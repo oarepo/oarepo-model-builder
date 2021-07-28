@@ -72,10 +72,6 @@ jobs:
       - name: Test with pytest
         run: |
           pytest tests
-
-      - name: Check manifest
-        run: |
-          check-manifest
       #
       #    - name: Coveralls
       #      uses: AndreMiras/coveralls-python-action@develop
@@ -94,7 +90,7 @@ jobs:
 
       - name: Build package to publish
         run: |
-          python setup.py sdist bdist_wheel
+          poetry build
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
