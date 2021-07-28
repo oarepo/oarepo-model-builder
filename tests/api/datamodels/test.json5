@@ -1,0 +1,43 @@
+{
+  "title": "Test record v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "oarepo:type": [
+    "include1"
+  ],
+  "properties": {
+    "field0": {
+      "oarepo:type": "include2"
+    },
+    "field1": {
+      "type": "string",
+      "ui": {
+        "hint": {
+          "cs": "testovaci field",
+          "en": "test field"
+        },
+      },
+      "search": {
+        "mapping": "keyword"
+      },
+    },
+    "field2": {
+      "type": "object",
+      "description": "Record access control and ownership.",
+      "additionalProperties": false,
+      "properties": {
+        "subfield1": {
+          "description": "Sub field 1.",
+          "type": "array",
+          "items": "include2",
+          "ui": {
+            "label": {
+              "cs": "vloz subfield1 hodnotu",
+              "en": "enter subfield1 value"
+            }
+          }
+        }
+      }
+    }
+  }
+}

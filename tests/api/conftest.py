@@ -74,44 +74,66 @@ def app():
     shutil.rmtree(instance_path)
 
 
+class LiteEntryPoint:
+    def __init__(self, name, val):
+        self.name = name
+        self.val = val
+
+    def load(self):
+        return self.val
+
+
+def extra_entrypoints(app, group=None, name=None):
+    from . import datamodels
+
+    data = {
+        'oarepo_model_builder.datamodels': [
+            LiteEntryPoint('test', datamodels),
+        ],
+    }
+
+    names = data.keys() if name is None else [name]
+    for key in names:
+        for entry_point in data[key]:
+            yield entry_point
+
+
 @pytest.fixture()
 def datamodel_json():
     return {
-        "test-v1.0.0": {
-            "title": "Test record v1.0.0",
-            "type": "object",
-            "additionalProperties": False,
-            # TODO: implement oarepo:include
-            # "oarepo:include": ["invenio-record-v1.0.0"],
-            "properties": {
-                "field1": {
-                    "type": "string",
-                    "ui": {
-                        "hint": {
-                            "cs": "testovaci field",
-                            "en": "test field"
-                        },
-                    },
-                    "search": {
-                        "mapping": "keyword"
+        "title": "Test record v1.0.0",
+        "type": "object",
+        "additionalProperties": False,
+        # TODO: implement oarepo:include
+        # "oarepo:include": ["invenio-record-v1.0.0"],
+        "properties": {
+            "field1": {
+                "type": "string",
+                "ui": {
+                    "hint": {
+                        "cs": "testovaci field",
+                        "en": "test field"
                     },
                 },
-                "field2": {
-                    "type": "object",
-                    "description": "Record access control and ownership.",
-                    "additionalProperties": False,
-                    "properties": {
-                        "subfield1": {
-                            "description": "Sub field 1.",
-                            "type": "array",
-                            # TODO: implement items auto import
-                            # "items": "rdm-definitions-v1.0.0#agent",
-                            "ui": {
-                                "label": {"cs": "vloz subfield1 hodnotu",
-                                          "en": "enter subfield1 value"}
-                            }
-                            # TODO: implement default mappings for field without `search` spec
+                "search": {
+                    "mapping": "keyword"
+                },
+            },
+            "field2": {
+                "type": "object",
+                "description": "Record access control and ownership.",
+                "additionalProperties": False,
+                "properties": {
+                    "subfield1": {
+                        "description": "Sub field 1.",
+                        "type": "array",
+                        # TODO: implement items auto import
+                        # "items": "rdm-definitions-v1.0.0#agent",
+                        "ui": {
+                            "label": {"cs": "vloz subfield1 hodnotu",
+                                      "en": "enter subfield1 value"}
                         }
+                        # TODO: implement default mappings for field without `search` spec
                     }
                 }
             }

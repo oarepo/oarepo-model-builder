@@ -7,9 +7,11 @@
 
 """OArepo module that generates data model files from a JSON specification file."""
 import json
+import json5
+import os
 from functools import cached_property
 from typing import List
-
+from werkzeug.datastructures import ImmutableDict
 import pkg_resources
 
 from oarepo_model_builder.builder import BaseBuilder
@@ -23,6 +25,22 @@ class _OARepoModelBuilderState:
         self._builders = None
         self._el_builders = None
         self._default_conf = None
+
+    @cached_property
+    def datamodels(self):
+        models = {}
+        for entry_point in pkg_resources.iter_entry_points('oarepo_model_builder.datamodels'):
+            ep = entry_point.load()
+            directory = os.path.dirname(ep.__file__)
+            for file in os.listdir(directory):
+                file_path = os.path.join(directory, file)
+
+                if file.lower().endswith(('.json5', '.json')):
+                    model_name = file.rsplit('.', 1)[0]
+                    with open(file_path) as mf:
+                        models[model_name] = json5.load(mf)
+
+        return models
 
     @property
     def datamodel_builders(self) -> List[BaseBuilder]:

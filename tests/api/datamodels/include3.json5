@@ -1,0 +1,14 @@
+{
+  "type": "string",
+  "ui": {
+    "hint": {
+      "cs": "includnuty field 3",
+      "en": "included field 3"
+    },
+  },
+  "search": {
+    "mapping": {
+      "type": "text"
+    }
+  }
+}

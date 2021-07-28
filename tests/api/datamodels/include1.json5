@@ -1,0 +1,10 @@
+{
+  "title": "Included properties v1.0.0",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "includedField1": {
+      "type": "string",
+    }
+  }
+}

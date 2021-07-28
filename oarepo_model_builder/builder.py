@@ -41,19 +41,20 @@ class DataModelBuilder(BaseBuilder):
         if handlers is None:
             handlers = []
 
-        results = []
+        result = WalkResult.KEEP
         for h in handlers:
-            results.append(h.pre(el, config, path, outputs))
+            if h.pre(el, config, path, outputs) == WalkResult.DELETE:
+                result = WalkResult.DELETE
 
         if isinstance(el, dict):
             for k, v in list(el.items()):
-                if self.walk(v, outputs, path + [k], config, handlers) == WalkResult.DELETE:
+                if self.walk(v, config, path + [k], outputs, handlers) == WalkResult.DELETE:
                     del el[k]
 
         for h in handlers:
             h.post(el, config, path, outputs)
 
-        return WalkResult.DELETE if any([r == WalkResult.DELETE for r in results]) else WalkResult.KEEP
+        return result
 
     def __call__(self, *args, **kwargs):
         self.walk(*args, **kwargs)
@@ -82,7 +83,6 @@ class MappingBuilder(BaseBuilder):
 
             field_path = ['mappings'] + path[properties_idx:-1]
             outputs['mapping'].set(field_path, self._resolve(el))
-
             return WalkResult.DELETE
 
         return WalkResult.KEEP

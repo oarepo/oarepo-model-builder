@@ -24,23 +24,10 @@ def model():
 
 
 @model.command('build')
-@click.option('-s', '--source', type=click.Path(readable=True, exists=True))
+@click.argument('source', type=click.Path(readable=True, exists=True))
 @with_appcontext
-def build(source=None, base_dir=os.getcwd()):
+def build(source, base_dir=os.getcwd()):
     """Build data model files from JSON5 source specification."""
-
-    if not source:
-        """Try to find `datamodel.json5` in package modules."""
-        for mod in pkgutil.iter_modules([base_dir]):
-            data_path = os.path.join(base_dir, os.path.join(mod.name, 'datamodel.json5'))
-            if os.path.exists(data_path):
-                source = data_path
-                break
-
-        if not source:
-            click.secho('Could not find `datamodel.json5` file in current package.', fg='red')
-            exit(1)
-
     click.secho('Generating models from: ' + source, fg='green')
     with open(source) as datamodel_file:
         data = json5.load(datamodel_file)
