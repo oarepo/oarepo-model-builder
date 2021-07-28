@@ -36,8 +36,11 @@ def resolve_includes(src, prop):
                 included_datamodel = {}
 
                 for inc in includes:
-                    _includes_merger.merge(included_datamodel,
-                                           deepcopy(current_model_builder.datamodels[inc]))
+                    if isinstance(inc, str):
+                        _includes_merger.merge(included_datamodel,
+                                               deepcopy(current_model_builder.datamodels[inc]))
+                    elif isinstance(inc, dict):
+                        _includes_merger.merge(included_datamodel, deepcopy(inc))
             else:
                 included_datamodel = {}
 

@@ -1,0 +1,8 @@
+include *.md
+include *.in
+include LICENSE
+recursive-include oarepo_model_builder *.json5
+recursive-include oarepo_model_builder *.py
+recursive-include oarepo_model_builder *.po *.pot *.mo
+graft oarepo_model_builder
+prune tests

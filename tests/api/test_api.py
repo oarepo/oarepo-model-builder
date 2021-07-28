@@ -143,7 +143,13 @@ def test_resolve_includes(app):
                      "type": "array",
                      "items": [
                          "include1",
-                         "include4"
+                         "include4",
+                         {
+                             "type": "object",
+                             "properties": {
+                                 "field1": "include2"
+                             }
+                         }
                      ]
                  }
              }
@@ -160,7 +166,8 @@ def test_resolve_includes(app):
                          "additionalProperties": False,
                          "properties": {
                              "includedField1": {"type": "string"},
-                             "includedField2": {"type": "number"}
+                             "includedField2": {"type": "number"},
+                             "field1": {"type": "number"}
                          }
                      }
                  }
