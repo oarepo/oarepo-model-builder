@@ -6,7 +6,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """OArepo module that generates data model files from a JSON specification file."""
-from enum import Enum
 from typing import List
 
 from oarepo_model_builder.builders import BuildResult

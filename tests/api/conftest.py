@@ -121,7 +121,7 @@ def datamodel_json():
                         "en": "test field"
                     },
                 },
-                "search": {
+                "oarepo:search": {
                     "mapping": "keyword"
                 },
             },
