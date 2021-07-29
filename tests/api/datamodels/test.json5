@@ -2,13 +2,11 @@
   "title": "Test record v1.0.0",
   "type": "object",
   "additionalProperties": false,
-  "oarepo:metadata":  {
+  "oarepo:ui":  {
     "title": {
-      "cs": "",
-      "en": ""
+      "cs": "Title cs",
+      "en": "Title en"
     },
-    "recordClass": "...",
-    "draftRecordClass": "...",
   },
   "oarepo:type": [
     "include1"
@@ -19,7 +17,7 @@
     },
     "field1": {
       "type": "string",
-      "ui": {
+      "oarepo:ui": {
         "hint": {
           "cs": "testovaci field",
           "en": "test field"
@@ -38,7 +36,7 @@
           "description": "Sub field 1.",
           "type": "array",
           "items": "include2",
-          "ui": {
+          "oarepo:ui": {
             "label": {
               "cs": "vloz subfield1 hodnotu",
               "en": "enter subfield1 value"

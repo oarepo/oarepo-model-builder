@@ -1,6 +1,6 @@
 {
   "type": "string",
-  "ui": {
+  "oarepo:ui": {
     "hint": {
       "cs": "includnuty field 3",
       "en": "included field 3"

@@ -15,7 +15,7 @@ class JSONSchemaBuilder(JSONBuilder):
         else:
             path_skipped = path[-1].startswith('oarepo:')
             if path_skipped:
-                self.push(self.IGNORED, path)
+                self.push(self.IGNORED_SUBTREE, path)
             elif isinstance(el, dict):
                 self.push({}, path)
             elif isinstance(el, (list, tuple)):
