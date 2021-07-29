@@ -1,5 +1,5 @@
 from oarepo_model_builder.builders.json import JSONBuilder
-from oarepo_model_builder.output import JsonSchemaOutput
+from oarepo_model_builder.outputs.output import JsonSchemaOutput
 
 
 class JSONSchemaBuilder(JSONBuilder):

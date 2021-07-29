@@ -7,7 +7,7 @@ from tests.api.conftest import extra_entrypoints
 
 @patch('pkg_resources.iter_entry_points', extra_entrypoints)
 def test_resolve_includes(app):
-    assert {'test', 'include1', 'include2', 'include3', 'include4'} == set(current_model_builder.datamodels)
+    assert {'test', 'type1', 'type2', 'type3', 'type4'} == set(current_model_builder.datamodels)
 
     test_cases = [
         # 1) Check if list type references resolves correctly
@@ -16,12 +16,12 @@ def test_resolve_includes(app):
              "title": "Test record for 1.1",
              "type": "object",
              "additionalProperties": False,
-             "oarepo:type": ["include1"],
+             "oarepo:type": ["type1"],
              "properties": {
                  "field1": {
                      "oarepo:type": [
-                         "include1",
-                         "include4"
+                         "type1",
+                         "type4"
                      ]
                  }
              }
@@ -49,8 +49,8 @@ def test_resolve_includes(app):
              "additionalProperties": False,
              "properties": {
                  "field1": [
-                     'include1',
-                     'include4'
+                     'type1',
+                     'type4'
                  ]
              }
          }, {
@@ -77,7 +77,7 @@ def test_resolve_includes(app):
              "additionalProperties": False,
              "properties": {
                  "field1": {
-                     "oarepo:type": "include2"
+                     "oarepo:type": "type2"
                  }
              }
          }, {
@@ -96,7 +96,7 @@ def test_resolve_includes(app):
              "type": "object",
              "additionalProperties": False,
              "properties": {
-                 "field1": "include2"
+                 "field1": "type2"
              }
          }, {
              "title": "Test record for 2.2",
@@ -117,7 +117,7 @@ def test_resolve_includes(app):
              "properties": {
                  "arrayField": {
                      "type": "array",
-                     "items": "include2"
+                     "items": "type2"
                  }
              }
          }, {
@@ -142,12 +142,12 @@ def test_resolve_includes(app):
                  "arrayField": {
                      "type": "array",
                      "items": [
-                         "include1",
-                         "include4",
+                         "type1",
+                         "type4",
                          {
                              "type": "object",
                              "properties": {
-                                 "field1": "include2"
+                                 "field1": "type2"
                              }
                          }
                      ]

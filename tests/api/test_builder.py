@@ -1,5 +1,6 @@
-from oarepo_model_builder.builder import MappingBuilder, WalkResult, DataModelBuilder
-from oarepo_model_builder.output import MappingOutput
+from oarepo_model_builder.builders.mapping import MappingBuilder
+from oarepo_model_builder.builders.source import BuildResult, DataModelBuilder
+from oarepo_model_builder.outputs.output import MappingOutput
 from oarepo_model_builder.proxies import current_model_builder
 
 
@@ -22,27 +23,46 @@ def test_mapping_builder(app):
     config = current_model_builder.model_config
 
     outputs = {}
-    res = mb.pre({}, config, None, outputs)
+    res = mb.pre({}, config, [], outputs)
 
-    assert res == WalkResult.KEEP
+    assert res == BuildResult.KEEP
     assert len(outputs) == 1
     assert isinstance(outputs['mapping'], MappingOutput)
 
     test_cases = [
         # Test single field mapping
-        ({'type': 'keyword'}, ['test-record-v1.0.0', 'properties', 'test', 'search'], 'test', {'type': 'keyword'}),
-        # Test shorthand mapping definition
-        ('keyword', ['test-record-v1.0.0', 'properties', 'test', 'search'], 'test', {'type': 'keyword'})
+        (
+            {'type': 'keyword'},
+            ['properties', 'test1', 'search'],
+            {
+                'mappings': {
+                    'properties': {
+                        'test1': {'type': 'keyword'}
+                    }
+                }
+            },
+            BuildResult.DELETE
+        ),
+        # Test shorthand mapping specification
+        (
+            'keyword',
+            ['properties', 'test2', 'search'],
+            {
+                'mappings': {
+                    'properties': {
+                        'test2': {'type': 'keyword'}
+                    }
+                }
+            },
+            BuildResult.DELETE
+        )
     ]
 
     for tc in test_cases:
-        source, path, field, result = tc
-
-        res = mb.pre(source, config, path, outputs)
-        if path[-1] == 'search':
-            assert res == WalkResult.DELETE
-        else:
-            assert res == WalkResult.KEEP
-
-        assert field in outputs['mapping'].data['mappings']['properties']
-        assert outputs['mapping'].data['mappings']['properties'][field] == result
+        outputs = {}
+        el, path, mapping, result = tc
+        print(el, path)
+        mb.pre(el, {}, [], outputs)
+        res = mb.pre(el, {}, path, outputs)
+        assert res == result
+        assert outputs['mapping'].data == mapping

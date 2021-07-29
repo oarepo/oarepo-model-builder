@@ -11,10 +11,11 @@ import json5
 import os
 from functools import cached_property
 from typing import List
-from werkzeug.datastructures import ImmutableDict
 import pkg_resources
 
-from oarepo_model_builder.builder import BaseBuilder
+from oarepo_model_builder.builders.element import ElementBuilder
+from oarepo_model_builder.builders.output import OutputBuilder
+from oarepo_model_builder.builders.source import SourceBuilder
 
 
 class _OARepoModelBuilderState:
@@ -43,7 +44,7 @@ class _OARepoModelBuilderState:
         return models
 
     @property
-    def datamodel_builders(self) -> List[BaseBuilder]:
+    def source_builders(self) -> List[SourceBuilder]:
         if self._builders is None:
             builders = []
             for entry_point in pkg_resources.iter_entry_points('oarepo_model_builder.datamodel'):
@@ -53,7 +54,7 @@ class _OARepoModelBuilderState:
         return self._builders
 
     @property
-    def element_builders(self) -> List[BaseBuilder]:
+    def element_builders(self) -> List[ElementBuilder]:
         if self._el_builders is None:
             builders = []
             for entry_point in pkg_resources.iter_entry_points('oarepo_model_builder.elements'):
@@ -64,22 +65,18 @@ class _OARepoModelBuilderState:
 
     @cached_property
     def model_config(self):
-        if self._default_conf is None:
-            try:
-                import importlib.resources as pkg_resources
-            except ImportError:
-                # Try backported to PY<37 `importlib_resources`.
-                import importlib_resources as pkg_resources
+        try:
+            import importlib.resources as pkg_resources
+        except ImportError:
+            # Try backported to PY<37 `importlib_resources`.
+            import importlib_resources as pkg_resources
 
-            from . import config
-            config_json = pkg_resources.read_text(config, 'default.json')
-            self._default_conf = json.loads(config_json)
+        from . import config
+        config_json = pkg_resources.read_text(config, 'default.json')
+        return json.loads(config_json)
+        # TODO: iterate over oarepo_model_builder.config entrypoints and update
 
-            # TODO: iterate over oarepo_model_builder.config entrypoints and update
-
-        return self._default_conf
-
-    def output_builders(self, output_type) -> List[BaseBuilder]:
+    def output_builders(self, output_type) -> List[OutputBuilder]:
         builders = []
         for entry_point in pkg_resources.iter_entry_points(f'oarepo_model_builder.{output_type}'):
             builders.append(entry_point.load())

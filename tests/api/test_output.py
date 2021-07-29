@@ -1,4 +1,4 @@
-from oarepo_model_builder.output import BaseOutput, MappingOutput, JsonSchemaOutput
+from oarepo_model_builder.outputs.output import BaseOutput, MappingOutput, JsonSchemaOutput
 
 
 def test_base_output():

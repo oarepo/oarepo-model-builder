@@ -6,13 +6,19 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """OArepo module that generates data model files from a JSON specification file."""
-from collections import defaultdict
-from enum import Enum
-from functools import reduce
-from operator import getitem
-from typing import List
+from deepmerge import Merger
 
 from oarepo_model_builder.proxies import current_model_builder
+
+_output_merger = Merger(
+    [
+        (list, ["append"]),
+        (dict, ["merge"]),
+        (set, ["union"])
+    ],
+    ["override"],
+    ["override"]
+)
 
 
 class BaseOutput:
@@ -27,18 +33,23 @@ class BaseOutput:
         raise NotImplemented
 
     def set(self, path, val):
-        def _default():
-            return defaultdict(_default)
+        print('set', path, val)
 
-        def _defaultify(d):
-            if not isinstance(d, dict):
-                return d
-            return defaultdict(_default, {k: _defaultify(v) for k, v in d.items()})
+        def _unflatten(paths, data):
+            _path = paths[0]
+            data.setdefault(_path, {})
 
-        data = _defaultify(self._data)
-        reduce(getitem, path[:-1], data)[path[-1]] = val
+            if len(paths) == 1:
+                data[_path] = val
+            else:
+                _unflatten(paths[1:], data[_path])
 
-        self._data = data
+        d = {}
+        _unflatten(path, d)
+
+        print(d)
+
+        self._data = _output_merger.merge(self._data, dict(d))
 
     @property
     def data(self):

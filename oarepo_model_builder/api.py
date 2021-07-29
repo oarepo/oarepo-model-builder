@@ -11,7 +11,7 @@ from typing import Dict
 
 from deepmerge import Merger
 
-from oarepo_model_builder.output import BaseOutput
+from oarepo_model_builder.outputs.output import BaseOutput
 from oarepo_model_builder.proxies import current_model_builder
 
 _includes_merger = Merger(
@@ -65,7 +65,7 @@ def resolve_includes(src, prop):
             resolve_includes(v, prop)
 
 
-def build_datamodel_files(src, config=None):
+def build_datamodel(src, config=None):
     """Build data model files from source JSON5 specification data."""
     if config is None:
         config = {}
@@ -76,7 +76,7 @@ def build_datamodel_files(src, config=None):
     resolve_includes(src, None)
 
     # Iterate over registered model builders
-    for builder in current_model_builder.datamodel_builders:
+    for builder in current_model_builder.source_builders:
         el_handlers = current_model_builder.element_builders
 
         builder(el=src, config=config, path=[], outputs=outputs, handlers=el_handlers)

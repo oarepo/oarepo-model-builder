@@ -13,7 +13,7 @@ import click
 import json5
 from flask.cli import with_appcontext
 
-from oarepo_model_builder.api import build_datamodel_files
+from oarepo_model_builder.api import build_datamodel
 from oarepo_model_builder.proxies import current_model_builder
 
 
@@ -32,4 +32,4 @@ def build(source, base_dir=os.getcwd()):
     with open(source) as datamodel_file:
         data = json5.load(datamodel_file)
 
-    build_datamodel_files(data, config=current_model_builder.model_config)
+    build_datamodel(data, config=current_model_builder.model_config)

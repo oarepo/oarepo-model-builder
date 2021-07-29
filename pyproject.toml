@@ -10,11 +10,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-oarepo = "^3.3"
-oarepo-micro-api = "^3.3.83"
 json5 = "^0.9.6"
 deepmerge = "^0.3.0"
-jsonref = "^0.2"
 
 [tool.poetry.dev-dependencies]
 oarepo = {extras = ["tests"], version = "^3.3.81"}

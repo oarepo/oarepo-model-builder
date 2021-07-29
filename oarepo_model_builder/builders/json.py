@@ -1,9 +1,9 @@
 from typing import List
 
-from ..builder import BaseBuilder
+from oarepo_model_builder.builders.element import ElementBuilder
 
 
-class JSONBuilder(BaseBuilder):
+class JSONBuilder(ElementBuilder):
     """Hierarchic json builder."""
     IGNORED_SUBTREE = object()
     IGNORED_NODE = object()
