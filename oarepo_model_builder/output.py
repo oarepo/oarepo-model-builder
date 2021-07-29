@@ -65,6 +65,6 @@ class JsonSchemaOutput(BaseOutput):
 
     def __init__(self, path, data=None):
         if data is None:
-            data = current_model_builder.model_config.get('jsonschema')
+            data = current_model_builder.model_config.get('jsonschema', {})
 
         super().__init__(path, data)

@@ -106,10 +106,16 @@ def datamodel_json():
         "additionalProperties": False,
         # TODO: implement oarepo:include
         # "oarepo:include": ["invenio-record-v1.0.0"],
+        "oarepo:ui": {
+           "title": {
+               "cs": "Datamodel title CS",
+               "en": "Datamodel title EN"
+           }
+        },
         "properties": {
             "field1": {
                 "type": "string",
-                "ui": {
+                "oarepo:ui": {
                     "hint": {
                         "cs": "testovaci field",
                         "en": "test field"
@@ -129,7 +135,7 @@ def datamodel_json():
                         "type": "array",
                         # TODO: implement items auto import
                         # "items": "rdm-definitions-v1.0.0#agent",
-                        "ui": {
+                        "oarepo:ui": {
                             "label": {"cs": "vloz subfield1 hodnotu",
                                       "en": "enter subfield1 value"}
                         }
