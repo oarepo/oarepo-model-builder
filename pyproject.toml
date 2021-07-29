@@ -32,5 +32,8 @@ oarepo_model_builder = "oarepo_model_builder.ext:OARepoModelBuilder"
 [tool.poetry.plugins."oarepo_model_builder.datamodel"]
 datamodel = "oarepo_model_builder.handlers:DataModelBuilder"
 
+[tool.poetry.plugins."oarepo_model_builder.elements"]
+datamodel = "oarepo_model_builder.builders.jsonschema_builder:JSONSchemaBuilder"
+
 [tool.poetry.plugins."flask.commands"]
 model = "oarepo_model_builder.cli:model"
