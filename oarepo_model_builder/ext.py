@@ -13,9 +13,9 @@ from functools import cached_property
 from typing import List
 import pkg_resources
 
-from oarepo_model_builder.builders.element import ElementBuilder
-from oarepo_model_builder.builders.output import OutputBuilder
-from oarepo_model_builder.builders.source import SourceBuilder
+from oarepo_model_builder.builders import ElementBuilder
+from oarepo_model_builder.builders import OutputBuilder
+from oarepo_model_builder.builders import SourceBuilder
 
 
 class _OARepoModelBuilderState:

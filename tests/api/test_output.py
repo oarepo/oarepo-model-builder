@@ -1,11 +1,11 @@
-from oarepo_model_builder.outputs.output import BaseOutput, MappingOutput, JsonSchemaOutput
+from oarepo_model_builder.outputs import BaseOutput, MappingOutput, JsonSchemaOutput
 
 
 def test_base_output():
     bo = BaseOutput('', {'test': 'data'})
 
     assert bo.path == ''
-    assert bo.output_type == None
+    assert bo.output_type is None
     assert bo.data == {'test': 'data'}
 
     bo.set(['testpath', 'subpath', 'subsub'], 'test1')

@@ -7,7 +7,6 @@
 
 """OArepo module that generates data model files from a JSON specification file."""
 import os
-import pkgutil
 
 import click
 import json5

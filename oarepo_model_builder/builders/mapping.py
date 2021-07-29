@@ -6,10 +6,11 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """OArepo module that generates data model files from a JSON specification file."""
+from copy import deepcopy
 
-from oarepo_model_builder.builders.json import JSONBuilder
-from oarepo_model_builder.builders.source import BuildResult
-from oarepo_model_builder.outputs.output import MappingOutput
+from oarepo_model_builder.builders import JSONBuilder
+from oarepo_model_builder.builders import BuildResult
+from oarepo_model_builder.outputs import MappingOutput
 
 
 class MappingBuilder(JSONBuilder):
@@ -23,7 +24,7 @@ class MappingBuilder(JSONBuilder):
 
     def pre(self, el, config, path, outputs):
         if not path:
-            initial_data = config.get('mapping', {}).get('initial', None)
+            initial_data = deepcopy(config.get('mapping', {}).get('initial', None))
             outputs['mapping'] = MappingOutput(path=path, data=initial_data)
         elif path[-1] == 'search':
             # We are dealing with a field mapping, use path until 'properties' keyword as field path

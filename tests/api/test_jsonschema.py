@@ -1,5 +1,5 @@
-from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.builders.source import DataModelBuilder
+from oarepo_model_builder.builders import JSONSchemaBuilder
+from oarepo_model_builder.builders import DataModelBuilder
 from oarepo_model_builder.proxies import current_model_builder
 
 

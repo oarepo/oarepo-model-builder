@@ -11,7 +11,7 @@ from typing import Dict
 
 from deepmerge import Merger
 
-from oarepo_model_builder.outputs.output import BaseOutput
+from oarepo_model_builder.outputs import BaseOutput
 from oarepo_model_builder.proxies import current_model_builder
 
 _includes_merger = Merger(

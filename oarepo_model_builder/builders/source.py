@@ -9,7 +9,7 @@
 from typing import List
 
 from oarepo_model_builder.builders import BuildResult
-from oarepo_model_builder.builders.element import ElementBuilder
+from oarepo_model_builder.builders import ElementBuilder
 
 
 class SourceBuilder:
