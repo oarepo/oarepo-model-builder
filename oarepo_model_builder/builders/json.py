@@ -25,15 +25,3 @@ class JSONBuilder(BaseBuilder):
 
     def pop(self):
         self.stack.pop()
-
-{
-    properties: {
-        a: {
-            oarepo:ui: {
-               aa: {...}
-            }
-        }
-    }
-}
-
-{properties: {a: {}}}
