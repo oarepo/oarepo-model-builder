@@ -21,6 +21,10 @@ class SourceBuilder:
     def __call__(self, *args, **kwargs):
         return self.walk(*args, **kwargs)
 
+    def options(self):
+        """returns list/tuple of click.argument or click.option options"""
+        return ()
+
 
 class DataModelBuilder(SourceBuilder):
     """Handles building a data model from a datamodel specification."""

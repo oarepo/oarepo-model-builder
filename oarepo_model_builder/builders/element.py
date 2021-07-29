@@ -16,3 +16,7 @@ class ElementBuilder:
 
     def post(self, el, config, path, outputs):
         raise NotImplemented
+
+    def options(self):
+        """returns list/tuple of click.argument or click.option options"""
+        return ()

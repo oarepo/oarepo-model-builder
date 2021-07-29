@@ -16,6 +16,7 @@ import pkg_resources
 from oarepo_model_builder.builders import ElementBuilder
 from oarepo_model_builder.builders import OutputBuilder
 from oarepo_model_builder.builders import SourceBuilder
+from oarepo_model_builder.config import Config
 
 
 class _OARepoModelBuilderState:
@@ -73,7 +74,7 @@ class _OARepoModelBuilderState:
 
         from . import config
         config_json = pkg_resources.read_text(config, 'default.json')
-        return json.loads(config_json)
+        return Config(json5.loads(config_json))
         # TODO: iterate over oarepo_model_builder.config entrypoints and update
 
     def output_builders(self, output_type) -> List[OutputBuilder]:
