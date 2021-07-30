@@ -12,6 +12,8 @@ packages = [
 python = "^3.9"
 json5 = "^0.9.6"
 deepmerge = "^0.3.0"
+libcst = "^0.3.19"
+munch = "^2.4.0"
 
 [tool.poetry.dev-dependencies]
 oarepo = {extras = ["tests"], version = "^3.3.81"}

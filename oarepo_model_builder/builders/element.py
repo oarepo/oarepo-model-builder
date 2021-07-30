@@ -11,8 +11,18 @@
 class ElementBuilder:
     """Base element builder interface."""
 
+    def begin(self, config, outputs, root):
+        pass
+
+    def end(self, config, outputs, root):
+        pass
+
     def pre(self, el, config, path, outputs):
         raise NotImplemented
 
     def post(self, el, config, path, outputs):
         raise NotImplemented
+
+    def options(self):
+        """returns list/tuple of click.argument or click.option options"""
+        return ()

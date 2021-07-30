@@ -22,11 +22,12 @@ class MappingBuilder(JSONBuilder):
             return dict(type=el)
         return el
 
+    def begin(self, config, outputs, root):
+        initial_data = deepcopy(config.get('mapping', {}).get('initial', None))
+        outputs['mapping'] = MappingOutput(path='TODO', data=initial_data)
+
     def pre(self, el, config, path, outputs):
-        if not path:
-            initial_data = deepcopy(config.get('mapping', {}).get('initial', None))
-            outputs['mapping'] = MappingOutput(path=path, data=initial_data)
-        elif path[-1] == 'search':
+        if path[-1] == 'search':
             # We are dealing with a field mapping, use path until 'properties' keyword as field path
             properties_idx = [i for i, j in enumerate(reversed(path[:-1])) if j == 'properties']
             if len(properties_idx) > 0:

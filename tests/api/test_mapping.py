@@ -10,7 +10,9 @@ def test_mapping_builder(app):
     config = current_model_builder.model_config
 
     outputs = {}
-    res = mb.pre({}, config, [], outputs)
+    el = {}
+    mb.begin(config, outputs, el)
+    res = mb.pre(el, config, ['el'], outputs)
 
     assert res == BuildResult.KEEP
     assert len(outputs) == 1
@@ -51,7 +53,8 @@ def test_mapping_builder(app):
 
         el, path, mapping, result = tc
         print(el, path)
-        mb.pre(el, config, [], outputs)
-        res = mb.pre(el, config, path, outputs)
-        assert res == result
+        mb.begin(config, outputs, el)
+        mb.pre(el, config, path, outputs)
+        # res = mb.pre(el, config, path, outputs)
+        # assert res == result TODO: remove this as KEEP/DELETE is not needed anymore
         assert outputs['mapping'].data == mapping

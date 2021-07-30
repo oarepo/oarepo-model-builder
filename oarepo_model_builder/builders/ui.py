@@ -14,13 +14,14 @@ class UIBuilder(JSONBuilder):
     def is_property(self, path):
         return len(path) > 1 and path[-2] == 'properties'  # TODO: tohle neni uplne spravne
 
+    def begin(self, config, outputs, root):
+        output = outputs['ui'] = UIOutput("TODO")
+        self.stack[0] = output.data
+        if 'oarepo:ui' in root:
+            self.stack[-1].update(root['oarepo:ui'])  # title etc
+
     def pre(self, el, config, path, outputs):
-        if not path:
-            output = outputs['ui'] = UIOutput("TODO")
-            self.stack[0] = output.data
-            if 'oarepo:ui' in el:
-                self.stack[-1].update(el['oarepo:ui'])  # title etc
-        elif self.is_property(path):
+        if self.is_property(path):
             self.push(copy.deepcopy(el.get('oarepo:ui', {})), path)
         else:
             self.push(self.IGNORED_NODE, path)  # ignored node means that just the node is output, not the whole subtree
