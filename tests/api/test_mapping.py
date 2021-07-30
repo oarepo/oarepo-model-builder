@@ -58,3 +58,56 @@ def test_mapping_builder():
         # res = mb.pre(el, config, path, outputs)
         # assert res == result TODO: remove this as KEEP/DELETE is not needed anymore
         assert outputs['mapping'].data == mapping
+
+
+def test_mapping_output():
+    mo = MappingOutput(path='')
+
+    assert mo.output_type == 'mapping'
+    assert mo.path == ''
+    assert mo.data == {
+        "settings": {
+            "analysis": {
+                "char_filter": {
+                    "configured_html_strip": {
+                        "type": "html_strip",
+                        "escaped_tags": []
+                    }
+                },
+                "normalizer": {
+                    "wsnormalizer": {
+                        "type": "custom",
+                        "filter": [
+                            "trim"
+                        ]
+                    }
+                },
+                "filter": {
+                    "czech_stop": {
+                        "type": "stop",
+                        "stopwords": "_czech_"
+                    },
+                    "czech_stemmer": {
+                        "type": "stemmer",
+                        "language": "czech"
+                    }
+                },
+                "analyzer": {
+                    "default": {
+                        "tokenizer": "standard",
+                        "filter": [
+                            "lowercase",
+                            "czech_stop",
+                            "czech_stemmer"
+                        ]
+                    }
+                }
+            }
+        },
+        "mappings": {
+            "dynamic": False,
+            "date_detection": False,
+            "numeric_detection": False,
+            "properties": {}
+        }
+    }

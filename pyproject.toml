@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.1.0"
+version = "0.1.1"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>"]
 
@@ -9,7 +9,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.8,<4.0"
 json5 = "^0.9.6"
 deepmerge = "^0.3.0"
 libcst = "^0.3.19"
@@ -30,5 +30,5 @@ datamodel = "oarepo_model_builder.handlers:DataModelBuilder"
 jsonschema = "oarepo_model_builder.builders.jsonschema_builder:JSONSchemaBuilder"
 mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
 
-[tool.poetry.plugins."flask.commands"]
-model = "oarepo_model_builder.cli:model"
+[tool.poetry.scripts]
+models = "oarepo_model_builder.cli:model"

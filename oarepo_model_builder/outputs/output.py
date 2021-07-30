@@ -31,8 +31,6 @@ class BaseOutput:
         raise NotImplemented
 
     def set(self, path, val):
-        print('set', path, val)
-
         def _unflatten(paths, data):
             _path = paths[0]
             data.setdefault(_path, {})

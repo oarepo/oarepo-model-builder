@@ -11,7 +11,6 @@ import os
 
 import click
 import json5
-from flask.cli import with_appcontext
 
 from oarepo_model_builder.api import build_datamodel
 from oarepo_model_builder.proxies import current_model_builder
@@ -39,10 +38,9 @@ def builder_arguments(f):
 
 @model.command('build')
 @click.argument('source', type=click.Path(readable=True, exists=True))
-@click.option('package')
-@click.option('datamodel-version', default='1.0.0')
+@click.option('--package')
+@click.option('--datamodel-version', default='1.0.0')
 @builder_arguments
-@with_appcontext
 def build(source, base_dir=os.getcwd(), **kwargs):
     """Build data model files from JSON5 source specification."""
     click.secho('Generating models from: ' + source, fg='green')
