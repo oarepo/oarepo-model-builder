@@ -15,5 +15,5 @@ def test_jsonschema_builder(app, datamodel_json, model_config):
     assert outputs['jsonschema'].path.split('/')[-3:] == [
         'jsonschemas',
         'oarepo_model_builder',
-        'oarepo-model-builder-1.0.0.json'
+        'oarepo-model-builder-v1.0.0.json'
     ]

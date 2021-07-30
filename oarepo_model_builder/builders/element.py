@@ -11,6 +11,12 @@
 class ElementBuilder:
     """Base element builder interface."""
 
+    def begin(self, config, outputs):
+        pass
+
+    def end(self, config, outputs):
+        pass
+
     def pre(self, el, config, path, outputs):
         raise NotImplemented
 

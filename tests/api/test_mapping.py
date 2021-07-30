@@ -10,6 +10,7 @@ def test_mapping_builder(app):
     config = current_model_builder.model_config
 
     outputs = {}
+    mb.begin(config, outputs)
     res = mb.pre({}, config, [], outputs)
 
     assert res == BuildResult.KEEP
@@ -51,6 +52,7 @@ def test_mapping_builder(app):
 
         el, path, mapping, result = tc
         print(el, path)
+        mb.begin(config, outputs)
         mb.pre(el, config, [], outputs)
         res = mb.pre(el, config, path, outputs)
         assert res == result
