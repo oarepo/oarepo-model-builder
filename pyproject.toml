@@ -14,19 +14,14 @@ json5 = "^0.9.6"
 deepmerge = "^0.3.0"
 libcst = "^0.3.19"
 munch = "^2.4.0"
+click = ">=7.1"
 
 [tool.poetry.dev-dependencies]
-oarepo = {extras = ["tests"], version = "^3.3.81"}
+pytest = "^4.6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.plugins."invenio_base.apps"]
-oarepo_model_builder = "oarepo_model_builder.ext:OARepoModelBuilder"
-
-[tool.poetry.plugins."invenio_base.api_apps"]
-oarepo_model_builder = "oarepo_model_builder.ext:OARepoModelBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.datamodel"]
 datamodel = "oarepo_model_builder.handlers:DataModelBuilder"

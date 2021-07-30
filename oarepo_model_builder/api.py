@@ -7,11 +7,9 @@
 
 """OArepo module that generates data model files from a JSON specification file."""
 from copy import deepcopy
-from typing import Dict
 
 from deepmerge import Merger
 
-from oarepo_model_builder.outputs import BaseOutput
 from oarepo_model_builder.proxies import current_model_builder
 
 _includes_merger = Merger(
@@ -70,7 +68,7 @@ def build_datamodel(src, config=None):
     if config is None:
         config = {}
 
-    outputs: Dict[str: BaseOutput] = {}
+    outputs = {}
 
     # Resolve includes
     resolve_includes(src, None)

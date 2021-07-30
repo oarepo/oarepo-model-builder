@@ -8,8 +8,6 @@
 """OArepo module that generates data model files from a JSON specification file."""
 from deepmerge import Merger
 
-from oarepo_model_builder.proxies import current_model_builder
-
 _output_merger = Merger(
     [
         (list, ["append"]),
@@ -57,25 +55,3 @@ class BaseOutput:
 
     def __call__(self, *args, **kwargs):
         raise NotImplemented
-
-
-class MappingOutput(BaseOutput):
-    """ES Mapping output."""
-    output_type = 'mapping'
-
-    def __init__(self, path, data=None):
-        if data is None:
-            data = current_model_builder.model_config.get('search').get('mapping')
-
-        super().__init__(path, data)
-
-
-class JsonSchemaOutput(BaseOutput):
-    """Output class for jsonschema."""
-    output_type = 'jsonschema'
-
-    def __init__(self, path, data=None):
-        if data is None:
-            data = current_model_builder.model_config.get('jsonschema', {})
-
-        super().__init__(path, data)

@@ -3,7 +3,7 @@ from oarepo_model_builder.builders import UIBuilder
 from oarepo_model_builder.proxies import current_model_builder
 
 
-def test_ui_builder(app, datamodel_json):
+def test_ui_builder(datamodel_json):
     build = DataModelBuilder()
     el_handlers = [UIBuilder()]
 

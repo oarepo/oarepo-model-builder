@@ -22,7 +22,7 @@ def test_base_output():
     }
 
 
-def test_mapping_output(app):
+def test_mapping_output():
     mo = MappingOutput(path='')
 
     assert mo.output_type == 'mapping'
@@ -75,7 +75,7 @@ def test_mapping_output(app):
     }
 
 
-def test_jsonschema_output(app):
+def test_jsonschema_output():
     jo = JsonSchemaOutput(path='')
 
     assert jo.output_type == 'jsonschema'

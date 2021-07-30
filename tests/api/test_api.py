@@ -6,7 +6,7 @@ from tests.api.conftest import extra_entrypoints
 
 
 @patch('pkg_resources.iter_entry_points', extra_entrypoints)
-def test_resolve_includes(app):
+def test_resolve_includes():
     assert {'test', 'type1', 'type2', 'type3', 'type4'} == set(current_model_builder.datamodels)
 
     test_cases = [

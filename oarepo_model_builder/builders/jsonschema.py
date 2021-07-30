@@ -2,9 +2,9 @@ from typing import List, Dict
 
 import click
 
-from oarepo_model_builder.builders.json import JSONBuilder
+from oarepo_model_builder.builders import JSONBuilder
 from oarepo_model_builder.config import Config
-from oarepo_model_builder.outputs.output import JsonSchemaOutput, BaseOutput
+from oarepo_model_builder.outputs import JsonSchemaOutput, BaseOutput
 
 
 class JSONSchemaBuilder(JSONBuilder):

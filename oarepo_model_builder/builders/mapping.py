@@ -18,7 +18,6 @@ class MappingBuilder(JSONBuilder):
 
     def _resolve(self, el):
         if isinstance(el, str):
-            # TODO: implement import of references here
             return dict(type=el)
         return el
 
