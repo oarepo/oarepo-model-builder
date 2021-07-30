@@ -7,7 +7,6 @@
 
 """OArepo module that generates data model files from a JSON specification file."""
 
-from flask import current_app
-from werkzeug.local import LocalProxy
+from oarepo_model_builder import OARepoModelBuilder
 
-current_model_builder = LocalProxy(lambda: current_app.extensions['oarepo-model-builder'])
+current_model_builder = OARepoModelBuilder()

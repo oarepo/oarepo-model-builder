@@ -3,7 +3,7 @@ from oarepo_model_builder.builders import DataModelBuilder
 from oarepo_model_builder.proxies import current_model_builder
 
 
-def test_jsonschema_builder(app, datamodel_json, model_config):
+def test_jsonschema_builder(datamodel_json, model_config):
     build = DataModelBuilder()
     el_handlers = [JSONSchemaBuilder()]
 

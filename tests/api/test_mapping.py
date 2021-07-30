@@ -4,7 +4,7 @@ from oarepo_model_builder.outputs import MappingOutput
 from oarepo_model_builder.proxies import current_model_builder
 
 
-def test_mapping_builder(app):
+def test_mapping_builder():
     mb = MappingBuilder()
 
     config = current_model_builder.model_config
