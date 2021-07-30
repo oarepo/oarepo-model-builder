@@ -11,10 +11,10 @@
 class ElementBuilder:
     """Base element builder interface."""
 
-    def begin(self, config, outputs):
+    def begin(self, config, outputs, root):
         pass
 
-    def end(self, config, outputs):
+    def end(self, config, outputs, root):
         pass
 
     def pre(self, el, config, path, outputs):
