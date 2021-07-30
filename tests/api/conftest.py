@@ -13,6 +13,7 @@ from invenio_records_rest.ext import InvenioRecordsREST
 from invenio_search.ext import InvenioSearch
 
 from oarepo_model_builder.ext import OARepoModelBuilder
+from oarepo_model_builder.proxies import current_model_builder
 
 
 @pytest.yield_fixture(scope="module")
@@ -107,10 +108,10 @@ def datamodel_json():
         # TODO: implement oarepo:include
         # "oarepo:include": ["invenio-record-v1.0.0"],
         "oarepo:ui": {
-           "title": {
-               "cs": "Datamodel title CS",
-               "en": "Datamodel title EN"
-           }
+            "title": {
+                "cs": "Datamodel title CS",
+                "en": "Datamodel title EN"
+            }
         },
         "properties": {
             "field1": {
@@ -145,3 +146,16 @@ def datamodel_json():
             }
         }
     }
+
+
+@pytest.fixture()
+def model_config(app):
+    config = current_model_builder.model_config
+    config.base_dir = os.getcwd()
+
+    config.source = None
+    config.package = (os.path.basename(os.getcwd())).replace('-', '_')
+    config.kebab_package = config.package.replace('_', '-')
+    config.datamodel = config.kebab_package
+    config.datamodel_version = '1.0.0'
+    return config

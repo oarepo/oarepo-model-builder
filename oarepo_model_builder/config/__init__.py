@@ -10,4 +10,4 @@ class Config(AutoMunch):
             return os.path.join(self.base_dir, self[config_name])
 
         # otherwise construct it from relative path
-        return os.path.join(self.base_dir, relative_path)
+        return os.path.join(self.base_dir, relative_path.format(**self))

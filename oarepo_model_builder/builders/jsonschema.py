@@ -1,5 +1,8 @@
+from typing import List, Dict
+
 from oarepo_model_builder.builders.json import JSONBuilder
-from oarepo_model_builder.outputs.output import JsonSchemaOutput
+from oarepo_model_builder.config import Config
+from oarepo_model_builder.outputs.output import JsonSchemaOutput, BaseOutput
 
 
 class JSONSchemaBuilder(JSONBuilder):
@@ -8,9 +11,12 @@ class JSONSchemaBuilder(JSONBuilder):
         super().__init__()
         self.output = None
 
-    def pre(self, el, config, path, outputs):
+    def pre(self, el, config: Config, path: List[str], outputs: Dict[str, BaseOutput]):
         if not path:
-            output = outputs['jsonschema'] = JsonSchemaOutput("TODO")
+            output = outputs['jsonschema'] = JsonSchemaOutput(
+                config.resolve_path('jsonschemas/{package}/{datamodel}-v{datamodel_version}.json',
+                                    'schema_path')
+            )
             self.stack[0] = output.data
         else:
             path_skipped = path[-1].startswith('oarepo:')

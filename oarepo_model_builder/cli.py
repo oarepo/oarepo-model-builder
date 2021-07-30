@@ -39,6 +39,8 @@ def builder_arguments(f):
 
 @model.command('build')
 @click.argument('source', type=click.Path(readable=True, exists=True))
+@click.argument('package')
+@click.argument('datamodel-version', default='1.0.0')
 @builder_arguments
 @with_appcontext
 def build(source, base_dir=os.getcwd(), **kwargs):
@@ -51,4 +53,7 @@ def build(source, base_dir=os.getcwd(), **kwargs):
     config.update(kwargs)      # config is an instance of Munch, so can use either dict or dot style
     config.source = source
     config.base_dir = base_dir
+    config.package = kwargs['package'] or (os.path.basename(os.getcwd())).replace('-', '_')
+    config.kebab_package = config.package.replace('_', '-')
+    config.datamodel = config.kebab_package
     build_datamodel(data, config=config)
