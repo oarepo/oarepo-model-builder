@@ -39,8 +39,8 @@ def builder_arguments(f):
 
 @model.command('build')
 @click.argument('source', type=click.Path(readable=True, exists=True))
-@click.argument('package')
-@click.argument('datamodel-version', default='1.0.0')
+@click.option('package')
+@click.option('datamodel-version', default='1.0.0')
 @builder_arguments
 @with_appcontext
 def build(source, base_dir=os.getcwd(), **kwargs):

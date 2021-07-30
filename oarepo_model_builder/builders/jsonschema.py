@@ -1,5 +1,7 @@
 from typing import List, Dict
 
+import click
+
 from oarepo_model_builder.builders.json import JSONBuilder
 from oarepo_model_builder.config import Config
 from oarepo_model_builder.outputs.output import JsonSchemaOutput, BaseOutput
@@ -7,14 +9,16 @@ from oarepo_model_builder.outputs.output import JsonSchemaOutput, BaseOutput
 
 class JSONSchemaBuilder(JSONBuilder):
     """Handles building of jsonschema from a data model specification."""
+
     def __init__(self):
         super().__init__()
         self.output = None
 
     def begin(self, config, outputs, root):
         output = outputs['jsonschema'] = JsonSchemaOutput(
-            config.resolve_path('jsonschemas/{package}/{datamodel}-v{datamodel_version}.json',
-                                'schema_path')
+            config.resolve_path(
+                'schema_path',
+                'jsonschemas/{package}/{datamodel}-v{datamodel_version}.json')
         )
         self.stack[0] = output.data
 
@@ -31,3 +35,8 @@ class JSONSchemaBuilder(JSONBuilder):
 
     def post(self, el, config, path, outputs):
         self.pop()
+
+    def options(self):
+        return [
+            click.option('schema-path')
+        ]
