@@ -72,7 +72,6 @@ class OARepoModelBuilder:
         from . import config
         config_json = pkg_resources.read_text(config, 'default.json')
         return Config(json5.loads(config_json))
-        # TODO: iterate over oarepo_model_builder.config entrypoints and update
 
     def output_builders(self, output_type) -> list:
         builders = []
