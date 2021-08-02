@@ -4,6 +4,7 @@
     "additionalProperties": false
   },
   "search": {
+    "default_mapping_type": "keyword",
     "mapping": {
       "settings": {
         "analysis": {

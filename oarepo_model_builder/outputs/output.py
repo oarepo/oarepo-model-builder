@@ -6,6 +6,8 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """OArepo module that generates data model files from a JSON specification file."""
+import json
+
 from deepmerge import Merger
 
 _output_merger = Merger(
@@ -53,3 +55,12 @@ class BaseOutput:
 
     def __call__(self, *args, **kwargs):
         raise NotImplemented
+
+
+class JsonOutput(BaseOutput):
+    """Output that handles JSON formatted data."""
+
+    def save(self):
+        if self.data and self.path:
+            with open(self.path, mode='w') as fp:
+                fp.write(json.dumps(self.data))

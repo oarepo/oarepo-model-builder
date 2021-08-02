@@ -6,14 +6,13 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """OArepo module that generates data model files from a JSON specification file."""
-import json
 from copy import deepcopy
 
-from oarepo_model_builder.outputs.output import BaseOutput
+from oarepo_model_builder.outputs.output import JsonOutput
 from oarepo_model_builder.proxies import current_model_builder
 
 
-class JsonSchemaOutput(BaseOutput):
+class JsonSchemaOutput(JsonOutput):
     """Output class for jsonschema."""
     output_type = 'jsonschema'
 
@@ -22,8 +21,3 @@ class JsonSchemaOutput(BaseOutput):
             data = deepcopy(current_model_builder.model_config.get('jsonschema', {}))
 
         super().__init__(path, data)
-
-    def save(self):
-        if self.data and self.path:
-            with open(self.path, mode='w') as fp:
-                fp.write(json.dumps(self.data))
