@@ -39,10 +39,10 @@ def builder_arguments(f):
 @model.command('build')
 @click.argument('source', type=click.Path(readable=True, exists=True))
 @click.option('--package')
-@click.option('--config', type=click.Path(readable=True, exists=True))
+@click.option('--config-path', '-c', type=click.Path(readable=True, exists=True))
 @click.option('--datamodel-version', default='1.0.0')
 @builder_arguments
-def build(source, base_dir=os.getcwd(), config=None, **kwargs):
+def build(source, base_dir=os.getcwd(), config_path=None, **kwargs):
     """Build data model files from JSON5 source specification."""
     click.secho('Generating models from: ' + source, fg='green')
     with open(source) as datamodel_file:
@@ -50,8 +50,8 @@ def build(source, base_dir=os.getcwd(), config=None, **kwargs):
 
     config = current_model_builder.model_config
 
-    if config:
-        with open(config) as config_file:
+    if config_path:
+        with open(config_path) as config_file:
             config.update(json5.load(config_file))
 
     config.update(kwargs)      # config is an instance of Munch, so can use either dict or dot style

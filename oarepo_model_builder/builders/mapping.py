@@ -34,9 +34,10 @@ class MappingBuilder(JSONBuilder):
         return len(path) > 1 and path[-2] == 'properties'  # TODO: tohle neni uplne spravne
 
     def begin(self, config, outputs, root):
-        output = outputs['mapping'] = MappingOutput(path=config.resolve_path(
+        output = outputs['mapping'] = MappingOutput()
+        output.path = config.resolve_path(
             'mapping_path',
-            'mappings/v7/{datamodel}-v{datamodel_version}.json'))
+            'mappings/v7/{datamodel}-v{datamodel_version}.json')
         self.stack[0] = output.data
         if 'oarepo:search' in root:
             self.stack[-1].update(root['oarepo:search'])

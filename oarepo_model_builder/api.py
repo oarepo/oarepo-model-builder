@@ -10,6 +10,7 @@ from copy import deepcopy
 
 from deepmerge import Merger
 
+from oarepo_model_builder.errors import BuildError
 from oarepo_model_builder.proxies import current_model_builder
 
 _includes_merger = Merger(
@@ -28,15 +29,14 @@ def resolve_includes(src, prop):
         while 'oarepo:type' in src:
             includes = src.pop('oarepo:type')
             if not isinstance(includes, (list, tuple)):
-                included_datamodel = deepcopy(current_model_builder.datamodels[includes])
-
+                included_datamodel = current_model_builder.get_model(includes)
             elif includes:
                 included_datamodel = {}
 
                 for inc in includes:
                     if isinstance(inc, str):
                         _includes_merger.merge(included_datamodel,
-                                               deepcopy(current_model_builder.datamodels[inc]))
+                                               current_model_builder.get_model(inc))
                     elif isinstance(inc, dict):
                         _includes_merger.merge(included_datamodel, deepcopy(inc))
             else:

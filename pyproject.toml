@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.1.1"
+version = "0.1.5a2"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>"]
 
@@ -25,11 +25,11 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.plugins."oarepo_model_builder.source"]
-datamodel = "oarepo_model_builder.handlers:DataModelBuilder"
+datamodel = "oarepo_model_builder.builders:DataModelBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.elements"]
-jsonschema = "oarepo_model_builder.builders.jsonschema_builder:JSONSchemaBuilder"
-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+jsonschema = "oarepo_model_builder.builders:JSONSchemaBuilder"
+mapping = "oarepo_model_builder.builders:MappingBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.jsonschema"]
 jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"

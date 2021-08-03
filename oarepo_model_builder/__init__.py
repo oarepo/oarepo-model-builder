@@ -9,12 +9,14 @@
 __version__ = '0.1.0'
 
 import os
+from copy import deepcopy
 from functools import cached_property
 
 import json5
 import pkg_resources
 
 from oarepo_model_builder.config import Config
+from oarepo_model_builder.errors import BuildError
 
 
 class OARepoModelBuilder:
@@ -41,12 +43,19 @@ class OARepoModelBuilder:
 
         return models
 
+    def get_model(self, name):
+        try:
+            return deepcopy(self.datamodels[name])
+        except KeyError:
+            raise BuildError(f'datamodel "{name}" not in registered datamodels')
+
     @property
     def source_builders(self) -> list:
         if self._builders is None:
             builders = []
             for entry_point in pkg_resources.iter_entry_points('oarepo_model_builder.source'):
-                builders.append(entry_point.load())
+                cls = entry_point.load()
+                builders.append(cls())
             builders.sort(key=lambda opener: -getattr(opener, '_priority', 10))
             self._builders = builders
         return self._builders
@@ -56,7 +65,8 @@ class OARepoModelBuilder:
         if self._el_builders is None:
             builders = []
             for entry_point in pkg_resources.iter_entry_points('oarepo_model_builder.elements'):
-                builders.append(entry_point.load())
+                cls = entry_point.load()
+                builders.append(cls())
             builders.sort(key=lambda opener: -getattr(opener, '_priority', 10))
             self._el_builders = builders
         return self._el_builders
@@ -76,6 +86,7 @@ class OARepoModelBuilder:
     def output_builders(self, output_type) -> list:
         builders = []
         for entry_point in pkg_resources.iter_entry_points(f'oarepo_model_builder.{output_type}'):
-            builders.append(entry_point.load())
+            cls = entry_point.load()
+            builders.append(cls())
         builders.sort(key=lambda opener: -getattr(opener, '_priority', 10))
         return builders

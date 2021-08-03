@@ -26,36 +26,19 @@ class BaseOutput:
     """Base output handler interface."""
     output_type = None
 
-    def __init__(self, path, data=None):
+    def __init__(self, path=None, data=None):
         self.path = path
         self._data = data
 
     def save(self):
         raise NotImplemented
 
-    def set(self, path, val):
-        def _unflatten(paths, data):
-            _path = paths[0]
-            data.setdefault(_path, {})
-
-            if len(paths) == 1:
-                data[_path] = val
-            else:
-                _unflatten(paths[1:], data[_path])
-
-        d = {}
-        _unflatten(path, d)
-
-        print(d)
-
-        self._data = _output_merger.merge(self._data, dict(d))
-
     @property
     def data(self):
         return self._data
 
     def __call__(self, *args, **kwargs):
-        raise NotImplemented
+        pass
 
 
 class JsonOutput(BaseOutput):

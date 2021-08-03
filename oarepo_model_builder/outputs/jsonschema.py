@@ -16,7 +16,7 @@ class JsonSchemaOutput(JsonOutput):
     """Output class for jsonschema."""
     output_type = 'jsonschema'
 
-    def __init__(self, path, data=None):
+    def __init__(self, path=None, data=None):
         if data is None:
             data = deepcopy(current_model_builder.model_config.get('jsonschema', {}))
 

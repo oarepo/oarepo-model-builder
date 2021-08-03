@@ -15,11 +15,10 @@ class JSONSchemaBuilder(JSONBuilder):
         self.output = None
 
     def begin(self, config, outputs, root):
-        output = outputs['jsonschema'] = JsonSchemaOutput(
-            config.resolve_path(
-                'schema_path',
-                'jsonschemas/{package}/{datamodel}-v{datamodel_version}.json')
-        )
+        output = outputs['jsonschema'] = JsonSchemaOutput()
+        output.path = config.resolve_path(
+            'schema_path',
+            'jsonschemas/{package}/{datamodel}-v{datamodel_version}.json')
         self.stack[0] = output.data
 
     def pre(self, el, config: Config, path: List[str], outputs: Dict[str, BaseOutput]):
