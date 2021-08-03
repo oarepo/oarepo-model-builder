@@ -23,12 +23,18 @@ pytest = "^4.6"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.plugins."oarepo_model_builder.datamodel"]
+[tool.poetry.plugins."oarepo_model_builder.source"]
 datamodel = "oarepo_model_builder.handlers:DataModelBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.elements"]
 jsonschema = "oarepo_model_builder.builders.jsonschema_builder:JSONSchemaBuilder"
 mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+
+[tool.poetry.plugins."oarepo_model_builder.jsonschema"]
+jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"
+
+[tool.poetry.plugins."oarepo_model_builder.mapping"]
+mapping = "oarepo_model_builder.outputs:MappingOutput"
 
 [tool.poetry.scripts]
 models = "oarepo_model_builder.cli:model"
