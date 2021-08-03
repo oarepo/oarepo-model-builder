@@ -7,10 +7,10 @@
 
 """OArepo module that generates data model files from a JSON specification file."""
 
-from oarepo_model_builder.outputs.output import BaseOutput
+from oarepo_model_builder.outputs.output import JsonOutput
 
 
-class UIOutput(BaseOutput):
+class UIOutput(JsonOutput):
     output_type = 'ui'
 
     def __init__(self, path):
