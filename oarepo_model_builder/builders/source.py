@@ -8,26 +8,23 @@
 """OArepo module that generates data model files from a JSON specification file."""
 from typing import List
 
-from oarepo_model_builder.builders import BuildResult
 from oarepo_model_builder.builders import ElementBuilder
 
 
 class SourceBuilder:
     """Base builder from source specification interface."""
 
-    def walk(self, el, config, path, outputs, handlers) -> BuildResult:
+    def walk(self, el, config, path, outputs, handlers):
         raise NotImplemented
 
     def __call__(self, el, config, path, outputs, handlers, *args, **kwargs):
         for h in handlers:
             h.begin(config, outputs, el)
 
-        ret = self.walk(el, config, path, outputs, handlers, *args, **kwargs)
+        self.walk(el, config, path, outputs, handlers, *args, **kwargs)
 
         for h in handlers:
             h.end(config, outputs, el)
-
-        return ret
 
     def options(self):
         """returns list/tuple of click.argument or click.option options"""
@@ -37,24 +34,19 @@ class SourceBuilder:
 class DataModelBuilder(SourceBuilder):
     """Handles building a data model from a datamodel specification."""
 
-    def walk(self, el, config, path, outputs, handlers: List[ElementBuilder] = None) -> BuildResult:
+    def walk(self, el, config, path, outputs, handlers: List[ElementBuilder] = None):
         """Walk the source data and call element handlers on each element."""
         if handlers is None:
             handlers = []
 
-        result = BuildResult.KEEP
         if path:
             for h in handlers:
-                if h.pre(el, config, path, outputs) == BuildResult.DELETE:
-                    result = BuildResult.DELETE
+                h.pre(el, config, path, outputs)
 
         if isinstance(el, dict):
             for k, v in list(el.items()):
-                if self.walk(v, config, path + [k], outputs, handlers) == BuildResult.DELETE:
-                    del el[k]
+                self.walk(v, config, path + [k], outputs, handlers)
 
         if path:
             for h in handlers:
                 h.post(el, config, path, outputs)
-
-        return result

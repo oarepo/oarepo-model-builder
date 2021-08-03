@@ -3,6 +3,7 @@ import os
 
 from oarepo_model_builder.builders import JSONSchemaBuilder
 from oarepo_model_builder.outputs import JsonSchemaOutput
+from tests.api.helpers import navigate_json
 
 
 def test_jsonschema_builder(model_config):
@@ -24,11 +25,12 @@ def test_jsonschema_builder(model_config):
     # 2) Test `pre` implementation
 
     # 2.1) `oarepo:` elements and subtrees are ignored by jsonschema
-    builder.pre({'oarepo:search': {'mapping': 'keyword'}}, model_config, ['properties'], outputs)
+    src = {'oarepo:search': {'mapping': 'keyword'}}
+    builder.pre(src, model_config, ['properties'], outputs)
     assert builder.stack[-1] == {}
-    builder.pre({'mapping': 'keyword'}, model_config, ['properties', 'oarepo:search'], outputs)
+    builder.pre(navigate_json(src, 'oarepo:search'), model_config, ['properties', 'oarepo:search'], outputs)
     assert builder.stack[-1] == builder.IGNORED_SUBTREE
-    builder.pre('keyword', model_config, ['properties', 'oarepo:search', 'mapping'], outputs)
+    builder.pre(navigate_json(src, 'oarepo:search', 'mapping'), model_config, ['properties', 'oarepo:search', 'mapping'], outputs)
     assert builder.stack[-1] == builder.IGNORED_SUBTREE
 
     assert builder.stack[0] == {'properties': {}, **model_config.jsonschema}
@@ -37,9 +39,10 @@ def test_jsonschema_builder(model_config):
     builder.pop()
 
     # 2.2) Valid jsonschema elements are pushed to stack/output data
-    builder.pre({'field1': {'type': 'string'}}, model_config, ['properties'], outputs)
-    builder.pre({'type': 'string'}, model_config, ['properties', 'field1'], outputs)
-    builder.pre('string', model_config, ['properties', 'field1', 'type'], outputs)
+    src = {'field1': {'type': 'string'}}
+    builder.pre(src, model_config, ['properties'], outputs)
+    builder.pre(navigate_json(src, 'field1'), model_config, ['properties', 'field1'], outputs)
+    builder.pre(navigate_json(src, 'field1', 'type'), model_config, ['properties', 'field1', 'type'], outputs)
 
     expected = {'properties': {'field1': {'type': 'string'}}}
     expected.update(model_config.jsonschema)
