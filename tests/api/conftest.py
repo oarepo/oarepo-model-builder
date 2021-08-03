@@ -88,4 +88,5 @@ def model_config():
     config.kebab_package = config.package.replace('_', '-')
     config.datamodel = config.kebab_package
     config.datamodel_version = '1.0.0'
+    config.pyproject = True
     return config

@@ -101,7 +101,8 @@ Will be compiled into resulting JSON Schema:
 
 - Specifies how the current field/object should be indexed and handled for search, filtering and aggregations
 - Used by the ElasticSearch Mapping generator to generate property mappings.
-- If not present on a property, a default mapping type of **keyword** or **object** (for object-type properties) is assumed in resulting mapping output
+- If not present on a property, a default mapping type of **keyword** or **object** (for object-type properties) is
+  assumed in resulting mapping output
 - Value can be either string or object.
 - This directive is omitted from the JSON Schema builder output
 
@@ -114,7 +115,7 @@ mapping_config: string  // string value represents an ES mapping type of propert
 mapping_config: object  // you can also pass object for more complex property mapping configurations
 
 "oarepo:search": {
-  "mapping": mapping_config  // "oarepo:search" block will be substituted by mapping_object configuration ES mapping output
+"mapping": mapping_config  // "oarepo:search" block will be substituted by mapping_object configuration ES mapping output
 }
 // or
 "oarepo:search": string  // "string" represents an ES mapping type of the parent property
@@ -224,21 +225,22 @@ Will result in the following files:
 multilingual_string: {lang_code: value, ...}
 
 "oarepo:ui": {
-  "title": multilingual_string,   // Property or object title
-  "label": multilingual_string,   // Label to be displayed on property input fields
-  "hint": multilingual_string     // Additional hint to be displayed on property input fields 
+"title": multilingual_string, // Property or object title
+"label": multilingual_string, // Label to be displayed on property input fields
+"hint": multilingual_string     // Additional hint to be displayed on property input fields 
 }
 ```
 
 ### Example usage
 
 The following source specification:
+
 ```json5
 
 {
   "title": "Test record v1.0.0",
   "type": "object",
-  "oarepo:ui":  {
+  "oarepo:ui": {
     "title": {
       "cs": "Testovaci zaznam",
       "en": "Test record"
@@ -263,7 +265,28 @@ The following source specification:
 
 Will result in the following files:
 
-##### TODO(@mesemus):
+```json5
+{
+  "title": {
+    "cs": "Testovaci zaznam",
+    "en": "Test record"
+  },
+  "fields": {
+    "field1": {
+      "label": {
+        "en": "Test field 1"
+      },
+      "hint": {
+        "cs": "Vyplnte testovaci field",
+        "en": "Please provide test field input"
+      }
+    }
+  }
+}
+```
+
+At the same time, the file is registered under ``oarepo_ui`` entrypoint into a poetry-compatible ``pyproject.toml``
+file. Use a '--no-pyproject' setting to skip the registration.
 
 ## Customization
 
@@ -271,6 +294,7 @@ Will result in the following files:
 
 You can override some build process defaults using a custom JSON configuration file, starting with configuration
 from `./config/defauts.json`.
+
 ```json5
 // build-config.json
 {
@@ -332,21 +356,25 @@ from `./config/defauts.json`.
 
 ### Entrypoints
 
-This package uses the following entrypoints in the build process to determine, which builders and data models
-should be considered:
+This package uses the following entrypoints in the build process to determine, which builders and data models should be
+considered:
 
 #### oarepo_model_builder.source
+
 Classes responsible for parsing the whole source data model specification file.
 
 Default:
+
 ```python
 datamodel = "oarepo_model_builder.handlers:DataModelBuilder"
 ```
 
 #### oarepo_model_builder.elements
+
 Classes for building the output files from elements in a source data model specification file.
 
 Default:
+
 ```python
 jsonschema = "oarepo_model_builder.builders.jsonschema_builder:JSONSchemaBuilder"
 mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
@@ -357,6 +385,7 @@ mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
 Classes responsible for generating output files of certain type
 
 Default:
+
 ```toml
 [tool.poetry.plugins."oarepo_model_builder.jsonschema"]
 jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"
@@ -365,8 +394,8 @@ jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"
 mapping = "oarepo_model_builder.outputs:MappingOutput"
 ```
 
-
 #### oarepo_model_builder.datamodels
+
 Python modules containing data model specification files
 
 ## Usage
