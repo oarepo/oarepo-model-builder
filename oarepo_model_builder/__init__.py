@@ -45,7 +45,7 @@ class OARepoModelBuilder:
     def source_builders(self) -> list:
         if self._builders is None:
             builders = []
-            for entry_point in pkg_resources.iter_entry_points('oarepo_model_builder.datamodel'):
+            for entry_point in pkg_resources.iter_entry_points('oarepo_model_builder.source'):
                 builders.append(entry_point.load())
             builders.sort(key=lambda opener: -getattr(opener, '_priority', 10))
             self._builders = builders
@@ -64,13 +64,13 @@ class OARepoModelBuilder:
     @cached_property
     def model_config(self):
         try:
-            import importlib.resources as pkg_resources
+            import importlib.resources as resources
         except ImportError:
             # Try backported to PY<37 `importlib_resources`.
-            import importlib_resources as pkg_resources
+            import importlib_resources as resources
 
         from . import config
-        config_json = pkg_resources.read_text(config, 'default.json')
+        config_json = resources.read_text(config, 'default.json')
         return Config(json5.loads(config_json))
 
     def output_builders(self, output_type) -> list:
