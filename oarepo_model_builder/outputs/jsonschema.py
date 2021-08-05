@@ -8,7 +8,7 @@
 """OArepo module that generates data model files from a JSON specification file."""
 from copy import deepcopy
 
-from oarepo_model_builder.outputs.output import JsonOutput
+from oarepo_model_builder.outputs.json import JsonOutput
 from oarepo_model_builder.proxies import current_model_builder
 
 

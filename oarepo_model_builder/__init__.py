@@ -6,8 +6,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """OArepo module that generates data model files from a JSON specification file."""
 
-__version__ = '0.1.0'
-
 import os
 from copy import deepcopy
 from functools import cached_property

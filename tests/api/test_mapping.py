@@ -1,17 +1,11 @@
+import copy
 import json
 import os
 
 from oarepo_model_builder.builders import MappingBuilder
 from oarepo_model_builder.outputs import MappingOutput
 from oarepo_model_builder.proxies import current_model_builder
-from tests.api.helpers import navigate_json
-
-
-def _process_field(builder, src, path_list, config, outputs):
-    for paths in path_list:
-        builder.pre(navigate_json(src, *paths), config, ['properties'] + paths, outputs)
-    for paths in reversed(path_list):
-        builder.post(navigate_json(src, *paths), config, ['properties'] + paths, outputs)
+from tests.api.helpers import _process_field
 
 
 def test_mapping_builder():
@@ -26,6 +20,35 @@ def test_mapping_builder():
     assert len(outputs) == 1
     assert isinstance(outputs['mapping'], MappingOutput)
 
+    # 0) Test False mapping elements are ignored
+    src = {
+        'test0': {'type': 'string'},
+        'test1': {'oarepo:search': False}
+    }
+
+    res = {
+        **config.search['mapping'],
+        **{
+            'mappings': {
+                'properties': {}
+            }
+        }
+    }
+    no_mapping_config = copy.deepcopy(config)
+    no_mapping_config.search['default_mapping_type'] = False
+
+    mb.pre(src, config, ['properties'], outputs)
+    # -- process test0 field
+    path_list = [['test0'], ['test0', 'type']]
+    _process_field(mb, src, path_list, no_mapping_config, outputs)
+    # -- process test1 field
+    path_list = [['test1'], ['test1', 'oarepo:search']]
+    _process_field(mb, src, path_list, config, outputs)
+
+    assert outputs['mapping'].data == res
+
+    mb = MappingBuilder()
+    mb.begin(config, outputs, el)
     # 1) Test default mapping type without explicit mapping spec
     src = {
         'test0': {'type': 'string'},
@@ -143,8 +166,24 @@ def test_mapping_builder():
                 'type': 'string',
                 'oarepo:search': 'date'
             }
+        },
+        'testComplexItems': {
+            'type': 'array',
+            'uniqueItems': True,
+            'items': {
+                "type": "object",
+                "properties": {
+                    "identifiers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "oarepo:search": "text"
+                        },
+                        "uniqueItems": True
+                    }
+                }
+            }
         }
-
     }
     res = {**config.search['mapping'],
            **{
@@ -163,6 +202,14 @@ def test_mapping_builder():
                        },
                        'testExplicitItems': {
                            'type': 'date'
+                       },
+                       'testComplexItems': {
+                           'type': 'object',
+                           'properties': {
+                               'identifiers': {
+                                   'type': 'text'
+                               }
+                           }
                        }
                    }
                }
@@ -184,6 +231,20 @@ def test_mapping_builder():
     path_list = [['testExplicitItems'],
                  ['testExplicitItems', 'items'],
                  ['testExplicitItems', 'items', 'oarepo:search']]
+    _process_field(mb, src, path_list, config, outputs)
+
+    path_list = [['testComplexItems'],
+                 ['testComplexItems', 'type'],
+                 ['testComplexItems', 'uniqueItems'],
+                 ['testComplexItems', 'items'],
+                 ['testComplexItems', 'items', 'type'],
+                 ['testComplexItems', 'items', 'properties'],
+                 ['testComplexItems', 'items', 'properties', 'identifiers'],
+                 ['testComplexItems', 'items', 'properties', 'identifiers', 'type'],
+                 ['testComplexItems', 'items', 'properties', 'identifiers', 'items'],
+                 ['testComplexItems', 'items', 'properties', 'identifiers', 'items', 'type'],
+                 ['testComplexItems', 'items', 'properties', 'identifiers', 'items', 'oarepo:search'],
+                 ['testComplexItems', 'items', 'properties', 'identifiers', 'uniqueItems']]
     _process_field(mb, src, path_list, config, outputs)
 
     assert outputs['mapping'].data == res

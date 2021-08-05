@@ -7,7 +7,7 @@
 
 """OArepo module that generates data model files from a JSON specification file."""
 
-from oarepo_model_builder.outputs.output import JsonOutput
+from oarepo_model_builder.outputs.json import JsonOutput
 
 
 class UIOutput(JsonOutput):

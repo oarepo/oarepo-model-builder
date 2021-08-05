@@ -11,11 +11,14 @@ class JSONBuilder(ElementBuilder):
     def __init__(self):
         self.stack: List = [{}]
 
+    def should_ignore(self, element):
+        return element is self.IGNORED_SUBTREE or element is self.IGNORED_NODE
+
     def push(self, el, path):
         top = self.stack[-1]
         if top is self.IGNORED_SUBTREE:
             self.stack.append(self.IGNORED_SUBTREE)
-        elif el is self.IGNORED_SUBTREE or el is self.IGNORED_NODE:
+        elif self.should_ignore(el):
             self.stack.append(el)
         else:
             if top is self.IGNORED_NODE:

@@ -3,12 +3,14 @@ import os
 
 from oarepo_model_builder.builders import JSONSchemaBuilder
 from oarepo_model_builder.outputs import JsonSchemaOutput
-from tests.api.helpers import navigate_json
+from oarepo_model_builder.proxies import current_model_builder
+from tests.api.helpers import _process_field
 
 
 def test_jsonschema_builder(model_config):
     builder = JSONSchemaBuilder()
     outputs = {}
+    config = current_model_builder.model_config
 
     # 1) Test that begin properly initializes outputs
     builder.begin(model_config, outputs, {})
@@ -25,36 +27,60 @@ def test_jsonschema_builder(model_config):
     # 2) Test `pre` implementation
 
     # 2.1) `oarepo:` elements and subtrees are ignored by jsonschema
-    src = {'oarepo:search': {'mapping': 'keyword'}}
-    builder.pre(src, model_config, ['properties'], outputs)
-    assert builder.stack[-1] == {}
-    builder.pre(navigate_json(src, 'oarepo:search'), model_config, ['properties', 'oarepo:search'], outputs)
-    assert builder.stack[-1] == builder.IGNORED_SUBTREE
-    builder.pre(navigate_json(src, 'oarepo:search', 'mapping'), model_config, ['properties', 'oarepo:search', 'mapping'], outputs)
-    assert builder.stack[-1] == builder.IGNORED_SUBTREE
+    src = {
+        'field1': {
+            'type': 'object',
+            'properties': {
+                'a': {
+                    'type': 'string',
+                    'oarepo:search': 'text'
+                }
+            },
+            'required': ['a'],
+            'oarepo:ui': {
+                'label': {}
+            },
+            'oarepo:search':
+                {'mapping': 'keyword'}
+        }
+    }
+    res = {
+        **config.jsonschema,
+        'properties': {
+            'field1': {
+                'type': 'object',
+                'properties': {
+                    'a': {
+                        'type': 'string'
+                    }
+                },
+                'required': ['a'],
+            }
+        }
+    }
+    builder.pre(src, config, ['properties'], outputs)
+    builder.pre(src, config, ['field1'], outputs)
 
-    assert builder.stack[0] == {'properties': {}, **model_config.jsonschema}
-    builder.pop()
-    builder.pop()
-    builder.pop()
+    path_list = [['type']]
+    _process_field(builder, src['field1'], path_list, config, outputs)
 
-    # 2.2) Valid jsonschema elements are pushed to stack/output data
-    src = {'field1': {'type': 'string'}}
-    builder.pre(src, model_config, ['properties'], outputs)
-    builder.pre(navigate_json(src, 'field1'), model_config, ['properties', 'field1'], outputs)
-    builder.pre(navigate_json(src, 'field1', 'type'), model_config, ['properties', 'field1', 'type'], outputs)
+    path_list = [['properties'],
+                 ['properties', 'a'],
+                 ['properties', 'a', 'type'],
+                 ['properties', 'a', 'oarepo:search']]
+    _process_field(builder, src['field1'], path_list, config, outputs)
 
-    expected = {'properties': {'field1': {'type': 'string'}}}
-    expected.update(model_config.jsonschema)
+    path_list = [['required']]
+    _process_field(builder, src['field1'], path_list, config, outputs)
 
-    assert builder.stack[0] == expected
+    path_list = [['oarepo:ui']]
+    _process_field(builder, src['field1'], path_list, config, outputs)
 
-    # 3) Test `pop` implementation
-    assert len(builder.stack) == 4
-    builder.pop()
-    assert len(builder.stack) == 3
-    assert builder.stack[0] == expected
-    assert outputs['jsonschema'].data == expected
+    path_list = [['oarepo:search'],
+                 ['oarepo:search', 'mapping']]
+    _process_field(builder, src['field1'], path_list, config, outputs)
+
+    assert outputs['jsonschema'].data == res
 
 
 def test_jsonschema_output(model_config):

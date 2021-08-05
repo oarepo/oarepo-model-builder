@@ -112,12 +112,14 @@ Will be compiled into resulting JSON Schema:
 mapping_config: string  // string value represents an ES mapping type of property
 // or
 mapping_config: object  // you can also pass object for more complex property mapping configurations
+// or
+mapping_config: false  // parent field should be omitted from the generated ES mapping output
 
 "oarepo:search": {
   "mapping": mapping_config  // "oarepo:search" block will be substituted by mapping_object configuration ES mapping output
 }
 // or
-"oarepo:search": string  // "string" represents an ES mapping type of the parent property
+"oarepo:search": string | false  // "string" represents an ES mapping type of the parent property
 ```
 
 #### Example usage
@@ -127,6 +129,10 @@ The following source specification:
 ```json5
 {
   "properties": {
+    "testNoMapping": {
+      "type": "string",
+      "oarepo:search": false
+    },
     "testDefault": {
       "type": "string"
     },
@@ -167,22 +173,14 @@ Will result in the following files:
 {
   "mappings": {
     "properties": {
-      "testDefault": {
-        "type": "keyword"
-      },
-      "testExplicit": {
-        "type": "text"
-      },
-      "testShorthand": {
-        "type": "date"
-      },
+      "testDefault": {"type": "keyword"},
+      "testExplicit": {"type": "text"},
+      "testShorthand": {"type": "date"},
       "testObject": {
         "type": "text",
         "index": "false"
       },
-      "testArray": {
-        "type": "date"
-      }
+      "testArray": {"type": "date"}
     }
   }
 }
@@ -192,18 +190,11 @@ Will result in the following files:
 // jsonschemas/.../mymodel-v1.0.0.json
 {
   "properties": {
-    "testDefault": {
-      "type": "string"
-    },
-    "testExplicit": {
-      "type": "string",
-    },
-    "testShorthand": {
-      "type": "string",
-    },
-    "testObject": {
-      "type": "string"
-    },
+    "testNoMapping": {"type": "string"},
+    "testDefault": {"type": "string"},
+    "testExplicit": {"type": "string"},
+    "testShorthand": {"type": "string"},
+    "testObject": {"type": "string"},
     "testArray": {
       "type": "array",
       "items": {

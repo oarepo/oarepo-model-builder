@@ -27,8 +27,6 @@ class JSONSchemaBuilder(JSONBuilder):
             self.push(self.IGNORED_SUBTREE, path)
         elif isinstance(el, dict):
             self.push({}, path)
-        elif isinstance(el, (list, tuple)):
-            self.push([], path)
         else:
             self.push(el, path)
 
