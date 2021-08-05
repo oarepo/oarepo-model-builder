@@ -3,6 +3,7 @@ name = "oarepo-model-builder"
 version = "0.1.6"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>"]
+readme = "README.md"
 
 packages = [
     { include = "oarepo_model_builder" }
