@@ -32,7 +32,10 @@ class MappingBuilder(JSONBuilder):
             return self._resolve(self.default_type(config))
 
     def is_property(self, path):
-        return len(path) > 1 and path[-2] == 'properties' and path[0] == 'properties'
+        return len(path) > 1 and \
+               path[-1] not in ['properties', 'mappings'] and \
+               path[-2] == 'properties' and \
+               path[0] == 'properties'
 
     def begin(self, config, outputs, root):
         output = outputs['mapping'] = MappingOutput()
@@ -46,6 +49,11 @@ class MappingBuilder(JSONBuilder):
 
     def default_type(self, config):
         return config.search.get('default_mapping_type', 'keyword')
+
+    def should_exclude(self, el, config):
+        return el is False or \
+               ('oarepo:search' in el and self._parse_oarepo_search(el['oarepo:search'], config) is False) or \
+               ('oarepo:search' not in el and self.default_type(config) is False)
 
     def update_mapping_type(self, mapping_type='object'):
         """Sets a mapping type on first non-ignored element on stack"""
@@ -65,12 +73,8 @@ class MappingBuilder(JSONBuilder):
 
     def pre(self, el, config, path, outputs):
         if self.is_property(path):
-            if 'oarepo:search' in el:
-                # Handle properties that should be omitted from mapping output
-                if self._parse_oarepo_search(el['oarepo:search'], config) is False:
-                    self.push(self.IGNORED_SUBTREE, path)
-                    return
-            elif self.default_type(config) is False:
+            if self.should_exclude(el, config):
+                print('excluding', path)
                 self.push(self.IGNORED_SUBTREE, path)
                 return
 
@@ -82,12 +86,17 @@ class MappingBuilder(JSONBuilder):
                 self.stack[-1]['type'] = self.default_type(config)
         elif path[-1] == 'properties':
             # Map properties to ES mapping properties
+            print('properties', path, self.stack[-1])
             self.push({}, path)
+            print('pushed', path, self.stack[0]['mappings'])
         elif path[-1] == 'items':
             # Map array items to certain ES property mapping
             if 'properties' in el:
-                self.update_mapping_type()
-                self.push(self.IGNORED_NODE, path)
+                if not self.should_exclude(el, config):
+                    self.update_mapping_type()
+                    self.push(self.IGNORED_NODE, path)
+                else:
+                    self.push(self.IGNORED_SUBTREE, path)
             elif 'oarepo:search' in el:
                 self.update_with_search(el['oarepo:search'], config)
                 self.push(self.IGNORED_SUBTREE, path)
