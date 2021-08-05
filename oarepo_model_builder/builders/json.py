@@ -17,10 +17,8 @@ class JSONBuilder(ElementBuilder):
     def push(self, el, path):
         top = self.stack[-1]
         if top is self.IGNORED_SUBTREE:
-            print('subtree', el)
             self.stack.append(self.IGNORED_SUBTREE)
         elif self.should_ignore(el):
-            print('ignore', el)
             self.stack.append(el)
         else:
             if top is self.IGNORED_NODE:
