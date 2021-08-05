@@ -11,15 +11,15 @@ def test_resolve_includes():
 
     test_cases = [
         # 1) Check if list type references resolves correctly
-        # 1.1) For explicit oarepo:type keyword definition
+        # 1.1) For explicit oarepo:use keyword definition
         ({
              "title": "Test record for 1.1",
              "type": "object",
              "additionalProperties": False,
-             "oarepo:type": ["type1"],
+             "oarepo:use": ["type1"],
              "properties": {
                  "field1": {
-                     "oarepo:type": [
+                     "oarepo:use": [
                          "type1",
                          "type4"
                      ]
@@ -70,14 +70,14 @@ def test_resolve_includes():
              }
          }),
         # 2) Check if string type reference is resolved correctly
-        # 2.1) For explicit oarepo:type keyword definition
+        # 2.1) For explicit oarepo:use keyword definition
         ({
              "title": "Test record for 2.1",
              "type": "object",
              "additionalProperties": False,
              "properties": {
                  "field1": {
-                     "oarepo:type": "type2"
+                     "oarepo:use": "type2"
                  }
              }
          }, {

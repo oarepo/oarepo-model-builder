@@ -8,12 +8,12 @@
       "en": "Title en"
     },
   },
-  "oarepo:type": [
+  "oarepo:use": [
     "include1"
   ],
   "properties": {
     "field0": {
-      "oarepo:type": "include2"
+      "oarepo:use": "include2"
     },
     "field1": {
       "type": "string",

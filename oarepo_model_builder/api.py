@@ -26,8 +26,8 @@ _includes_merger = Merger(
 
 def resolve_includes(src, prop):
     if isinstance(src, dict):
-        while 'oarepo:type' in src:
-            includes = src.pop('oarepo:type')
+        while 'oarepo:use' in src:
+            includes = src.pop('oarepo:use')
             if not isinstance(includes, (list, tuple)):
                 included_datamodel = current_model_builder.get_model(includes)
             elif includes:
@@ -48,13 +48,13 @@ def resolve_includes(src, prop):
         if prop == 'properties':
             for k, v in list(src.items()):
                 if isinstance(v, (str, list, tuple)):
-                    src[k] = {'oarepo:type': v}
+                    src[k] = {'oarepo:use': v}
                 elif isinstance(v, dict) and 'items' in v and isinstance(v['items'], (str, list, tuple)):
-                    v['items'] = {'oarepo:type': v['items']}
+                    v['items'] = {'oarepo:use': v['items']}
 
         for k, v in list(src.items()):
             if k == 'properties' and isinstance(v, (str, list, tuple)):
-                src[k] = {'oarepo:type': v}
+                src[k] = {'oarepo:use': v}
 
             resolve_includes(v, k)
 

@@ -13,18 +13,18 @@ poetry install oarepo-model-builder
 Data model specification should be a JSON5 formatted file based on JSON Schema with the following OArepo specific
 extension keywords:
 
-### oarepo:type
+### oarepo:use
 
-- Defines a reference to a type of the given property/object.
+- Defines a reference to another datamodel. Contents of referenced datamodel will be used in place of this directive.
 - Can be used anywhere in the specification file.
 - This directive will be replaced by a referred datamodel type contents.
 - Only new properties will be added to current property/object.
-- All referenced types must be registered under *datamodel* entrypoints (see **Entrypoints**)
+- All referenced datamodels must be registered under *datamodel* entrypoints (see **Entrypoints**)
 
 #### Syntax
 
 ```json
-"oarepo:type": List[string] | string   // list of datamodel type references or single string reference 
+"oarepo:use": List[string] | string   // list of datamodel type references or single string reference 
 ```
 
 #### Example Usage:
@@ -37,12 +37,12 @@ The following source specification:
   "title": "Test record v1.0.0",
   "type": "object",
   "additionalProperties": false,
-  "oarepo:type": [
+  "oarepo:use": [
     "include1"
   ],
   "properties": {
     "field0": {
-      "oarepo:type": "include2"
+      "oarepo:use": "include2"
     }
   }
 }
