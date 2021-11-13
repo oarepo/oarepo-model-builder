@@ -11,12 +11,17 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.10"
-json5 = "^0.9.6"
+json5 = { version = "^0.9.6", optional = true }
 libcst = "^0.3.19"
 click = ">=7.1"
 tomlkit = "^0.7.2"
 jsonpointer = "^2.2"
 deepdiff = "^5.6.0"
+PyYAML = { version = "^6.0", optional = true }
+
+[tool.poetry.extras]
+json5 = ["json5"]
+pyyaml = ["pyyaml"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^6"
@@ -24,19 +29,25 @@ pytest = "^6"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-#
-# [tool.poetry.plugins."oarepo_model_builder.source"]
-# datamodel = "oarepo_model_builder.builders:DataModelBuilder"
-#
-# [tool.poetry.plugins."oarepo_model_builder.elements"]
-# jsonschema = "oarepo_model_builder.builders:JSONSchemaBuilder"
-# mapping = "oarepo_model_builder.builders:MappingBuilder"
-#
-# [tool.poetry.plugins."oarepo_model_builder.jsonschema"]
-# jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"
-#
-# [tool.poetry.plugins."oarepo_model_builder.mapping"]
-# mapping = "oarepo_model_builder.outputs:MappingOutput"
-#
-# [tool.poetry.scripts]
-# models = "oarepo_model_builder.cli:model"
+
+[tool.poetry.plugins."oarepo_model_builder.builders"]
+jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
+mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+
+[tool.poetry.plugins."oarepo_model_builder.ouptuts"]
+jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
+mapping = "oarepo_model_builder.outputs.mapping:MappingOutput"
+
+[tool.poetry.plugins."oarepo_model_builder.preprocessors"]
+
+[tool.poetry.plugins."oarepo_model_builder.transformers"]
+jsonschema = "oarepo_model_builder.transformers.default_values:DefaultValuesTransformer"
+
+[tool.poetry.plugins."oarepo_model_builder.loaders"]
+json = "oarepo_model_builder.loaders:json_loader"
+json5 = "oarepo_model_builder.loaders:json_loader"
+yaml = "oarepo_model_builder.loaders:yaml_loader"
+yml = "oarepo_model_builder.loaders:yaml_loader"
+
+[tool.poetry.scripts]
+oarepo-compile-model = "oarepo_model_builder.cli:run"

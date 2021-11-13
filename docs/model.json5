@@ -1,0 +1,7 @@
+{
+  model: {
+    a: {
+      type: 'string'
+    }
+  }
+}

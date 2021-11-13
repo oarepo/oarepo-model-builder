@@ -5,7 +5,7 @@ from deepdiff import DeepDiff
 
 from .json_stack import JSONStack
 from . import OutputBase
-from ..schema import deepmerge
+import json
 
 try:
     import json5
@@ -33,7 +33,7 @@ class JSONOutput(OutputBase):
         if DeepDiff(data, self.original_data):
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
             with open(self.path, 'w') as f:
-                json5.dump(data, f)
+                json.dump(data, f, ensure_ascii=False, indent=4)
 
     def enter(self, key, el):
         if key:

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from oarepo_model_builder.loaders import json_loader
 from oarepo_model_builder.schema import ModelSchema
 
 
@@ -9,7 +10,9 @@ def test_loading_from_string():
 
 
 def test_loading_from_empty_file():
-    schema = ModelSchema(Path(__file__).parent.joinpath('data/empty.json'))
+    schema = ModelSchema(Path(__file__).parent.joinpath('data/empty.json'), loaders={
+        'json': json_loader
+    })
     assert schema.schema == {}
 
 
