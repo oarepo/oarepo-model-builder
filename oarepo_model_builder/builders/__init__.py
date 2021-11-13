@@ -13,10 +13,10 @@ def _on(path, phase, priority, condition):
         def wrapped(*args, **kwargs):
             return f(*args, **kwargs)
 
-        wrapped.model_visitor_phase = phase
-        wrapped.model_visitor_path = path
-        wrapped.model_visitor_priority = priority
-        wrapped.model_visitor_condition = condition
+        wrapped.model_builder_phase = phase
+        wrapped.model_builder_path = path
+        wrapped.model_builder_priority = priority
+        wrapped.model_builder_condition = condition
         return wrapped
 
     return wrapper
@@ -44,16 +44,16 @@ class OutputBuilder:
         self.json_paths = JSONPaths()
         arr = []
         for name, method in inspect.getmembers(self, inspect.ismethod):
-            if not hasattr(method, 'model_visitor_phase'):
+            if not hasattr(method, 'model_builder_phase'):
                 continue
             arr.append(
                 (
-                    -method.model_visitor_priority,
-                    -len(method.model_visitor_path),
-                    method.model_visitor_path,
-                    method.model_visitor_phase,
+                    -method.model_builder_priority,
+                    -len(method.model_builder_path),
+                    method.model_builder_path,
+                    method.model_builder_phase,
                     id(method),
-                    method.model_visitor_condition,
+                    method.model_builder_condition,
                     method
                 )
             )
@@ -91,17 +91,17 @@ class OutputPreprocessor:
         self.json_paths = JSONPaths()
         arr = []
         for name, method in inspect.getmembers(self, inspect.ismethod):
-            if not hasattr(method, 'model_visitor_phase'):
+            if not hasattr(method, 'model_builder_phase'):
                 continue
             arr.append(
                 (
-                    -method.model_visitor_priority,
-                    -len(method.model_visitor_path),
-                    method.model_visitor_path,
-                    method.model_visitor_phase,
+                    -method.model_builder_priority,
+                    -len(method.model_builder_path),
+                    method.model_builder_path,
+                    method.model_builder_phase,
                     id(method),
-                    method.model_visitor_condition,
-                    method.model_visitor_output_builder_type,
+                    method.model_builder_condition,
+                    method.model_builder_output_builder_type,
                     method
                 )
             )
@@ -128,17 +128,17 @@ class OutputPreprocessor:
         return self._call_method(data, stack, output_builder_type, 'primitive')
 
 
-def process(visitor, phase, path, priority=0, condition=None):
+def process(model_builder, phase, path, priority=0, condition=None):
     def wrapper(f):
         @functools.wraps(f)
         def wrapped(*args, **kwargs):
             return f(*args, **kwargs)
 
-        wrapped.model_visitor_priority = priority
-        wrapped.model_visitor_phase = phase
-        wrapped.model_visitor_output_builder_type = visitor if isinstance(visitor, str) else visitor.output_builder_type
-        wrapped.model_visitor_path = path
-        wrapped.model_visitor_condition = condition
+        wrapped.model_builder_priority = priority
+        wrapped.model_builder_phase = phase
+        wrapped.model_builder_output_builder_type = model_builder if isinstance(model_builder, str) else model_builder.output_builder_type
+        wrapped.model_builder_path = path
+        wrapped.model_builder_condition = condition
         return wrapped
 
     return wrapper
