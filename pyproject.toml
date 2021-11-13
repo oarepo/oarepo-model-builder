@@ -12,11 +12,11 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
 json5 = "^0.9.6"
-deepmerge = "^0.3.0"
 libcst = "^0.3.19"
-munch = "^2.4.0"
 click = ">=7.1"
 tomlkit = "^0.7.2"
+jsonpointer = "^2.2"
+deepdiff = "^5.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
@@ -24,19 +24,19 @@ pytest = "^4.6"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.plugins."oarepo_model_builder.source"]
-datamodel = "oarepo_model_builder.builders:DataModelBuilder"
-
-[tool.poetry.plugins."oarepo_model_builder.elements"]
-jsonschema = "oarepo_model_builder.builders:JSONSchemaBuilder"
-mapping = "oarepo_model_builder.builders:MappingBuilder"
-
-[tool.poetry.plugins."oarepo_model_builder.jsonschema"]
-jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"
-
-[tool.poetry.plugins."oarepo_model_builder.mapping"]
-mapping = "oarepo_model_builder.outputs:MappingOutput"
-
-[tool.poetry.scripts]
-models = "oarepo_model_builder.cli:model"
+#
+# [tool.poetry.plugins."oarepo_model_builder.source"]
+# datamodel = "oarepo_model_builder.builders:DataModelBuilder"
+#
+# [tool.poetry.plugins."oarepo_model_builder.elements"]
+# jsonschema = "oarepo_model_builder.builders:JSONSchemaBuilder"
+# mapping = "oarepo_model_builder.builders:MappingBuilder"
+#
+# [tool.poetry.plugins."oarepo_model_builder.jsonschema"]
+# jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"
+#
+# [tool.poetry.plugins."oarepo_model_builder.mapping"]
+# mapping = "oarepo_model_builder.outputs:MappingOutput"
+#
+# [tool.poetry.scripts]
+# models = "oarepo_model_builder.cli:model"

@@ -1,25 +1,49 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2021 CESNET.
-#
-# OARepo-Communities is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
-
-"""OArepo module that generates data model files from a JSON specification file."""
-import json
 import os
+from pathlib import Path
 
-from oarepo_model_builder.outputs.output import BaseOutput
+from deepdiff import DeepDiff
+
+from .json_stack import JSONStack
+from . import OutputBase
+from ..schema import deepmerge
+
+try:
+    import json5
+except ImportError:
+    import json as json5
 
 
-class JsonOutput(BaseOutput):
-    """Output that handles JSON formatted data."""
+class JSONOutput(OutputBase):
+    IGNORE_NODE = JSONStack.IGNORED_NODE
+    IGNORE_SUBTREE = JSONStack.IGNORED_SUBTREE
 
-    def save(self):
-        if self.data and self.path:
-            parent = os.path.dirname(self.path)
-            if not os.path.exists(parent):
-                os.makedirs(parent)
-                # TODO: maybe add __init__.py automatically into each created dir?
-            with open(self.path, mode='w') as fp:
-                fp.write(json.dumps(self.data, indent=2, sort_keys=True))
+    def begin(self):
+        if os.path.exists(self.path):
+            try:
+                with open(self.path) as f:
+                    self.original_data = json5.load(f)  # noqa
+            except ValueError:
+                self.original_data = None
+        else:
+            self.original_data = None
+        self.stack = JSONStack()
+
+    def finish(self):
+        data = self.stack.value
+        if DeepDiff(data, self.original_data):
+            Path(self.path).parent.mkdir(parents=True, exist_ok=True)
+            with open(self.path, 'w') as f:
+                json5.dump(data, f)
+
+    def enter(self, key, el):
+        if key:
+            self.stack.push(key, el)
+
+    def leave(self):
+        if not self.stack.empty:
+            self.stack.pop()
+
+    def primitive(self, key, value):
+        if key:
+            self.stack.push(key, value)
+            self.stack.pop()
