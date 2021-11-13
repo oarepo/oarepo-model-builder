@@ -4,7 +4,7 @@ from oarepo_model_builder.builders.mapping import MappingBuilder
 
 
 class MultilangPreprocessor(OutputPreprocessor):
-    @process(model_builder=JSONSchemaBuilder, phase='enter',
+    @process(model_builder=JSONSchemaBuilder,
              path='**/properties/*',
              condition=lambda current: current.type == 'multilingual')
     def modify_multilang_schema(self, data, stack, **kwargs):
@@ -19,7 +19,7 @@ class MultilangPreprocessor(OutputPreprocessor):
         }
         return data
 
-    @process(model_builder=MappingBuilder, phase='enter',
+    @process(model_builder=MappingBuilder,
              path='**/properties/*',
              condition=lambda current: current.type == 'multilingual')
     def modify_multilang_mapping(self, data, stack, **kwargs):

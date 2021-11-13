@@ -133,14 +133,14 @@ class ModelBuilder:
             self._iterate_schema_output_builder(schema, output_builder)
 
     def _iterate_schema_output_builder(self, schema: ModelSchema, output_builder: OutputBuilder):
-        def call_processors(stack, output_builder, phase):
+        def call_processors(stack, output_builder):
             data = copy.deepcopy(stack.top.el)
             for output_preprocessor in self.output_preprocessors:
-                data = getattr(output_preprocessor, phase)(output_builder.output_builder_type, data, stack) or data
+                data = output_preprocessor.process(output_builder.output_builder_type, data, stack) or data
             return data
 
         def on_enter(stack):
-            data = call_processors(stack, output_builder, 'enter')
+            data = call_processors(stack, output_builder)
             if isinstance(data, ReplaceElement):
                 return data
             stack.top.el = data
@@ -150,7 +150,7 @@ class ModelBuilder:
             output_builder.element_leave(stack)
 
         def on_primitive(stack):
-            data = call_processors(stack, output_builder, 'primitive')
+            data = call_processors(stack, output_builder)
             if isinstance(data, ReplaceElement):
                 return data
             stack.top.el = data
