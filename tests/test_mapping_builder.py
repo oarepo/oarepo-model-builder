@@ -14,7 +14,7 @@ except ImportError:
     import json as json5
 
 
-def test_simple_mapping_visitor():
+def test_simple_mapping_builder():
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
         outputs=[MappingOutput],
@@ -53,7 +53,7 @@ def test_simple_mapping_visitor():
     }
 
 
-def test_mapping_visitor_processor():
+def test_mapping_preprocessor():
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
         outputs=[MappingOutput],

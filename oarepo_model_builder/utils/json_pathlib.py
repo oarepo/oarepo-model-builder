@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict, namedtuple
 from functools import cached_property
-from typing import List
+from typing import List, Iterable
 
 """
 A path is a sequence of names separated by '/' with an optional 
@@ -48,7 +48,7 @@ class JSONPaths:
     def path_regex(self):
         return re.compile('|'.join(f'({x})' for x in self.path_regex_list))
 
-    def match(self, path=None, subtree=None):
+    def match(self, path=None, subtree=None, extra_data=None):
         """
         Matches a path and subtree against stored paths. Returns iterator of matched values
 
@@ -64,7 +64,10 @@ class JSONPaths:
                 matched = False
                 for rec in self.paths[idx]:
                     if rec.condition:
-                        if any(rec.condition(PathCondition(subtree))):
+                        condition_result = rec.condition(PathCondition(subtree, extra_data=extra_data))
+                        if isinstance(condition_result, Iterable):
+                            condition_result = any(condition_result)
+                        if condition_result:
                             matched = True
                             yield rec.value
                     else:
@@ -87,10 +90,11 @@ def path_to_regex(path):
 
 
 class PathCondition:
-    def __init__(self, start=None, subtree_list=()):
+    def __init__(self, start=None, subtree_list=(), extra_data=None):
         self._subtree_list = [*subtree_list]
         if start:
             self._subtree_list.append(start)
+        self._extra_data = extra_data or {}
 
     def _apply(self, p, subtree_list):
         if subtree_list:
@@ -117,6 +121,8 @@ class PathCondition:
                             yield subtree[p]
 
     def __getattr__(self, item):
+        if item in self._extra_data:
+            return self._extra_data[item]
         try:
             item = int(item)
         except:

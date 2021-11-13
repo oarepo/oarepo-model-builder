@@ -1,6 +1,7 @@
-from oarepo_model_builder.builders import OutputPreprocessor, process, ReplaceElement
+from oarepo_model_builder.preprocessors import OutputPreprocessor, process
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
+from oarepo_model_builder.builders import ReplaceElement
 
 
 class MultilangPreprocessor(OutputPreprocessor):
@@ -23,7 +24,7 @@ class MultilangPreprocessor(OutputPreprocessor):
              path='**/properties/*',
              condition=lambda current: current.type == 'multilingual')
     def modify_multilang_mapping(self, data, stack, **kwargs):
-        return ReplaceElement({
+        raise ReplaceElement({
             stack.top.key: {
                 'type': 'object',
                 'properties': {

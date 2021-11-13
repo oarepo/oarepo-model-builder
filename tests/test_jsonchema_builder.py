@@ -14,7 +14,7 @@ except ImportError:
     import json as json5
 
 
-def test_simple_jsonschema_visitor():
+def test_simple_jsonschema_builder():
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput],
@@ -53,7 +53,7 @@ def test_simple_jsonschema_visitor():
     }
 
 
-def test_jsonschema_visitor_processor():
+def test_jsonschema_preprocessor():
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput],

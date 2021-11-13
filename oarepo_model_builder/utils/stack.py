@@ -1,30 +1,39 @@
 from functools import cached_property
+from typing import Generator
+
 from deepdiff import DeepDiff
 
 
+class ReplaceElement(Exception):
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+
+
 class ModelBuilderStackEntry:
-    def __init__(self, key=None, el=None):
+    def __init__(self, key=None, data=None):
         self.key = key
-        self.el = el
+        self.data = data
 
     def __getitem__(self, item):
-        return self.el[item]
+        return self.data[item]
 
     def __eq__(self, other):
         return self.key == other.key and not DeepDiff(self.key, other.key)
 
     def __str__(self):
-        return f'{self.key} - {self.el}'
+        return f'{self.key} - {self.data}'
 
 
 class ModelBuilderStack:
     DICT = 'dict'
     LIST = 'list'
     PRIMITIVE = 'primitive'
+    SKIP = 'skip'
 
     def __init__(self, schema):
         self.schema = schema
-        self.stack = [ModelBuilderStackEntry(None, schema.schema)]
+        self.stack = []
 
     def __getitem__(self, item):
         return self.stack[item]
@@ -47,12 +56,13 @@ class ModelBuilderStack:
 
     @property
     def top_type(self):
-        t = self.top
-        if isinstance(t.el, dict):
-            return self.DICT
-        if isinstance(t.el, list):
-            return self.LIST
-        return self.PRIMITIVE
+        match self.top.data:
+            case dict():
+                return self.DICT
+            case list():
+                return self.LIST
+            case _:
+                return self.PRIMITIVE
 
     @cached_property
     def path(self):
@@ -62,37 +72,44 @@ class ModelBuilderStack:
         if "path" in self.__dict__:
             del self.__dict__["path"]
 
-    def process(self, on_enter, on_leave, on_primitive):
-        from oarepo_model_builder.builders import ReplaceElement
+    def process(self, on_element):
+        self.stack = []
+        self._process_internal(None, self.schema.schema, on_element)
 
-        top_type = self.top_type
-        if top_type == self.PRIMITIVE:
-            return on_primitive(self)
-        elif top_type == self.LIST:
-            res = on_enter(self)
-            if isinstance(res, ReplaceElement):
-                return res
-            items = [*self.top.el]
-            idx = -1
-            while items:
-                idx += 1
-                l = items.pop(0)
-                self.push(idx, l)
-                ret = self.process(on_enter, on_leave, on_primitive)
+    def _process_internal(self, key, element, on_element):
+        popped = False
+
+        try:
+            # push the element to the stack
+            self.push(key, element)
+
+            # call the on_element function.
+            ret = on_element(self)
+
+            # if the result is not a generator,
+            if not isinstance(ret, Generator):
+                ret = iter([ret])
+
+            res = next(ret, '')
+
+            if res is self.SKIP:
+                return
+
+            match self.top_type:
+                case self.LIST:
+                    for idx, l in enumerate(self.top.data):
+                        self._process_internal(idx, l, on_element)
+                case self.DICT:
+                    for k, v in self.top.data.items():
+                        self._process_internal(k, v, on_element)
+
+            next(ret, '')
+
+        except ReplaceElement as re:
+            self.pop()
+            popped = True
+            for k, v in re.data.items():
+                self._process_internal(k, v, on_element)
+        finally:
+            if not popped:
                 self.pop()
-                if isinstance(ret, ReplaceElement):
-                    items = [*ret.data] + items
-            on_leave(self)
-        elif top_type == self.DICT:
-            res = on_enter(self)
-            if isinstance(res, ReplaceElement):
-                return res
-            items = [*self.top.el.items()]
-            while items:
-                k, v = items.pop(0)
-                self.push(k, v)
-                ret = self.process(on_enter, on_leave, on_primitive)
-                self.pop()
-                if isinstance(ret, ReplaceElement):
-                    items = [*ret.data.items()] + items
-            on_leave(self)

@@ -4,9 +4,9 @@ from typing import List, Dict
 
 from .outputs import OutputBase
 from .schema import ModelSchema
-from oarepo_model_builder.utils.stack import ModelBuilderStack
 from .transformers import ModelTransformer
-from .builders import OutputBuilder, OutputPreprocessor, ReplaceElement
+from .builders import OutputBuilder, ModelBuilderStack, ReplaceElement
+from .preprocessors import OutputPreprocessor
 
 
 class ModelBuilder:
@@ -134,26 +134,16 @@ class ModelBuilder:
 
     def _iterate_schema_output_builder(self, schema: ModelSchema, output_builder: OutputBuilder):
         def call_processors(stack, output_builder):
-            data = copy.deepcopy(stack.top.el)
+            data = copy.deepcopy(stack.top.data)
             for output_preprocessor in self.output_preprocessors:
                 data = output_preprocessor.process(output_builder.output_builder_type, data, stack) or data
             return data
 
-        def on_enter(stack):
+        def on_element(stack):
             data = call_processors(stack, output_builder)
             if isinstance(data, ReplaceElement):
                 return data
-            stack.top.el = data
-            output_builder.element_enter(stack)
+            stack.top.data = data
+            return output_builder.process_element(stack)
 
-        def on_leave(stack):
-            output_builder.element_leave(stack)
-
-        def on_primitive(stack):
-            data = call_processors(stack, output_builder)
-            if isinstance(data, ReplaceElement):
-                return data
-            stack.top.el = data
-            output_builder.element_primitive(stack)
-
-        ModelBuilderStack(schema).process(on_enter, on_leave, on_primitive)
+        ModelBuilderStack(schema).process(on_element)

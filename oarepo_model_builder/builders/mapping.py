@@ -1,33 +1,23 @@
-from ..outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.utils.stack import ModelBuilderStack
-from . import OutputBuilder, on_enter, on_primitive, on_leave
+from . import process
+from .json_base import JSONBaseBuilder
 from ..utils.schema import is_schema_element
 
 
-class MappingBuilder(OutputBuilder):
+class MappingBuilder(JSONBaseBuilder):
     output_builder_type = 'mapping'
+    output_file_type = 'mapping'
+    output_file_name = 'mapping-file'
 
-    @on_enter('/model/**')
+    @process('/model/**', condition=lambda current: is_schema_element(current.stack))
     def enter_model_element(self, stack: ModelBuilderStack):
-        if is_schema_element(stack):
-            self.output.enter(stack.top.key, [] if stack.top_type == stack.LIST else {})
-        else:
-            # not a schema element, so ignore it and the whole subtree
-            self.output.enter(stack.top.key, JSONSchemaOutput.IGNORE_SUBTREE)
+        self.model_element_enter(stack)
 
-    @on_primitive('/model/**')
-    def primitive_model(self, stack: ModelBuilderStack):
-        if is_schema_element(stack):
-            self.output.primitive(stack.top.key, stack.top.el)
+        # process children
+        yield
 
-    @on_leave('/model/**')
-    def leave_model_element(self, stack: ModelBuilderStack):
-        if is_schema_element(stack):
-            top = stack.top.el
-            if 'oarepo:mapping' in top:
-                self.output.merge_mapping(top['oarepo:mapping'])
-        self.output.leave()
+        data = stack.top.data
+        if 'oarepo:mapping' in data:
+            self.output.merge_mapping(data['oarepo:mapping'])
 
-    @on_enter('/model')
-    def enter_model(self, stack: ModelBuilderStack):
-        self.output = self.builder.get_output('mapping', stack[0]['mapping-file'])
+        self.model_element_leave(stack)

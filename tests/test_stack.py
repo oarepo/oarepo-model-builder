@@ -18,27 +18,28 @@ def test_stack():
     stack = ModelBuilderStack(schema)
     out = []
 
-    def on_data(event, stack):
-        out.append((event, stack.top, stack.level))
+    def on_data(stack):
+        if stack.top_type != stack.PRIMITIVE:
+            out.append(('enter', stack.top, stack.level))
+            yield
+            out.append(('leave', stack.top, stack.level))
+        else:
+            out.append(('primitive', stack.top, stack.level))
 
-    stack.process(
-        functools.partial(on_data, 'enter'),
-        functools.partial(on_data, 'leave'),
-        functools.partial(on_data, 'primitive')
-    )
+    stack.process(on_data)
 
     assert out == [
-        ('enter', ModelBuilderStackEntry(key=None, el={'a': {'b': [1, 2], 'c': 3}, 'd': 4, 'e': {'f': 5}}), 1),
-        ('enter', ModelBuilderStackEntry(key='a', el={'b': [1, 2], 'c': 3}), 2),
-        ('enter', ModelBuilderStackEntry(key='b', el=[1, 2]), 3),
-        ('primitive', ModelBuilderStackEntry(key=0, el=1), 4),
-        ('primitive', ModelBuilderStackEntry(key=1, el=2), 4),
-        ('leave', ModelBuilderStackEntry(key='b', el=[1, 2]), 3),
-        ('primitive', ModelBuilderStackEntry(key='c', el=3), 3),
-        ('leave', ModelBuilderStackEntry(key='a', el={'b': [1, 2], 'c': 3}), 2),
-        ('primitive', ModelBuilderStackEntry(key='d', el=4), 2),
-        ('enter', ModelBuilderStackEntry(key='e', el={'f': 5}), 2),
-        ('primitive', ModelBuilderStackEntry(key='f', el=5), 3),
-        ('leave', ModelBuilderStackEntry(key='e', el={'f': 5}), 2),
-        ('leave', ModelBuilderStackEntry(key=None, el={'a': {'b': [1, 2], 'c': 3}, 'd': 4, 'e': {'f': 5}}), 1)
+        ('enter', ModelBuilderStackEntry(key=None, data={'a': {'b': [1, 2], 'c': 3}, 'd': 4, 'e': {'f': 5}}), 1),
+        ('enter', ModelBuilderStackEntry(key='a', data={'b': [1, 2], 'c': 3}), 2),
+        ('enter', ModelBuilderStackEntry(key='b', data=[1, 2]), 3),
+        ('primitive', ModelBuilderStackEntry(key=0, data=1), 4),
+        ('primitive', ModelBuilderStackEntry(key=1, data=2), 4),
+        ('leave', ModelBuilderStackEntry(key='b', data=[1, 2]), 3),
+        ('primitive', ModelBuilderStackEntry(key='c', data=3), 3),
+        ('leave', ModelBuilderStackEntry(key='a', data={'b': [1, 2], 'c': 3}), 2),
+        ('primitive', ModelBuilderStackEntry(key='d', data=4), 2),
+        ('enter', ModelBuilderStackEntry(key='e', data={'f': 5}), 2),
+        ('primitive', ModelBuilderStackEntry(key='f', data=5), 3),
+        ('leave', ModelBuilderStackEntry(key='e', data={'f': 5}), 2),
+        ('leave', ModelBuilderStackEntry(key=None, data={'a': {'b': [1, 2], 'c': 3}, 'd': 4, 'e': {'f': 5}}), 1)
     ]
