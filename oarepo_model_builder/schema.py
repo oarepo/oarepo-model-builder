@@ -49,9 +49,9 @@ class ModelSchema:
         """
         extension = pathlib.Path(file_path).suffix.lower()[1:]
         if extension in self.loaders:
-            return self.loaders[extension](file_path)
+            return self.loaders[extension](file_path, self)
 
-        raise Exception(f'Can not load {file_path} - no loader has been found for extension {extension}'
+        raise Exception(f'Can not load {file_path} - no loader has been found for extension {extension} '
                         f'in entry point group oarepo_model_builder.loaders')
 
     def _load_included_file(self, file_id):

@@ -36,10 +36,11 @@ def run(output_directory, package, sets, configs, model_filename):
     preprocess_classes = load_entry_points_list('oarepo_model_builder.preprocessors')
     transformer_classes = load_entry_points_list('oarepo_model_builder.transformers')
     loaders = load_entry_points_dict('oarepo_model_builder.loaders')
+    safe_loaders = {k: v for k, v in loaders.items() if getattr(v, 'safe', False)}
 
-    schema = ModelSchema(model_filename, loaders=loaders)
+    schema = ModelSchema(model_filename, loaders=safe_loaders)
     for config in configs:
-        load_config(schema, config)
+        load_config(schema, config, loaders)
 
     for s in sets:
         k, v = s.split('=', 1)
@@ -66,9 +67,14 @@ def load_entry_points_list(name):
     return [ep.load() for ep in pkg_resources.iter_entry_points(group=name)]
 
 
-def load_config(schema, config):
-    loaded_file = schema._load(config)
-    schema.schema = deepmerge(loaded_file, schema.schema, [])
+def load_config(schema, config, loaders):
+    old_loaders = schema.loaders
+    schema.loaders = loaders
+    try:
+        loaded_file = schema._load(config)
+        schema.schema = deepmerge(loaded_file, schema.schema, [])
+    finally:
+        schema.loaders = old_loaders
 
 
 if __name__ == '__main__':
