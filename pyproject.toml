@@ -55,7 +55,7 @@ yaml = "oarepo_model_builder.loaders:yaml_loader"
 yml = "oarepo_model_builder.loaders:yaml_loader"
 
 [tool.poetry.plugins."oarepo_model_builder.templates"]
-invenio_record = "oarepo_model_builder.invenio.templates.invenio_record.py.jinja2"
+99-base_templates = "oarepo_model_builder.invenio.templates"
 
 
 [tool.poetry.scripts]
