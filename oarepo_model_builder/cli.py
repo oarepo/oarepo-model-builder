@@ -6,6 +6,10 @@ import pkg_resources
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.schema import ModelSchema, deepmerge
 
+import logging
+
+from oarepo_model_builder.utils.verbose import log
+
 
 @click.command()
 @click.option('--output-directory',
@@ -19,6 +23,9 @@ from oarepo_model_builder.schema import ModelSchema, deepmerge
               help='Overwrite option in the model file. Example '
                    '--set name=value',
               multiple=True)
+@click.option('-v', 'verbosity',
+              help='Increase the verbosity. This option can be used multiple times.',
+              count=True)
 @click.option('--config', 'configs',
               help='Load a config file and replace parts of the model with it. '
                    'The config file can be a json, yaml or a python file. '
@@ -27,10 +34,22 @@ from oarepo_model_builder.schema import ModelSchema, deepmerge
                    'after the evaluation all globals are set on the model.',
               multiple=True)
 @click.argument('model_filename')
-def run(output_directory, package, sets, configs, model_filename):
+def run(output_directory, package, sets, configs, model_filename, verbosity):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
+
+    # set the logging level, it will be warning - 1 (that is, 29) if not verbose,
+    # so that warnings only will be emitted. With each verbosity level
+    # it will decrease
+    logging.basicConfig(
+        level=logging.WARNING - verbosity,
+        format=''
+    )
+
+    log.enter(1, 'Processing model %s into output directory %s',
+        model_filename, output_directory)
+
     output_classes = load_entry_points_list('oarepo_model_builder.ouptuts')
     builder_classes = load_entry_points_list('oarepo_model_builder.builders')
     preprocess_classes = load_entry_points_list('oarepo_model_builder.preprocessors')
@@ -57,6 +76,8 @@ def run(output_directory, package, sets, configs, model_filename):
     )
 
     builder.build(schema, output_directory)
+
+    log.leave('Done')
 
 
 def load_entry_points_dict(name):

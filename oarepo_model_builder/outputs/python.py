@@ -1,6 +1,7 @@
 import libcst as cst
 
 from oarepo_model_builder.outputs import OutputBase
+from oarepo_model_builder.utils.verbose import log
 
 
 class PythonOutput(OutputBase):
@@ -20,6 +21,7 @@ class PythonOutput(OutputBase):
         code = self.cst.code
         if code != self.original_data:
             self.path.parent.mkdir(parents=True, exist_ok=True)
+            log(2, 'Saving %s', self.path)
             with self.path.open(mode='w') as f:
                 f.write(code)
 

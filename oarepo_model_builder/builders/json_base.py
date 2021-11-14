@@ -2,7 +2,7 @@ from pathlib import Path
 
 from oarepo_model_builder.builders import OutputBuilder, process
 from oarepo_model_builder.builders.utils import ensure_parent_modules
-from oarepo_model_builder.utils.stack import ModelBuilderStack
+from oarepo_model_builder.stack import ModelBuilderStack
 
 
 class JSONBaseBuilder(OutputBuilder):
@@ -28,4 +28,5 @@ class JSONBaseBuilder(OutputBuilder):
     def enter_model(self, stack: ModelBuilderStack):
         output_name = stack[0][self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)
-        ensure_parent_modules(self.builder, Path(output_name), self.parent_module_root_name)
+        ensure_parent_modules(self.builder, Path(output_name),
+                              ends_at=self.parent_module_root_name)

@@ -1,4 +1,4 @@
-from oarepo_model_builder.utils.stack import ModelBuilderStack
+from oarepo_model_builder.stack import ModelBuilderStack
 from . import process
 from .json_base import JSONBaseBuilder
 from ..utils.schema import is_schema_element

@@ -1,4 +1,4 @@
-from oarepo_model_builder.utils.stack import ModelBuilderStack
+from oarepo_model_builder.stack import ModelBuilderStack
 
 
 def is_schema_element(stack: ModelBuilderStack):

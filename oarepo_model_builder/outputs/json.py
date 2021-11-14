@@ -4,6 +4,7 @@ from deepdiff import DeepDiff
 
 from . import OutputBase
 from .json_stack import JSONStack
+from ..utils.verbose import log
 
 try:
     import json5
@@ -30,6 +31,7 @@ class JSONOutput(OutputBase):
         data = self.stack.value
         if DeepDiff(data, self.original_data):
             self.path.parent.mkdir(parents=True, exist_ok=True)
+            log(2, 'Saving %s', self.path)
             with self.path.open(mode='w') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
 

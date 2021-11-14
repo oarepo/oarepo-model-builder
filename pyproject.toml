@@ -33,6 +33,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.plugins."oarepo_model_builder.builders"]
 jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
 mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.ouptuts"]
 jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"

@@ -1,7 +1,5 @@
-import functools
-
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.utils.stack import ModelBuilderStack, ModelBuilderStackEntry
+from oarepo_model_builder.stack import ModelBuilderStack, ModelBuilderStackEntry
 
 
 def test_stack():

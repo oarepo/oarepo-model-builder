@@ -5,7 +5,8 @@ import inspect
 from typing import TYPE_CHECKING
 
 from oarepo_model_builder.utils.json_pathlib import JSONPaths
-from oarepo_model_builder.utils.stack import ModelBuilderStack, ReplaceElement
+from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement
+from oarepo_model_builder.utils.verbose import log
 
 if TYPE_CHECKING:
     from oarepo_model_builder.builder import ModelBuilder
@@ -51,10 +52,11 @@ class OutputBuilder:
             self.json_paths.register(path, condition, method)
 
     def begin(self):
+        log.enter(2, 'Creating %s', self.output_builder_type)
         pass
 
     def finish(self):
-        pass
+        log.leave()
 
     def process_element(self, stack: ModelBuilderStack):
         """

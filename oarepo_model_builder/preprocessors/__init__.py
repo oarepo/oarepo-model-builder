@@ -6,7 +6,7 @@ from collections import namedtuple
 from typing import TYPE_CHECKING
 
 from oarepo_model_builder.utils.json_pathlib import JSONPaths
-from oarepo_model_builder.utils.stack import ModelBuilderStack
+from oarepo_model_builder.stack import ModelBuilderStack
 
 if TYPE_CHECKING:
     from oarepo_model_builder.builder import ModelBuilder

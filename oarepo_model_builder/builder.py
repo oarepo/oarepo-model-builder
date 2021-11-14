@@ -107,25 +107,13 @@ class ModelBuilder:
         self.output_builders = [e(self) for e in self.output_builder_classes]
         self.output_preprocessors = [e(self) for e in self.output_preprocessor_classes]
 
-        for ext in self.output_builders:
-            ext.begin()
-
-        for proc in self.output_preprocessors:
-            proc.begin()
-
         for transformer in self.transformer_classes:
             schema = transformer(self).transform(schema) or schema
 
         # process the file
         self._iterate_schema(schema)
 
-        for proc in self.output_preprocessors:
-            proc.finish()
-
-        for ext in self.output_builders:
-            ext.finish()
-
-        for output in self.outputs.values():
+        for output in sorted(self.outputs.values(), key=lambda x: x.path):
             output.finish()
 
         return self.outputs
@@ -134,7 +122,17 @@ class ModelBuilder:
 
     def _iterate_schema(self, schema: ModelSchema):
         for output_builder in self.output_builders:
+            output_builder.begin()
+
+            for proc in self.output_preprocessors:
+                proc.begin()
+
             self._iterate_schema_output_builder(schema, output_builder)
+
+            for proc in self.output_preprocessors:
+                proc.finish()
+
+            output_builder.finish()
 
     def _iterate_schema_output_builder(self, schema: ModelSchema, output_builder: OutputBuilder):
         def call_processors(stack, output_builder):
