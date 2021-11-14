@@ -42,7 +42,7 @@ def test_simple_jsonschema_builder():
         output_dir=tmpdir
     )
 
-    with open(os.path.join(tmpdir, 'test', 'jsonschema', 'test', 'test-1.0.0.json')) as f:
+    with open(os.path.join(tmpdir, 'test', 'jsonschemas', 'test-1.0.0.json')) as f:
         data = json5.load(f)
 
     assert data == {
@@ -83,7 +83,7 @@ def test_jsonschema_preprocessor():
         output_dir=tmpdir
     )
 
-    with open(os.path.join(tmpdir, 'test', 'jsonschema', 'test', 'test-1.0.0.json')) as f:
+    with open(os.path.join(tmpdir, 'test', 'jsonschemas', 'test-1.0.0.json')) as f:
         data = json5.load(f)
 
     assert data == {

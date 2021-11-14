@@ -18,6 +18,7 @@ tomlkit = "^0.7.2"
 jsonpointer = "^2.2"
 deepdiff = "^5.6.0"
 PyYAML = { version = "^6.0", optional = true }
+Jinja2 = "^3.0.3"
 
 [tool.poetry.extras]
 json5 = ["json5"]
@@ -34,6 +35,7 @@ build-backend = "poetry.core.masonry.api"
 jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
 mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
 python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
+invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.ouptuts"]
 jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
@@ -43,13 +45,18 @@ python = "oarepo_model_builder.outputs.python:PythonOutput"
 [tool.poetry.plugins."oarepo_model_builder.preprocessors"]
 
 [tool.poetry.plugins."oarepo_model_builder.transformers"]
-jsonschema = "oarepo_model_builder.transformers.default_values:DefaultValuesTransformer"
+01-default = "oarepo_model_builder.transformers.default_values:DefaultValuesTransformer"
+10-invenio = "oarepo_model_builder.transformers.invenio:InvenioTransformer"
 
 [tool.poetry.plugins."oarepo_model_builder.loaders"]
 json = "oarepo_model_builder.loaders:json_loader"
 json5 = "oarepo_model_builder.loaders:json_loader"
 yaml = "oarepo_model_builder.loaders:yaml_loader"
 yml = "oarepo_model_builder.loaders:yaml_loader"
+
+[tool.poetry.plugins."oarepo_model_builder.templates"]
+invenio_record = "oarepo_model_builder.invenio.templates.invenio_record.py.jinja2"
+
 
 [tool.poetry.scripts]
 oarepo-compile-model = "oarepo_model_builder.cli:run"

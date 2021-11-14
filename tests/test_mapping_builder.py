@@ -42,7 +42,7 @@ def test_simple_mapping_builder():
         output_dir=tmpdir
     )
 
-    with open(os.path.join(tmpdir, 'test', 'mapping', 'v7', 'test', 'test-1.0.0.json')) as f:
+    with open(os.path.join(tmpdir, 'test', 'mappings', 'v7', 'test-1.0.0.json')) as f:
         data = json5.load(f)
 
     assert data == {
@@ -80,7 +80,7 @@ def test_mapping_preprocessor():
         output_dir=tmpdir
     )
 
-    with open(os.path.join(tmpdir, 'test', 'mapping', 'v7', 'test', 'test-1.0.0.json')) as f:
+    with open(os.path.join(tmpdir, 'test', 'mappings', 'v7', 'test-1.0.0.json')) as f:
         data = json5.load(f)
 
     assert data == {

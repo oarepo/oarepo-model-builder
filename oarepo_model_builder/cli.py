@@ -48,7 +48,7 @@ def run(output_directory, package, sets, configs, model_filename, verbosity):
     )
 
     log.enter(1, 'Processing model %s into output directory %s',
-        model_filename, output_directory)
+              model_filename, output_directory)
 
     output_classes = load_entry_points_list('oarepo_model_builder.ouptuts')
     builder_classes = load_entry_points_list('oarepo_model_builder.builders')
@@ -85,7 +85,9 @@ def load_entry_points_dict(name):
 
 
 def load_entry_points_list(name):
-    return [ep.load() for ep in pkg_resources.iter_entry_points(group=name)]
+    ret = [(ep.name, ep.load()) for ep in pkg_resources.iter_entry_points(group=name)]
+    ret.sort()
+    return [x[1] for x in ret]
 
 
 def load_config(schema, config, loaders):

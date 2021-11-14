@@ -1,6 +1,13 @@
-import libcst as cst
+import pkgutil
+from typing import Optional
 
+import libcst as cst
+import pkg_resources
+from jinja2 import Environment, FunctionLoader
+
+from oarepo_model_builder.invenio.template_registry import templates
 from oarepo_model_builder.outputs import OutputBase
+from oarepo_model_builder.utils.cst import MergingTransformer
 from oarepo_model_builder.utils.verbose import log
 
 
@@ -25,32 +32,16 @@ class PythonOutput(OutputBase):
             with self.path.open(mode='w') as f:
                 f.write(code)
 
-    def get_class(self, name):
-        ret = PythonClass(self, ((cst.ClassDef, name),))
-        if not ret.exists:
-            ret.create(name)
-        return ret
+    def merge(self, template_name, context):
+        # template is a loadable resource
+        env = Environment(
+            loader=FunctionLoader(lambda tn: getattr(templates, tn)),
+            autoescape=False
+        )
+        rendered = env.get_template(template_name).render(context)
+        rendered_cst = cst.parse_module(rendered, config=self.cst.config_for_parsing)
+        self.cst = self.cst.visit(MergingTransformer(rendered_cst))
 
-    def create_cst(self, new_cst, path):
-        self.cst = self.cst.visit(CreatingTransformer(path, new_cst))
-
-
-class CreatingTransformer(cst.CSTTransformer):
-    def __init__(self, path, new_cst):
-        super().__init__()
-        self.path = path
-        self.new_cst = new_cst
-        if path:
-            raise Exception('Creating nested stuff not supported yet')
-
-    def leave_Module(self, original_node: cst.Module, updated_node: cst.Module) -> cst.Module:
-        if not self.path:
-            return updated_node.with_changes(
-                body=[
-                    *updated_node.body,
-                    *self.new_cst
-                ]
-            )
 
 
 class CSTPart:
