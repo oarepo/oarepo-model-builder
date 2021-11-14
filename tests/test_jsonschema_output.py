@@ -1,4 +1,5 @@
 import tempfile
+from pathlib import Path
 
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 
@@ -10,7 +11,7 @@ except ImportError:
 
 def test_create_simple_schema():
     with tempfile.NamedTemporaryFile(suffix='.json') as tmpf:
-        output = JSONSchemaOutput(tmpf.name)
+        output = JSONSchemaOutput(Path(tmpf.name))
         output.begin()
         output.enter('properties', {})
         output.enter('a', {})

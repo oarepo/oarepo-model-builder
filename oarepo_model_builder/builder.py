@@ -1,5 +1,6 @@
 import copy
 import os
+from pathlib import Path
 from typing import List, Dict
 
 from .outputs import OutputBase
@@ -39,7 +40,7 @@ class ModelBuilder:
     A list of output_builders. Each extension is responsible for generating one or more files
     """
 
-    outputs: Dict[str, OutputBase]
+    outputs: Dict[Path, OutputBase]
     """
     Mapping between concrete output (file path relative to output dir) and instance of builder class
     """
@@ -70,7 +71,7 @@ class ModelBuilder:
         self.output_preprocessor_classes = [*output_preprocessors]
         self.transformer_classes = [*transformers]
 
-    def get_output(self, output_type: str, path: str):
+    def get_output(self, output_type: str, path: str | Path):
         """
         Given a path, instantiate file builder on the path with the given output type
         and return it. If the builder on the path has already been requested, return
@@ -80,17 +81,21 @@ class ModelBuilder:
         :param path: relative path to output_dir, set in build()
         :return:    instance of FileBuilder for the path
         """
+        if not isinstance(path, Path):
+            path = Path(path)
+        path = self.output_dir.joinpath(path)
+
         output = self.outputs.get(path, None)
         if output:
             assert output_type == self.outputs[path].output_type
         else:
-            output = self.output_classes[output_type](os.path.join(self.output_dir, path))
+            output = self.output_classes[output_type](path)
             output.begin()
             self.outputs[path] = output
         return output
 
     # main entry point
-    def build(self, schema: ModelSchema, output_dir):
+    def build(self, schema: ModelSchema, output_dir: str | Path):
         """
         compile the schema to output directory
 
@@ -98,7 +103,7 @@ class ModelBuilder:
         :param output_dir:  output directory where to put generated files
         :return:            the outputs (self.outputs)
         """
-        self.output_dir = output_dir  # noqa
+        self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
         self.output_builders = [e(self) for e in self.output_builder_classes]
         self.output_preprocessors = [e(self) for e in self.output_preprocessor_classes]
