@@ -1,12 +1,10 @@
-import os
-from pathlib import Path
+import libcst as cst
 
 from oarepo_model_builder.outputs import OutputBase
 
-import libcst as cst
-
 
 class PythonOutput(OutputBase):
+    output_type = 'python'
 
     def begin(self):
         if self.path.exists():

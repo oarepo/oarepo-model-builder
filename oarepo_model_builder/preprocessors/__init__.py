@@ -1,15 +1,21 @@
+from __future__ import annotations
+
 import functools
 import inspect
 from collections import namedtuple
+from typing import TYPE_CHECKING
 
 from oarepo_model_builder.utils.json_pathlib import JSONPaths
 from oarepo_model_builder.utils.stack import ModelBuilderStack
+
+if TYPE_CHECKING:
+    from oarepo_model_builder.builder import ModelBuilder
 
 
 class OutputPreprocessor:
     PathMethodRecord = namedtuple('PathMethodRecord', 'method, output_builder_type')
 
-    def __init__(self, builder: "oarepo_model_builder.builder.ModelBuilder"):
+    def __init__(self, builder: ModelBuilder):
         self.builder = builder
         # TODO: move this to metaclass and initialize only once per class
         self.json_paths = JSONPaths()

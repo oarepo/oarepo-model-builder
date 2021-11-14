@@ -3,6 +3,7 @@ import tempfile
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.outputs.mapping import MappingOutput
+from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.transformers.default_values import DefaultValuesTransformer
 from oarepo_model_builder.builders.mapping import MappingBuilder
@@ -17,7 +18,7 @@ except ImportError:
 def test_simple_mapping_builder():
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
-        outputs=[MappingOutput],
+        outputs=[MappingOutput, PythonOutput],
         transformers=[DefaultValuesTransformer],
     )
     tmpdir = tempfile.mkdtemp()
@@ -56,7 +57,7 @@ def test_simple_mapping_builder():
 def test_mapping_preprocessor():
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
-        outputs=[MappingOutput],
+        outputs=[MappingOutput, PythonOutput],
         transformers=[DefaultValuesTransformer],
         output_preprocessors=[MultilangPreprocessor]
     )

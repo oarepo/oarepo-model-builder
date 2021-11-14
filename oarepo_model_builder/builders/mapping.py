@@ -8,6 +8,8 @@ class MappingBuilder(JSONBaseBuilder):
     output_builder_type = 'mapping'
     output_file_type = 'mapping'
     output_file_name = 'mapping-file'
+    parent_module_root_name = 'mappings'
+
 
     @process('/model/**', condition=lambda current: is_schema_element(current.stack))
     def enter_model_element(self, stack: ModelBuilderStack):

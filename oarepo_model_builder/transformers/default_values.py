@@ -18,7 +18,7 @@ class DefaultValuesTransformer(ModelTransformer):
             schema.set('schema-file',
                        os.path.join(
                            schema.get('package'),
-                           'jsonschema',
+                           'jsonschemas',
                            schema.get('package'),
                            schema.get('schema-name')
                        ))
@@ -26,7 +26,7 @@ class DefaultValuesTransformer(ModelTransformer):
             schema.set('mapping-file',
                        os.path.join(
                            schema.get('package'),
-                           'mapping',
+                           'mappings',
                            'v7',
                            schema.get('package'),
                            schema.get('schema-name')

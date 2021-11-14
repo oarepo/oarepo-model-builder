@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 import functools
 import inspect
+from typing import TYPE_CHECKING
 
-import oarepo_model_builder
 from oarepo_model_builder.utils.json_pathlib import JSONPaths
 from oarepo_model_builder.utils.stack import ModelBuilderStack, ReplaceElement
+
+if TYPE_CHECKING:
+    from oarepo_model_builder.builder import ModelBuilder
 
 
 def process(path, priority=0, condition=None):
@@ -23,7 +28,7 @@ def process(path, priority=0, condition=None):
 class OutputBuilder:
     output_builder_type = None
 
-    def __init__(self, builder: "oarepo_model_builder.builder.ModelBuilder"):
+    def __init__(self, builder: ModelBuilder):
         self.builder = builder
         # TODO: move this to metaclass and initialize only once per class
         self.json_paths = JSONPaths()
@@ -67,3 +72,11 @@ class OutputBuilder:
         # do not skip stack top
         if stack.level > 1:
             return stack.SKIP
+
+
+__all__ = [
+    'process',
+    'OutputBuilder',
+    'ModelBuilderStack',
+    'ReplaceElement'
+]

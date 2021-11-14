@@ -1,11 +1,9 @@
-import os
-from pathlib import Path
+import json
 
 from deepdiff import DeepDiff
 
-from .json_stack import JSONStack
 from . import OutputBase
-import json
+from .json_stack import JSONStack
 
 try:
     import json5

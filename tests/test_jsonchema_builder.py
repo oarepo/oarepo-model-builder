@@ -3,6 +3,7 @@ import tempfile
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
+from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.transformers.default_values import DefaultValuesTransformer
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
@@ -17,7 +18,7 @@ except ImportError:
 def test_simple_jsonschema_builder():
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
-        outputs=[JSONSchemaOutput],
+        outputs=[JSONSchemaOutput, PythonOutput],
         transformers=[DefaultValuesTransformer],
     )
     tmpdir = tempfile.mkdtemp()
@@ -56,7 +57,7 @@ def test_simple_jsonschema_builder():
 def test_jsonschema_preprocessor():
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
-        outputs=[JSONSchemaOutput],
+        outputs=[JSONSchemaOutput, PythonOutput],
         transformers=[DefaultValuesTransformer],
         output_preprocessors=[MultilangPreprocessor]
     )

@@ -8,6 +8,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     output_builder_type = 'jsonschema'
     output_file_type = 'jsonschema'
     output_file_name = 'schema-file'
+    parent_module_root_name = 'jsonschemas'
 
     @process('/model/**', condition=lambda current: is_schema_element(current.stack))
     def model_element(self, stack: ModelBuilderStack):
