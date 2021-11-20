@@ -85,8 +85,8 @@ model:
         Dolor sit ...
 ```
 
-**Note**: ``multilingual`` is a special type that is translated
-to the correct schema, mapping and marshmallow files
+**Note**: ``multilingual`` is a special type (not defined in this library) that is translated
+to the correct schema, mapping and marshmallow files with a custom ``PropertyPreprocessor``.
 
 ``oarepo:ui`` gives information for the ui output
 
@@ -174,20 +174,19 @@ the content of the schema as text, or just a path pointing to the file. The exte
 which [loader](./oarepo_model_builder/loaders/__init__.py) is used. JSON, JSON5 and YAML are supported out of the box (
 if you have json5 and pyyaml packages installed)
 
-Then the pipeline is called with [ModelBuilder](./oarepo_model_builder/builder.py).build(schema, output_dir). You can
-instantiate the builder and pass it all preprocessor, output builder and output classes or
-call [create_builder_from_entrypoints()](./oarepo_model_builder/entrypoints.py)
-to get an instance of ``ModelBuilder`` initialized with components registered in entrypoints.
+Then [ModelBuilder](./oarepo_model_builder/builder.py).build(schema, output_dir) is called.
 
 It begins with calling all [ModelPreprocessors](./oarepo_model_builder/model_preprocessors/__init__.py). They get the
-whole schema and settings and can modify both.
+whole schema and settings and can modify both. See [ElasticsearchModelPreprocessor](./oarepo_model_builder/model_preprocessors/elasticsearch.py) as an example.
+The deepmerge function does not overwrite values if they already exist in settings.
+
 
 For each of the outputs (jsonschema, mapping, record, resource, ...)
 the "model" property of the transformed schema is then iterated
 (property by property) and for each, a [PropertyPreprocessor](./oarepo_model_builder/property_preprocessors/__init__.py)
 is called.
 
-The preprocessor can either modify the property or decide to remove it or replace it with a new set of properties
+The preprocessor can either modify the property, decide to remove it or replace it with a new set of properties
 (see [multilang in tests](./tests/multilang.py) ).
 
 The property is then passed to the
@@ -200,7 +199,7 @@ of [OutputBase](./oarepo_model_builder/outputs/__init__.py), for
 example [JSONOutput](./oarepo_model_builder/outputs/json.py) or more
 specialized [JSONSchemaOutput](./oarepo_model_builder/outputs/jsonschema.py).
 
-See [JSONBaseBuilder](./oarepo_model_builder/builders/json_base.py) for example how to get an output and write to it (in
+See [JSONBaseBuilder](./oarepo_model_builder/builders/json_base.py) for an example of how to get an output and write to it (in
 this case, the json-based output).
 
 This way, even if more output builders access the same file, their access is coordinated.
