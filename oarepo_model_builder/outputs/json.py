@@ -19,7 +19,7 @@ class JSONOutput(OutputBase):
     def begin(self):
         if self.path.exists():
             try:
-                with self.path.open() as f:
+                with self.builder.open(self.path) as f:
                     self.original_data = json5.load(f)  # noqa
             except ValueError:
                 self.original_data = None
@@ -32,7 +32,7 @@ class JSONOutput(OutputBase):
         if DeepDiff(data, self.original_data):
             self.path.parent.mkdir(parents=True, exist_ok=True)
             log(2, 'Saving %s', self.path)
-            with self.path.open(mode='w') as f:
+            with self.builder.open(self.path, mode='w') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
 
     def enter(self, key, el):

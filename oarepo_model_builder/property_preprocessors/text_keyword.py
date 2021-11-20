@@ -41,7 +41,11 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
              condition=lambda current: current.type == 'keyword')
     def modify_keyword_mapping(self, data, stack: ModelBuilderStack, **kwargs):
         data['type'] = 'keyword'
-        data['ignore_above'] = self.settings['elasticsearch']['keyword_ignore_above']
+        deepmerge(
+            data.setdefault('oarepo:mapping', {}),
+            {
+                'ignore_above': self.settings['elasticsearch']['keyword-ignore-above']
+            })
         return data
 
     #
@@ -60,11 +64,14 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
              condition=lambda current: current.type == 'fulltext-keyword')
     def modify_fulltext_keyword_mapping(self, data, stack: ModelBuilderStack, **kwargs):
         data['type'] = 'text'
-        return deepmerge(data, {
-            'fields': {
-                'keyword': {
-                    'type': 'keyword',
-                    'ignore_above': self.settings['elasticsearch']['keyword_ignore_above']
+        deepmerge(
+            data.setdefault('oarepo:mapping', {}),
+            {
+                'fields': {
+                    'keyword': {
+                        'type': 'keyword',
+                        'ignore_above': self.settings['elasticsearch']['keyword-ignore-above']
+                    }
                 }
-            }
-        }, [])
+            }, [])
+        return data

@@ -10,8 +10,12 @@ except ImportError:
 
 
 def test_create_simple_schema():
+
+    class FakeBuilder:
+        open = open
+
     with tempfile.NamedTemporaryFile(suffix='.json') as tmpf:
-        output = JSONSchemaOutput(Path(tmpf.name))
+        output = JSONSchemaOutput(FakeBuilder(), Path(tmpf.name))
         output.begin()
         output.enter('properties', {})
         output.enter('a', {})

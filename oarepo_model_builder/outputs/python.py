@@ -16,7 +16,7 @@ class PythonOutput(OutputBase):
 
     def begin(self):
         if self.path.exists():
-            with self.path.open() as f:
+            with self.builder.open(self.path) as f:
                 self.original_data = f.read()
 
                 self.cst = cst.parse_module(self.original_data)
@@ -29,7 +29,7 @@ class PythonOutput(OutputBase):
         if code != self.original_data:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             log(2, 'Saving %s', self.path)
-            with self.path.open(mode='w') as f:
+            with self.builder.open(self.path, mode='w') as f:
                 f.write(code)
 
     def merge(self, template_name, context):

@@ -9,7 +9,7 @@ class ElasticsearchModelPreprocessor(ModelPreprocessor):
             settings,
             {
                 'elasticsearch': {
-                    'keyword_ignore_above': 50
+                    'keyword-ignore-above': 50
                 }
             }
         )

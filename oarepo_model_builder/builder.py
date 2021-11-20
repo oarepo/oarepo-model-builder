@@ -54,7 +54,8 @@ class ModelBuilder:
             outputs: List[type(OutputBase)] = (),
             output_builders: List[type(OutputBuilder)] = (),
             output_preprocessors: List[type(PropertyPreprocessor)] = (),
-            model_preprocessors: List[type(ModelPreprocessor)] = ()
+            model_preprocessors: List[type(ModelPreprocessor)] = (),
+            open=open
     ):
         """
         Initializes the builder
@@ -69,6 +70,7 @@ class ModelBuilder:
         self.output_classes = {o.output_type: o for o in outputs}
         self.output_preprocessor_classes = [*output_preprocessors]
         self.model_preprocessor_classes = [*model_preprocessors]
+        self.open = open
 
     def get_output(self, output_type: str, path: str | Path):
         """
@@ -88,7 +90,7 @@ class ModelBuilder:
         if output:
             assert output_type == self.outputs[path].output_type
         else:
-            output = self.output_classes[output_type](path)
+            output = self.output_classes[output_type](self, path)
             output.begin()
             self.outputs[path] = output
         return output

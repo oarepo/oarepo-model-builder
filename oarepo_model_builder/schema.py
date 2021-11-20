@@ -12,19 +12,19 @@ class ModelSchema:
     OAREPO_USE = 'oarepo:use'
 
     def __init__(self, file_path, content=None,
-                 included_schemas: Dict[str, Callable] = None,
+                 included_models: Dict[str, Callable] = None,
                  loaders=None):
         """
         Creates and parses model schema
 
         :param file_path: path on the filesystem to the model schema file
         :param content:   if set, use this content, otherwise load the file_path
-        :param included_schemas: a dictionary of file_id to callable that returns included json.
+        :param included_models: a dictionary of file_id to callable that returns included json.
                 The callable expects a single parameter, an instance of this schema
         """
 
         self.file_path = file_path
-        self.included_schemas = included_schemas or {}
+        self.included_schemas = included_models or {}
         self.loaders = loaders
 
         if content is not None:

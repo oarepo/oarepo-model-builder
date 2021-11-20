@@ -4,7 +4,8 @@ from pathlib import Path
 class OutputBase:
     output_type = None
 
-    def __init__(self, path: Path):
+    def __init__(self, builder, path: Path):
+        self.builder = builder
         self.path: Path = path
 
     def begin(self):

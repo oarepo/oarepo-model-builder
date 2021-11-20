@@ -1,13 +1,9 @@
-import pathlib
-
-import click
-import pkg_resources
-
-from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.schema import ModelSchema, deepmerge
-
 import logging
 
+import click
+
+from oarepo_model_builder.entrypoints import load_entry_points_dict, create_builder_from_entrypoints
+from oarepo_model_builder.schema import ModelSchema, deepmerge
 from oarepo_model_builder.utils.verbose import log
 
 
@@ -50,10 +46,7 @@ def run(output_directory, package, sets, configs, model_filename, verbosity):
     log.enter(1, 'Processing model %s into output directory %s',
               model_filename, output_directory)
 
-    output_classes = load_entry_points_list('oarepo_model_builder.ouptuts')
-    builder_classes = load_entry_points_list('oarepo_model_builder.builders')
-    preprocess_classes = load_entry_points_list('oarepo_model_builder.property_preprocessors')
-    model_preprocessor_classes = load_entry_points_list('oarepo_model_builder.model_preprocessors')
+    builder = create_builder_from_entrypoints()
     loaders = load_entry_points_dict('oarepo_model_builder.loaders')
     safe_loaders = {k: v for k, v in loaders.items() if getattr(v, 'safe', False)}
 
@@ -66,28 +59,11 @@ def run(output_directory, package, sets, configs, model_filename, verbosity):
         schema.schema[k] = v
 
     if package:
-        schema.schema['package'] = package
-
-    builder = ModelBuilder(
-        output_builders=builder_classes,
-        outputs=output_classes,
-        output_preprocessors=preprocess_classes,
-        model_preprocessors=model_preprocessor_classes
-    )
+        schema.settings['package'] = package
 
     builder.build(schema, output_directory)
 
     log.leave('Done')
-
-
-def load_entry_points_dict(name):
-    return {ep.name: ep.load() for ep in pkg_resources.iter_entry_points(group=name)}
-
-
-def load_entry_points_list(name):
-    ret = [(ep.name, ep.load()) for ep in pkg_resources.iter_entry_points(group=name)]
-    ret.sort()
-    return [x[1] for x in ret]
 
 
 def load_config(schema, config, loaders):
