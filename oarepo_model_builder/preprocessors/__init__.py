@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from oarepo_model_builder.builder import ModelBuilder
 
 
-class OutputPreprocessor:
+class PropertyPreprocessor:
     PathMethodRecord = namedtuple('PathMethodRecord', 'method, output_builder_type')
 
     def __init__(self, builder: ModelBuilder):
@@ -37,10 +37,11 @@ class OutputPreprocessor:
         arr.sort()
         for _prior, _lpath, path, _mid, condition, output_builder_type, method in arr:
             self.json_paths.register(path, condition,
-                                     OutputPreprocessor.PathMethodRecord(method, output_builder_type))
+                                     PropertyPreprocessor.PathMethodRecord(method, output_builder_type))
 
-    def begin(self):
-        pass
+    def begin(self, schema, settings):
+        self.schema = schema
+        self.settings = settings
 
     def finish(self):
         pass

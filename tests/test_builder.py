@@ -15,7 +15,7 @@ def test_empty_builder():
 
 def test_transformer():
     class SampleTransformer(ModelTransformer):
-        def transform(self, schema):
+        def transform(self, schema, settings):
             schema.set('test', 1)
 
     builder = ModelBuilder(

@@ -9,7 +9,7 @@ class PythonStructureBuilder(OutputBuilder):
     @process('/model')
     def model(self, stack: ModelBuilderStack):
         yield
-        package_path = stack[0]['package-path']
+        package_path = self.settings['package-path']
 
         ensure_parent_modules(
             self.builder,

@@ -4,7 +4,7 @@ from typing import List, Dict
 
 from .builders import OutputBuilder, ModelBuilderStack, ReplaceElement
 from .outputs import OutputBase
-from .preprocessors import OutputPreprocessor
+from .preprocessors import PropertyPreprocessor
 from .schema import ModelSchema
 from .transformers import ModelTransformer
 
@@ -29,7 +29,7 @@ class ModelBuilder:
     A list of extension classes to be used in build. 
     """
 
-    output_preprocessor_classes: List[type(OutputPreprocessor)]
+    output_preprocessor_classes: List[type(PropertyPreprocessor)]
     """
     Processor classes (called before and after file builder is called)
     """
@@ -44,7 +44,7 @@ class ModelBuilder:
     Mapping between concrete output (file path relative to output dir) and instance of builder class
     """
 
-    output_preprocessors: List[OutputPreprocessor]
+    output_preprocessors: List[PropertyPreprocessor]
     """
     Current instances of processor classes.
     """
@@ -53,7 +53,7 @@ class ModelBuilder:
             self,
             outputs: List[type(OutputBase)] = (),
             output_builders: List[type(OutputBuilder)] = (),
-            output_preprocessors: List[type(OutputPreprocessor)] = (),
+            output_preprocessors: List[type(PropertyPreprocessor)] = (),
             transformers: List[type(ModelTransformer)] = ()
     ):
         """
@@ -108,7 +108,7 @@ class ModelBuilder:
         self.output_preprocessors = [e(self) for e in self.output_preprocessor_classes]
 
         for transformer in self.transformer_classes:
-            schema = transformer(self).transform(schema) or schema
+            transformer(self).transform(schema, schema.settings)
 
         # process the file
         self._iterate_schema(schema)
@@ -122,10 +122,10 @@ class ModelBuilder:
 
     def _iterate_schema(self, schema: ModelSchema):
         for output_builder in self.output_builders:
-            output_builder.begin()
+            output_builder.begin(schema, schema.settings)
 
             for proc in self.output_preprocessors:
-                proc.begin()
+                proc.begin(schema, schema.settings)
 
             self._iterate_schema_output_builder(schema, output_builder)
 

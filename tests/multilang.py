@@ -1,10 +1,10 @@
-from oarepo_model_builder.preprocessors import OutputPreprocessor, process
+from oarepo_model_builder.preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.builders import ReplaceElement
 
 
-class MultilangPreprocessor(OutputPreprocessor):
+class MultilangPreprocessor(PropertyPreprocessor):
     @process(model_builder=JSONSchemaBuilder,
              path='**/properties/*',
              condition=lambda current: current.type == 'multilingual')

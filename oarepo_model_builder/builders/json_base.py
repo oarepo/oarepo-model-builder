@@ -26,7 +26,7 @@ class JSONBaseBuilder(OutputBuilder):
 
     @process('/model')
     def enter_model(self, stack: ModelBuilderStack):
-        output_name = stack[0][self.output_file_name]
+        output_name = self.settings[self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)
         ensure_parent_modules(self.builder, Path(output_name),
                               ends_at=self.parent_module_root_name)

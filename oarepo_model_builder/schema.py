@@ -34,11 +34,17 @@ class ModelSchema:
 
         self._resolve_references(self.schema, [])
 
+        self.schema.setdefault('settings', {})
+
     def get(self, key):
         return self.schema.get(key, None)
 
     def set(self, key, value):
         self.schema[key] = value
+
+    @property
+    def settings(self):
+        return self.schema['settings']
 
     def _load(self, file_path):
         """
@@ -92,7 +98,10 @@ class ModelSchema:
                 self._resolve_references(v, stack)
 
 
-def deepmerge(target, source, stack):
+def deepmerge(target, source, stack=None):
+    if stack is None:
+        stack = []
+
     if isinstance(target, dict):
         if source is not None:
             if not isinstance(source, dict):

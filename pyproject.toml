@@ -43,10 +43,12 @@ mapping = "oarepo_model_builder.outputs.mapping:MappingOutput"
 python = "oarepo_model_builder.outputs.python:PythonOutput"
 
 [tool.poetry.plugins."oarepo_model_builder.preprocessors"]
+10-text_keyword = "oarepo_model_builder.preprocessors.text_keyword:TextKeywordPreprocessor"
 
 [tool.poetry.plugins."oarepo_model_builder.transformers"]
 01-default = "oarepo_model_builder.transformers.default_values:DefaultValuesTransformer"
 10-invenio = "oarepo_model_builder.transformers.invenio:InvenioTransformer"
+20-elasticsearch = "oarepo_model_builder.transformers.elasticsearch:ElasticsearchTransformer"
 
 [tool.poetry.plugins."oarepo_model_builder.loaders"]
 json = "oarepo_model_builder.loaders:json_loader"

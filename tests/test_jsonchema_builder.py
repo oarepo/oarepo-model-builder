@@ -26,7 +26,9 @@ def test_simple_jsonschema_builder():
         schema=ModelSchema(
             '',
             {
-                'package': 'test',
+                'settings': {
+                    'package': 'test',
+                },
                 'model': {
                     'properties': {
                         'a': {
@@ -67,7 +69,9 @@ def test_jsonschema_preprocessor():
         schema=ModelSchema(
             '',
             {
-                'package': 'test',
+                'settings': {
+                    'package': 'test',
+                },
                 'model': {
                     'properties': {
                         'a': {

@@ -51,7 +51,9 @@ class OutputBuilder:
         for _prior, _lpath, path, _mid, condition, method in arr:
             self.json_paths.register(path, condition, method)
 
-    def begin(self):
+    def begin(self, schema, settings):
+        self.schema = schema
+        self.settings = settings
         log.enter(2, 'Creating %s', self.output_builder_type)
         pass
 

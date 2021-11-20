@@ -14,6 +14,8 @@ def test_stack():
         }
     })
     stack = ModelBuilderStack(schema)
+    # pop the empty settings added by the schema
+    schema.schema.pop('settings')
     out = []
 
     def on_data(stack):
