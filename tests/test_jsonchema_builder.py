@@ -1,5 +1,4 @@
 import os
-import tempfile
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
@@ -7,6 +6,7 @@ from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
+from tests.mock_open import MockOpen
 from tests.multilang import MultilangPreprocessor
 
 try:
@@ -20,8 +20,8 @@ def test_simple_jsonschema_builder():
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
+        open=MockOpen()
     )
-    tmpdir = tempfile.mkdtemp()
     builder.build(
         schema=ModelSchema(
             '',
@@ -41,11 +41,10 @@ def test_simple_jsonschema_builder():
                 }
             }
         ),
-        output_dir=tmpdir
+        output_dir=''
     )
 
-    with open(os.path.join(tmpdir, 'test', 'jsonschemas', 'test-1.0.0.json')) as f:
-        data = json5.load(f)
+    data = json5.load(builder.open(os.path.join('test', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -61,10 +60,10 @@ def test_jsonschema_preprocessor():
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        output_preprocessors=[MultilangPreprocessor]
+        output_preprocessors=[MultilangPreprocessor],
+        open=MockOpen()
     )
 
-    tmpdir = tempfile.mkdtemp()
     builder.build(
         schema=ModelSchema(
             '',
@@ -84,11 +83,10 @@ def test_jsonschema_preprocessor():
                 }
             }
         ),
-        output_dir=tmpdir
+        output_dir=''
     )
 
-    with open(os.path.join(tmpdir, 'test', 'jsonschemas', 'test-1.0.0.json')) as f:
-        data = json5.load(f)
+    data = json5.load(builder.open(os.path.join('test', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {

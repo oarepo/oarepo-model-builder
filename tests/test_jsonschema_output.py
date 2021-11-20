@@ -1,7 +1,7 @@
-import tempfile
 from pathlib import Path
 
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
+from tests.mock_open import MockOpen
 
 try:
     import json5
@@ -12,23 +12,23 @@ except ImportError:
 def test_create_simple_schema():
 
     class FakeBuilder:
-        open = open
+        open = MockOpen()
 
-    with tempfile.NamedTemporaryFile(suffix='.json') as tmpf:
-        output = JSONSchemaOutput(FakeBuilder(), Path(tmpf.name))
-        output.begin()
-        output.enter('properties', {})
-        output.enter('a', {})
-        output.primitive('type', 'string')
-        output.leave()
-        output.leave()
-        output.finish()
-        with open(tmpf.name) as f:
-            data = json5.load(f)
-        assert data == {
-            'properties': {
-                'a': {
-                    'type': 'string'
-                }
+    output = JSONSchemaOutput(FakeBuilder(), Path('blah.json'))
+    output.begin()
+    output.enter('properties', {})
+    output.enter('a', {})
+    output.primitive('type', 'string')
+    output.leave()
+    output.leave()
+    output.finish()
+
+    data = json5.load(FakeBuilder.open('blah.json'))
+
+    assert data == {
+        'properties': {
+            'a': {
+                'type': 'string'
             }
         }
+    }

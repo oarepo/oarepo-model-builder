@@ -1,5 +1,4 @@
 import os
-import tempfile
 
 import json5
 import pytest
@@ -14,6 +13,7 @@ from oarepo_model_builder.property_preprocessors.text_keyword import TextKeyword
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.model_preprocessors.elasticsearch import ElasticsearchModelPreprocessor
+from tests.mock_open import MockOpen
 
 
 def get_model_schema(field_type):
@@ -45,12 +45,11 @@ def fulltext_builder():
 
 
 def test_fulltext(fulltext_builder):
-    tmpdir = tempfile.mkdtemp()
     schema = get_model_schema('fulltext')
-    fulltext_builder.build(schema, output_dir=tmpdir)
+    fulltext_builder.open = MockOpen()
+    fulltext_builder.build(schema, output_dir='')
 
-    with open(os.path.join(tmpdir, 'test', 'jsonschemas', 'test-1.0.0.json')) as f:
-        data = json5.load(f)
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -60,8 +59,7 @@ def test_fulltext(fulltext_builder):
         }
     }
 
-    with open(os.path.join(tmpdir, 'test', 'mappings', 'v7', 'test-1.0.0.json')) as f:
-        data = json5.load(f)
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -73,12 +71,11 @@ def test_fulltext(fulltext_builder):
 
 
 def test_keyword(fulltext_builder):
-    tmpdir = tempfile.mkdtemp()
     schema = get_model_schema('keyword')
-    fulltext_builder.build(schema, output_dir=tmpdir)
+    fulltext_builder.open = MockOpen()
+    fulltext_builder.build(schema, output_dir='')
 
-    with open(os.path.join(tmpdir, 'test', 'jsonschemas', 'test-1.0.0.json')) as f:
-        data = json5.load(f)
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -88,8 +85,7 @@ def test_keyword(fulltext_builder):
         }
     }
 
-    with open(os.path.join(tmpdir, 'test', 'mappings', 'v7', 'test-1.0.0.json')) as f:
-        data = json5.load(f)
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -102,12 +98,11 @@ def test_keyword(fulltext_builder):
 
 
 def test_fulltext_keyword(fulltext_builder):
-    tmpdir = tempfile.mkdtemp()
     schema = get_model_schema('fulltext-keyword')
-    fulltext_builder.build(schema, output_dir=tmpdir)
+    fulltext_builder.open = MockOpen()
+    fulltext_builder.build(schema, output_dir='')
 
-    with open(os.path.join(tmpdir, 'test', 'jsonschemas', 'test-1.0.0.json')) as f:
-        data = json5.load(f)
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -117,8 +112,7 @@ def test_fulltext_keyword(fulltext_builder):
         }
     }
 
-    with open(os.path.join(tmpdir, 'test', 'mappings', 'v7', 'test-1.0.0.json')) as f:
-        data = json5.load(f)
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
