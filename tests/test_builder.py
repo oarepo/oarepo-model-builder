@@ -1,6 +1,6 @@
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.transformers import ModelTransformer
+from oarepo_model_builder.model_preprocessors import ModelPreprocessor
 
 
 def test_empty_builder():
@@ -14,7 +14,7 @@ def test_empty_builder():
 
 
 def test_transformer():
-    class SampleTransformer(ModelTransformer):
+    class SampleModelPreprocessor(ModelPreprocessor):
         def transform(self, schema, settings):
             schema.set('test', 1)
 
@@ -22,7 +22,7 @@ def test_transformer():
         output_builders=[],
         outputs=[],
         output_preprocessors=[],
-        transformers=[SampleTransformer]
+        model_preprocessors=[SampleModelPreprocessor]
     )
     schema = ModelSchema('', {'a': 2})
     builder.build(schema, '/tmp/test')

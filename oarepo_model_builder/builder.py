@@ -4,9 +4,9 @@ from typing import List, Dict
 
 from .builders import OutputBuilder, ModelBuilderStack, ReplaceElement
 from .outputs import OutputBase
-from .preprocessors import PropertyPreprocessor
+from .property_preprocessors import PropertyPreprocessor
 from .schema import ModelSchema
-from .transformers import ModelTransformer
+from .model_preprocessors import ModelPreprocessor
 
 
 class ModelBuilder:
@@ -14,9 +14,9 @@ class ModelBuilder:
     Processes a model file and generates/updates sources for the model
     """
 
-    transformer_classes: List[type(ModelTransformer)]
+    model_preprocessor_classes: List[type(ModelPreprocessor)]
     """
-    Transformer classes that are called after schema is loaded and before it is processed
+    Model preprocessor classes that are called after schema is loaded and before it is processed
     """
 
     output_classes: Dict[str, type(OutputBase)]
@@ -54,7 +54,7 @@ class ModelBuilder:
             outputs: List[type(OutputBase)] = (),
             output_builders: List[type(OutputBuilder)] = (),
             output_preprocessors: List[type(PropertyPreprocessor)] = (),
-            transformers: List[type(ModelTransformer)] = ()
+            model_preprocessors: List[type(ModelPreprocessor)] = ()
     ):
         """
         Initializes the builder
@@ -68,7 +68,7 @@ class ModelBuilder:
             assert o.output_type, f'output_type not set up on class {o}'
         self.output_classes = {o.output_type: o for o in outputs}
         self.output_preprocessor_classes = [*output_preprocessors]
-        self.transformer_classes = [*transformers]
+        self.model_preprocessor_classes = [*model_preprocessors]
 
     def get_output(self, output_type: str, path: str | Path):
         """
@@ -107,8 +107,8 @@ class ModelBuilder:
         self.output_builders = [e(self) for e in self.output_builder_classes]
         self.output_preprocessors = [e(self) for e in self.output_preprocessor_classes]
 
-        for transformer in self.transformer_classes:
-            transformer(self).transform(schema, schema.settings)
+        for model_preprocessor in self.model_preprocessor_classes:
+            model_preprocessor(self).transform(schema, schema.settings)
 
         # process the file
         self._iterate_schema(schema)

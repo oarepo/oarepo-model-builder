@@ -5,7 +5,7 @@ from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.transformers.default_values import DefaultValuesTransformer
+from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.builders.mapping import MappingBuilder
 from tests.multilang import MultilangPreprocessor
 
@@ -19,7 +19,7 @@ def test_simple_mapping_builder():
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
-        transformers=[DefaultValuesTransformer],
+        model_preprocessors=[DefaultValuesModelPreprocessor],
     )
     tmpdir = tempfile.mkdtemp()
     builder.build(
@@ -60,7 +60,7 @@ def test_mapping_preprocessor():
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
-        transformers=[DefaultValuesTransformer],
+        model_preprocessors=[DefaultValuesModelPreprocessor],
         output_preprocessors=[MultilangPreprocessor]
     )
 

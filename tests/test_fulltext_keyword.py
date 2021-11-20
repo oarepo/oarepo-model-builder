@@ -10,10 +10,10 @@ from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.preprocessors.text_keyword import TextKeywordPreprocessor
+from oarepo_model_builder.property_preprocessors.text_keyword import TextKeywordPreprocessor
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.transformers.default_values import DefaultValuesTransformer
-from oarepo_model_builder.transformers.elasticsearch import ElasticsearchTransformer
+from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.elasticsearch import ElasticsearchModelPreprocessor
 
 
 def get_model_schema(field_type):
@@ -39,7 +39,7 @@ def fulltext_builder():
     return ModelBuilder(
         output_builders=[JSONSchemaBuilder, MappingBuilder],
         outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
-        transformers=[DefaultValuesTransformer, ElasticsearchTransformer],
+        model_preprocessors=[DefaultValuesModelPreprocessor, ElasticsearchModelPreprocessor],
         output_preprocessors=[TextKeywordPreprocessor]
     )
 

@@ -52,8 +52,8 @@ def run(output_directory, package, sets, configs, model_filename, verbosity):
 
     output_classes = load_entry_points_list('oarepo_model_builder.ouptuts')
     builder_classes = load_entry_points_list('oarepo_model_builder.builders')
-    preprocess_classes = load_entry_points_list('oarepo_model_builder.preprocessors')
-    transformer_classes = load_entry_points_list('oarepo_model_builder.transformers')
+    preprocess_classes = load_entry_points_list('oarepo_model_builder.property_preprocessors')
+    model_preprocessor_classes = load_entry_points_list('oarepo_model_builder.model_preprocessors')
     loaders = load_entry_points_dict('oarepo_model_builder.loaders')
     safe_loaders = {k: v for k, v in loaders.items() if getattr(v, 'safe', False)}
 
@@ -72,7 +72,7 @@ def run(output_directory, package, sets, configs, model_filename, verbosity):
         output_builders=builder_classes,
         outputs=output_classes,
         output_preprocessors=preprocess_classes,
-        transformers=transformer_classes
+        model_preprocessors=model_preprocessor_classes
     )
 
     builder.build(schema, output_directory)

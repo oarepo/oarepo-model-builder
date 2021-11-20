@@ -1,4 +1,4 @@
-class ModelTransformer:
+class ModelPreprocessor:
     def __init__(self, builder: 'oarepo_model_builder.builder.ModelBuilder'):
         self.builder = builder
 

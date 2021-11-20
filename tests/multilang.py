@@ -1,4 +1,4 @@
-from oarepo_model_builder.preprocessors import PropertyPreprocessor, process
+from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.builders import ReplaceElement

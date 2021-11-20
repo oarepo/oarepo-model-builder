@@ -2,11 +2,11 @@ import os
 from pathlib import Path
 from typing import Dict
 
-from . import ModelTransformer
+from . import ModelPreprocessor
 from ..schema import ModelSchema
 
 
-class DefaultValuesTransformer(ModelTransformer):
+class DefaultValuesModelPreprocessor(ModelPreprocessor):
     def transform(self, schema: ModelSchema, settings: Dict):
 
         if not settings.get('package'):

@@ -1,8 +1,8 @@
 from oarepo_model_builder.schema import deepmerge
-from oarepo_model_builder.transformers import ModelTransformer
+from oarepo_model_builder.model_preprocessors import ModelPreprocessor
 
 
-class InvenioTransformer(ModelTransformer):
+class InvenioModelPreprocessor(ModelPreprocessor):
 
     def transform(self, schema, settings):
         deepmerge(settings, {
