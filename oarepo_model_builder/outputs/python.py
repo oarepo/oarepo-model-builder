@@ -15,12 +15,12 @@ class PythonOutput(OutputBase):
     output_type = 'python'
 
     def begin(self):
-        if self.path.exists():
+        try:
             with self.builder.open(self.path) as f:
                 self.original_data = f.read()
 
                 self.cst = cst.parse_module(self.original_data)
-        else:
+        except FileNotFoundError:
             self.original_data = None
             self.cst = cst.parse_module('')
 
@@ -41,7 +41,6 @@ class PythonOutput(OutputBase):
         rendered = env.get_template(template_name).render(context)
         rendered_cst = cst.parse_module(rendered, config=self.cst.config_for_parsing)
         self.cst = self.cst.visit(MergingTransformer(rendered_cst))
-
 
 
 class CSTPart:

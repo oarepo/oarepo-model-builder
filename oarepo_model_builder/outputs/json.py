@@ -17,14 +17,14 @@ class JSONOutput(OutputBase):
     IGNORE_SUBTREE = JSONStack.IGNORED_SUBTREE
 
     def begin(self):
-        if self.path.exists():
-            try:
-                with self.builder.open(self.path) as f:
-                    self.original_data = json5.load(f)  # noqa
-            except ValueError:
-                self.original_data = None
-        else:
+        try:
+            with self.builder.open(self.path) as f:
+                self.original_data = json5.load(f)  # noqa
+        except FileNotFoundError:
             self.original_data = None
+        except ValueError:
+            self.original_data = None
+
         self.stack = JSONStack()
 
     def finish(self):
