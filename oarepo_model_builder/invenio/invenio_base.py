@@ -4,7 +4,6 @@ from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
 class InvenioBaseClassPythonBuilder(PythonBuilder):
-    output_builder_type = 'invenio_record'
     class_config = None
     template = None
 

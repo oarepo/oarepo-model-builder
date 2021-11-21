@@ -4,10 +4,12 @@ from oarepo_model_builder.builders import process
 from oarepo_model_builder.stack import ModelBuilderStack
 from .invenio_base import InvenioBaseClassPythonBuilder
 from ..outputs.json_stack import JSONStack
+from ..utils.deepmerge import deepmerge
 from ..utils.schema import is_schema_element
 
 
 class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
+    output_builder_type = 'invenio_record_schema'
     class_config = 'record-schema-class'
     template = 'record-schema'
 
@@ -56,18 +58,35 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
     def set_marshmallow_definition(self, data):
         marshmallow = data['oarepo:marshmallow']
+
+        data_type = data.get('type', 'object')
+        generator = self.schema.settings.python.marshmallow.mapping.get(data_type, None)
+        if isinstance(generator, dict):
+            # a value, not a callable => merge it
+            marshmallow = deepmerge(generator, marshmallow)
+            data['marshmallow'] = marshmallow
+            generator = None
+
+        # add imports if required
         for imp in marshmallow.get('imports', []):
             self.imports[imp['import']].add(imp['prefix'])
 
         if 'field' in marshmallow:
+            # do not modify the field
             return
-        data_type = data.get('type', 'object')
-        generator = self.schema.settings.python.marshmallow.mapping.get(data_type, None)
+        if 'class' in marshmallow:
+            # generate instance of the class, filling the options and validators
+            marshmallow['field'] = create_field(marshmallow['class'], options=(), validators=(), data=data)
+            return
+
+        # if no generator from settings, get the default one
         if not generator:
             generator = default_marshmallow_generators.get(data_type, None)
             if not generator:
                 raise Exception(f'Do not have marshmallow field generator for {data_type}. '
                                 f'Define it either in invenio_record_schema.py or in your own config')
+
+        # and generate the field
         marshmallow['field'] = generator(data, self.schema, self.imports)
 
     def model_element_enter(self, stack: ModelBuilderStack):
@@ -84,11 +103,12 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.stack.pop()
 
 
-def create_field(field_type, options=(), validators=()):
-    opts = [*options]
+def create_field(field_type, options=(), validators=(), data=None):
+    opts = [*options, *data['oarepo:marshmallow'].get('options', [])]
+    validators = [*validators, *data['oarepo:marshmallow'].get('validators', [])]
     if validators:
         opts.append(f'validators=[{",".join(validators)}]')
-    return f'ma_fields.{field_type}({", ".join(opts)})'
+    return f'{field_type}({", ".join(opts)})'
 
 
 def marshmallow_string_generator(data, schema, imports):
@@ -97,7 +117,7 @@ def marshmallow_string_generator(data, schema, imports):
     max_length = data.get('maxLength', None)
     if min_length is not None or max_length is not None:
         validators.append(f'ma_valid.Length(min={min_length}, max={max_length})')
-    return create_field('String', [], validators)
+    return create_field('ma_fields.String', [], validators, data)
 
 
 # TODO: rest of supported schema types
