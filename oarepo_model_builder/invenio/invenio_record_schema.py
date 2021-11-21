@@ -17,8 +17,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.imports = defaultdict(set)  # import => aliases
 
     def finish(self):
-        # TODO: generate subschemas as well, not implemented here
-        # TODO: generate arrays as well, not implemented here
+        # TODO: generate subschemas as well
+        # TODO: generate arrays as well
+        # TODO: handle required
         super().finish(fields=self.stack.value.get('properties', {}), imports=self.imports)
 
     @process('/model/**', condition=lambda current: is_schema_element(current.stack))
@@ -76,19 +77,24 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.stack.pop()
 
 
-# TODO: how to do required ? Need to do this later, on leave of 'properties'
+def create_field(field_type, options=(), validators=()):
+    opts = [*options]
+    if validators:
+        opts.append(f'validators=[{",".join(validators)}]')
+    return f'ma.{field_type}({", ".join(opts)})'
+
+
 def marshmallow_string_generator(data, schema, imports):
     add_imports(imports)
-    opts = []
     validators = []
     min_length = data.get('minLength', None)
     max_length = data.get('maxLength', None)
     if min_length is not None or max_length is not None:
         validators.append(f'ma_valid.Length(min={min_length}, max={max_length})')
-    if validators:
-        opts.append(f'validators=[{",".join(validators)}]')
-    return f'ma.String({", ".join(opts)})'
+    return create_field('String', [], validators)
 
+
+# TODO: rest of supported schema types
 
 def add_imports(imports):
     imports['marshmallow.fields'].add('ma')
