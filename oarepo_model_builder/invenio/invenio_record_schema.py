@@ -15,12 +15,19 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         super().begin(schema, settings)
         self.stack = JSONStack()
         self.imports = defaultdict(set)  # import => aliases
+        self.imports['marshmallow'].add('ma')
+        self.imports['marshmallow.fields'].add('ma_fields')
+        self.imports['marshmallow.validate'].add('ma_valid')
 
     def finish(self):
         # TODO: generate subschemas as well
         # TODO: generate arrays as well
         # TODO: handle required
-        super().finish(fields=self.stack.value.get('properties', {}), imports=self.imports)
+        super().finish(
+            fields=self.stack.value.get('properties', {}),
+            imports=self.imports,
+
+        )
 
     @process('/model/**', condition=lambda current: is_schema_element(current.stack))
     def enter_model_element(self, stack: ModelBuilderStack):
@@ -81,11 +88,10 @@ def create_field(field_type, options=(), validators=()):
     opts = [*options]
     if validators:
         opts.append(f'validators=[{",".join(validators)}]')
-    return f'ma.{field_type}({", ".join(opts)})'
+    return f'ma_fields.{field_type}({", ".join(opts)})'
 
 
 def marshmallow_string_generator(data, schema, imports):
-    add_imports(imports)
     validators = []
     min_length = data.get('minLength', None)
     max_length = data.get('maxLength', None)
@@ -95,10 +101,6 @@ def marshmallow_string_generator(data, schema, imports):
 
 
 # TODO: rest of supported schema types
-
-def add_imports(imports):
-    imports['marshmallow.fields'].add('ma')
-    imports['marshmallow.validate'].add('ma_valid')
 
 
 default_marshmallow_generators = {

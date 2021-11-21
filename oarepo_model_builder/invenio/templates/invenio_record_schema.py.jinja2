@@ -5,14 +5,27 @@ from invenio_records_resources.services.records.schema import BaseRecordSchema a
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
+{% for b in python.record_schema_properties_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+
 {% for imp, imp_aliases in imports.items() %}
 {% for alias in imp_aliases %}
-from {{ imp|package_name }} import {{ imp|base_name }} as {{ alias }}
+import {{ imp }} as {{ alias }}
 {% endfor %}
 {% endfor %}
 
+{% if python.marshmallow.top_level_properties %}
+class {{ python.record_schema_properties_class|base_name }}({% for b in python.record_schema_properties_bases %}{{ b|base_name }}, {% endfor %}ma.Schema):
+{% else %}
 class {{ python.record_schema_class|base_name }}({% for b in python.record_schema_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecordSchema):
+{% endif %}
     """Model for {{ python.record_class|base_name }} schema."""
     {% for fld_name, fld_def in fields.items() %}
     {{ fld_name }} = {{ fld_def["oarepo:marshmallow"].field }}
     {% endfor %}
+
+{% if python.marshmallow.top_level_properties %}
+class {{ python.record_schema_class|base_name }}({% for b in python.record_schema_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecordSchema):
+    properties = ma_fields.Nested({{ python.record_schema_properties_class|base_name }}())
+{% endif %}
