@@ -37,7 +37,7 @@ jobs:
           python -m pip install --upgrade pip wheel setuptools
           pip install poetry
           poetry config virtualenvs.create false
-          poetry install
+          poetry install --extras "pyyaml json5"
           cat poetry.lock
 
       - name: Test with pytest
