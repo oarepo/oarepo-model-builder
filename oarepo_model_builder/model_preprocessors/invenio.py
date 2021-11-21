@@ -7,6 +7,10 @@ class InvenioModelPreprocessor(ModelPreprocessor):
     def transform(self, schema, settings):
         deepmerge(settings, {
             'invenio': {
-                'record_class': 'Record'
+                'record_class': 'Record',
+
+                # just make sure that the templates is always there
+                'templates': {
+                }
             }
         })

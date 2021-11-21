@@ -1,11 +1,7 @@
-import pkgutil
-from typing import Optional
-
 import libcst as cst
-import pkg_resources
 from jinja2 import Environment, FunctionLoader
 
-from oarepo_model_builder.invenio.template_registry import templates
+from oarepo_model_builder.templates import templates
 from oarepo_model_builder.outputs import OutputBase
 from oarepo_model_builder.utils.cst import MergingTransformer
 from oarepo_model_builder.utils.verbose import log
