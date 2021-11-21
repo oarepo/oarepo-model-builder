@@ -11,6 +11,8 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
     def transform(self, schema: ModelSchema, settings: Dict):
         self.set(settings, 'package', lambda: os.path.basename(os.getcwd()).replace('-', '_'))
 
+        self.set(settings, 'package-base', lambda: settings.package.rsplit('.', maxsplit=1)[-1])
+
         self.set(settings, 'kebap-package', lambda: settings.package.replace('_', '-'))
 
         @self.set(settings, 'package-path')
@@ -38,3 +40,9 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
                 settings.schema_name
             )
         )
+
+        self.set(settings, 'schema-server', lambda: 'https://localhost/jsonschemas/')
+
+        self.set(settings, 'index-name', lambda: os.path.basename(settings.mapping_file).replace('.json', ''))
+
+        self.set(settings, 'collection-url', lambda: f'/{settings.package_base}')

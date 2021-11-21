@@ -26,6 +26,8 @@ will compile the model.yaml into the current directory. Options:
                            evaluated with the current model stored in the
                            "oarepo_model" global variable and after the
                            evaluation all globals are set on the model.
+  --isort / --skip-isort   Call isort on generated sources (default: yes)
+  --black / --skip-black   Call black on generated sources (default: yes)
 ```
 
 ## Model file structure

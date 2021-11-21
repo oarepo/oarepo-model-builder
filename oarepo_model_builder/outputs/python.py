@@ -37,6 +37,7 @@ class PythonOutput(OutputBase):
                 subprocess.call([
                     'black',
                     '-q',
+                    '--experimental-string-processing',
                     str(self.path)
                 ])
 

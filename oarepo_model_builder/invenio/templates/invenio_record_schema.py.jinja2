@@ -1,0 +1,9 @@
+from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
+
+
+{% for b in python.record_schema_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+
+class {{ python.record_schema_class|base_name }}({% for b in python.record_schema_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecordSchema):
+    """Model for {{ python.record_class|base_name }} schema."""

@@ -1,22 +1,22 @@
-import invenio_records_resources.records.systemfields
-import invenio_records_resources.records.systemfields.pid
-import invenio_pidstore.providers.recordid_v2
+from invenio_records_resources.records.systemfields import ConstantField, IndexField
+from invenio_records_resources.records.systemfields.pid import PIDField, PIDFieldContext
+from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_records_resources.records.api import Record as InvenioBaseRecord
 
 {% for b in python.record_bases %}
-    import {{ b|package_name }}
+from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
-import {{ python.record_metadata_class|package_name }}
-import {{ python.record_dumper_class|package_name }}
+from {{ python.record_metadata_class|package_name }} import {{ python.record_metadata_class|base_name }}
+from {{ python.record_dumper_class|package_name }} import {{ python.record_dumper_class|base_name }}
 
 
-class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b }}, {% endfor %}InvenioBaseRecord):
-    model_cls = {{ python.record_metadata_class }}
-    schema = invenio_records_resources.records.systemfields.ConstantField("$schema", "{{ schema_url }}")
-    index = invenio_records_resources.records.systemfields.IndexField("{{ index_name }}")
-    pid = invenio_records_resources.records.systemfields.pid.PIDField(
+class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecord):
+    model_cls = {{ python.record_metadata_class|base_name }}
+    schema = ConstantField("$schema", "{{ settings.schema_server }}{{ settings.schema_name }}")
+    index = IndexField("{{ settings.index_name }}")
+    pid = PIDField(
         create=True,
-        provider=invenio_pidstore.providers.recordid_v2.RecordIdProviderV2,
-        context_cls = invenio_records_resources.records.systemfields.pid.PIDFieldContext
+        provider=RecordIdProviderV2,
+        context_cls = PIDFieldContext
     )
-    dumper = {{ python.record_dumper_class }}
+    dumper = {{ python.record_dumper_class|base_name }}

@@ -22,6 +22,10 @@ def get_model_schema(field_type):
         {
             'settings': {
                 'package': 'test',
+                'python': {
+                    'use_isort': False,
+                    'use_black': False
+                }
             },
             'model': {
                 'properties': {

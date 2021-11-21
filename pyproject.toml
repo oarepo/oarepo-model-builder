@@ -35,11 +35,15 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.plugins."oarepo_model_builder.builders"]
-01-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
-10-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
-20-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
-50-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
-60-invenio_record_metadata = "oarepo_model_builder.invenio.invenio_record_metadata:InvenioRecordMetadataBuilder"
+001-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
+010-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+020-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
+050-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
+060-invenio_record_metadata = "oarepo_model_builder.invenio.invenio_record_metadata:InvenioRecordMetadataBuilder"
+070-invenio_record_permissions = "oarepo_model_builder.invenio.invenio_record_permissions:InvenioRecordPermissionsBuilder"
+080-invenio_record_search_options = "oarepo_model_builder.invenio.invenio_record_search:InvenioRecordSearchOptionsBuilder"
+090-invenio_record_service_config = "oarepo_model_builder.invenio.invenio_record_service_config:InvenioRecordServiceConfigBuilder"
+100-invenio_record_schema = "oarepo_model_builder.invenio.invenio_record_schema:InvenioRecordSchemaBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.ouptuts"]
 jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"

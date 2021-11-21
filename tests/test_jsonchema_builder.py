@@ -28,6 +28,10 @@ def test_simple_jsonschema_builder():
             {
                 'settings': {
                     'package': 'test',
+                    'python': {
+                        'use_isort': False,
+                        'use_black': False
+                    }
                 },
                 'model': {
                     'properties': {
@@ -70,6 +74,10 @@ def test_jsonschema_preprocessor():
             {
                 'settings': {
                     'package': 'test',
+                    'python': {
+                        'use_isort': False,
+                        'use_black': False
+                    }
                 },
                 'model': {
                     'properties': {
