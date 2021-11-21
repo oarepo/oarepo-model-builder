@@ -69,7 +69,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         # add imports if required
         for imp in marshmallow.get('imports', []):
-            self.imports[imp['import']].add(imp['prefix'])
+            self.imports[imp['import']].add(imp['alias'])
 
         if 'field' in marshmallow:
             # do not modify the field
@@ -106,9 +106,13 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 def create_field(field_type, options=(), validators=(), data=None):
     opts = [*options, *data['oarepo:marshmallow'].get('options', [])]
     validators = [*validators, *data['oarepo:marshmallow'].get('validators', [])]
+    nested = data['oarepo:marshmallow'].get('nested', False)
     if validators:
         opts.append(f'validators=[{",".join(validators)}]')
-    return f'{field_type}({", ".join(opts)})'
+    ret = f'{field_type}({", ".join(opts)})'
+    if nested:
+        ret = f'ma_fields.Nested({ret})'
+    return ret
 
 
 def marshmallow_string_generator(data, schema, imports):

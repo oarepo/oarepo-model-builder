@@ -1,7 +1,9 @@
+from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.builders import ReplaceElement
+from oarepo_model_builder.utils.deepmerge import deepmerge
 
 
 class MultilangPreprocessor(PropertyPreprocessor):
@@ -40,3 +42,18 @@ class MultilangPreprocessor(PropertyPreprocessor):
                 'type': 'text'
             }
         })
+
+    @process(model_builder=InvenioRecordSchemaBuilder,
+             path='**/properties/*',
+             condition=lambda current: current.type == 'multilingual')
+    def modify_multilang_marshmallow(self, data, stack, **kwargs):
+        data['type'] = 'object'
+        deepmerge(data.setdefault('oarepo:marshmallow', {}), {
+            'imports': [{
+                'import': 'tests.multilang',
+                'alias': 'multilingual'
+            }],
+            'class': 'multilingual.MultilingualSchema',
+            'nested': True
+        })
+        return data
