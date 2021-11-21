@@ -1,7 +1,7 @@
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
-from oarepo_model_builder.schema import deepmerge
+from oarepo_model_builder.utils.deepmerge import deepmerge
 from oarepo_model_builder.stack import ModelBuilderStack
 
 

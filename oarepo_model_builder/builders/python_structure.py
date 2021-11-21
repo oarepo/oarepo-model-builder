@@ -1,15 +1,16 @@
-from oarepo_model_builder.builders import OutputBuilder, process
+from oarepo_model_builder.builders import process
+from oarepo_model_builder.builders.python import PythonBuilder
 from oarepo_model_builder.builders.utils import ensure_parent_modules
 from oarepo_model_builder.stack import ModelBuilderStack
 
 
-class PythonStructureBuilder(OutputBuilder):
+class PythonStructureBuilder(PythonBuilder):
     output_builder_type = 'python_structure'
 
     @process('/model')
     def model(self, stack: ModelBuilderStack):
         yield
-        package_path = self.settings['package-path']
+        package_path = self.settings.package_path
 
         ensure_parent_modules(
             self.builder,

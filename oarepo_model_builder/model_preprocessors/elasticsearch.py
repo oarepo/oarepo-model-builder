@@ -1,4 +1,4 @@
-from oarepo_model_builder.schema import deepmerge
+from oarepo_model_builder.utils.deepmerge import deepmerge
 from oarepo_model_builder.model_preprocessors import ModelPreprocessor
 
 

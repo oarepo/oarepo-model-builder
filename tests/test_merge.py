@@ -1,4 +1,4 @@
-from oarepo_model_builder.schema import deepmerge
+from oarepo_model_builder.utils.deepmerge import deepmerge
 
 
 def test_merge_simple():

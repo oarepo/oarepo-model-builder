@@ -2,10 +2,12 @@ import copy
 import pathlib
 from typing import Dict, Callable
 
-import pkg_resources
+import munch
 from jsonpointer import resolve_pointer
 
 from .exceptions import IncludedFileNotFoundException
+from .utils.deepmerge import deepmerge
+from .utils.hyphen_munch import HyphenMunch
 
 
 class ModelSchema:
@@ -35,6 +37,7 @@ class ModelSchema:
         self._resolve_references(self.schema, [])
 
         self.schema.setdefault('settings', {})
+        self.schema = munch.munchify(self.schema, factory=HyphenMunch)
 
     def get(self, key):
         return self.schema.get(key, None)
@@ -44,7 +47,10 @@ class ModelSchema:
 
     @property
     def settings(self):
-        return self.schema['settings']
+        return self.schema.settings
+
+    def merge(self, another):
+        self.schema = munch.munchify(deepmerge(another, self.schema, []), factory=HyphenMunch)
 
     def _load(self, file_path):
         """
@@ -98,27 +104,3 @@ class ModelSchema:
                 self._resolve_references(v, stack)
 
 
-def deepmerge(target, source, stack=None):
-    if stack is None:
-        stack = []
-
-    if isinstance(target, dict):
-        if source is not None:
-            if not isinstance(source, dict):
-                raise AttributeError(
-                    f'Incompatible source and target on path {stack}: source {source}, target {target}')
-            for k, v in source.items():
-                if k not in target:
-                    target[k] = source[k]
-                else:
-                    target[k] = deepmerge(target[k], source[k], stack + [k])
-    elif isinstance(target, list):
-        if source is not None:
-            if not isinstance(source, list):
-                raise AttributeError(
-                    f'Incompatible source and target on path {stack}: source {source}, target {target}')
-            for idx in range(min(len(source), len(target))):
-                target[idx] = deepmerge(target[idx], source[idx], stack + [idx])
-            for idx in range(len(target), len(source)):
-                target.append(source[idx])
-    return target

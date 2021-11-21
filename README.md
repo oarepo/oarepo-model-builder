@@ -59,7 +59,7 @@ settings:
   schema-file: full path to generated json schema
   mapping-file: full path to generated mapping
 
-  invenio:
+  python:
     record-class-name: Record
     record-class-module: package + '.records'
 
@@ -291,7 +291,7 @@ or via --set option), specify the relative path to the template:
 
 ```yaml
 settings:
-   invenio:
+   python:
      templates:
        record: ./test/my_invenio_record.py.jinja2
 ```

@@ -1,3 +1,4 @@
+import sys
 import libcst as cst
 from jinja2 import Environment, FunctionLoader
 
@@ -27,16 +28,39 @@ class PythonOutput(OutputBase):
             log(2, 'Saving %s', self.path)
             with self.builder.open(self.path, mode='w') as f:
                 f.write(code)
+            if self.builder.schema.settings.python.use_isort:
+                import isort
+                config = isort.settings.Config(verbose=False, quiet=True)
+                isort.file(self.path, config=config)
+            if self.builder.schema.settings.python.use_black:
+                import subprocess
+                subprocess.call([
+                    'black',
+                    '-q',
+                    str(self.path)
+                ])
 
-    def merge(self, template_name, context):
+    def merge(self, template_name, context, filters=None):
         # template is a loadable resource
         env = Environment(
-            loader=FunctionLoader(lambda tn: getattr(templates, tn)),
-            autoescape=False
+            loader=FunctionLoader(lambda tn: templates.get_template(tn, context['settings'])),
+            autoescape=False,
         )
+        self.register_default_filters(env)
+        for filter_name, filter_func in (filters or {}).items():
+            env.filters[filter_name] = filter_func
+
         rendered = env.get_template(template_name).render(context)
-        rendered_cst = cst.parse_module(rendered, config=self.cst.config_for_parsing)
+        try:
+            rendered_cst = cst.parse_module(rendered, config=self.cst.config_for_parsing)
+        except:
+            print(rendered, file=sys.stderr)
+            raise
         self.cst = self.cst.visit(MergingTransformer(rendered_cst))
+
+    def register_default_filters(self, env):
+        env.filters['package_name'] = lambda value: (value.rsplit('.', maxsplit=1)[0])
+        env.filters['base_name'] = lambda value: (value.rsplit('.', maxsplit=1)[1])
 
 
 class CSTPart:

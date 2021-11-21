@@ -104,6 +104,7 @@ class ModelBuilder:
         :param output_dir:  output directory where to put generated files
         :return:            the outputs (self.outputs)
         """
+        self.schema = schema
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
         self.output_builders = [e(self) for e in self.output_builder_classes]

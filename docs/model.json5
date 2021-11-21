@@ -1,4 +1,7 @@
 {
+  settings: {
+    package: 'test'
+  },
   model: {
     a: {
       type: 'string'

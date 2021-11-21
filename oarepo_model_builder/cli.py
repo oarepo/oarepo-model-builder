@@ -3,9 +3,11 @@ import logging
 import click
 
 from oarepo_model_builder.entrypoints import load_entry_points_dict, create_builder_from_entrypoints
-from oarepo_model_builder.schema import ModelSchema, deepmerge
+from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.utils.deepmerge import deepmerge
 from oarepo_model_builder.utils.verbose import log
 
+from .utils.hyphen_munch import HyphenMunch
 
 @click.command()
 @click.option('--output-directory',
@@ -29,8 +31,10 @@ from oarepo_model_builder.utils.verbose import log
                    'model stored in the "oarepo_model" global variable and '
                    'after the evaluation all globals are set on the model.',
               multiple=True)
+@click.option('--isort/--skip-isort', default=True, help='Call isort on generated sources')
+@click.option('--black/--skip-black', default=True, help='Call black on generated sources')
 @click.argument('model_filename')
-def run(output_directory, package, sets, configs, model_filename, verbosity):
+def run(output_directory, package, sets, configs, model_filename, verbosity, isort, black):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
@@ -61,6 +65,11 @@ def run(output_directory, package, sets, configs, model_filename, verbosity):
     if package:
         schema.settings['package'] = package
 
+    if 'python' not in schema.settings:
+        schema.settings.python = HyphenMunch()
+    schema.settings.python.use_isort = isort
+    schema.settings.python.use_black = black
+
     builder.build(schema, output_directory)
 
     log.leave('Done')
@@ -71,7 +80,7 @@ def load_config(schema, config, loaders):
     schema.loaders = loaders
     try:
         loaded_file = schema._load(config)
-        schema.schema = deepmerge(loaded_file, schema.schema, [])
+        schema.merge(loaded_file)
     finally:
         schema.loaders = old_loaders
 

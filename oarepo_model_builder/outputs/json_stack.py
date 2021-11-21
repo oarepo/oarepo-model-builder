@@ -1,7 +1,7 @@
 import copy
 from typing import List
 
-from oarepo_model_builder.schema import deepmerge
+from oarepo_model_builder.utils.deepmerge import deepmerge
 
 
 class JSONStack:
