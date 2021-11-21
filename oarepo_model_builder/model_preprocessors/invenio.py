@@ -29,7 +29,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: snake_case(settings.python.record_prefix))
 
         self.set(settings.python, 'record-class',
-                 lambda: (f'{settings.package}.records.{record_prefix}Record'))
+                 lambda: (f'{settings.package}.record.{record_prefix}Record'))
         self.set(settings.python, 'record-schema-class',
                  lambda: (f'{settings.package}.schema.{record_prefix}Schema'))
         self.set(settings.python, 'record-schema-properties-class',
@@ -39,7 +39,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(settings.python, 'record-permissions-class',
                  lambda: (f'{settings.package}.permissions.{record_prefix}PermissionPolicy'))
         self.set(settings.python, 'record-dumper-class',
-                 lambda: (f'{settings.package}.dumpers.{record_prefix}Dumper'))
+                 lambda: (f'{settings.package}.dumper.{record_prefix}Dumper'))
         self.set(settings.python, 'record-metadata-table-name',
                  lambda: f'{record_prefix.lower()}_metadata')
         self.set(settings.python, 'record-search-options-class',

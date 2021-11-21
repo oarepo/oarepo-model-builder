@@ -44,6 +44,7 @@ build-backend = "poetry.core.masonry.api"
 080-invenio_record_search_options = "oarepo_model_builder.invenio.invenio_record_search:InvenioRecordSearchOptionsBuilder"
 090-invenio_record_service_config = "oarepo_model_builder.invenio.invenio_record_service_config:InvenioRecordServiceConfigBuilder"
 100-invenio_record_schema = "oarepo_model_builder.invenio.invenio_record_schema:InvenioRecordSchemaBuilder"
+110-invenio_record_dumper = "oarepo_model_builder.invenio.invenio_record_dumper:InvenioRecordDumperBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.ouptuts"]
 jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
