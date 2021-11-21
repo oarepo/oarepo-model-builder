@@ -15,6 +15,10 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 'record_prefix': camel_case(settings.package.rsplit('.', maxsplit=1)[-1]),
                 # just make sure that the templates is always there
                 'templates': {
+                },
+                'marshmallow': {
+                    'mapping': {
+                    }
                 }
             }
         })

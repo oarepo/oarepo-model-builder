@@ -5,5 +5,14 @@ from invenio_records_resources.services.records.schema import BaseRecordSchema a
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
+{% for imp, imp_aliases in imports.items() %}
+{% for alias in imp_aliases %}
+from {{ imp|package_name }} import {{ imp|base_name }} as {{ alias }}
+{% endfor %}
+{% endfor %}
+
 class {{ python.record_schema_class|base_name }}({% for b in python.record_schema_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecordSchema):
     """Model for {{ python.record_class|base_name }} schema."""
+    {% for fld_name, fld_def in fields.items() %}
+    {{ fld_name }} = {{ fld_def["oarepo:marshmallow"].field }}
+    {% endfor %}

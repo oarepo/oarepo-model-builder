@@ -3,8 +3,11 @@
     package: 'test'
   },
   model: {
-    a: {
-      type: 'string'
-    }
+    properties: {
+      a: {
+        type: 'string',
+        minLength: 5
+      }
+    },
   }
 }

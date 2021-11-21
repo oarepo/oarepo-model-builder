@@ -77,6 +77,11 @@ class OutputBuilder:
         if stack.level > 1:
             return stack.SKIP
 
+    @process('/model')
+    def enter_model(self, stack: ModelBuilderStack):
+        # do not skip /model
+        yield
+
 
 __all__ = [
     'process',

@@ -8,7 +8,7 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
     class_config = None
     template = None
 
-    def finish(self):
+    def finish(self, **extra_kwargs):
         python_path = self.class_to_path(self.settings.python[self.class_config])
         self.create_parent_modules(python_path)
 
@@ -19,5 +19,5 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
 
         output.merge(
             self.template,
-            HyphenMunch(settings=self.settings, python=self.settings.python)
+            HyphenMunch(settings=self.settings, python=self.settings.python, **extra_kwargs)
         )
