@@ -50,6 +50,7 @@ build-backend = "poetry.core.masonry.api"
 jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
 mapping = "oarepo_model_builder.outputs.mapping:MappingOutput"
 python = "oarepo_model_builder.outputs.python:PythonOutput"
+toml = "oarepo_model_builder.outputs.toml:TOMLOutput"
 
 [tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
 10-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
