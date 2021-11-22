@@ -81,6 +81,12 @@ settings:
 
   elasticsearch:
     keyword-ignore-above: 50
+
+  plugins:
+    packages: list of extra packages that should be installed in compiler's venv
+    output|builder|model|property: 
+      disabled: list of plugin names to disable or __all__ to disable all plugins in this category    
+      enabled: list of module:className or plugin names (without :) to enable. Overrides plugin disable setting
 ```
 
 ### model section
@@ -168,7 +174,7 @@ To generate invenio model from a model file, perform the following steps:
         output_builders=[JSONSchemaBuilder, MappingBuilder],
         outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor, ElasticsearchModelPreprocessor],
-        output_preprocessors=[TextKeywordPreprocessor]
+        property_preprocessors=[TextKeywordPreprocessor]
       )    
    ```   
 

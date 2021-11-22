@@ -12,7 +12,7 @@ def create_builder_from_entrypoints():
     return ModelBuilder(
         output_builders=builder_classes,
         outputs=output_classes,
-        output_preprocessors=preprocess_classes,
+        property_preprocessors=preprocess_classes,
         model_preprocessors=model_preprocessor_classes
     )
 

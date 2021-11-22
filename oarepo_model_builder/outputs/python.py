@@ -9,7 +9,7 @@ from oarepo_model_builder.utils.verbose import log
 
 
 class PythonOutput(OutputBase):
-    output_type = 'python'
+    TYPE = 'python'
 
     def begin(self):
         try:

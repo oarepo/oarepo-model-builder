@@ -8,7 +8,7 @@ from ..utils.schema import is_schema_element
 
 
 class MappingBuilder(JSONBaseBuilder):
-    output_builder_type = 'mapping'
+    TYPE = 'mapping'
     output_file_type = 'mapping'
     output_file_name = 'mapping-file'
     parent_module_root_name = 'mappings'

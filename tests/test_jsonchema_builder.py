@@ -64,7 +64,7 @@ def test_jsonschema_preprocessor():
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        output_preprocessors=[MultilangPreprocessor],
+        property_preprocessors=[MultilangPreprocessor],
         open=MockOpen()
     )
 

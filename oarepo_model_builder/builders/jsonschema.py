@@ -8,7 +8,7 @@ from ..utils.schema import is_schema_element
 
 
 class JSONSchemaBuilder(JSONBaseBuilder):
-    output_builder_type = 'jsonschema'
+    TYPE = 'jsonschema'
     output_file_type = 'jsonschema'
     output_file_name = 'schema-file'
     parent_module_root_name = 'jsonschemas'

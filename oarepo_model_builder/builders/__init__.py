@@ -27,7 +27,7 @@ def process(path, priority=0, condition=None):
 
 
 class OutputBuilder:
-    output_builder_type = None
+    TYPE = None
 
     def __init__(self, builder: ModelBuilder):
         self.builder = builder
@@ -54,7 +54,7 @@ class OutputBuilder:
     def begin(self, schema, settings):
         self.schema = schema
         self.settings = settings
-        log.enter(2, 'Creating %s', self.output_builder_type)
+        log.enter(2, 'Creating %s', self.TYPE)
         pass
 
     def finish(self):

@@ -3,6 +3,7 @@ from oarepo_model_builder.model_preprocessors import ModelPreprocessor
 
 
 class ElasticsearchModelPreprocessor(ModelPreprocessor):
+    TYPE = 'elasticsearch'
 
     def transform(self, schema, settings):
         deepmerge(

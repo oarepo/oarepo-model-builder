@@ -1,6 +1,9 @@
 {
   settings: {
-    package: 'test'
+    package: 'test',
+    plugins: {
+      'packages': []
+    }
   },
   model: {
     properties: {

@@ -5,7 +5,7 @@ import tomlkit
 
 
 class TOMLOutput(OutputBase):
-    output_type = 'toml'
+    TYPE = 'toml'
 
     def begin(self):
         try:
@@ -16,6 +16,7 @@ class TOMLOutput(OutputBase):
         except FileNotFoundError:
             self.original_data = None
             self.toml = tomlkit.document()
+            self.parsed = None
 
     def table(self, key):
         try:

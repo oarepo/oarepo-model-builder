@@ -6,7 +6,7 @@ from oarepo_model_builder.stack import ModelBuilderStack
 
 
 class TextKeywordPreprocessor(PropertyPreprocessor):
-
+    TYPE = 'text_keyword'
     #
     # type='fulltext' in model
     #

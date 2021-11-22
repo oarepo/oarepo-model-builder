@@ -7,7 +7,7 @@ def test_empty_builder():
     builder = ModelBuilder(
         output_builders=[],
         outputs=[],
-        output_preprocessors=[]
+        property_preprocessors=[]
     )
     outputs = builder.build(ModelSchema('', {'a': 1}), '/tmp/test')
     assert outputs == {}
@@ -21,7 +21,7 @@ def test_transformer():
     builder = ModelBuilder(
         output_builders=[],
         outputs=[],
-        output_preprocessors=[],
+        property_preprocessors=[],
         model_preprocessors=[SampleModelPreprocessor]
     )
     schema = ModelSchema('', {'a': 2})

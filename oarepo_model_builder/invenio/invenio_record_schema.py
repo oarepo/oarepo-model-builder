@@ -9,7 +9,7 @@ from ..utils.schema import is_schema_element
 
 
 class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
-    output_builder_type = 'invenio_record_schema'
+    TYPE = 'invenio_record_schema'
     class_config = 'record-schema-class'
     template = 'record-schema'
 

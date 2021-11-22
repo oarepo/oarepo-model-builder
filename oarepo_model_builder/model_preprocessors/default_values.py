@@ -7,6 +7,7 @@ from ..schema import ModelSchema
 
 
 class DefaultValuesModelPreprocessor(ModelPreprocessor):
+    TYPE = 'default'
 
     def transform(self, schema: ModelSchema, settings: Dict):
         self.set(settings, 'package', lambda: os.path.basename(os.getcwd()).replace('-', '_'))

@@ -67,7 +67,7 @@ def process(model_builder, path, priority=0, condition=None):
 
         wrapped.model_builder_priority = priority
         wrapped.model_builder_output_builder_type = \
-            model_builder if isinstance(model_builder, str) else model_builder.output_builder_type
+            model_builder if isinstance(model_builder, str) else model_builder.TYPE
         wrapped.model_builder_path = path
         wrapped.model_builder_condition = condition
         return wrapped

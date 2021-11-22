@@ -37,6 +37,7 @@ class ModelSchema:
         self._resolve_references(self.schema, [])
 
         self.schema.setdefault('settings', {})
+        self.schema['settings'].setdefault('plugins', {})
         self.schema = munch.munchify(self.schema, factory=HyphenMunch)
 
     def get(self, key):

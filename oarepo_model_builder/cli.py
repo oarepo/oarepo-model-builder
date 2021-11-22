@@ -1,4 +1,7 @@
 import logging
+import os
+import sys
+from pathlib import Path
 
 import click
 
@@ -8,6 +11,7 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
 from oarepo_model_builder.utils.verbose import log
 
 from .utils.hyphen_munch import HyphenMunch
+
 
 @click.command()
 @click.option('--output-directory',
@@ -39,6 +43,10 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
 
+    # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
+    # from the correct virtual environ)
+    os.environ['PATH'] = str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get('PATH', '')
+
     # set the logging level, it will be warning - 1 (that is, 29) if not verbose,
     # so that warnings only will be emitted. With each verbosity level
     # it will decrease
@@ -62,6 +70,8 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
         k, v = s.split('=', 1)
         schema.schema[k] = v
 
+    check_plugin_packages(schema.settings)
+
     if package:
         schema.settings['package'] = package
 
@@ -83,6 +93,25 @@ def load_config(schema, config, loaders):
         schema.merge(loaded_file)
     finally:
         schema.loaders = old_loaders
+
+
+def check_plugin_packages(settings):
+    try:
+        required_packages = settings.plugins.packages
+    except AttributeError:
+        return
+    import pkg_resources, subprocess
+    known_packages = set(d.project_name for d in pkg_resources.working_set)
+    unknown_packages = [rp for rp in required_packages if rp not in known_packages]
+    if unknown_packages:
+        if input(f'Required packages {", ".join(unknown_packages)} are missing. '
+                 f'Should I install them for you via pip install? (y/n) ') == 'y':
+            if subprocess.call([
+                'pip', 'install', *unknown_packages
+            ]):
+                sys.exit(1)
+            print("Installed required packages, please run this command again")
+        sys.exit(1)
 
 
 if __name__ == '__main__':

@@ -6,14 +6,14 @@ from oarepo_model_builder.schema import ModelSchema
 
 def test_loading_from_string():
     schema = ModelSchema('/tmp/path.json', {})
-    assert schema.schema == {'settings': {}}
+    assert schema.schema == {'settings': {'plugins':{}}}
 
 
 def test_loading_from_empty_file():
     schema = ModelSchema(Path(__file__).parent.joinpath('data/empty.json'), loaders={
         'json': json_loader
     })
-    assert schema.schema == {'settings': {}}
+    assert schema.schema == {'settings': {'plugins':{}}}
 
 
 def test_loading_included_resource():
@@ -27,7 +27,7 @@ def test_loading_included_resource():
                              }
                          })
     assert schema.schema == {
-        'settings': {},
+        'settings': {'plugins':{}},
         'a': {
             'included': 'test1'
         }
@@ -44,6 +44,6 @@ def test_loading_included_resource_root():
             }
         })
     assert schema.schema == {
-        'settings': {},
+        'settings': {'plugins':{}},
         'included': 'test1'
     }

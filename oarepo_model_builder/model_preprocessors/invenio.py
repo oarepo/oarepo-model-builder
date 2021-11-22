@@ -8,6 +8,7 @@ def last_item(x):
 
 
 class InvenioModelPreprocessor(ModelPreprocessor):
+    TYPE = 'invenio'
 
     def transform(self, schema, settings):
         deepmerge(settings, {
@@ -34,6 +35,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: (f'{settings.package}.schema.{record_prefix}Schema'))
         self.set(settings.python, 'record-schema-metadata-class',
                  lambda: (f'{settings.package}.schema.{record_prefix}MetadataSchema'))
+        self.set(settings.python, 'record-schema-metadata-alembic',
+                 lambda: (f'{settings.package_base}'))
         self.set(settings.python, 'record-metadata-class',
                  lambda: (f'{settings.package}.metadata.{record_prefix}Metadata'))
         self.set(settings.python, 'record-permissions-class',

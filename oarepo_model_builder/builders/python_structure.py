@@ -5,7 +5,7 @@ from oarepo_model_builder.stack import ModelBuilderStack
 
 
 class PythonStructureBuilder(PythonBuilder):
-    output_builder_type = 'python_structure'
+    TYPE = 'python_structure'
 
     @process('/model')
     def model(self, stack: ModelBuilderStack):

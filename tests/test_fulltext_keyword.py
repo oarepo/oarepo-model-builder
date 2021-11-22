@@ -44,7 +44,7 @@ def fulltext_builder():
         output_builders=[JSONSchemaBuilder, MappingBuilder],
         outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor, ElasticsearchModelPreprocessor],
-        output_preprocessors=[TextKeywordPreprocessor]
+        property_preprocessors=[TextKeywordPreprocessor]
     )
 
 
