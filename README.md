@@ -69,24 +69,44 @@ settings:
       mapping: {}
 
     record-prefix-snake: snake_case(record_prefix)
+    
     record-class: {settings.package}.record.{record_prefix}Record
+       # full record class name with package
     record-schema-class: {settings.package}.schema.{record_prefix}Schema
+       # full record schema class name (apart from invenio stuff, contains only metadata field)
     record-schema-metadata-class: {settings.package}.schema.{record_prefix}MetadataSchema
+       # full record schema metadata class name (contains model schema as marshmallow)
+    record-schema-metadata-alembic: {settings.package_base}  
+       # name of key in pyproject.toml invenio_db.alembic entry point 
     record-metadata-class: {settings.package}.metadata.{record_prefix}Metadata
-    record-permissions-class: {settings.package}.permissions.{record_prefix}PermissionPolicy
-    record-dumper-class: {settings.package}.dumper.{record_prefix}Dumper
+       # db class to store record's metadata 
     record-metadata-table-name: {record_prefix.lower()}_metadata
+       # name of database table for storing metadata 
+    record-permissions-class: {settings.package}.permissions.{record_prefix}PermissionPolicy
+       # class containing permissions for the record
+    record-dumper-class: {settings.package}.dumper.{record_prefix}Dumper
+       # record dumper class for elasticsearch
     record-search-options-class: {settings.package}.search_options.{record_prefix}SearchOptions
+       # search options for the record
     record-service-config-class: {settings.package}.service_config.{record_prefix}ServiceConfig
+       # configuration of record's service
 
   elasticsearch:
     keyword-ignore-above: 50
 
   plugins:
-    packages: list of extra packages that should be installed in compiler's venv
-    output|builder|model|property: 
-      disabled: list of plugin names to disable or __all__ to disable all plugins in this category    
-      enabled: list of module:className or plugin names (without :) to enable. Overrides plugin disable setting
+    packages: []
+       # list of extra packages that should be installed in compiler's venv
+    output|builder|model|property:
+      # plugin types - file outputs, builders, model preprocessors, property preprocessors 
+      disabled: []
+        # list of plugin names to disable
+        # string "__all__" to disable all plugins in this category    
+      enabled: 
+        # list of plugin names to enable. The plugins will be used
+        # in the order defined. Use with disabled: __all__
+        # list of "module:className" that will be added at the end of
+        # plugin list
 ```
 
 ### model section
