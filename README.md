@@ -36,7 +36,7 @@ A model is a json/yaml file with the following structure:
 
 ```yaml
 settings:
-  invenio:
+  python:
   elasticsearch:
 model:
   properties:
@@ -49,21 +49,35 @@ the ``settings`` and ``model`` are currently processed.
 ### settings section
 
 The settings section might contain the following keys
-(default values are mentioned if not set):
+(default values below):
 
 ```yaml
 settings:
-  package: basename(pwd) with '-' converted to '_'
+  package: basename(output dir) with '-' converted to '_'
   kebap-package: to_kebap(package)
-  package-path: package name as python Path instance
+  package-path: path to package as python Path instance
   schema-version: 1.0.0  
-  schema-name: kebap-package-schema-version.json
+  schema-name: {kebap-package}-{schema-version}.json
   schema-file: full path to generated json schema
   mapping-file: full path to generated mapping
 
   python:
-    record-class-name: Record
-    record-class-module: package + '.records'
+    record-prefix: camel_case(last component of package)
+    templates: {}   # overridden templates
+    marshmallow:
+      top-level-metadata: true
+      mapping: {}
+
+    record-prefix-snake: snake_case(record_prefix)
+    record-class: {settings.package}.record.{record_prefix}Record
+    record-schema-class: {settings.package}.schema.{record_prefix}Schema
+    record-schema-metadata-class: {settings.package}.schema.{record_prefix}MetadataSchema
+    record-metadata-class: {settings.package}.metadata.{record_prefix}Metadata
+    record-permissions-class: {settings.package}.permissions.{record_prefix}PermissionPolicy
+    record-dumper-class: {settings.package}.dumper.{record_prefix}Dumper
+    record-metadata-table-name: {record_prefix.lower()}_metadata
+    record-search-options-class: {settings.package}.search_options.{record_prefix}SearchOptions
+    record-service-config-class: {settings.package}.service_config.{record_prefix}ServiceConfig
 
   elasticsearch:
     keyword-ignore-above: 50

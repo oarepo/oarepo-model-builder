@@ -17,7 +17,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 'templates': {
                 },
                 'marshmallow': {
-                    'top_level_properties': True,
+                    'top-level-metadata': True,
                     'mapping': {
                     }
                 }
@@ -32,8 +32,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: (f'{settings.package}.record.{record_prefix}Record'))
         self.set(settings.python, 'record-schema-class',
                  lambda: (f'{settings.package}.schema.{record_prefix}Schema'))
-        self.set(settings.python, 'record-schema-properties-class',
-                 lambda: (f'{settings.package}.schema.{record_prefix}PropertiesSchema'))
+        self.set(settings.python, 'record-schema-metadata-class',
+                 lambda: (f'{settings.package}.schema.{record_prefix}MetadataSchema'))
         self.set(settings.python, 'record-metadata-class',
                  lambda: (f'{settings.package}.metadata.{record_prefix}Metadata'))
         self.set(settings.python, 'record-permissions-class',

@@ -15,8 +15,8 @@ import {{ imp }} as {{ alias }}
 {% endfor %}
 {% endfor %}
 
-{% if python.marshmallow.top_level_properties %}
-class {{ python.record_schema_properties_class|base_name }}({% for b in python.record_schema_properties_bases %}{{ b|base_name }}, {% endfor %}ma.Schema):
+{% if python.marshmallow.top_level_metadata %}
+class {{ python.record_schema_metadata_class|base_name }}({% for b in python.record_schema_properties_bases %}{{ b|base_name }}, {% endfor %}ma.Schema):
 {% else %}
 class {{ python.record_schema_class|base_name }}({% for b in python.record_schema_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecordSchema):
 {% endif %}
@@ -25,7 +25,7 @@ class {{ python.record_schema_class|base_name }}({% for b in python.record_schem
     {{ fld_name }} = {{ fld_def["oarepo:marshmallow"].field }}
     {% endfor %}
 
-{% if python.marshmallow.top_level_properties %}
+{% if python.marshmallow.top_level_metadata %}
 class {{ python.record_schema_class|base_name }}({% for b in python.record_schema_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecordSchema):
-    properties = ma_fields.Nested({{ python.record_schema_properties_class|base_name }}())
+    metadata = ma_fields.Nested({{ python.record_schema_metadata_class|base_name }}())
 {% endif %}
