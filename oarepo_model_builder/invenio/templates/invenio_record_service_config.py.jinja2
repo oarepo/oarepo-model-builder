@@ -13,7 +13,7 @@ from {{ python.record_search_options_class|package_name }} import {{ python.reco
 
 
 class {{ python.record_service_config_class|base_name }}({% for b in python.record_service_config_bases %}{{ b|base_name }}, {% endfor %}InvenioRecordServiceConfig):
-    """Model for {{ python.record_class|base_name }} service config."""
+    """{{ python.record_class|base_name }} service config."""
 
     permission_policy_cls = {{ python.record_permissions_class|base_name }}
     schema = {{ python.record_schema_class|base_name }}

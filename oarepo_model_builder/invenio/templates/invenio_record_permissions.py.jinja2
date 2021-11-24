@@ -7,7 +7,7 @@ from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
 class {{ python.record_permissions_class|base_name }}({% for b in python.record_permissions_bases %}{{ b|base_name }}, {% endfor %}RecordPermissionPolicy):
-    """Model for {{ python.record_class }} permissions."""
+    """{{ python.record_class }} permissions."""
 
     can_search = [SystemProcess(), AnyUser()]
     can_read = [SystemProcess(), AnyUser()]

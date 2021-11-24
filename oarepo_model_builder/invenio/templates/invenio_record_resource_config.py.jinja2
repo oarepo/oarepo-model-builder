@@ -1,0 +1,12 @@
+from invenio_records_resources.resources import RecordResourceConfig as InvenioRecordResourceConfig
+
+
+{% for b in python.record_resource_config_class_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+
+class {{ python.record_resource_config_class|base_name }}({% for b in python.record_resource_config_class_bases %}{{ b|base_name }}, {% endfor %}InvenioRecordResourceConfig):
+    """{{ python.record_class|base_name }} resource config."""
+
+    blueprint_name = '{{ python.record_resource_blueprint_name }}'
+    url_prefix = '{{ settings.collection_url }}'

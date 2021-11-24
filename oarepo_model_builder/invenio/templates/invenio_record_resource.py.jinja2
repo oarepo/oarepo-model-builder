@@ -1,0 +1,12 @@
+from invenio_records_resources.resources import RecordResource as InvenioRecordResource
+
+
+{% for b in python.record_resource_class_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+
+
+class {{ python.record_resource_class|base_name }}({% for b in python.record_resource_class_bases %}{{ b|base_name }}, {% endfor %}InvenioRecordResource):
+    """{{ python.record_class|base_name }} resource."""
+    # here you can for example redefine
+    # create_url_rules function to add your own rules

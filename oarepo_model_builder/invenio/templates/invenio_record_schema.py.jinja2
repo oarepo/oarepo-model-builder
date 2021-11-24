@@ -20,7 +20,7 @@ class {{ python.record_schema_metadata_class|base_name }}({% for b in python.rec
 {% else %}
 class {{ python.record_schema_class|base_name }}({% for b in python.record_schema_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecordSchema):
 {% endif %}
-    """Model for {{ python.record_class|base_name }} schema."""
+    """{{ python.record_class|base_name }} schema."""
     {% for fld_name, fld_def in fields.items() %}
     {{ fld_name }} = {{ fld_def["oarepo:marshmallow"].field }}
     {% endfor %}

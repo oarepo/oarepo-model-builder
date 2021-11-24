@@ -60,6 +60,7 @@ settings:
   schema-name: {kebap-package}-{schema-version}.json
   schema-file: full path to generated json schema
   mapping-file: full path to generated mapping
+  collection-url: camel_case(last component of package)
 
   python:
     record-prefix: camel_case(last component of package)
@@ -90,7 +91,15 @@ settings:
        # search options for the record
     record-service-config-class: {settings.package}.service_config.{record_prefix}ServiceConfig
        # configuration of record's service
-
+    record-resource-config-class: {settings.package}.resource.{record_prefix}ResourceConfig
+       # configuration of record's resource
+    record-resource-class: {settings.package}.resource.{record_prefix}Resource
+       # record resource
+    record-resource-blueprint-name: {record_prefix}
+       # blueprint name of the resource 
+    register-blueprint-function: {settings.package}.blueprint.register_blueprint'
+       # name of the blueprint registration function
+    
   elasticsearch:
     keyword-ignore-above: 50
 

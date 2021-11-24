@@ -49,3 +49,13 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: (f'{settings.package}.search_options.{record_prefix}SearchOptions'))
         self.set(settings.python, 'record-service-config-class',
                  lambda: (f'{settings.package}.service_config.{record_prefix}ServiceConfig'))
+        self.set(settings.python, 'record-service-class',
+                 lambda: (f'{settings.package}.service.{record_prefix}Service'))
+        self.set(settings.python, 'record-resource-config-class',
+                 lambda: (f'{settings.package}.resource.{record_prefix}ResourceConfig'))
+        self.set(settings.python, 'record-resource-class',
+                 lambda: (f'{settings.package}.resource.{record_prefix}Resource'))
+        self.set(settings.python, 'record-resource-blueprint-name',
+                 lambda: record_prefix)
+        self.set(settings.python, 'register-blueprint-function',
+                 lambda: (f'{settings.package}.blueprint.register_blueprint'))
