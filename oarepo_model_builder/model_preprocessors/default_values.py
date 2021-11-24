@@ -12,6 +12,8 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
     def transform(self, schema: ModelSchema, settings: Dict):
         self.set(settings, 'package', lambda: os.path.basename(os.getcwd()).replace('-', '_'))
 
+        self.set(settings, 'processing-order', lambda: ['settings', '*', 'model'])
+
         self.set(settings, 'package-base', lambda: settings.package.rsplit('.', maxsplit=1)[-1])
 
         self.set(settings, 'kebap-package', lambda: settings.package.replace('_', '-'))

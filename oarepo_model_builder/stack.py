@@ -1,5 +1,5 @@
 from functools import cached_property
-from typing import Generator
+from typing import Generator, List
 
 from deepdiff import DeepDiff
 
@@ -74,9 +74,13 @@ class ModelBuilderStack:
 
     def process(self, on_element):
         self.stack = []
-        self._process_internal(None, self.schema.schema, on_element)
+        try:
+            processing_order = self.schema.settings.processing_order
+        except AttributeError:
+            processing_order = None
+        self._process_internal(None, self.schema.schema, on_element, processing_order)
 
-    def _process_internal(self, key, element, on_element):
+    def _process_internal(self, key, element, on_element, processing_order: List[str] = None):
         popped = False
 
         try:
@@ -100,7 +104,21 @@ class ModelBuilderStack:
                     for idx, l in enumerate(self.top.data):
                         self._process_internal(idx, l, on_element)
                 case self.DICT:
-                    for k, v in self.top.data.items():
+                    items = list(self.top.data.items())
+                    if processing_order:
+                        def key_function(x):
+                            try:
+                                return processing_order.index(x)
+                            except ValueError:
+                                pass
+                            try:
+                                return processing_order.index('*')
+                            except ValueError:
+                                pass
+                            return len(processing_order)
+
+                        items.sort(key=key_function)
+                    for k, v in items:
                         self._process_internal(k, v, on_element)
 
             next(ret, '')
