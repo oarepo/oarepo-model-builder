@@ -36,10 +36,15 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         )
 
         self.set(
+            settings, 'mapping-package', lambda: f'{settings.package}.mappings'
+        )
+
+        self.set(
             settings, 'mapping-file', lambda: os.path.join(
                 settings.package_path,
                 'mappings',
                 'v7',
+                settings.package_base,
                 settings.schema_name
             )
         )

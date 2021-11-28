@@ -37,8 +37,14 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: (f'{settings.package}.schema.{record_prefix}MetadataSchema'))
         self.set(settings.python, 'record-schema-metadata-alembic',
                  lambda: (f'{settings.package_base}'))
+        self.set(settings.python, 'record-schema-metadata-poetry',
+                 lambda: (f'{settings.package_base}'))
         self.set(settings.python, 'record-metadata-class',
                  lambda: (f'{settings.package}.metadata.{record_prefix}Metadata'))
+
+        self.set(settings.python, 'record-mapping-poetry',
+                 lambda: (f'{settings.package_base}'))
+
         self.set(settings.python, 'record-permissions-class',
                  lambda: (f'{settings.package}.permissions.{record_prefix}PermissionPolicy'))
         self.set(settings.python, 'record-dumper-class',

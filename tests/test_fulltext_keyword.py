@@ -63,7 +63,7 @@ def test_fulltext(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -89,7 +89,7 @@ def test_keyword(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -116,7 +116,7 @@ def test_fulltext_keyword(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {

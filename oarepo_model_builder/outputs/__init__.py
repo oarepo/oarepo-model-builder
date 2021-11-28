@@ -13,3 +13,7 @@ class OutputBase:
 
     def finish(self):
         raise NotImplemented()
+
+    @property
+    def created(self):
+        raise NotImplementedError()

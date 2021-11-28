@@ -9,3 +9,6 @@ class {{ python.record_metadata_class|base_name }}({% for b in python.record_met
     """Model for {{ python.record_class|base_name }} metadata."""
 
     __tablename__ = "{{ python.record_metadata_table_name }}"
+
+    # Enables SQLAlchemy-Continuum versioning
+    __versioned__ = {}

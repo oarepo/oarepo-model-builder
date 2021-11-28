@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.1.7"
+version = "0.9.0"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
-authors = ["Miroslav Bauer <bauer@cesnet.cz>"]
+authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
 
 packages = [
@@ -35,22 +35,30 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.plugins."oarepo_model_builder.builders"]
-001-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
-010-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
-020-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
-050-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
-060-invenio_record_metadata = "oarepo_model_builder.invenio.invenio_record_metadata:InvenioRecordMetadataBuilder"
-070-invenio_record_permissions = "oarepo_model_builder.invenio.invenio_record_permissions:InvenioRecordPermissionsBuilder"
-080-invenio_record_search_options = "oarepo_model_builder.invenio.invenio_record_search:InvenioRecordSearchOptionsBuilder"
-090-invenio_record_service_config = "oarepo_model_builder.invenio.invenio_record_service_config:InvenioRecordServiceConfigBuilder"
-100-invenio_record_service = "oarepo_model_builder.invenio.invenio_record_service:InvenioRecordServiceBuilder"
-110-invenio_record_schema = "oarepo_model_builder.invenio.invenio_record_schema:InvenioRecordSchemaBuilder"
-120-invenio_record_dumper = "oarepo_model_builder.invenio.invenio_record_dumper:InvenioRecordDumperBuilder"
-130-invenio_record_metadata_alembic_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_alembic_poetry:InvenioRecordMetadataAlembicPoetryBuilder"
-140-invenio_record_resource_config = "oarepo_model_builder.invenio.invenio_record_resource_config:InvenioRecordResourceConfigBuilder"
-150-invenio_record_resource = "oarepo_model_builder.invenio.invenio_record_resource:InvenioRecordResourceBuilder"
-160-invenio_blueprint = "oarepo_model_builder.invenio.invenio_blueprint:InvenioBlueprintBuilder"
-170-invenio_resource_poetry = "oarepo_model_builder.invenio.invenio_record_resource_poetry:InvenioRecordResourcePoetryBuilder"
+020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
+030-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+
+100-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
+110-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
+120-invenio_record_metadata = "oarepo_model_builder.invenio.invenio_record_metadata:InvenioRecordMetadataBuilder"
+130-invenio_record_schema = "oarepo_model_builder.invenio.invenio_record_schema:InvenioRecordSchemaBuilder"
+
+200-invenio_record_permissions = "oarepo_model_builder.invenio.invenio_record_permissions:InvenioRecordPermissionsBuilder"
+
+300-invenio_record_search_options = "oarepo_model_builder.invenio.invenio_record_search:InvenioRecordSearchOptionsBuilder"
+310-invenio_record_service_config = "oarepo_model_builder.invenio.invenio_record_service_config:InvenioRecordServiceConfigBuilder"
+320-invenio_record_service = "oarepo_model_builder.invenio.invenio_record_service:InvenioRecordServiceBuilder"
+340-invenio_record_dumper = "oarepo_model_builder.invenio.invenio_record_dumper:InvenioRecordDumperBuilder"
+
+400-invenio_record_resource_config = "oarepo_model_builder.invenio.invenio_record_resource_config:InvenioRecordResourceConfigBuilder"
+410-invenio_record_resource = "oarepo_model_builder.invenio.invenio_record_resource:InvenioRecordResourceBuilder"
+420-invenio_blueprint = "oarepo_model_builder.invenio.invenio_blueprint:InvenioBlueprintBuilder"
+
+900-invenio_sample_app_poetry = "oarepo_model_builder.invenio.invenio_sample_app_poetry:InvenioSampleAppPoetryBuilder"
+910-invenio_record_metadata_alembic_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_alembic_poetry:InvenioRecordMetadataAlembicPoetryBuilder"
+920-invenio_record_metadata_models_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_models_poetry:InvenioRecordMetadataModelsPoetryBuilder"
+930-invenio_resource_poetry = "oarepo_model_builder.invenio.invenio_record_resource_poetry:InvenioRecordResourcePoetryBuilder"
+940-invenio_record_search_poetry = "oarepo_model_builder.invenio.invenio_record_search_poetry:InvenioRecordSearchPoetryBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.ouptuts"]
 jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"

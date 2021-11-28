@@ -5,6 +5,7 @@ from . import process
 from .json_base import JSONBaseBuilder
 from .utils import ensure_parent_modules
 from ..utils.schema import is_schema_element
+from ..utils.verbose import log
 
 
 class MappingBuilder(JSONBaseBuilder):
@@ -13,20 +14,30 @@ class MappingBuilder(JSONBaseBuilder):
     output_file_name = 'mapping-file'
     parent_module_root_name = 'mappings'
 
-
     @process('/model/**', condition=lambda current: is_schema_element(current.stack))
     def enter_model_element(self, stack: ModelBuilderStack):
-        self.model_element_enter(stack)
+        # ignore schema leaves different than "type" - for example, minLength, ...
+        # that should not be present in mapping
+        if stack.top_type in (stack.LIST, stack.DICT) or stack.top.key == 'type':
+            self.model_element_enter(stack)
 
-        # process children
-        yield
+            # process children
+            yield
 
-        data = stack.top.data
-        if isinstance(data, dict) and 'oarepo:mapping' in data:
-            self.output.merge_mapping(data['oarepo:mapping'])
+            data = stack.top.data
+            if isinstance(data, dict) and 'oarepo:mapping' in data:
+                self.output.merge_mapping(data['oarepo:mapping'])
 
-        self.model_element_leave(stack)
+            self.model_element_leave(stack)
 
     def on_enter_model(self, output_name, stack: ModelBuilderStack):
         ensure_parent_modules(self.builder, Path(output_name),
                               ends_at=self.parent_module_root_name)
+        self.output.enter('mappings', {})
+
+    def finish(self):
+        super().finish()
+
+        log(log.INFO, f"""
+    invenio index init --force
+            """)

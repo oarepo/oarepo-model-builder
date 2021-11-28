@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 import sys
@@ -51,12 +52,16 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
     # so that warnings only will be emitted. With each verbosity level
     # it will decrease
     logging.basicConfig(
-        level=logging.WARNING - verbosity,
+        level=logging.INFO - verbosity,
         format=''
     )
 
-    log.enter(1, 'Processing model %s into output directory %s',
-              model_filename, output_directory)
+    handler = logging.FileHandler(Path(output_directory) / 'installation.log', 'a')
+    handler.setLevel(logging.INFO)
+    logging.root.addHandler(handler)
+
+    log.enter(0, '\n\n%s\n\nProcessing model %s into output directory %s',
+              datetime.datetime.now(), model_filename, output_directory)
 
     builder = create_builder_from_entrypoints()
     loaders = load_entry_points_dict('oarepo_model_builder.loaders')
@@ -83,6 +88,8 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
     builder.build(schema, output_directory)
 
     log.leave('Done')
+
+    print(f"Log saved to {Path(output_directory) / 'installation.log'}")
 
 
 def load_config(schema, config, loaders):

@@ -21,6 +21,10 @@ class PythonOutput(OutputBase):
             self.original_data = None
             self.cst = cst.parse_module('')
 
+    @property
+    def created(self):
+        return self.original_data is None
+
     def finish(self):
         code = self.cst.code
         if code != self.original_data:

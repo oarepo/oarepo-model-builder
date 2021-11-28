@@ -48,7 +48,7 @@ def test_simple_mapping_builder():
         output_dir=''
     )
 
-    data = json5.load(builder.open(os.path.join('test', 'mappings', 'v7', 'test-1.0.0.json')))
+    data = json5.load(builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -91,7 +91,7 @@ def test_mapping_preprocessor():
         output_dir=''
     )
 
-    data = json5.load(builder.open(os.path.join('test', 'mappings', 'v7', 'test-1.0.0.json')))
+    data = json5.load(builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {

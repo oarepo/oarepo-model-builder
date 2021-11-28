@@ -27,6 +27,10 @@ class JSONOutput(OutputBase):
 
         self.stack = JSONStack()
 
+    @property
+    def created(self):
+        return self.original_data is None
+
     def finish(self):
         data = self.stack.value
         if DeepDiff(data, self.original_data):

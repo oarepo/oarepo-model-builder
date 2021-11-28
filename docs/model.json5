@@ -1,6 +1,6 @@
 {
   settings: {
-    package: 'test',
+    package: 'record_test',
     plugins: {
       'packages': []
     }
@@ -8,7 +8,7 @@
   model: {
     properties: {
       a: {
-        type: 'string',
+        type: 'fulltext',
         minLength: 5
       }
     },
