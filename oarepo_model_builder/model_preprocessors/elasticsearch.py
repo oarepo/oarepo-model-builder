@@ -10,7 +10,25 @@ class ElasticsearchModelPreprocessor(ModelPreprocessor):
             settings,
             {
                 'elasticsearch': {
-                    'keyword-ignore-above': 50
+                    'version': 'v7',
+                    'keyword-ignore-above': 50,
+                    'templates': {
+                        'v7': {
+                            'mappings': {
+                                "properties": {
+                                    "id": {
+                                        "type": "keyword"
+                                    },
+                                    "created": {
+                                        "type": "date"
+                                    },
+                                    "updated": {
+                                        "type": "date"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         )

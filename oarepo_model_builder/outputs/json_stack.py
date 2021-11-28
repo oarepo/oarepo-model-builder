@@ -32,10 +32,13 @@ class JSONStack:
 
             el = copy.deepcopy(el)
             if isinstance(top, dict):
-                top[key] = el
+                if key not in top:
+                    top[key] = el
+                else:
+                    top[key] = deepmerge(el, top[key])
             elif isinstance(top, list):
                 if key < len(top):
-                    top[key] = el
+                    top[key] = deepmerge(el, top[key])
                 else:
                     assert key == len(top)
                     top.append(el)

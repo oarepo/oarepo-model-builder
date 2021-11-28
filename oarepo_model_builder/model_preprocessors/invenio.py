@@ -18,12 +18,13 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 'templates': {
                 },
                 'marshmallow': {
-                    'top-level-metadata': True,
                     'mapping': {
                     }
                 }
             }
         })
+
+        settings.setdefault('top-level-metadata', True)
 
         record_prefix = settings.python.record_prefix
         self.set(settings.python, 'record-prefix-snake',

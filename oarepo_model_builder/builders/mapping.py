@@ -33,7 +33,15 @@ class MappingBuilder(JSONBaseBuilder):
     def on_enter_model(self, output_name, stack: ModelBuilderStack):
         ensure_parent_modules(self.builder, Path(output_name),
                               ends_at=self.parent_module_root_name)
+        self.output.merge(
+            self.settings.elasticsearch.templates[self.settings.elasticsearch.version]
+        )
         self.output.enter('mappings', {})
+        self.output.enter('properties', {})
+
+        if self.settings.top_level_metadata:
+            self.output.enter('metadata', {})
+            self.output.primitive('type', 'object')
 
     def finish(self):
         super().finish()

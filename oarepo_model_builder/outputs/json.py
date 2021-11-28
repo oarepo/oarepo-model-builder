@@ -51,3 +51,6 @@ class JSONOutput(OutputBase):
         if key:
             self.stack.push(key, value)
             self.stack.pop()
+
+    def merge(self, value):
+        self.stack.merge(value)
