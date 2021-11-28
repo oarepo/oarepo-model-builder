@@ -108,7 +108,7 @@ def create_field(field_type, options=(), validators=(), data=None):
     validators = [*validators, *data['oarepo:marshmallow'].get('validators', [])]
     nested = data['oarepo:marshmallow'].get('nested', False)
     if validators:
-        opts.append(f'validators=[{",".join(validators)}]')
+        opts.append(f'validate=[{",".join(validators)}]')
     ret = f'{field_type}({", ".join(opts)})'
     if nested:
         ret = f'ma_fields.Nested({ret})'
