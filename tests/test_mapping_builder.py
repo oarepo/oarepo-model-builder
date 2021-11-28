@@ -31,6 +31,12 @@ def test_simple_mapping_builder():
                     'python': {
                         'use_isort': False,
                         'use_black': False
+                    },
+                    'elasticsearch': {
+                        'version': 'v7',
+                        'templates': {
+                            'v7': {}
+                        }
                     }
                 },
                 'model': {
@@ -50,13 +56,7 @@ def test_simple_mapping_builder():
 
     data = json5.load(builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
-    assert data == {
-        'properties': {
-            'a': {
-                'type': 'text'
-            }
-        }
-    }
+    assert data == {'mappings': {'properties': {'a': {'type': 'text'}}}}
 
 
 def test_mapping_preprocessor():
@@ -77,6 +77,12 @@ def test_mapping_preprocessor():
                     'python': {
                         'use_isort': False,
                         'use_black': False
+                    },
+                    'elasticsearch': {
+                        'version': 'v7',
+                        'templates': {
+                            'v7': {}
+                        }
                     }
                 },
                 'model': {
@@ -94,20 +100,22 @@ def test_mapping_preprocessor():
     data = json5.load(builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {
-        'properties': {
-            'a': {
-                'type': 'object',
-                'properties': {
-                    'lang': {
-                        'type': 'keyword'
-                    },
-                    'value': {
-                        'type': 'text'
+        "mappings": {
+            'properties': {
+                'a': {
+                    'type': 'object',
+                    'properties': {
+                        'lang': {
+                            'type': 'keyword'
+                        },
+                        'value': {
+                            'type': 'text'
+                        }
                     }
+                },
+                'a_cs': {
+                    'type': 'text'
                 }
-            },
-            'a_cs': {
-                'type': 'text'
             }
         }
     }

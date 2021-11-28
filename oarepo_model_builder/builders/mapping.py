@@ -37,9 +37,9 @@ class MappingBuilder(JSONBaseBuilder):
             self.settings.elasticsearch.templates[self.settings.elasticsearch.version]
         )
         self.output.enter('mappings', {})
-        self.output.enter('properties', {})
 
-        if self.settings.top_level_metadata:
+        if self.settings.get('top_level_metadata'):
+            self.output.enter('properties', {})
             self.output.enter('metadata', {})
             self.output.primitive('type', 'object')
 

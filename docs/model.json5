@@ -1,9 +1,6 @@
 {
   settings: {
     package: 'record_test',
-    plugins: {
-      'packages': []
-    }
   },
   model: {
     properties: {
