@@ -40,6 +40,10 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         )
 
         self.set(
+            settings, 'jsonschemas-package', lambda: f'{settings.package}.jsonschemas'
+        )
+
+        self.set(
             settings, 'mapping-file', lambda: os.path.join(
                 settings.package_path,
                 'mappings',
@@ -49,7 +53,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             )
         )
 
-        self.set(settings, 'schema-server', lambda: 'local://')
+        self.set(settings, 'schema-server', lambda: 'http://localhost/schemas/')
 
         self.set(settings, 'index-name', lambda: settings.package_base + '-' + os.path.basename(settings.mapping_file).replace('.json', ''))
 

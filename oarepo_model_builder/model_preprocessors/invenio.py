@@ -46,6 +46,9 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(settings.python, 'record-mapping-poetry',
                  lambda: (f'{settings.package_base}'))
 
+        self.set(settings.python, 'record-jsonschemas-poetry',
+                 lambda: (f'{settings.package_base}'))
+
         self.set(settings.python, 'record-permissions-class',
                  lambda: (f'{settings.package}.permissions.{record_prefix}PermissionPolicy'))
         self.set(settings.python, 'record-dumper-class',
