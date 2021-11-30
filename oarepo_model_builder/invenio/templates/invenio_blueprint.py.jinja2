@@ -1,0 +1,12 @@
+from {{ python.record_service_config_class|package_name }} import {{ python.record_service_config_class|base_name }}
+from {{ python.record_service_class|package_name }} import {{ python.record_service_class|base_name }}
+from {{ python.record_resource_config_class|package_name }} import {{ python.record_resource_config_class|base_name }}
+from {{ python.record_resource_class|package_name }} import {{ python.record_resource_class|base_name }}
+
+def {{ python.register_blueprint_function|base_name }}(app):
+    service_config = {{ python.record_service_config_class|base_name }}()
+    resource_config = {{ python.record_resource_config_class|base_name }}()
+    service = {{ python.record_service_class|base_name }}(config=service_config)
+    resource = {{ python.record_resource_class|base_name }}(service=service, config=resource_config)
+
+    return resource.as_blueprint()

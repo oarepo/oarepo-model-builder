@@ -1,0 +1,9 @@
+from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
+
+
+{% for b in python.record_search_options_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+
+class {{ python.record_search_options_class|base_name }}({% for b in python.record_search_options_bases %}{{ b|base_name }}, {% endfor %}InvenioSearchOptions):
+    """{{ python.record_class|base_name }} search options."""

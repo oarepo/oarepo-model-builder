@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.1.7"
+version = "0.9.0"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
-authors = ["Miroslav Bauer <bauer@cesnet.cz>"]
+authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
 
 packages = [
@@ -10,33 +10,81 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-json5 = "^0.9.6"
-deepmerge = "^0.3.0"
+python = ">=3.10,<4.0"
+json5 = { version = "^0.9.6", optional = true }
 libcst = "^0.3.19"
-munch = "^2.4.0"
 click = ">=7.1"
 tomlkit = "^0.7.2"
+jsonpointer = "^2.2"
+deepdiff = "^5.6.0"
+PyYAML = { version = "^6.0", optional = true }
+Jinja2 = "^3.0.3"
+munch = "^2.5.0"
+isort = "^5.10.1"
+black = "^21.11b1"
+
+[tool.poetry.extras]
+json5 = ["json5"]
+pyyaml = ["pyyaml"]
 
 [tool.poetry.dev-dependencies]
-pytest = "^4.6"
+pytest = "^6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.plugins."oarepo_model_builder.source"]
-datamodel = "oarepo_model_builder.builders:DataModelBuilder"
+[tool.poetry.plugins."oarepo_model_builder.builders"]
+020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
+030-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
 
-[tool.poetry.plugins."oarepo_model_builder.elements"]
-jsonschema = "oarepo_model_builder.builders:JSONSchemaBuilder"
-mapping = "oarepo_model_builder.builders:MappingBuilder"
+100-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
+110-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
+120-invenio_record_metadata = "oarepo_model_builder.invenio.invenio_record_metadata:InvenioRecordMetadataBuilder"
+130-invenio_record_schema = "oarepo_model_builder.invenio.invenio_record_schema:InvenioRecordSchemaBuilder"
 
-[tool.poetry.plugins."oarepo_model_builder.jsonschema"]
-jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"
+200-invenio_record_permissions = "oarepo_model_builder.invenio.invenio_record_permissions:InvenioRecordPermissionsBuilder"
 
-[tool.poetry.plugins."oarepo_model_builder.mapping"]
-mapping = "oarepo_model_builder.outputs:MappingOutput"
+300-invenio_record_search_options = "oarepo_model_builder.invenio.invenio_record_search:InvenioRecordSearchOptionsBuilder"
+310-invenio_record_service_config = "oarepo_model_builder.invenio.invenio_record_service_config:InvenioRecordServiceConfigBuilder"
+320-invenio_record_service = "oarepo_model_builder.invenio.invenio_record_service:InvenioRecordServiceBuilder"
+340-invenio_record_dumper = "oarepo_model_builder.invenio.invenio_record_dumper:InvenioRecordDumperBuilder"
+
+400-invenio_record_resource_config = "oarepo_model_builder.invenio.invenio_record_resource_config:InvenioRecordResourceConfigBuilder"
+410-invenio_record_resource = "oarepo_model_builder.invenio.invenio_record_resource:InvenioRecordResourceBuilder"
+420-invenio_blueprint = "oarepo_model_builder.invenio.invenio_blueprint:InvenioBlueprintBuilder"
+
+900-invenio_sample_app_poetry = "oarepo_model_builder.invenio.invenio_sample_app_poetry:InvenioSampleAppPoetryBuilder"
+910-invenio_record_metadata_alembic_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_alembic_poetry:InvenioRecordMetadataAlembicPoetryBuilder"
+920-invenio_record_metadata_models_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_models_poetry:InvenioRecordMetadataModelsPoetryBuilder"
+930-invenio_resource_poetry = "oarepo_model_builder.invenio.invenio_record_resource_poetry:InvenioRecordResourcePoetryBuilder"
+940-invenio_record_search_poetry = "oarepo_model_builder.invenio.invenio_record_search_poetry:InvenioRecordSearchPoetryBuilder"
+950-invenio_record_jsonschemas_poetry = "oarepo_model_builder.invenio.invenio_record_jsonschemas_poetry:InvenioRecordJSONSchemasPoetryBuilder"
+
+
+[tool.poetry.plugins."oarepo_model_builder.ouptuts"]
+jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
+mapping = "oarepo_model_builder.outputs.mapping:MappingOutput"
+python = "oarepo_model_builder.outputs.python:PythonOutput"
+toml = "oarepo_model_builder.outputs.toml:TOMLOutput"
+
+[tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
+10-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
+
+[tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
+01-default = "oarepo_model_builder.model_preprocessors.default_values:DefaultValuesModelPreprocessor"
+10-invenio = "oarepo_model_builder.model_preprocessors.invenio:InvenioModelPreprocessor"
+20-elasticsearch = "oarepo_model_builder.model_preprocessors.elasticsearch:ElasticsearchModelPreprocessor"
+
+[tool.poetry.plugins."oarepo_model_builder.loaders"]
+json = "oarepo_model_builder.loaders:json_loader"
+json5 = "oarepo_model_builder.loaders:json_loader"
+yaml = "oarepo_model_builder.loaders:yaml_loader"
+yml = "oarepo_model_builder.loaders:yaml_loader"
+
+[tool.poetry.plugins."oarepo_model_builder.templates"]
+99-base_templates = "oarepo_model_builder.invenio"
+
 
 [tool.poetry.scripts]
-models = "oarepo_model_builder.cli:model"
+oarepo-compile-model = "oarepo_model_builder.cli:run"

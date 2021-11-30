@@ -1,0 +1,35 @@
+from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
+from invenio_records_resources.services import RecordLink, pagination_links
+from invenio_records_resources.services.records.components import DataComponent, MetadataComponent
+
+
+{% for b in python.record_service_config_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+from {{ python.record_class|package_name }} import {{ python.record_class|base_name }}
+from {{ python.record_permissions_class|package_name }} import {{ python.record_permissions_class|base_name }}
+from {{ python.record_schema_class|package_name }} import {{ python.record_schema_class|base_name }}
+from {{ python.record_search_options_class|package_name }} import {{ python.record_search_options_class|base_name }}
+
+
+class {{ python.record_service_config_class|base_name }}({% for b in python.record_service_config_bases %}{{ b|base_name }}, {% endfor %}InvenioRecordServiceConfig):
+    """{{ python.record_class|base_name }} service config."""
+
+    permission_policy_cls = {{ python.record_permissions_class|base_name }}
+    schema = {{ python.record_schema_class|base_name }}
+    search = {{ python.record_search_options_class|base_name }}
+    record_cls = {{ python.record_class|base_name }}
+
+    components = [
+       DataComponent,
+       MetadataComponent
+    ]
+
+    @property
+    def links_item(self):
+        return {
+            "self": RecordLink("{{ settings.collection_url }}/{id}"),
+        }
+
+    links_search = pagination_links("{{ settings.collection_url }}{?args*}")
+

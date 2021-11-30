@@ -1,39 +1,24 @@
-from typing import List, Dict
+from pathlib import Path
 
-import click
+from oarepo_model_builder.stack import ModelBuilderStack
+from . import process
+from .json_base import JSONBaseBuilder
+from .utils import ensure_parent_modules
+from ..utils.schema import is_schema_element
 
-from oarepo_model_builder.builders import JSONBuilder
-from oarepo_model_builder.config import Config
-from oarepo_model_builder.outputs import JsonSchemaOutput, BaseOutput
 
+class JSONSchemaBuilder(JSONBaseBuilder):
+    TYPE = 'jsonschema'
+    output_file_type = 'jsonschema'
+    output_file_name = 'schema-file'
+    parent_module_root_name = 'jsonschemas'
 
-class JSONSchemaBuilder(JSONBuilder):
-    """Handles building of jsonschema from a data model specification."""
+    @process('/model/**', condition=lambda current: is_schema_element(current.stack))
+    def model_element(self, stack: ModelBuilderStack):
+        self.model_element_enter(stack)
+        yield
+        self.model_element_leave(stack)
 
-    def __init__(self):
-        super().__init__()
-        self.output = None
-
-    def begin(self, config, outputs, root):
-        output = outputs['jsonschema'] = JsonSchemaOutput()
-        output.path = config.resolve_path(
-            'schema_path',
-            'jsonschemas/{package}/{datamodel}-v{datamodel_version}.json')
-        self.stack[0] = output.data
-
-    def pre(self, el, config: Config, path: List[str], outputs: Dict[str, BaseOutput]):
-        path_skipped = path[-1].startswith('oarepo:')
-        if path_skipped:
-            self.push(self.IGNORED_SUBTREE, path)
-        elif isinstance(el, dict):
-            self.push({}, path)
-        else:
-            self.push(el, path)
-
-    def post(self, el, config, path, outputs):
-        self.pop()
-
-    def options(self):
-        return [
-            click.option('schema-path')
-        ]
+    def on_enter_model(self, output_name, stack: ModelBuilderStack):
+        ensure_parent_modules(self.builder, Path(output_name),
+                              ends_at=self.parent_module_root_name)

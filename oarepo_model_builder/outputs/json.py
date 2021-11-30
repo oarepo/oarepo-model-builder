@@ -1,25 +1,56 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2021 CESNET.
-#
-# OARepo-Communities is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
-
-"""OArepo module that generates data model files from a JSON specification file."""
 import json
-import os
 
-from oarepo_model_builder.outputs.output import BaseOutput
+from deepdiff import DeepDiff
+
+from . import OutputBase
+from .json_stack import JSONStack
+from ..utils.verbose import log
+
+try:
+    import json5
+except ImportError:
+    import json as json5
 
 
-class JsonOutput(BaseOutput):
-    """Output that handles JSON formatted data."""
+class JSONOutput(OutputBase):
+    IGNORE_NODE = JSONStack.IGNORED_NODE
+    IGNORE_SUBTREE = JSONStack.IGNORED_SUBTREE
 
-    def save(self):
-        if self.data and self.path:
-            parent = os.path.dirname(self.path)
-            if not os.path.exists(parent):
-                os.makedirs(parent)
-                # TODO: maybe add __init__.py automatically into each created dir?
-            with open(self.path, mode='w') as fp:
-                fp.write(json.dumps(self.data, indent=2, sort_keys=True))
+    def begin(self):
+        try:
+            with self.builder.open(self.path) as f:
+                self.original_data = json5.load(f)  # noqa
+        except FileNotFoundError:
+            self.original_data = None
+        except ValueError:
+            self.original_data = None
+
+        self.stack = JSONStack()
+
+    @property
+    def created(self):
+        return self.original_data is None
+
+    def finish(self):
+        data = self.stack.value
+        if DeepDiff(data, self.original_data):
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            log(2, 'Saving %s', self.path)
+            with self.builder.open(self.path, mode='w') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+
+    def enter(self, key, el):
+        if key:
+            self.stack.push(key, el)
+
+    def leave(self):
+        if not self.stack.empty:
+            self.stack.pop()
+
+    def primitive(self, key, value):
+        if key:
+            self.stack.push(key, value)
+            self.stack.pop()
+
+    def merge(self, value):
+        self.stack.merge(value)

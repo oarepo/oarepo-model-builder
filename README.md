@@ -1,379 +1,343 @@
 # OARepo model builder
 
-An utility library that generates OARepo required data model files from a JSON specification file.
+A library and command-line tool to generate invenio model from a single model file.
 
-## Installation
+## CLI Usage
 
-```shell
-poetry install oarepo-model-builder
+```bash
+oarepo-compile-model model.yaml
 ```
 
-## Data model specification file
+will compile the model.yaml into the current directory. Options:
 
-Data model specification should be a JSON5 formatted file based on JSON Schema with the following OArepo specific
-extension keywords:
-
-### oarepo:use
-
-- Defines a reference to another datamodel. Contents of referenced datamodel will be used in place of this directive.
-- Can be used anywhere in the specification file.
-- This directive will be replaced by a referred datamodel type contents.
-- Only new properties will be added to current property/object.
-- All referenced datamodels must be registered under *datamodel* entrypoints (see **Entrypoints**)
-
-#### Syntax
-
-```json
-"oarepo:use": List[string] | string   // list of datamodel type references or single string reference 
+```bash
+  --output-directory <dir> Output directory where the generated files will be
+                           placed. Defaults to "."
+  --package <name>         Package into which the model is generated. If not
+                           passed, the name of the current directory,
+                           converted into python package name, is used.
+  --set <name=value>       Overwrite option in the model file. 
+                           Example --set settings.elasticsearch.keyword-ignore-above=20
+  -v                       Increase the verbosity. This option can be used
+                           multiple times.
+  --config <filename>      Load a config file and replace parts of the model
+                           with it. The config file can be a json, yaml or a
+                           python file. If it is a python file, it is
+                           evaluated with the current model stored in the
+                           "oarepo_model" global variable and after the
+                           evaluation all globals are set on the model.
+  --isort / --skip-isort   Call isort on generated sources (default: yes)
+  --black / --skip-black   Call black on generated sources (default: yes)
 ```
 
-#### Example Usage:
+## Model file structure
 
-The following source specification:
+A model is a json/yaml file with the following structure:
 
-```json5
-// datamodel.json5
-{
-  "title": "Test record v1.0.0",
-  "type": "object",
-  "additionalProperties": false,
-  "oarepo:use": [
-    "include1"
-  ],
-  "properties": {
-    "field0": {
-      "oarepo:use": "include2"
+```yaml
+settings:
+  python:
+  elasticsearch:
+model:
+  properties:
+    title: { type: 'fulltext' }
+```
+
+There might be more sections (documentation etc.), but only the ``settings`` and ``model`` are currently processed.
+
+### settings section
+
+The settings section might contain the following keys
+(default values below):
+
+```yaml
+settings:
+  package: basename(output dir) with '-' converted to '_'
+  kebap-package: to_kebap(package)
+  package-path: path to package as python Path instance
+  schema-version: 1.0.0
+  schema-name: { kebap-package }-{schema-version}.json
+  schema-file: full path to generated json schema
+  mapping-file: full path to generated mapping
+  collection-url: camel_case(last component of package)
+
+  processing-order: [ 'settings', '*', 'model' ]
+
+  python:
+    record-prefix: camel_case(last component of package)
+    templates: { }   # overridden templates
+    marshmallow:
+      top-level-metadata: true
+      mapping: { }
+
+    record-prefix-snake: snake_case(record_prefix)
+
+    record-class: { settings.package }.record.{record_prefix}Record
+      # full record class name with package
+    record-schema-class: { settings.package }.schema.{record_prefix}Schema
+      # full record schema class name (apart from invenio stuff, contains only metadata field)
+    record-schema-metadata-class: { settings.package }.schema.{record_prefix}MetadataSchema
+      # full record schema metadata class name (contains model schema as marshmallow)
+    record-schema-metadata-alembic: { settings.package_base }
+    # name of key in pyproject.toml invenio_db.alembic entry point 
+    record-metadata-class: { settings.package }.metadata.{record_prefix}Metadata
+      # db class to store record's metadata 
+    record-metadata-table-name: { record_prefix.lower() }_metadata
+      # name of database table for storing metadata 
+    record-permissions-class: { settings.package }.permissions.{record_prefix}PermissionPolicy
+      # class containing permissions for the record
+    record-dumper-class: { settings.package }.dumper.{record_prefix}Dumper
+      # record dumper class for elasticsearch
+    record-search-options-class: { settings.package }.search_options.{record_prefix}SearchOptions
+      # search options for the record
+    record-service-config-class: { settings.package }.service_config.{record_prefix}ServiceConfig
+      # configuration of record's service
+    record-resource-config-class: { settings.package }.resource.{record_prefix}ResourceConfig
+      # configuration of record's resource
+    record-resource-class: { settings.package }.resource.{record_prefix}Resource
+      # record resource
+    record-resource-blueprint-name: { record_prefix }
+    # blueprint name of the resource 
+    register-blueprint-function: { settings.package }.blueprint.register_blueprint'
+      # name of the blueprint registration function
+
+  elasticsearch:
+    keyword-ignore-above: 50
+
+  plugins:
+    packages: [ ]
+    # list of extra packages that should be installed in compiler's venv
+    output|builder|model|property:
+      # plugin types - file outputs, builders, model preprocessors, property preprocessors 
+      disabled: [ ]
+      # list of plugin names to disable
+      # string "__all__" to disable all plugins in this category    
+      enabled:
+      # list of plugin names to enable. The plugins will be used
+      # in the order defined. Use with disabled: __all__
+      # list of "module:className" that will be added at the end of
+      # plugin list
+```
+
+### model section
+
+The model section is a json schema that might be annotated with extra sections. For example:
+
+```yaml
+model:
+  properties:
+    title:
+      type: multilingual
+      oarepo:ui:
+        label: Title
+        class: bold-text
+      oarepo:documentation: |
+        Lorem ipsum ...
+        Dolor sit ...
+```
+
+**Note**: ``multilingual`` is a special type (not defined in this library) that is translated to the correct schema,
+mapping and marshmallow files with a custom ``PropertyPreprocessor``.
+
+``oarepo:ui`` gives information for the ui output
+
+``oarepo:documentation`` is a section that is currently ignored
+
+## Referencing a model
+
+## API Usage
+
+To generate invenio model from a model file, perform the following steps:
+
+1. Load the model into a ``ModelSchema`` instance
+    ```python
+    from oarepo_model_builder.schema import ModelSchema
+    from oarepo_model_builder.loaders import yaml_loader
+   
+    included_models = {
+        'my_model': lambda parent_model: {'test': 'abc'} 
     }
-  }
-}
-```
+    loaders = {'yaml': yaml_loader}
+   
+    model = ModelSchema(file_path='test.yaml', 
+                        included_models=included_models, 
+                        loaders=loaders)
+    ```
 
-```json5
-// datamodels/include1.json5
-{
-  "title": "Included properties v1.0.0",
-  "type": "object",
-  "additionalProperties": true,
-  "properties": {
-    "includedField1": {
-      "type": "string",
-    }
-  }
-}
-```
+   You can also path directly the content of the file path in ``content`` attribute
 
-```json5
-// datamodels/include2.json5
-{
-  "type": "number"
-}
-```
+   The ``included_models`` is a mapping between model key and its accessor. It is used to replace any ``oarepo:use``
+   element. See the Referencing a model above.
 
-```python
-# setup.py
-entry_points = {
-    'oarepo_model_builder.datamodels': [
-        'includes = mypkg.datamodels'
-    ],
-    ...
-}
-```
+   The ``loaders`` handle loading of files - the key is lowercased file extension, value a function taking (schema,
+   path) and returning loaded content
 
-Will be compiled into resulting JSON Schema:
 
-```json
-{
-  "title": "Test record v1.0.0",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "field0": {
-      "type": "number"
-    },
-    "includedField1": {
-      "type": "string"
-    }
-  }
-}
-```
+2. Create an instance of ``ModelBuilder``
 
-### oarepo:search
+   To use the pre-installed set of builders and preprocessors, invoke:
 
-- Specifies how the current field/object should be indexed and handled for search, filtering and aggregations
-- Used by the ElasticSearch Mapping generator to generate property mappings.
-- If not present on a property, a default mapping type of **keyword** or **object** (for object-type properties) is assumed in resulting mapping output
-- Value can be either string or object.
-- This directive is omitted from the JSON Schema builder output
+   ```python
+   from oarepo_model_builder.entrypoints \ 
+    import create_builder_from_entrypoints
+   
+   builder = create_builder_from_entrypoints()
+   ```
 
-#### Syntax
+   To have a complete control of builders and preprocessors, invoke:
 
-```json5
+   ```python
+      from oarepo_model_builder.builder import ModelBuilder
+      from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
+      from oarepo_model_builder.builders.mapping import MappingBuilder
+      from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
+      from oarepo_model_builder.outputs.mapping import MappingOutput
+      from oarepo_model_builder.outputs.python import PythonOutput
+      from oarepo_model_builder.property_preprocessors.text_keyword import TextKeywordPreprocessor
+      from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
+      from oarepo_model_builder.model_preprocessors.elasticsearch import ElasticsearchModelPreprocessor
 
-mapping_config: string  // string value represents an ES mapping type of property
-// or
-mapping_config: object  // you can also pass object for more complex property mapping configurations
-// or
-mapping_config: false  // parent field should be omitted from the generated ES mapping output
+      builder = ModelBuilder(
+        output_builders=[JSONSchemaBuilder, MappingBuilder],
+        outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
+        model_preprocessors=[DefaultValuesModelPreprocessor, ElasticsearchModelPreprocessor],
+        property_preprocessors=[TextKeywordPreprocessor]
+      )    
+   ```   
 
-"oarepo:search": {
-  "mapping": mapping_config  // "oarepo:search" block will be substituted by mapping_object configuration ES mapping output
-}
-// or
-"oarepo:search": string | false  // "string" represents an ES mapping type of the parent property
-```
 
-#### Example usage
+3. Invoke
 
-The following source specification:
+   ```python
+      builder.build(schema, output_directory)
+   ```
 
-```json5
-{
-  "properties": {
-    "testNoMapping": {
-      "type": "string",
-      "oarepo:search": false
-    },
-    "testDefault": {
-      "type": "string"
-    },
-    "testExplicit": {
-      "type": "string",
-      "oarepo:search": {
-        "mapping": "text"
-      }
-    },
-    "testShorthand": {
-      "type": "string",
-      "oarepo:search": "date"
-    },
-    "testObject": {
-      "type": "string",
-      "oarepo:search": {
-        "mapping": {
-          "type": "text",
-          "index": "false"
-        }
-      }
-    },
-    "testArray": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "oarepo:search": "date"
-      }
-    }
-  }
-}
-```
+## Extending the builder
 
-Will result in the following files:
+### Builder pipeline
 
-```json5
-// mappings/v7/mymodel-v1.0.0.json
-{
-  "mappings": {
-    "properties": {
-      "testDefault": {"type": "keyword"},
-      "testExplicit": {"type": "text"},
-      "testShorthand": {"type": "date"},
-      "testObject": {
-        "type": "text",
-        "index": "false"
-      },
-      "testArray": {"type": "date"}
-    }
-  }
-}
-```
+![Pipeline](./docs/oarepo-model-builder.png)
 
-```json5
-// jsonschemas/.../mymodel-v1.0.0.json
-{
-  "properties": {
-    "testNoMapping": {"type": "string"},
-    "testDefault": {"type": "string"},
-    "testExplicit": {"type": "string"},
-    "testShorthand": {"type": "string"},
-    "testObject": {"type": "string"},
-    "testArray": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    }
-  }
-}
-```
+At first, an instance of [ModelSchema](./oarepo_model_builder/schema.py) is obtained. The schema can be either passed
+the content of the schema as text, or just a path pointing to the file. The extension of the file determines
+which [loader](./oarepo_model_builder/loaders/__init__.py) is used. JSON, JSON5 and YAML are supported out of the box (
+if you have json5 and pyyaml packages installed)
 
-### oarepo:ui
+Then [ModelBuilder](./oarepo_model_builder/builder.py).build(schema, output_dir) is called.
 
-- Directive used to specify a field metadata to be used by UI representations of the data model
+It begins with calling all [ModelPreprocessors](./oarepo_model_builder/model_preprocessors/__init__.py). They get the
+whole schema and settings and can modify both.
+See [ElasticsearchModelPreprocessor](./oarepo_model_builder/model_preprocessors/elasticsearch.py) as an example. The
+deepmerge function does not overwrite values if they already exist in settings.
 
-#### Syntax
+For each of the outputs (jsonschema, mapping, record, resource, ...)
+the top-level properties of the transformed schema are then iterated. 
+The order of the top-level properties is given by ``settings.processing-order``.
 
-```json5
-multilingual_string: {lang_code: value, ...}
+The top-level property and all its descendants (a visitor patern, visiting property by property), 
+a [PropertyPreprocessor](./oarepo_model_builder/property_preprocessors/__init__.py)
+is called. 
 
-"oarepo:ui": {
-  "title": multilingual_string,   // Property or object title
-  "label": multilingual_string,   // Label to be displayed on property input fields
-  "hint": multilingual_string     // Additional hint to be displayed on property input fields 
-}
-```
+The preprocessor can either modify the property, decide to remove it or replace it with a new set of properties
+(see [multilang in tests](./tests/multilang.py) ).
 
-### Example usage
+The property is then passed to the
+[OutputBuilder](./oarepo_model_builder/builders/__init__.py)
+(an example is [JSONSchemaBuilder](./oarepo_model_builder/builders/jsonschema.py))
+that serializes the tree of properties into the output.
 
-The following source specification:
-```json5
+The output builder does not create files on the filesystem explicitly but uses instances
+of [OutputBase](./oarepo_model_builder/outputs/__init__.py), for
+example [JSONOutput](./oarepo_model_builder/outputs/json.py) or more
+specialized [JSONSchemaOutput](./oarepo_model_builder/outputs/jsonschema.py).
 
-{
-  "title": "Test record v1.0.0",
-  "type": "object",
-  "oarepo:ui":  {
-    "title": {
-      "cs": "Testovaci zaznam",
-      "en": "Test record"
-    },
-  },
-  "properties": {
-    "field1": {
-      "type": "string",
-      "oarepo:ui": {
-        "label": {
-          "en": "Test field 1"
-        },
-        "hint": {
-          "cs": "Vyplnte testovaci field",
-          "en": "Please provide test field input"
-        }
-      }
-    }
-  }
-}
-```
+See [JSONBaseBuilder](./oarepo_model_builder/builders/json_base.py) for an example of how to get an output and write to
+it (in this case, the json-based output).
 
-Will result in the following files:
+This way, even if more output builders access the same file, their access is coordinated.
 
-##### TODO(@mesemus):
+### Registering Preprocessors, Builders and Outputs for commandline client
 
-## Customization
+The model & property preprocessors, output builders and outputs are registered in entry points. In poetry, it looks as:
 
-### Build configuration
-
-You can override some build process defaults using a custom JSON configuration file, starting with configuration
-from `./config/defauts.json`.
-```json5
-// build-config.json
-{
-  "jsonschema": {
-    "type": "object",
-    "additionalProperties": false
-  },
-  "search": {
-    "default_mapping_type": "keyword",
-    "mapping": {
-      "settings": {
-        "analysis": {
-          "char_filter": {
-            "configured_html_strip": {
-              "type": "html_strip",
-              "escaped_tags": []
-            }
-          },
-          "normalizer": {
-            "wsnormalizer": {
-              "type": "custom",
-              "filter": [
-                "trim"
-              ]
-            }
-          },
-          "filter": {
-            "czech_stop": {
-              "type": "stop",
-              "stopwords": "_czech_"
-            },
-            "czech_stemmer": {
-              "type": "stemmer",
-              "language": "czech"
-            }
-          },
-          "analyzer": {
-            "default": {
-              "tokenizer": "standard",
-              "filter": [
-                "lowercase",
-                "czech_stop",
-                "czech_stemmer"
-              ]
-            }
-          }
-        }
-      },
-      "mappings": {
-        "dynamic": false,
-        "date_detection": false,
-        "numeric_detection": false,
-        "properties": {}
-      }
-    }
-  }
-}
-```
-
-### Entrypoints
-
-This package uses the following entrypoints in the build process to determine, which builders and data models
-should be considered:
-
-#### oarepo_model_builder.source
-Classes responsible for parsing the whole source data model specification file.
-
-Default:
-```python
-datamodel = "oarepo_model_builder.handlers:DataModelBuilder"
-```
-
-#### oarepo_model_builder.elements
-Classes for building the output files from elements in a source data model specification file.
-
-Default:
-```python
-jsonschema = "oarepo_model_builder.builders.jsonschema_builder:JSONSchemaBuilder"
-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
-```
-
-#### oarepo_model_builder.{output_type}
-
-Classes responsible for generating output files of certain type
-
-Default:
 ```toml
-[tool.poetry.plugins."oarepo_model_builder.jsonschema"]
-jsonschema = "oarepo_model_builder.outputs:JsonSchemaOutput"
+[tool.poetry.plugins."oarepo_model_builder.builders"]
+010-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
+020-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+030-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
+040-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
 
-[tool.poetry.plugins."oarepo_model_builder.mapping"]
-mapping = "oarepo_model_builder.outputs:MappingOutput"
+[tool.poetry.plugins."oarepo_model_builder.ouptuts"]
+jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
+mapping = "oarepo_model_builder.outputs.mapping:MappingOutput"
+python = "oarepo_model_builder.outputs.python:PythonOutput"
+
+[tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
+010-text_keyword = "oarepo_model_builder.preprocessors.text_keyword:TextKeywordPreprocessor"
+
+[tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
+01-default = "oarepo_model_builder.transformers.default_values:DefaultValuesModelPreprocessor"
+10-invenio = "oarepo_model_builder.transformers.invenio:InvenioModelPreprocessor"
+20-elasticsearch = "oarepo_model_builder.transformers.elasticsearch:ElasticsearchModelPreprocessor"
+
+[tool.poetry.plugins."oarepo_model_builder.loaders"]
+json = "oarepo_model_builder.loaders:json_loader"
+json5 = "oarepo_model_builder.loaders:json_loader"
+yaml = "oarepo_model_builder.loaders:yaml_loader"
+yml = "oarepo_model_builder.loaders:yaml_loader"
+
+[tool.poetry.plugins."oarepo_model_builder.templates"]
+99-base_templates = "oarepo_model_builder.invenio.templates"
 ```
 
+### Generating python files
 
-#### oarepo_model_builder.datamodels
-Python modules containing data model specification files
+The default python output is based on [libCST](https://github.com/Instagram/LibCST) that enables merging generated code
+with a code that is already present in output files. The transformer provided in this package can:
 
-## Usage
+1. Add imports
+2. Add a new class or function on top-level
+3. Add a new method to an existing class
+4. Add a new const/property to an existing class
 
-To build a data model files from a specification file, this package provides the `models` script:
+The transformer will not touch an existing function/method. Increase verbosity level to get a list of rejected patches
+or add ``--set settings.python.overwrite=true``
+(use with caution, with sources stored in git and do diff afterwards).
 
-```shell
-$ models build --help
-Usage: models build [OPTIONS] SOURCE
+#### Overriding default templates
 
-  Build data model files from JSON5 source specification.
+The default templates are written as jinja2-based templates.
 
-Options:
-  --package TEXT            Package name of the model (example: 'test-package')
-  --config PATH             Path to custom build config file (example: './build-config.json')
-  --datamodel-version TEXT  Version string of the built model: (example: '1.0.0')
-  --help
+To override a single or multiple templates, create a package containing the templates and register it
+in ``oarepo_model_builder.templates``. Be sure to specify the registration key smaller than ``99-``. The template loader
+iterates the sorted set of keys and your templates would be loaded before the default ones. Example:
+
+   ```
+   my_package
+      +-- __init__.py
+      +-- templates
+          +-- invenio_record.py.jinja2 
+   ```
+
+   ```python
+   # my_package/__init__.py
+TEMPLATES = {
+    # resolved relative to the package
+    "record": "templates/invenio_record.py.jinja2"
+}
+   ```
+
+   ```toml
+   [tool.poetry.plugins."oarepo_model_builder.templates"]
+20-my_templates = "my_package"
+   ```
+
+To override a template for a single model, in your model file (or configuration file with -c option or via --set option)
+, specify the relative path to the template:
+
+```yaml
+settings:
+  python:
+    templates:
+      record: ./test/my_invenio_record.py.jinja2
 ```
-

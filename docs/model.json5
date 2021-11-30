@@ -1,0 +1,13 @@
+{
+  settings: {
+    package: 'record_test',
+  },
+  model: {
+    properties: {
+      a: {
+        type: 'fulltext',
+        minLength: 5
+      }
+    },
+  }
+}

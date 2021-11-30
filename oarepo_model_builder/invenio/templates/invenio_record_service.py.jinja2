@@ -1,0 +1,10 @@
+from invenio_records_resources.services import RecordService as InvenioRecordService
+
+
+{% for b in python.record_service_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+
+
+class {{ python.record_service_class|base_name }}({% for b in python.record_service_bases %}{{ b|base_name }}, {% endfor %}InvenioRecordService):
+    """{{ python.record_class|base_name }} service."""

@@ -1,63 +1,125 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2021 CESNET.
-#
-# OARepo-Communities is free software; you can redistribute it and/or modify
-# it under the terms of the MIT License; see LICENSE file for more details.
-
-"""OArepo module that generates data model files from a JSON specification file."""
-import functools
+import datetime
+import logging
 import os
+import sys
+from pathlib import Path
 
 import click
-import json5
 
-from oarepo_model_builder.api import build_datamodel
-from oarepo_model_builder.proxies import current_model_builder
+from oarepo_model_builder.entrypoints import load_entry_points_dict, create_builder_from_entrypoints
+from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.utils.deepmerge import deepmerge
+from oarepo_model_builder.utils.verbose import log
 
-
-@click.group()
-def model():
-    """Management commands for OARepo Model Builder."""
-    pass
+from .utils.hyphen_munch import HyphenMunch
 
 
-def builder_arguments(f):
-    args = []
-    # TODO: gather arguments from source and element builders when current_model_builder is a singleton
-    # TODO: can not be called now as it requires app_context that is not yet existing
-    #
-    # for builder in current_model_builder.source_builders:
-    #     args.extend(builder.options())
-    # for builder in current_model_builder.element_builders:
-    #     args.extend(builder.options())
-    for arg in args:
-        f = functools.wraps(f)(arg(f))
-    return f
+@click.command()
+@click.option('--output-directory',
+              help='Output directory where the generated files will be placed. '
+                   'Defaults to "."')
+@click.option('--package',
+              help='Package into which the model is generated. '
+                   'If not passed, the name of the current directory, '
+                   'converted into python package name, is used.')
+@click.option('--set', 'sets',
+              help='Overwrite option in the model file. Example '
+                   '--set name=value',
+              multiple=True)
+@click.option('-v', 'verbosity',
+              help='Increase the verbosity. This option can be used multiple times.',
+              count=True)
+@click.option('--config', 'configs',
+              help='Load a config file and replace parts of the model with it. '
+                   'The config file can be a json, yaml or a python file. '
+                   'If it is a python file, it is evaluated with the current '
+                   'model stored in the "oarepo_model" global variable and '
+                   'after the evaluation all globals are set on the model.',
+              multiple=True)
+@click.option('--isort/--skip-isort', default=True, help='Call isort on generated sources')
+@click.option('--black/--skip-black', default=True, help='Call black on generated sources')
+@click.argument('model_filename')
+def run(output_directory, package, sets, configs, model_filename, verbosity, isort, black):
+    """
+    Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
+    """
+
+    # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
+    # from the correct virtual environ)
+    os.environ['PATH'] = str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get('PATH', '')
+
+    # set the logging level, it will be warning - 1 (that is, 29) if not verbose,
+    # so that warnings only will be emitted. With each verbosity level
+    # it will decrease
+    logging.basicConfig(
+        level=logging.INFO - verbosity,
+        format=''
+    )
+
+    handler = logging.FileHandler(Path(output_directory) / 'installation.log', 'a')
+    handler.setLevel(logging.INFO)
+    logging.root.addHandler(handler)
+
+    log.enter(0, '\n\n%s\n\nProcessing model %s into output directory %s',
+              datetime.datetime.now(), model_filename, output_directory)
+
+    builder = create_builder_from_entrypoints()
+    loaders = load_entry_points_dict('oarepo_model_builder.loaders')
+    safe_loaders = {k: v for k, v in loaders.items() if getattr(v, 'safe', False)}
+
+    schema = ModelSchema(model_filename, loaders=safe_loaders)
+    for config in configs:
+        load_config(schema, config, loaders)
+
+    for s in sets:
+        k, v = s.split('=', 1)
+        schema.schema[k] = v
+
+    check_plugin_packages(schema.settings)
+
+    if package:
+        schema.settings['package'] = package
+
+    if 'python' not in schema.settings:
+        schema.settings.python = HyphenMunch()
+    schema.settings.python.use_isort = isort
+    schema.settings.python.use_black = black
+
+    builder.build(schema, output_directory)
+
+    log.leave('Done')
+
+    print(f"Log saved to {Path(output_directory) / 'installation.log'}")
 
 
-@model.command('build')
-@click.argument('source', type=click.Path(readable=True, exists=True))
-@click.option('--package')
-@click.option('--config-path', '-c', type=click.Path(readable=True, exists=True))
-@click.option('--datamodel-version', default='1.0.0')
-@builder_arguments
-def build(source, base_dir=os.getcwd(), config_path=None, **kwargs):
-    """Build data model files from JSON5 source specification."""
-    click.secho('Generating models from: ' + source, fg='green')
-    with open(source) as datamodel_file:
-        data = json5.load(datamodel_file)
+def load_config(schema, config, loaders):
+    old_loaders = schema.loaders
+    schema.loaders = loaders
+    try:
+        loaded_file = schema._load(config)
+        schema.merge(loaded_file)
+    finally:
+        schema.loaders = old_loaders
 
-    config = current_model_builder.model_config
 
-    if config_path:
-        with open(config_path) as config_file:
-            config.update(json5.load(config_file))
+def check_plugin_packages(settings):
+    try:
+        required_packages = settings.plugins.packages
+    except AttributeError:
+        return
+    import pkg_resources, subprocess
+    known_packages = set(d.project_name for d in pkg_resources.working_set)
+    unknown_packages = [rp for rp in required_packages if rp not in known_packages]
+    if unknown_packages:
+        if input(f'Required packages {", ".join(unknown_packages)} are missing. '
+                 f'Should I install them for you via pip install? (y/n) ') == 'y':
+            if subprocess.call([
+                'pip', 'install', *unknown_packages
+            ]):
+                sys.exit(1)
+            print("Installed required packages, please run this command again")
+        sys.exit(1)
 
-    config.update(kwargs)      # config is an instance of Munch, so can use either dict or dot style
-    config.source = source
-    config.base_dir = base_dir
-    config.package = kwargs['package'] or (os.path.basename(os.getcwd())).replace('-', '_')
-    config.kebab_package = config.package.replace('_', '-')
-    config.datamodel = config.kebab_package
-    build_datamodel(data, config=config)
+
+if __name__ == '__main__':
+    run()

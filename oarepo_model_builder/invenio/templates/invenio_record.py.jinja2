@@ -1,0 +1,23 @@
+from invenio_records.systemfields import ConstantField
+from invenio_records_resources.records.systemfields import IndexField
+from invenio_records_resources.records.systemfields.pid import PIDField, PIDFieldContext
+from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
+from invenio_records_resources.records.api import Record as InvenioBaseRecord
+
+{% for b in python.record_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+from {{ python.record_metadata_class|package_name }} import {{ python.record_metadata_class|base_name }}
+from {{ python.record_dumper_class|package_name }} import {{ python.record_dumper_class|base_name }}
+
+
+class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecord):
+    model_cls = {{ python.record_metadata_class|base_name }}
+    schema = ConstantField("$schema", "{{ settings.schema_server }}{{ settings.schema_name }}")
+    index = IndexField("{{ settings.index_name }}")
+    pid = PIDField(
+        create=True,
+        provider=RecordIdProviderV2,
+        context_cls = PIDFieldContext
+    )
+    dumper = {{ python.record_dumper_class|base_name }}()

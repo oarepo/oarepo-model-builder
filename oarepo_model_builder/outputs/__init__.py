@@ -1,6 +1,19 @@
-from .jsonschema import JsonSchemaOutput
-from .mapping import MappingOutput
-from .output import BaseOutput
-from .ui import UIOutput
+from pathlib import Path
 
-__all__ = ('BaseOutput', 'JsonSchemaOutput', 'MappingOutput', 'UIOutput')
+
+class OutputBase:
+    output_type = None
+
+    def __init__(self, builder, path: Path):
+        self.builder = builder
+        self.path: Path = path
+
+    def begin(self):
+        raise NotImplemented()
+
+    def finish(self):
+        raise NotImplemented()
+
+    @property
+    def created(self):
+        raise NotImplementedError()

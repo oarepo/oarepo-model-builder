@@ -1,0 +1,14 @@
+from invenio_db import db
+from invenio_records.models import RecordMetadataBase
+
+{% for b in python.record_metadata_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+
+class {{ python.record_metadata_class|base_name }}({% for b in python.record_metadata_bases %}{{ b|base_name }}, {% endfor %}db.Model, RecordMetadataBase):
+    """Model for {{ python.record_class|base_name }} metadata."""
+
+    __tablename__ = "{{ python.record_metadata_table_name }}"
+
+    # Enables SQLAlchemy-Continuum versioning
+    __versioned__ = {}
