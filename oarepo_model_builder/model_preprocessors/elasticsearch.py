@@ -24,6 +24,29 @@ class ElasticsearchModelPreprocessor(ModelPreprocessor):
                                     },
                                     "updated": {
                                         "type": "date"
+                                    },
+                                    "$schema": {
+                                        "type": "keyword"
+                                    },
+                                    "pid": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pk": {
+                                                "type": "integer"
+                                            },
+                                            "pid_type": {
+                                                "type": "keyword"
+                                            },
+                                            "status": {
+                                                "type": "keyword"
+                                            },
+                                            "obj_type": {
+                                                "type": "keyword"
+                                            }
+                                        }
+                                    },
+                                    "uuid": {
+                                        "type": "keyword"
                                     }
                                 }
                             }
