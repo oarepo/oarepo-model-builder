@@ -30,42 +30,75 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(settings.python, 'record-prefix-snake',
                  lambda: snake_case(settings.python.record_prefix))
 
+        # config
+        self.set(settings.python, 'config-package',
+                 lambda: f'{settings.package}.config')
+        self.set(settings.python, 'config-dummy-class',
+                 lambda: f'{settings.package}.config.DummyClass')
+        self.set(settings.python, 'config-resource-config-key',
+                 lambda: f'{settings.package_base_upper}_RESOURCE_CONFIG')
+        self.set(settings.python, 'config-resource-class-key',
+                 lambda: f'{settings.package_base_upper}_RESOURCE_CLASS')
+        self.set(settings.python, 'config-service-config-key',
+                 lambda: f'{settings.package_base_upper}_SERVICE_CONFIG')
+        self.set(settings.python, 'config-service-class-key',
+                 lambda: f'{settings.package_base_upper}_SERVICE_CLASS')
+
+        # ext
+        self.set(settings.python, 'ext-class',
+                 lambda: f'{settings.package}.ext.{record_prefix}Ext')
+        self.set(settings.python, 'flask-extension-name',
+                 lambda: f'{settings.package_base}')
+
+        # proxies
+        self.set(settings.python, 'proxies-package',
+                 lambda: f'{settings.package}.proxies')
+
+        # record
         self.set(settings.python, 'record-class',
-                 lambda: (f'{settings.package}.record.{record_prefix}Record'))
-        self.set(settings.python, 'record-schema-class',
-                 lambda: (f'{settings.package}.schema.{record_prefix}Schema'))
-        self.set(settings.python, 'record-schema-metadata-class',
-                 lambda: (f'{settings.package}.schema.{record_prefix}MetadataSchema'))
-        self.set(settings.python, 'record-schema-metadata-alembic',
-                 lambda: (f'{settings.package_base}'))
-        self.set(settings.python, 'record-schema-metadata-poetry',
-                 lambda: (f'{settings.package_base}'))
+                 lambda: f'{settings.package}.records.api.{record_prefix}Record')
         self.set(settings.python, 'record-metadata-class',
-                 lambda: (f'{settings.package}.metadata.{record_prefix}Metadata'))
-
-        self.set(settings.python, 'record-mapping-poetry',
-                 lambda: (f'{settings.package_base}'))
-
-        self.set(settings.python, 'record-jsonschemas-poetry',
-                 lambda: (f'{settings.package_base}'))
-
-        self.set(settings.python, 'record-permissions-class',
-                 lambda: (f'{settings.package}.permissions.{record_prefix}PermissionPolicy'))
-        self.set(settings.python, 'record-dumper-class',
-                 lambda: (f'{settings.package}.dumper.{record_prefix}Dumper'))
+                 lambda: f'{settings.package}.records.models.{record_prefix}Metadata')
         self.set(settings.python, 'record-metadata-table-name',
                  lambda: f'{record_prefix.lower()}_metadata')
-        self.set(settings.python, 'record-search-options-class',
-                 lambda: (f'{settings.package}.search_options.{record_prefix}SearchOptions'))
-        self.set(settings.python, 'record-service-config-class',
-                 lambda: (f'{settings.package}.service_config.{record_prefix}ServiceConfig'))
-        self.set(settings.python, 'record-service-class',
-                 lambda: (f'{settings.package}.service.{record_prefix}Service'))
+        #   - poetry
+        self.set(settings.python, 'record-mapping-poetry',
+                 lambda: f'{settings.package_base}')
+        self.set(settings.python, 'record-jsonschemas-poetry',
+                 lambda: f'{settings.package_base}')
+
+        # resource
         self.set(settings.python, 'record-resource-config-class',
-                 lambda: (f'{settings.package}.resource.{record_prefix}ResourceConfig'))
+                 lambda: f'{settings.package}.resources.config.{record_prefix}ResourceConfig')
         self.set(settings.python, 'record-resource-class',
-                 lambda: (f'{settings.package}.resource.{record_prefix}Resource'))
+                 lambda: f'{settings.package}.resources.resource.{record_prefix}Resource')
+        self.set(settings.python, 'record-permissions-class',
+                 lambda: f'{settings.package}.resources.permissions.{record_prefix}PermissionPolicy')
+
+        # service
+        self.set(settings.python, 'record-service-class',
+                 lambda: f'{settings.package}.services.service.{record_prefix}Service')
+        self.set(settings.python, 'record-service-config-class',
+                 lambda: f'{settings.package}.services.config.{record_prefix}ServiceConfig')
+        #   - schema
+        self.set(settings.python, 'record-schema-class',
+                 lambda: f'{settings.package}.services.schema.{record_prefix}Schema')
+        self.set(settings.python, 'record-schema-metadata-class',
+                 lambda: f'{settings.package}.services.schema.{record_prefix}MetadataSchema')
+        #   - dumper
+        self.set(settings.python, 'record-dumper-class',
+                 lambda: f'{settings.package}.services.dumper.{record_prefix}Dumper')
+        #   - search
+        self.set(settings.python, 'record-search-options-class',
+                 lambda: f'{settings.package}.services.search.{record_prefix}SearchOptions')
+
+        # alembic
+        self.set(settings.python, 'record-schema-metadata-alembic',
+                 lambda: f'{settings.package_base}')
+        self.set(settings.python, 'record-schema-metadata-poetry',
+                 lambda: f'{settings.package_base}')
+
         self.set(settings.python, 'record-resource-blueprint-name',
                  lambda: record_prefix)
-        self.set(settings.python, 'register-blueprint-function',
-                 lambda: (f'{settings.package}.blueprint.register_blueprint'))
+        self.set(settings.python, 'create_blueprint_from_app',
+                 lambda: f'{settings.package}.views.create_blueprint_from_app')

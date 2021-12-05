@@ -55,7 +55,7 @@ def _test(fulltext_builder, string_type):
     fulltext_builder.open = MockOpen()
     fulltext_builder.build(schema, output_dir='')
 
-    with fulltext_builder.open(os.path.join('test', 'schema.py')) as f:
+    with fulltext_builder.open(os.path.join('test', 'services', 'schema.py')) as f:
         data = f.read()
 
     assert 'a = ma_fields.String()' in data

@@ -13,7 +13,7 @@ class InvenioRecordResourcePoetryBuilder(OutputBuilder):
             'pyproject.toml'
         )
 
-        register_function = self.settings.python.register_blueprint_function.rsplit('.', maxsplit=1)
+        register_function = self.settings.python.create_blueprint_from_app.rsplit('.', maxsplit=1)
 
         output.set("tool.poetry.plugins.'invenio_base.api_blueprints'",
                    self.settings.python.record_resource_blueprint_name,

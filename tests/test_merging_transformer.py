@@ -202,3 +202,38 @@ from c import d, e
 from c import d
 import b
             """.strip()
+
+
+def test_top_level_vars():
+    existing_module = ""
+    included_module = """
+AAA = "123"
+BBB = "456"
+            """.strip()
+    original_cst = cst.parse_module(existing_module)
+    included_cst = cst.parse_module(included_module,
+                                    config=original_cst.config_for_parsing)
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+
+    assert transformed_cst.code.strip() == """
+AAA = "123"
+BBB = "456"
+            """.strip()
+
+
+def test_top_level_merged_vars():
+    existing_module = "CCC='456'"
+    included_module = """
+AAA = "123"
+BBB = "456"
+            """.strip()
+    original_cst = cst.parse_module(existing_module)
+    included_cst = cst.parse_module(included_module,
+                                    config=original_cst.config_for_parsing)
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+
+    assert transformed_cst.code.strip() == """
+CCC='456'
+AAA = "123"
+BBB = "456"
+            """.strip()

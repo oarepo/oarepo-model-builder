@@ -1,4 +1,4 @@
-from libcst import CSTTransformer, ClassDef, FunctionDef, Module, SimpleStatementLine, Import, ImportFrom
+from libcst import CSTTransformer, ClassDef, FunctionDef, Module, SimpleStatementLine, Import, ImportFrom, Assign, Name
 
 
 class MergingTransformer(CSTTransformer):
@@ -55,17 +55,8 @@ class MergingTransformer(CSTTransformer):
     def leave_Module(self, original_node: Module, updated_node: Module):
         parts_to_add = self.leave_class_module()
 
-        new_imports = self._extract_imports(self.stack[0][0])
-        existing_imports = self._extract_imports(original_node.body)
-
-        # extract imports that are not yet present
-        extra_imports = []
-        for ni in new_imports:
-            for ei in existing_imports:
-                if ei.deep_equals(ni):
-                    break
-            else:
-                extra_imports.append(ni)
+        extra_imports = self._merge_imports(original_node)
+        extra_assigns = self._merge_assigns(original_node)
 
         self._pop()
 
@@ -74,19 +65,47 @@ class MergingTransformer(CSTTransformer):
             body=[
                 *extra_imports,
                 *updated_node.body,
-                *parts_to_add
+                *parts_to_add,
+                *extra_assigns
             ]
         )
 
+    def _merge_imports(self, original_node):
+        new_imports = self._extract_imports(self.stack[0][0])
+        existing_imports = self._extract_imports(original_node.body)
+        return self._merge_nodes(existing_imports, new_imports)
+
+    def _merge_assigns(self, original_node):
+        new_assigns = self._extract_assigns(self.stack[0][0])
+        existing_assigns = self._extract_assigns(original_node.body)
+        return self._merge_nodes(existing_assigns, new_assigns)
+
+    def _merge_nodes(self, existing_nodes, new_nodes):
+        # extract assigns that are not yet present
+        extra_assigns = []
+        for ni in new_nodes:
+            for ei in existing_nodes:
+                if ei.deep_equals(ni):
+                    break
+            else:
+                extra_assigns.append(ni)
+        return extra_assigns
+
     def _extract_imports(self, lines):
-        imports = []
+        return self._extract_top_level(lines, (Import, ImportFrom))
+
+    def _extract_assigns(self, lines):
+        return self._extract_top_level(lines, Assign)
+
+    def _extract_top_level(self, lines, classes=()):
+        extracted = []
         for l in lines:
             if isinstance(l, SimpleStatementLine):
                 for ml in l.children:
-                    if isinstance(ml, (Import, ImportFrom)):
-                        imports.append(l)
+                    if isinstance(ml, classes):
+                        extracted.append(l)
                         break
-        return imports
+        return extracted
 
     def leave_class_module(self):
         new_parts = self.stack[-1][0]

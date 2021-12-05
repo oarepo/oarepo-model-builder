@@ -9,5 +9,7 @@ TEMPLATES = {
     "record-dumper": "templates/invenio_record_dumper.py.jinja2",
     "record-resource-config": "templates/invenio_record_resource_config.py.jinja2",
     "record-resource": "templates/invenio_record_resource.py.jinja2",
-    "blueprint": "templates/invenio_blueprint.py.jinja2",
+    "views": "templates/invenio_views.py.jinja2",
+    "config": "templates/invenio_config.py.jinja2",
+    "ext": "templates/invenio_ext.py.jinja2"
 }

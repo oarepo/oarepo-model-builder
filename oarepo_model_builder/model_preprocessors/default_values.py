@@ -16,6 +16,8 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
 
         self.set(settings, 'package-base', lambda: settings.package.rsplit('.', maxsplit=1)[-1])
 
+        self.set(settings, 'package-base-upper', lambda: settings.package_base.upper())
+
         self.set(settings, 'kebap-package', lambda: settings.package.replace('_', '-'))
 
         @self.set(settings, 'package-path')
@@ -30,22 +32,24 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             settings, 'schema-file', lambda: os.path.join(
                 settings.package_path,
+                'records',
                 'jsonschemas',
                 settings.schema_name
             )
         )
 
         self.set(
-            settings, 'mapping-package', lambda: f'{settings.package}.mappings'
+            settings, 'mapping-package', lambda: f'{settings.package}.records.mappings'
         )
 
         self.set(
-            settings, 'jsonschemas-package', lambda: f'{settings.package}.jsonschemas'
+            settings, 'jsonschemas-package', lambda: f'{settings.package}.records.jsonschemas'
         )
 
         self.set(
             settings, 'mapping-file', lambda: os.path.join(
                 settings.package_path,
+                'records',
                 'mappings',
                 'v7',
                 settings.package_base,

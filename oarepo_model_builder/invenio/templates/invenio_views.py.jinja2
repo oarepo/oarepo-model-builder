@@ -1,0 +1,3 @@
+def {{ python.create_blueprint_from_app|base_name }}(app):
+    """Create {{ python.package_name }} blueprint."""
+    return app.extensions["{{ python.flask_extension_name }}"].resource.as_blueprint()

@@ -1,0 +1,35 @@
+from {{ python.config_package|package_name }} import {{ python.config_package|base_name }} as config
+
+class {{ python.ext_class|base_name }}(object):
+    """{{ python.package }} extension."""
+
+    def __init__(self, app=None):
+        """Extension initialization."""
+        self.resource = None
+        self.service = None
+        if app:
+            self.init_app(app)
+
+    def init_app(self, app):
+        """Flask application initialization."""
+        self.init_config(app)
+        self.init_resource(app)
+        app.extensions["{{ python.flask_extension_name }}"] = self
+
+    def init_resource(self, app):
+        """Initialize vocabulary resources."""
+        self.service = app.config["{{ settings.python.config_service_class_key }}"](
+            config=app.config["{{settings.python.config_service_config_key}}"],
+        )
+        self.resource = app.config["{{ settings.python.config_resource_class_key }}"](
+            service=self.service,
+            config=app.config["{{settings.python.config_resource_config_key}}"],
+        )
+
+    def init_config(self, app):
+        """Initialize configuration."""
+        app.config.setdefault("{{settings.python.config_resource_config_key}}", config.{{ settings.python.config_resource_config_key }})
+        app.config.setdefault("{{settings.python.config_resource_class_key}}", config.{{ settings.python.config_resource_class_key }})
+        app.config.setdefault("{{settings.python.config_service_config_key}}", config.{{ settings.python.config_service_config_key }})
+        app.config.setdefault("{{settings.python.config_service_class_key}}", config.{{ settings.python.config_service_class_key }})
+

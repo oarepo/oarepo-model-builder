@@ -53,7 +53,7 @@ def test_fulltext(fulltext_builder):
     fulltext_builder.open = MockOpen()
     fulltext_builder.build(schema, output_dir='')
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'jsonschemas', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -63,7 +63,7 @@ def test_fulltext(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {'mappings': {'properties': {'$schema': {'type': 'keyword'},
                                                 'a': {'type': 'text'},
@@ -83,7 +83,7 @@ def test_keyword(fulltext_builder):
     fulltext_builder.open = MockOpen()
     fulltext_builder.build(schema, output_dir='')
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'jsonschemas', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -93,7 +93,7 @@ def test_keyword(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {'mappings': {'properties': {'$schema': {'type': 'keyword'},
                                                 'a': {'ignore_above': 50, 'type': 'keyword'},
@@ -113,7 +113,7 @@ def test_fulltext_keyword(fulltext_builder):
     fulltext_builder.open = MockOpen()
     fulltext_builder.build(schema, output_dir='')
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'jsonschemas', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -123,7 +123,7 @@ def test_fulltext_keyword(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
+    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {'mappings': {'properties': {'$schema': {'type': 'keyword'},
                                                 'a': {'fields': {'keyword': {'ignore_above': 50,

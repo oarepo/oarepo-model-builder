@@ -52,7 +52,12 @@ build-backend = "poetry.core.masonry.api"
 
 400-invenio_record_resource_config = "oarepo_model_builder.invenio.invenio_record_resource_config:InvenioRecordResourceConfigBuilder"
 410-invenio_record_resource = "oarepo_model_builder.invenio.invenio_record_resource:InvenioRecordResourceBuilder"
-420-invenio_blueprint = "oarepo_model_builder.invenio.invenio_blueprint:InvenioBlueprintBuilder"
+420-invenio_views = "oarepo_model_builder.invenio.invenio_views:InvenioViewsBuilder"
+
+500-invenio_config = "oarepo_model_builder.invenio.invenio_config:InvenioConfigBuilder"
+
+600-invenio_ext = "oarepo_model_builder.invenio.invenio_ext:InvenioExtBuilder"
+
 
 900-invenio_sample_app_poetry = "oarepo_model_builder.invenio.invenio_sample_app_poetry:InvenioSampleAppPoetryBuilder"
 910-invenio_record_metadata_alembic_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_alembic_poetry:InvenioRecordMetadataAlembicPoetryBuilder"
