@@ -51,8 +51,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: f'{settings.package_base}')
 
         # proxies
-        self.set(settings.python, 'proxies-package',
-                 lambda: f'{settings.package}.proxies')
+        self.set(settings.python, 'proxies-current-resource',
+                 lambda: f'{settings.package}.proxies.current_resource')
 
         # record
         self.set(settings.python, 'record-class',
@@ -100,5 +100,5 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
         self.set(settings.python, 'record-resource-blueprint-name',
                  lambda: record_prefix)
-        self.set(settings.python, 'create_blueprint_from_app',
+        self.set(settings.python, 'create-blueprint-from-app',
                  lambda: f'{settings.package}.views.create_blueprint_from_app')

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.9.1"
+version = "0.9.2"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
@@ -58,6 +58,7 @@ build-backend = "poetry.core.masonry.api"
 
 600-invenio_ext = "oarepo_model_builder.invenio.invenio_ext:InvenioExtBuilder"
 
+700-invenio_ext = "oarepo_model_builder.invenio.invenio_proxies:InvenioProxiesBuilder"
 
 900-invenio_sample_app_poetry = "oarepo_model_builder.invenio.invenio_sample_app_poetry:InvenioSampleAppPoetryBuilder"
 910-invenio_record_metadata_alembic_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_alembic_poetry:InvenioRecordMetadataAlembicPoetryBuilder"

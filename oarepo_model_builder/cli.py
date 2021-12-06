@@ -56,6 +56,7 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
         format=''
     )
 
+    Path(output_directory).mkdir(parents=True, exist_ok=True)
     handler = logging.FileHandler(Path(output_directory) / 'installation.log', 'a')
     handler.setLevel(logging.INFO)
     logging.root.addHandler(handler)
