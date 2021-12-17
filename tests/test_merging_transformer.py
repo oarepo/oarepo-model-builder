@@ -248,7 +248,7 @@ def test_merge_top_level_arrays():
                                     config=original_cst.config_for_parsing)
     transformed_cst = original_cst.visit(MergingTransformer(included_cst))
 
-    assert transformed_cst.code.strip() == """
+    assert transformed_cst.code.strip().replace(' ', '') == """
 CCC=[1,2,3,4,5,6]
             """.strip()
 

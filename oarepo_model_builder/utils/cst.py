@@ -1,5 +1,5 @@
 from libcst import CSTTransformer, ClassDef, FunctionDef, Module, SimpleStatementLine, Import, ImportFrom, Assign, Name, \
-    AssignTarget
+    AssignTarget, List
 
 
 class MergingTransformer(CSTTransformer):
@@ -53,6 +53,40 @@ class MergingTransformer(CSTTransformer):
             )
         return updated_node
 
+    def visit_Assign(self, node):
+        assign_name = self._node_name(node)
+        stack_top = self.stack[-1][0]
+        for el in stack_top:
+            el_name = self._node_name(el)
+            if el_name == assign_name and isinstance(node.value, List):
+                self._push(remove_simple_line(el))
+                return node
+        return False
+
+    def leave_Assign(self, original_node, updated_node):
+        self._pop()
+        return updated_node
+
+    def leave_List(self, original_node, updated_node):
+        stack_top = self.stack[-1][0]
+        if not isinstance(stack_top, Assign):
+            return False
+        # TODO: merge
+        node_elements = list(updated_node.elements)
+        for el in stack_top.value.elements:
+            for ne in updated_node.elements:
+                if ne.deep_equals(el):
+                    break
+            else:
+                node_elements.append(el)
+        return updated_node.with_changes(
+            elements=node_elements
+        )
+
+
+    def _merge_assign_value(self, target_node, source_node):
+        return target_node
+
     def leave_Module(self, original_node: Module, updated_node: Module):
         parts_to_add = self.leave_class_module()
 
@@ -93,12 +127,14 @@ class MergingTransformer(CSTTransformer):
         return extra_nodes
 
     def _node_name(self, node):
-        if not isinstance(node, SimpleStatementLine):
-            raise NotImplementedError(f'Getting name of node type {type(node)} not implemented yet')
-        body = node.body
-        if not len(body):
-            raise NotImplementedError(f'No body in SimpleStatementLine {node}')
-        name_element = body[0]
+        if isinstance(node, SimpleStatementLine):
+            body = node.body
+            if not len(body):
+                raise NotImplementedError(f'No body in SimpleStatementLine {node}')
+            name_element = body[0]
+        else:
+            name_element = node
+
         if isinstance(name_element, Assign):
             lhs = name_element.children[0]
             if not isinstance(lhs, AssignTarget):
@@ -136,3 +172,9 @@ class MergingTransformer(CSTTransformer):
                 if part.name.value not in existing_parts:
                     parts_to_add.append(part)
         return parts_to_add
+
+
+def remove_simple_line(node):
+    if isinstance(node, SimpleStatementLine):
+        return node.body[0]
+    return node
