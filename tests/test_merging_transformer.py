@@ -1,3 +1,5 @@
+import re
+
 import libcst as cst
 
 from oarepo_model_builder.utils.cst import MergingTransformer
@@ -242,14 +244,14 @@ BBB = "456"
 
 def test_merge_top_level_arrays():
     existing_module = "CCC=[1,2,3]"
-    included_module = """CCC=[4,5,6]"""
+    included_module = """CCC=[4,5,6,1]"""
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
     transformed_cst = original_cst.visit(MergingTransformer(included_cst))
 
     assert transformed_cst.code.strip().replace(' ', '') == """
-CCC=[1,2,3,4,5,6]
+CCC=[1,2,3,4,5,6,]
             """.strip()
 
 
@@ -265,3 +267,22 @@ def test_do_not_overwrite_top_level_vars():
 CCC=234
             """.strip()
 
+
+def test_merge_class_arrays():
+    existing_module = """
+class A:
+    CCC=[1,2,3]
+    """
+    included_module = """
+class A:
+    CCC=[4,5,6]
+    """
+    original_cst = cst.parse_module(existing_module)
+    included_cst = cst.parse_module(included_module,
+                                    config=original_cst.config_for_parsing)
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+
+    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+class A:
+CCC=[1,2,3,4,5,6]
+            """)

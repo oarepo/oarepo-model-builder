@@ -61,6 +61,7 @@ class MergingTransformer(CSTTransformer):
             if el_name == assign_name and isinstance(node.value, List):
                 self._push(remove_simple_line(el))
                 return node
+        self._push(None)
         return False
 
     def leave_Assign(self, original_node, updated_node):
@@ -75,7 +76,7 @@ class MergingTransformer(CSTTransformer):
         node_elements = list(updated_node.elements)
         for el in stack_top.value.elements:
             for ne in updated_node.elements:
-                if ne.deep_equals(el):
+                if ne.value.deep_equals(el.value):
                     break
             else:
                 node_elements.append(el)
