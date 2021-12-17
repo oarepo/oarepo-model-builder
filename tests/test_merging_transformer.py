@@ -113,6 +113,7 @@ class Blah:
         return 1 
     """.strip()
 
+
 def test_existing_method():
     existing_module = """
 # comment start
@@ -237,3 +238,30 @@ CCC='456'
 AAA = "123"
 BBB = "456"
             """.strip()
+
+
+def test_merge_top_level_arrays():
+    existing_module = "CCC=[1,2,3]"
+    included_module = """CCC=[4,5,6]"""
+    original_cst = cst.parse_module(existing_module)
+    included_cst = cst.parse_module(included_module,
+                                    config=original_cst.config_for_parsing)
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+
+    assert transformed_cst.code.strip() == """
+CCC=[1,2,3,4,5,6]
+            """.strip()
+
+
+def test_do_not_overwrite_top_level_vars():
+    existing_module = "CCC=234"
+    included_module = """CCC=438"""
+    original_cst = cst.parse_module(existing_module)
+    included_cst = cst.parse_module(included_module,
+                                    config=original_cst.config_for_parsing)
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+
+    assert transformed_cst.code.strip() == """
+CCC=234
+            """.strip()
+

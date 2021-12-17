@@ -1,4 +1,5 @@
-from libcst import CSTTransformer, ClassDef, FunctionDef, Module, SimpleStatementLine, Import, ImportFrom, Assign, Name
+from libcst import CSTTransformer, ClassDef, FunctionDef, Module, SimpleStatementLine, Import, ImportFrom, Assign, Name, \
+    AssignTarget
 
 
 class MergingTransformer(CSTTransformer):
@@ -81,15 +82,32 @@ class MergingTransformer(CSTTransformer):
         return self._merge_nodes(existing_assigns, new_assigns)
 
     def _merge_nodes(self, existing_nodes, new_nodes):
-        # extract assigns that are not yet present
-        extra_assigns = []
+        # extract nodes that are not yet present
+        extra_nodes = []
         for ni in new_nodes:
             for ei in existing_nodes:
-                if ei.deep_equals(ni):
+                if self._node_name(ei) == self._node_name(ni):
                     break
             else:
-                extra_assigns.append(ni)
-        return extra_assigns
+                extra_nodes.append(ni)
+        return extra_nodes
+
+    def _node_name(self, node):
+        if not isinstance(node, SimpleStatementLine):
+            raise NotImplementedError(f'Getting name of node type {type(node)} not implemented yet')
+        body = node.body
+        if not len(body):
+            raise NotImplementedError(f'No body in SimpleStatementLine {node}')
+        name_element = body[0]
+        if isinstance(name_element, Assign):
+            lhs = name_element.children[0]
+            if not isinstance(lhs, AssignTarget):
+                raise NotImplementedError(f'Getting name of node type {type(lhs)} not implemented yet')
+            return lhs.target.value
+        elif isinstance(name_element, (Import, ImportFrom)):
+            return self.new_cst.code_for_node(name_element).strip()
+        else:
+            raise NotImplementedError(f'Getting name of node type {type(name_element)} not implemented yet')
 
     def _extract_imports(self, lines):
         return self._extract_top_level(lines, (Import, ImportFrom))
