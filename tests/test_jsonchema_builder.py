@@ -1,6 +1,7 @@
 import os
 
 from oarepo_model_builder.builder import ModelBuilder
+from oarepo_model_builder.builders import OutputBuilderComponent
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
@@ -108,6 +109,62 @@ def test_jsonschema_preprocessor():
                         'type': 'string'
                     }
                 }
+            }
+        }
+    }
+
+
+class TestJSONSchemaOutputComponent(OutputBuilderComponent):
+    def model_element_enter(self, builder, data, *, stack):
+        if 'type' in data:
+            data['type'] = 'integer'
+        return data
+
+
+def test_components():
+    builder = ModelBuilder(
+        output_builders=[JSONSchemaBuilder],
+        outputs=[JSONSchemaOutput, PythonOutput],
+        model_preprocessors=[DefaultValuesModelPreprocessor],
+        output_builder_components={
+            JSONSchemaOutput.TYPE: [
+                TestJSONSchemaOutputComponent
+            ]
+        },
+        open=MockOpen()
+    )
+    builder.build(
+        schema=ModelSchema(
+            '',
+            {
+                'settings': {
+                    'package': 'test',
+                    'python': {
+                        'use_isort': False,
+                        'use_black': False
+                    }
+                },
+                'model': {
+                    'properties': {
+                        'a': {
+                            'type': 'string',
+                            'oarepo:ui': {
+                                'class': 'bolder'
+                            }
+                        }
+                    }
+                }
+            }
+        ),
+        output_dir=''
+    )
+
+    data = json5.load(builder.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
+
+    assert data == {
+        'properties': {
+            'a': {
+                'type': 'integer'
             }
         }
     }

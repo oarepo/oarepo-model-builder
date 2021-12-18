@@ -16,7 +16,9 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
             python_path
         )
 
+        context = HyphenMunch(settings=self.settings, python=self.settings.python, **extra_kwargs)
+        template = self.call_components('invenio_before_python_template', self.template, context=context)
         output.merge(
-            self.template,
-            HyphenMunch(settings=self.settings, python=self.settings.python, **extra_kwargs)
+            template,
+            context
         )

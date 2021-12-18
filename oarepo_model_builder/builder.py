@@ -3,7 +3,7 @@ import importlib
 from pathlib import Path
 from typing import List, Dict, Type
 
-from .builders import OutputBuilder, ModelBuilderStack, ReplaceElement
+from .builders import OutputBuilder, ModelBuilderStack, ReplaceElement, OutputBuilderComponent
 from .outputs import OutputBase
 from .property_preprocessors import PropertyPreprocessor
 from .schema import ModelSchema
@@ -45,6 +45,11 @@ class ModelBuilder:
     A list of output_builders. Each extension is responsible for generating one or more files
     """
 
+    output_builder_components: Dict[str, List[OutputBuilderComponent]]
+    """
+    A list of output builder components for an output builder
+    """
+
     outputs: Dict[Path, OutputBase]
     """
     Mapping between concrete output (file path relative to output dir) and instance of builder class
@@ -61,6 +66,7 @@ class ModelBuilder:
             output_builders: List[type(OutputBuilder)] = (),
             property_preprocessors: List[type(PropertyPreprocessor)] = (),
             model_preprocessors: List[type(ModelPreprocessor)] = (),
+            output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
             open=open
     ):
         """
@@ -77,6 +83,12 @@ class ModelBuilder:
         self.property_preprocessor_classes = [*property_preprocessors]
         self.model_preprocessor_classes = [*model_preprocessors]
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
+        if output_builder_components:
+            self.output_builder_components = {
+                builder_type: [x() for x in components] for builder_type, components in output_builder_components.items()
+            }
+        else:
+            self.output_builder_components = {}
         self.open = open
 
     def get_output(self, output_type: str, path: str | Path):
@@ -101,6 +113,9 @@ class ModelBuilder:
             output.begin()
             self.outputs[path] = output
         return output
+
+    def get_output_builder_components(self, output_builder_type):
+        return self.output_builder_components.get(output_builder_type, ())
 
     # main entry point
     def build(self, schema: ModelSchema, output_dir: str | Path):

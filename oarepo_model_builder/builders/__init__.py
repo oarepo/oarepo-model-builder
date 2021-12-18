@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 import inspect
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from oarepo_model_builder.utils.json_pathlib import JSONPaths
 from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement
@@ -69,18 +69,36 @@ class OutputBuilder:
 
         If no generator is returned, the content of the element is not processed
         """
-        for method in self.json_paths.match(stack.path, stack.top.data, extra_data={
-            'stack': stack
-        }):
-            return method(stack)
-        # do not skip stack top
-        if stack.level > 1:
-            return stack.SKIP
+        try:
+            self.call_components('before_process_element', value=stack.top.data, stack=stack)
+            for method in self.json_paths.match(stack.path, stack.top.data, extra_data={
+                'stack': stack
+            }):
+                return method(stack)
+            # do not skip stack top
+            if stack.level > 1:
+                return stack.SKIP
+        finally:
+            self.call_components('after_process_element', value=stack.top.data, stack=stack)
 
     @process('/model')
     def enter_model(self, stack: ModelBuilderStack):
         # do not skip /model
         yield
+
+    def call_components(self, method_name, value, **kwargs):
+        for component in self.builder.get_output_builder_components(self.TYPE):
+            if hasattr(component, method_name):
+                value = getattr(component, method_name)(self, value, **kwargs) or value
+        return value
+
+
+class OutputBuilderComponent:
+    def before_process_element(self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs):
+        return value
+
+    def after_process_element(self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs):
+        return value
 
 
 __all__ = [

@@ -74,3 +74,4 @@ docs/migration/data
 /.python-version
 /poetry.lock
 example/data
+.DS_Store

@@ -52,12 +52,13 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 self.stack.pop()
                 set_definition = True
             if set_definition:
-                self.set_marshmallow_definition(self.stack.real_top)
+                self.set_marshmallow_definition(self.stack.real_top, stack)
 
         self.model_element_leave(stack)
 
-    def set_marshmallow_definition(self, data):
+    def set_marshmallow_definition(self, data, stack):
         marshmallow = data['oarepo:marshmallow']
+        marshmallow = self.call_components('invenio_before_set_marshmallow_definition', marshmallow, stack=stack)
 
         data_type = data.get('type', 'object')
         generator = self.schema.settings.python.marshmallow.mapping.get(data_type, None)
@@ -88,6 +89,8 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         # and generate the field
         marshmallow['field'] = generator(data, self.schema, self.imports)
+        marshmallow = self.call_components('invenio_after_set_marshmallow_definition', marshmallow, stack=stack)
+        data['oarepo:marshmallow'] = marshmallow
 
     def model_element_enter(self, stack: ModelBuilderStack):
         top = stack.top

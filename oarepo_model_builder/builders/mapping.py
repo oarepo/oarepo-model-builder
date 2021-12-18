@@ -26,7 +26,8 @@ class MappingBuilder(JSONBaseBuilder):
 
             data = stack.top.data
             if isinstance(data, dict) and 'oarepo:mapping' in data:
-                self.output.merge_mapping(data['oarepo:mapping'])
+                mapping = self.call_components('before_merge_mapping', data['oarepo:mapping'], stack=stack)
+                self.output.merge_mapping(mapping)
 
             self.model_element_leave(stack)
 
