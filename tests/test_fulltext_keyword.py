@@ -109,7 +109,7 @@ def test_keyword(fulltext_builder):
 
 
 def test_fulltext_keyword(fulltext_builder):
-    schema = get_model_schema('fulltext-keyword')
+    schema = get_model_schema('fulltext+keyword')
     fulltext_builder.open = MockOpen()
     fulltext_builder.build(schema, output_dir='')
 

@@ -30,6 +30,24 @@ will compile the model.yaml into the current directory. Options:
   --black / --skip-black   Call black on generated sources (default: yes)
 ```
 
+## Model file
+
+A model is a json/yaml file including description of the model and processing settings.
+Example:
+
+```yaml
+version: 1.0.0
+model: 
+  properties:
+    title:
+      type: fulltext+keyword
+      oarepo:ui:
+        label: Title
+settings:
+  package: uct.titled_model 
+```
+
+
 ## Model file structure
 
 A model is a json/yaml file with the following structure:
@@ -38,7 +56,8 @@ A model is a json/yaml file with the following structure:
 version: 1.0.0
 model:
   properties:
-    title: { type: 'fulltext' }
+    title: 
+      type: fulltext+keyword
 settings:
   <generic settings here>
   python: ...
@@ -49,186 +68,25 @@ plugins: ...
 There might be more sections (documentation etc.), but only the ``settings``, ``model`` and ``plugins``
 are currently processed.
 
-## "settings" section
-
-The settings section contains various configuration settings. Below are the generic settings with their default values.
-
-```yaml
-settings:
-  package: basename(output dir) with '-' converted to '_'
-  kebap-package: to_kebap(package)
-  package-path: path to package as python Path instance
-  schema-name: { kebap-package }-{schema-version}.json
-  schema-file: full path to generated json schema
-  mapping-file: full path to generated mapping
-  collection-url: camel_case(last component of package)
-
-```
-
-Advanced use cases might require to modify [the python settings](docs/settings-python.md) or
-[elasticsearch settings](docs/settings-elasticsearch.md) (for example, to define custom analyzers).
-
 ## "model" section
 
-The model section is a json schema that might be annotated with extra information. For example:
+This section is described in [model.md](docs/model.md)
 
-```yaml
-model: # this is like the root of the json schema 
-  properties:
-    title:
-      type: multilingual
-      oarepo:ui:
-        label: Title
-        class: bold-text
-      oarepo:documentation: |
-        Lorem ipsum ...
-        Dolor sit ...
-```
+## "settings" section
 
-**Note**: ``multilingual`` is a special type (not defined in this library) that is translated to the correct schema,
-mapping and marshmallow files with a custom ``PropertyPreprocessor`` - see later.
+The settings section contains various configuration settings. In most cases you want to set only 
+the `package` option as in above because all other settings are derived from it. Even the `package`
+option might be omitted - in this case the package name will be the last component of the output 
+directory (with dashes converted to underscores).
 
-``oarepo:ui`` gives information for the ui output builder.
+The rest of the settings are described in [model-generic-settings.md](docs/model-generic-settings.md)
 
-``oarepo:documentation`` is a section that is currently ignored. In general, sections that are not recognized are
-ignored by default.
+Advanced use cases might require to modify [the python settings](docs/model-python-settings.md) or
+[elasticsearch settings](docs/model-elasticsearch-settings.md) (for example, to define custom analyzers).
 
-### Shortcuts
+## "plugins" section
 
-A ``type: object`` is redundant in models. If there is a `properties` child, the object type is added automatically.
-
-If an `items` child is present, the parent type is set to `array` (if not already present).
-
-If a key inside `properties` looks like `anything[]`, an array will be generated. For example,
-
-```yaml
-properties:
-  authors[]:
-    type: author
-    oarepo:documentation: anything here
-```
-
-will be translated into:
-
-```yaml
-properties:
-  authors:
-    type: array
-      items:
-        type: author
-        oarepo:documentation: anything here
-```
-
-Note that all children are propagated into the `items` section. 
-If you want to keep it at the same level, add an array suffix as well:
-
-```yaml
-properties:
-  authors[]:
-    type: author
-    oarepo:documentation[]: anything here
-```
-
-will be translated into:
-
-```yaml
-properties:
-  authors:
-    type: array
-      items:
-        type: author
-    oarepo:documentation: anything here
-```
-
-### Referencing another model
-
-Another model might be included via the `oarepo:use` directive. 
-
-To include another model in your model file, you can:
-  * use relative path to reference the model. The whole file will be parsed as json/yaml and
-    included at this position
-```yaml
-model:
-  properties:
-    author:
-      oarepo:use: ./person.yaml
-
--- with ./person.yaml
-type: object
-properties:
-  firstname: 
-    type: string
-
--- will result into
-model:
-  properties:
-    author:
-      oarepo:included-from: ./person.yaml
-      type: object
-      properties:
-        firstname: 
-          type: string
-```
-  * use a model supplied from a pip-installed package. The package references the model
-    from entry points. The key in entry points is then used as a reference:
-```toml
-# poetry
-
-[tool.poetry]
-name = "my-included-model"
-version = "0.0.1"
-
-include=["my_included_model/model.yaml"]
-
-[tool.poetry.plugins."oarepo.models"]
-test = "my_included_model.model.yaml"
-```
-
-```yaml
-# model
-
-model:
-  properties:
-    author:
-      oarepo:use: test
-```
-
-To include a part of another model in the file, you might
-  * use a json path to identify the part within the included model. The json path is after
-    the `#` character, for example:
-```yaml
-model:
-  properties:
-    author:
-      oarepo:use: ./common.yaml#/definitions/person
-```
-  * a reference to the same file is possible as well:
-```yaml
-model:
-  properties:
-    author:
-      oarepo:use: #/definitions/person
-```
-  * use an `$id` element in the included model to provide an id and reference the id
-```yaml
-# included file
-
-definitions:
-  person: 
-    $id: person
-
-#  model
-model:
-  properties:
-    author:
-      oarepo:use: ./common.yaml#person
-```
-
-#### Using named types
-
-## Plugins section
-
-See [plugins and the processing order](docs/settings-plugins.md) for details.
+See [plugins and the processing order](docs/model-plugins.md) for details.
 
 ## API Usage
 

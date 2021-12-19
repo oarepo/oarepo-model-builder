@@ -64,7 +64,7 @@ def test_keyword(fulltext_builder):
 
 
 def test_fulltext_keyword(fulltext_builder):
-    _test(fulltext_builder, 'fulltext-keyword')
+    _test(fulltext_builder, 'fulltext+keyword')
 
 
 def test_simple_array(fulltext_builder):

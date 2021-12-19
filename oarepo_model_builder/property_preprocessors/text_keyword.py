@@ -64,19 +64,19 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
         return data
 
     #
-    # type='fulltext-keyword' in model
+    # type='fulltext+keyword' in model
     #
 
     @process(model_builder=JSONSchemaBuilder,
              path='**/properties/*',
-             condition=lambda current: current.type == 'fulltext-keyword')
+             condition=lambda current: current.type == 'fulltext+keyword')
     def modify_fulltext_keyword_schema(self, data, stack: ModelBuilderStack, **kwargs):
         data['type'] = 'string'
         return data
 
     @process(model_builder=MappingBuilder,
              path='**/properties/*',
-             condition=lambda current: current.type == 'fulltext-keyword')
+             condition=lambda current: current.type == 'fulltext+keyword')
     def modify_fulltext_keyword_mapping(self, data, stack: ModelBuilderStack, **kwargs):
         data['type'] = 'text'
         deepmerge(
@@ -93,7 +93,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(model_builder=InvenioRecordSchemaBuilder,
              path='**/properties/*',
-             condition=lambda current: current.type == 'fulltext-keyword')
+             condition=lambda current: current.type == 'fulltext+keyword')
     def modify_fulltext_keyword_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
         data['type'] = 'string'
         return data
