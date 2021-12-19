@@ -102,3 +102,28 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: record_prefix)
         self.set(settings.python, 'create-blueprint-from-app',
                  lambda: f'{settings.package}.views.create_blueprint_from_app')
+
+        if 'model' in schema.schema:
+            if settings.top_level_metadata:
+                schema_class = settings.python.record_schema_class
+                schema_class_base_classes = settings.python.get('record_schema_bases', []) + [
+                    'ma.Schema'  # alias will be recognized automatically
+                ]
+            else:
+                schema_class = settings.python.record_schema_metadata_class,
+                schema_class_base_classes = settings.python.get('record_schema_metadata_bases', []) + [
+                    'ma.Schema'  # alias will be recognized automatically
+                ]
+
+            deepmerge(
+                schema.schema.model.setdefault('oarepo:marshmallow', {}),
+                {
+                    'class': schema_class,
+                    'base-classes': schema_class_base_classes,
+                    'generate': True
+                })
+
+        # default import prefixes
+        settings.python.setdefault('always-defined-import-prefixes', []).extend(
+            ['ma', 'ma_fields', 'ma_valid']
+        )

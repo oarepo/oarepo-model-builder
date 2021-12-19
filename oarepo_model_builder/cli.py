@@ -6,12 +6,13 @@ from pathlib import Path
 
 import click
 
-from oarepo_model_builder.entrypoints import load_entry_points_dict, create_builder_from_entrypoints
+from oarepo_model_builder.entrypoints import load_entry_points_dict, create_builder_from_entrypoints, \
+    load_included_models_from_entry_points
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.utils.deepmerge import deepmerge
 from oarepo_model_builder.utils.verbose import log
 
-from .utils.hyphen_munch import HyphenMunch
+from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
 @click.command()
@@ -48,6 +49,9 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
     # from the correct virtual environ)
     os.environ['PATH'] = str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get('PATH', '')
 
+    if not output_directory:
+        output_directory = os.getcwd()
+
     # set the logging level, it will be warning - 1 (that is, 29) if not verbose,
     # so that warnings only will be emitted. With each verbosity level
     # it will decrease
@@ -64,11 +68,12 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
     log.enter(0, '\n\n%s\n\nProcessing model %s into output directory %s',
               datetime.datetime.now(), model_filename, output_directory)
 
-    builder = create_builder_from_entrypoints()
     loaders = load_entry_points_dict('oarepo_model_builder.loaders')
     safe_loaders = {k: v for k, v in loaders.items() if getattr(v, 'safe', False)}
 
-    schema = ModelSchema(model_filename, loaders=safe_loaders)
+    included_models = load_included_models_from_entry_points()
+
+    schema = ModelSchema(model_filename, loaders=safe_loaders, included_models=included_models)
     for config in configs:
         load_config(schema, config, loaders)
 
@@ -83,9 +88,11 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
 
     if 'python' not in schema.settings:
         schema.settings.python = HyphenMunch()
+
     schema.settings.python.use_isort = isort
     schema.settings.python.use_black = black
 
+    builder = create_builder_from_entrypoints()
     builder.build(schema, output_directory)
 
     log.leave('Done')

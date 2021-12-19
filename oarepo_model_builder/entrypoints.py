@@ -32,3 +32,9 @@ def load_entry_points_list(name):
     ret = [(ep.name, ep.load()) for ep in pkg_resources.iter_entry_points(group=name)]
     ret.sort()
     return [x[1] for x in ret]
+
+
+def load_included_models_from_entry_points():
+    return {
+        ep.name: lambda schema: ep.load() for ep in pkg_resources.iter_entry_points(group='oarepo_model_builder.models')
+    }

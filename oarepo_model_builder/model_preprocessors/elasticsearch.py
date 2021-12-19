@@ -16,6 +16,8 @@ class ElasticsearchModelPreprocessor(ModelPreprocessor):
                         'v7': {
                             'mappings': {
                                 "properties": {
+                                    # TODO: tohle by melo byt v invenio baliku, ne tady -
+                                    #  i kvuli marshmallow, schematu a tak
                                     "id": {
                                         "type": "keyword"
                                     },

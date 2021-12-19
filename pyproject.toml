@@ -75,7 +75,8 @@ python = "oarepo_model_builder.outputs.python:PythonOutput"
 toml = "oarepo_model_builder.outputs.toml:TOMLOutput"
 
 [tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
-10-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
+100-type_shortcuts = "oarepo_model_builder.property_preprocessors.type_shortcuts:TypeShortcutsPreprocessor"
+500-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
 
 [tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
 01-default = "oarepo_model_builder.model_preprocessors.default_values:DefaultValuesModelPreprocessor"
