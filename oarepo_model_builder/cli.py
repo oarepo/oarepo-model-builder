@@ -1,18 +1,18 @@
 import datetime
+import json
 import logging
 import os
 import sys
 from pathlib import Path
 
 import click
+import yaml
 
 from oarepo_model_builder.entrypoints import load_entry_points_dict, create_builder_from_entrypoints, \
     load_included_models_from_entry_points
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.utils.deepmerge import deepmerge
-from oarepo_model_builder.utils.verbose import log
-
 from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
+from oarepo_model_builder.utils.verbose import log
 
 
 @click.command()

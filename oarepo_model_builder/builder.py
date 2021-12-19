@@ -1,7 +1,10 @@
 import copy
 import importlib
+import json
 from pathlib import Path
 from typing import List, Dict, Type
+
+import yaml
 
 from .builders import OutputBuilder, ModelBuilderStack, ReplaceElement, OutputBuilderComponent
 from .outputs import OutputBase
@@ -85,7 +88,8 @@ class ModelBuilder:
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
         if output_builder_components:
             self.output_builder_components = {
-                builder_type: [x() for x in components] for builder_type, components in output_builder_components.items()
+                builder_type: [x() for x in components] for builder_type, components in
+                output_builder_components.items()
             }
         else:
             self.output_builder_components = {}
@@ -136,6 +140,8 @@ class ModelBuilder:
 
         for model_preprocessor in self._filter_classes(self.model_preprocessor_classes, 'model'):
             model_preprocessor(self).transform(schema, schema.settings)
+
+        # print(yaml.dump(json.loads(json.dumps(schema.schema, default=lambda s: str(s)))))
 
         # process the file
         self._iterate_schema(schema)
