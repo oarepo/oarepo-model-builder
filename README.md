@@ -7,10 +7,10 @@ A library and command-line tool to generate invenio model project from a single 
 - [OARepo model builder](#oarepo-model-builder)
   - [CLI Usage](#cli-usage)
   - [Model file](#model-file)
-  - [Model file structure](#model-file-structure)
-  - ["model" section](#model-section)
-  - ["settings" section](#settings-section)
-  - ["plugins" section](#plugins-section)
+    - [Model file structure](#model-file-structure)
+    - ["model" section](#model-section)
+    - ["settings" section](#settings-section)
+    - ["plugins" section](#plugins-section)
   - [API Usage](#api-usage)
   - [Extending the builder](#extending-the-builder)
     - [Builder pipeline](#builder-pipeline)
@@ -69,7 +69,7 @@ settings:
 ```
 
 
-## Model file structure
+### Model file structure
 
 A model is a json/yaml file with the following structure:
 
@@ -89,11 +89,11 @@ plugins: ...
 There might be more sections (documentation etc.), but only the ``settings``, ``model`` and ``plugins``
 are currently processed.
 
-## "model" section
+### "model" section
 
 This section is described in [model.md](docs/model.md)
 
-## "settings" section
+### "settings" section
 
 The settings section contains various configuration settings. In most cases you want to set only 
 the `package` option as in above because all other settings are derived from it. Even the `package`
@@ -105,11 +105,11 @@ The rest of the settings are described in [model-generic-settings.md](docs/model
 Advanced use cases might require to modify [the python settings](docs/model-python-settings.md) or
 [elasticsearch settings](docs/model-elasticsearch-settings.md) (for example, to define custom analyzers).
 
-## "plugins" section
+### "plugins" section
 
 See [plugins and the processing order](docs/model-plugins.md) for details.
 
-## API Usage
+## APIs
 
 To generate invenio model from a model file, perform the following steps:
 
