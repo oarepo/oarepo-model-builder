@@ -63,19 +63,12 @@ def test_fulltext(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
+    data = json5.load(
+        fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
-    assert data == {'mappings': {'properties': {'$schema': {'type': 'keyword'},
-                                                'a': {'type': 'text'},
-                                                'created': {'type': 'date'},
-                                                'id': {'type': 'keyword'},
-                                                'pid': {'properties': {'obj_type': {'type': 'keyword'},
-                                                                       'pid_type': {'type': 'keyword'},
-                                                                       'pk': {'type': 'integer'},
-                                                                       'status': {'type': 'keyword'}},
-                                                        'type': 'object'},
-                                                'updated': {'type': 'date'},
-                                                'uuid': {'type': 'keyword'}}}}
+    assert data == {'mappings': {'properties': {
+        'a': {'type': 'text'},
+    }}}
 
 
 def test_keyword(fulltext_builder):
@@ -93,19 +86,12 @@ def test_keyword(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
+    data = json5.load(
+        fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
-    assert data == {'mappings': {'properties': {'$schema': {'type': 'keyword'},
-                                                'a': {'ignore_above': 50, 'type': 'keyword'},
-                                                'created': {'type': 'date'},
-                                                'id': {'type': 'keyword'},
-                                                'pid': {'properties': {'obj_type': {'type': 'keyword'},
-                                                                       'pid_type': {'type': 'keyword'},
-                                                                       'pk': {'type': 'integer'},
-                                                                       'status': {'type': 'keyword'}},
-                                                        'type': 'object'},
-                                                'updated': {'type': 'date'},
-                                                'uuid': {'type': 'keyword'}}}}
+    assert data == {'mappings': {'properties': {
+        'a': {'ignore_above': 50, 'type': 'keyword'},
+    }}}
 
 
 def test_fulltext_keyword(fulltext_builder):
@@ -123,18 +109,11 @@ def test_fulltext_keyword(fulltext_builder):
         }
     }
 
-    data = json5.load(fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
+    data = json5.load(
+        fulltext_builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
-    assert data == {'mappings': {'properties': {'$schema': {'type': 'keyword'},
-                                                'a': {'fields': {'keyword': {'ignore_above': 50,
-                                                                             'type': 'keyword'}},
-                                                      'type': 'text'},
-                                                'created': {'type': 'date'},
-                                                'id': {'type': 'keyword'},
-                                                'pid': {'properties': {'obj_type': {'type': 'keyword'},
-                                                                       'pid_type': {'type': 'keyword'},
-                                                                       'pk': {'type': 'integer'},
-                                                                       'status': {'type': 'keyword'}},
-                                                        'type': 'object'},
-                                                'updated': {'type': 'date'},
-                                                'uuid': {'type': 'keyword'}}}}
+    assert data == {'mappings': {'properties': {
+        'a': {'fields': {'keyword': {'ignore_above': 50,
+                                     'type': 'keyword'}},
+              'type': 'text'},
+    }}}
