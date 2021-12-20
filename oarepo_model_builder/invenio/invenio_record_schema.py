@@ -5,7 +5,7 @@ from oarepo_model_builder.stack import ModelBuilderStack
 from .invenio_base import InvenioBaseClassPythonBuilder
 from ..outputs.json_stack import JSONStack
 from ..utils.deepmerge import deepmerge
-from ..utils.jinja import package_name, base_name
+from ..utils.jinja import package_name, base_name, with_defined_prefix
 from ..utils.schema import is_schema_element, match_schema, Ref
 
 OAREPO_MARSHMALLOW_PROPERTY = 'oarepo:marshmallow'
@@ -110,7 +110,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             prepared_schema = marshmallow_stack_top.pop_prepared_schema()
             if prepared_schema:
                 deepmerge(data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {}), prepared_schema)
-            marshmallow_stack_top.add(stack.top.key, self.get_marshmallow_definition(data, stack)['field'])
+            definition = self.get_marshmallow_definition(data, stack)
+            key = definition.get('field_name', stack.top.key)
+            marshmallow_stack_top.add(key, definition['field'])
         elif schema_element_type == 'properties':
             node = self.marshmallow_stack.pop()
             self.process_template(
@@ -149,11 +151,18 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             return definition
 
         if 'class' in definition:
-            if '.' in definition['class']:
-                self.imported_classes[definition['class']] = base_name(definition['class'])
+            class_name = definition['class']
+            if '.' in class_name:
+                if not with_defined_prefix(self.settings.python.always_defined_import_prefixes, class_name):
+                    class_base_name = self.imported_classes[definition['class']] = base_name(class_name)
+                else:
+                    class_base_name = class_name
+            else:
+                class_base_name = class_name
 
             # generate instance of the class, filling the options and validators
-            definition['field'] = create_field(base_name(definition['class']), options=(), validators=(),
+
+            definition['field'] = create_field(class_base_name, options=(), validators=(),
                                                definition=definition)
             return definition
 
@@ -163,10 +172,12 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if not generator:
                 if data_type == 'object':
                     raise Exception(
+                        f'Do not have marshmallow field generator for type "{data_type}" at path "{stack.path}". '
                         f'Either supply an existing schema class or instruct the compiler to generate one. '
                         f'See the documentation for details.')
-                raise Exception(f'Do not have marshmallow field generator for {data_type} at path {stack.path}. '
-                                f'Define it either in invenio_record_schema.py or in your own config')
+                raise Exception(
+                    f'Do not have marshmallow field generator for type "{data_type}" at path "{stack.path}". '
+                    f'Define it either in invenio_record_schema.py or in your own config')
 
         # and generate the field
         definition['field'] = generator(data, definition, self.schema, self.imports)
@@ -180,7 +191,10 @@ def create_field(field_type, options=(), validators=(), definition=None):
     nested = definition.get('nested', False)
     if validators:
         opts.append(f'validate=[{",".join(validators)}]')
-    ret = f'{field_type}({", ".join(opts)})'
+    kwargs = definition.get('field_args', '')
+    if kwargs and opts:
+        kwargs = ', ' + kwargs
+    ret = f'{field_type}({", ".join(opts)}{kwargs})'
     if nested:
         ret = f'ma_fields.Nested({ret})'
     return ret

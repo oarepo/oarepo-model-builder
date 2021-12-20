@@ -78,6 +78,7 @@ toml = "oarepo_model_builder.outputs.toml:TOMLOutput"
 [tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
 100-type_shortcuts = "oarepo_model_builder.property_preprocessors.type_shortcuts:TypeShortcutsPreprocessor"
 500-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
+600-date = "oarepo_model_builder.property_preprocessors.date:DatePreprocessor"
 
 [tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
 01-default = "oarepo_model_builder.model_preprocessors.default_values:DefaultValuesModelPreprocessor"
@@ -93,6 +94,8 @@ yml = "oarepo_model_builder.loaders:yaml_loader"
 [tool.poetry.plugins."oarepo_model_builder.templates"]
 99-base_templates = "oarepo_model_builder.invenio"
 
+[tool.poetry.plugins."oarepo.models"]
+invenio = "oarepo_model_builder.builtin_models:invenio.json"
 
 [tool.poetry.scripts]
 oarepo-compile-model = "oarepo_model_builder.cli:run"

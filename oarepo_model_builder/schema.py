@@ -54,7 +54,7 @@ class ModelSchema:
     def merge(self, another):
         self.schema = munch.munchify(deepmerge(another, self.schema, []), factory=HyphenMunch)
 
-    def _load(self, file_path):
+    def _load(self, file_path, content=None):
         """
         Loads a json/json5 file on the path
 
@@ -63,7 +63,7 @@ class ModelSchema:
         """
         extension = pathlib.Path(file_path).suffix.lower()[1:]
         if extension in self.loaders:
-            return self.loaders[extension](file_path, self)
+            return self.loaders[extension](file_path, self, content=content)
 
         raise Exception(f'Can not load {file_path} - no loader has been found for extension {extension} '
                         f'in entry point group oarepo_model_builder.loaders')
