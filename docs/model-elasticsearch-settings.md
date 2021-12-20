@@ -44,3 +44,18 @@ settings:
     # version which should be generated. Only v7 is supported
     version: v7
 ```
+
+Later on, in model use the defined analyzer as:
+
+```yaml
+model:
+  properties:
+    a:
+      type: string
+      oarepo:mapping:
+        type: text
+        analyzer: lower_whitespace
+```
+
+*Note:* everything that you put into `oarepo:mapping` section will be copied into the generated
+mapping file.

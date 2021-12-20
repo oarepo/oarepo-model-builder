@@ -1,4 +1,5 @@
-  python:
+```yaml
+python:
     record-prefix: camel_case(last component of package)
     templates: { }   # overridden templates
     marshmallow:
@@ -35,3 +36,4 @@
     # blueprint name of the resource 
     register-blueprint-function: { settings.package }.blueprint.register_blueprint'
       # name of the blueprint registration function
+```

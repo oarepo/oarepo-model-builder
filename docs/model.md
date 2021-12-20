@@ -1,5 +1,13 @@
 # Model
 
+<!--TOC-->
+
+- [Model](#model)
+  - [Shortcuts](#shortcuts)
+  - [Referencing another model](#referencing-another-model)
+
+<!--TOC-->
+
 
 The model section is a json schema that might be annotated with extra information. For example:
 
@@ -24,7 +32,7 @@ mapping and marshmallow files with a custom ``PropertyPreprocessor`` - see later
 ``oarepo:documentation`` is a section that is currently ignored. In general, sections that are not recognized are
 ignored by default.
 
-### Shortcuts
+## Shortcuts
 
 A ``type: object`` is redundant in models. If there is a `properties` child, the object type is added automatically.
 
@@ -71,7 +79,7 @@ properties:
     oarepo:documentation: anything here
 ```
 
-### Referencing another model
+## Referencing another model
 
 Another model might be included via the `oarepo:use` directive. 
 

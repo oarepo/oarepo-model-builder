@@ -2,6 +2,23 @@
 
 A library and command-line tool to generate invenio model project from a single model file.
 
+<!--TOC-->
+
+- [OARepo model builder](#oarepo-model-builder)
+  - [CLI Usage](#cli-usage)
+  - [Model file](#model-file)
+  - [Model file structure](#model-file-structure)
+  - ["model" section](#model-section)
+  - ["settings" section](#settings-section)
+  - ["plugins" section](#plugins-section)
+  - [API Usage](#api-usage)
+  - [Extending the builder](#extending-the-builder)
+    - [Builder pipeline](#builder-pipeline)
+    - [Registering Preprocessors, Builders and Outputs for commandline client](#registering-preprocessors-builders-and-outputs-for-commandline-client)
+    - [Generating python files](#generating-python-files)
+
+<!--TOC-->
+
 ## CLI Usage
 
 ```bash
@@ -43,6 +60,10 @@ model:
       type: fulltext+keyword
       oarepo:ui:
         label: Title
+      oarepo:mapping:
+         # anything in here will be put into the mapping file
+         # fulltext+keyword type automatically creates "type: text" 
+         # with subfield 'keyword' of type keyword
 settings:
   package: uct.titled_model 
 ```
