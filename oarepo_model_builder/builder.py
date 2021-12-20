@@ -7,6 +7,7 @@ from typing import List, Dict, Type
 import yaml
 
 from .builders import OutputBuilder, ModelBuilderStack, ReplaceElement, OutputBuilderComponent
+from .fs import FileSystem, AbstractFileSystem
 from .outputs import OutputBase
 from .property_preprocessors import PropertyPreprocessor
 from .schema import ModelSchema
@@ -63,6 +64,8 @@ class ModelBuilder:
     Current instances of processor classes.
     """
 
+    filesystem: AbstractFileSystem
+
     def __init__(
             self,
             outputs: List[type(OutputBase)] = (),
@@ -70,7 +73,7 @@ class ModelBuilder:
             property_preprocessors: List[type(PropertyPreprocessor)] = (),
             model_preprocessors: List[type(ModelPreprocessor)] = (),
             output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
-            open=open
+            filesystem=FileSystem()
     ):
         """
         Initializes the builder
@@ -93,7 +96,7 @@ class ModelBuilder:
             }
         else:
             self.output_builder_components = {}
-        self.open = open
+        self.filesystem = filesystem
 
     def get_output(self, output_type: str, path: str | Path):
         """

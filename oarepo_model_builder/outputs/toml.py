@@ -9,7 +9,7 @@ class TOMLOutput(OutputBase):
 
     def begin(self):
         try:
-            with self.builder.open(self.path) as f:
+            with self.builder.filesystem.open(self.path) as f:
                 self.original_data = f.read()
                 self.toml = tomlkit.parse(self.original_data)
                 self.parsed = tomlkit.dumps(self.toml, sort_keys=True)
@@ -94,5 +94,5 @@ class TOMLOutput(OutputBase):
     def finish(self):
         out = tomlkit.dumps(self.toml, sort_keys=True)
         if out != self.parsed:
-            with self.builder.open(self.path, 'w') as f:
+            with self.builder.filesystem.open(self.path, 'w') as f:
                 f.write(tomlkit.dumps(self.toml))

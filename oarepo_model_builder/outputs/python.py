@@ -16,7 +16,7 @@ class PythonOutput(OutputBase):
 
     def begin(self):
         try:
-            with self.builder.open(self.path) as f:
+            with self.builder.filesystem.open(self.path) as f:
                 self.original_data = f.read()
 
                 self.cst = cst.parse_module(self.original_data)
@@ -31,9 +31,9 @@ class PythonOutput(OutputBase):
     def finish(self):
         code = self.cst.code
         if code != self.original_data:
-            self.path.parent.mkdir(parents=True, exist_ok=True)
+            self.builder.filesystem.mkdir(self.path.parent)
             log(2, 'Saving %s', self.path)
-            with self.builder.open(self.path, mode='w') as f:
+            with self.builder.filesystem.open(self.path, mode='w') as f:
                 f.write(code)
             if self.builder.schema.settings.python.use_isort:
                 import isort

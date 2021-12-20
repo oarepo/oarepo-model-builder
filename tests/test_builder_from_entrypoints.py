@@ -3,7 +3,7 @@ import os
 import re
 
 from oarepo_model_builder.entrypoints import load_model, create_builder_from_entrypoints
-from tests.mock_open import MockOpen
+from tests.mock_filesystem import MockFilesystem
 
 
 def test_include_invenio():
@@ -20,12 +20,12 @@ def test_include_invenio():
             }
         }, isort=False, black=False)
 
-    open = MockOpen()
-    builder = create_builder_from_entrypoints(open=open)
+    filesystem = MockFilesystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, '')
 
-    data = builder.open(os.path.join('test', 'services', 'schema.py')).read()
+    data = builder.filesystem.open(os.path.join('test', 'services', 'schema.py')).read()
     print(data)
 
     assert re.sub(r'\s', '', data) == re.sub(r'\s', '', """

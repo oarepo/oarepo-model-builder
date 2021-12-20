@@ -6,7 +6,7 @@ from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from tests.mock_open import MockOpen
+from tests.mock_filesystem import MockFilesystem
 from tests.multilang import MultilangPreprocessor
 
 try:
@@ -20,7 +20,7 @@ def test_simple_mapping_builder():
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        open=MockOpen()
+        filesystem=MockFilesystem()
     )
     builder.build(
         schema=ModelSchema(
@@ -54,7 +54,7 @@ def test_simple_mapping_builder():
         output_dir=''
     )
 
-    data = json5.load(builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
+    data = json5.load(builder.filesystem.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {'mappings': {'properties': {'a': {'type': 'text'}}}}
 
@@ -65,7 +65,7 @@ def test_mapping_preprocessor():
         outputs=[MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
-        open=MockOpen()
+        filesystem=MockFilesystem()
     )
 
     builder.build(
@@ -97,7 +97,7 @@ def test_mapping_preprocessor():
         output_dir=''
     )
 
-    data = json5.load(builder.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
+    data = json5.load(builder.filesystem.open(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json')))
 
     assert data == {
         "mappings": {
