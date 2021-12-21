@@ -13,7 +13,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     output_file_name = 'schema-file'
     parent_module_root_name = 'jsonschemas'
 
-    @process('/model/**', condition=lambda current: is_schema_element(current.stack))
+    @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
     def model_element(self, stack: ModelBuilderStack):
         self.model_element_enter(stack)
         yield

@@ -1,23 +1,25 @@
 # Extending the API
 
-See [template for property plugins](./extending-property.md)
+## Quick start
+ *  [template for property plugins](./extending-property.md)
+ *  [template for builder plugins](./extending-builder.md)
 
-See [template for builder plugins](./extending-builder.md)
+-----
 
 <!--TOC-->
 
 - [Extending the API](#extending-the-api)
+  - [Quick start](#quick-start)
   - [Builder pipeline](#builder-pipeline)
-  - [Registering Preprocessors, Builders and Outputs for commandline client](#registering-preprocessors-builders-and-outputs-for-commandline-client)
-  - [Generating python files](#generating-python-files)
-  - [Overriding default templates](#overriding-default-templates)
+  - [Creating your own property preprocessor](#creating-your-own-property-preprocessor)
+  - [Create your own Builders](#create-your-own-builders)
 
 <!--TOC-->
 
 
 ## Builder pipeline
 
-![Pipeline](./docs/oarepo-model-builder.png)
+![Pipeline](./oarepo-model-builder.png)
 
 At first, an instance of [ModelSchema](./oarepo_model_builder/schema.py) is obtained. The schema can be either passed
 the content of the schema as text, or just a path pointing to the file. The extension of the file determines
@@ -57,88 +59,10 @@ it (in this case, the json-based output).
 
 This way, even if more output builders access the same file, their access is coordinated.
 
-## Registering Preprocessors, Builders and Outputs for commandline client
+## Creating your own property preprocessor
 
-The model & property preprocessors, output builders and outputs are registered in entry points. In poetry, it looks as:
+See [template for property plugins](./extending-property.md)
 
-```toml
-[tool.poetry.plugins."oarepo_model_builder.builders"]
-010-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
-020-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
-030-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
-040-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
+## Create your own Builders
 
-[tool.poetry.plugins."oarepo_model_builder.ouptuts"]
-jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
-mapping = "oarepo_model_builder.outputs.mapping:MappingOutput"
-python = "oarepo_model_builder.outputs.python:PythonOutput"
-
-[tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
-010-text_keyword = "oarepo_model_builder.preprocessors.text_keyword:TextKeywordPreprocessor"
-
-[tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
-01-default = "oarepo_model_builder.transformers.default_values:DefaultValuesModelPreprocessor"
-10-invenio = "oarepo_model_builder.transformers.invenio:InvenioModelPreprocessor"
-20-elasticsearch = "oarepo_model_builder.transformers.elasticsearch:ElasticsearchModelPreprocessor"
-
-[tool.poetry.plugins."oarepo_model_builder.loaders"]
-json = "oarepo_model_builder.loaders:json_loader"
-json5 = "oarepo_model_builder.loaders:json_loader"
-yaml = "oarepo_model_builder.loaders:yaml_loader"
-yml = "oarepo_model_builder.loaders:yaml_loader"
-
-[tool.poetry.plugins."oarepo_model_builder.templates"]
-99-base_templates = "oarepo_model_builder.invenio.templates"
-```
-
-## Generating python files
-
-The default python output is based on [libCST](https://github.com/Instagram/LibCST) that enables merging generated code
-with a code that is already present in output files. The transformer provided in this package can:
-
-1. Add imports
-2. Add a new class or function on top-level
-3. Add a new method to an existing class
-4. Add a new const/property to an existing class
-
-The transformer will not touch an existing function/method. Increase verbosity level to get a list of rejected patches
-or add ``--set settings.python.overwrite=true``
-(use with caution, with sources stored in git and do diff afterwards).
-
-## Overriding default templates
-
-The default templates are written as jinja2-based templates.
-
-To override a single or multiple templates, create a package containing the templates and register it
-in ``oarepo_model_builder.templates``. Be sure to specify the registration key smaller than ``99-``. The template loader
-iterates the sorted set of keys and your templates would be loaded before the default ones. Example:
-
-   ```
-   my_package
-      +-- __init__.py
-      +-- templates
-          +-- invenio_record.py.jinja2 
-   ```
-
-   ```python
-   # my_package/__init__.py
-TEMPLATES = {
-    # resolved relative to the package
-    "record": "templates/invenio_record.py.jinja2"
-}
-   ```
-
-   ```toml
-   [tool.poetry.plugins."oarepo_model_builder.templates"]
-20-my_templates = "my_package"
-   ```
-
-To override a template for a single model, in your model file (or configuration file with -c option or via --set option)
-, specify the relative path to the template:
-
-```yaml
-settings:
-  python:
-    templates:
-      record: ./test/my_invenio_record.py.jinja2
-```
+See [template for builder plugins](./extending-builder.md)

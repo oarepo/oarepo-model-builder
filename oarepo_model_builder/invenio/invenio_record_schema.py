@@ -51,7 +51,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             imported_classes=self.imported_classes
         )
 
-    @process('/model/**', condition=lambda current: is_schema_element(current.stack))
+    @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
     def enter_model_element(self, stack: ModelBuilderStack):
         schema_path = match_schema(stack)
         if isinstance(schema_path[-1], Ref):

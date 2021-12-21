@@ -5,6 +5,9 @@
 - [Model](#model)
   - [Shortcuts](#shortcuts)
   - [Referencing another model](#referencing-another-model)
+  - [Built-in extensions](#built-in-extensions)
+    - [`oarepo:mapping` - elasticsearch definition](#oarepomapping---elasticsearch-definition)
+    - [`oarepo:marshmallow` - marshmallow definition](#oarepomarshmallow---marshmallow-definition)
 
 <!--TOC-->
 
@@ -164,3 +167,9 @@ model:
     author:
       oarepo:use: ./common.yaml#person
 ```
+
+## Built-in extensions
+
+### `oarepo:mapping` - elasticsearch definition
+
+### `oarepo:marshmallow` - marshmallow definition

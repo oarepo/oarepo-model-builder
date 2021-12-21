@@ -11,7 +11,7 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
     TYPE = 'type_shortcuts'
 
     @process(model_builder='*', path='/model/**',
-             condition=lambda current: is_schema_element(current.stack))
+             condition=lambda current, stack: is_schema_element(stack))
     def modify_type_shortcuts(self, data, stack: ModelBuilderStack, **kwargs):
         schema_types = match_schema(stack)
         top = schema_types[-1]
@@ -55,7 +55,7 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
         return ret
 
     @process(model_builder='*', path='/model',
-             condition=lambda current: is_schema_element(current.stack))
+             condition=lambda current, stack: is_schema_element(stack))
     def add_model_type(self, data, stack: ModelBuilderStack, **kwargs):
         if 'type' not in data:
             data['type'] = 'object'
