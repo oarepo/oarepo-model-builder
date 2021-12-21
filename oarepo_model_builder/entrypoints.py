@@ -53,12 +53,11 @@ def load_included_models_from_entry_points():
     return ret
 
 
-def load_model(model_filename, package, configs=(), black=True, isort=True, sets=(), model_content=None):
+def load_model(model_filename, package=None, configs=(), black=True, isort=True, sets=(), model_content=None):
     loaders = load_entry_points_dict('oarepo_model_builder.loaders')
-    safe_loaders = {k: v for k, v in loaders.items() if getattr(v, 'safe', False)}
     included_models = load_included_models_from_entry_points()
     schema = ModelSchema(model_filename, content=model_content,
-                         loaders=safe_loaders, included_models=included_models)
+                         loaders=loaders, included_models=included_models)
     for config in configs:
         load_config(schema, config, loaders)
     for s in sets:

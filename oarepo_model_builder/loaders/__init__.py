@@ -11,9 +11,6 @@ def json_loader(file_path, schema, content=None):
         return json5.load(f)
 
 
-json_loader.safe = True
-
-
 def yaml_loader(file_path, schema, content=None):
     try:
         import yaml
@@ -25,22 +22,3 @@ def yaml_loader(file_path, schema, content=None):
 
     with open(file_path) as f:
         return yaml.full_load(f)
-
-
-yaml_loader.safe = True
-
-
-def python_loader(file_path, schema, content=None):
-    with open(file_path) as f:
-        code = f.read()
-    # hope that user knows what he/she is doing
-    gls = {}
-    exec(code, gls)
-    ret = {}
-    for k, v in gls:
-        try:
-            json5.dumps(v)
-        except:
-            continue
-        ret[k] = v
-    return ret

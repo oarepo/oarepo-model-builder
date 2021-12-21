@@ -11,7 +11,7 @@ A library and command-line tool to generate invenio model project from a single 
     - ["model" section](#model-section)
     - ["settings" section](#settings-section)
     - ["plugins" section](#plugins-section)
-  - [API Usage](#api-usage)
+  - [APIs](#apis)
   - [Extending the builder](#extending-the-builder)
     - [Builder pipeline](#builder-pipeline)
     - [Registering Preprocessors, Builders and Outputs for commandline client](#registering-preprocessors-builders-and-outputs-for-commandline-client)
@@ -111,70 +111,7 @@ See [plugins and the processing order](docs/model-plugins.md) for details.
 
 ## APIs
 
-To generate invenio model from a model file, perform the following steps:
-
-1. Load the model into a ``ModelSchema`` instance
-    ```python
-    from oarepo_model_builder.schema import ModelSchema
-    from oarepo_model_builder.loaders import yaml_loader
-   
-    included_models = {
-        'my_model': lambda parent_model: {'test': 'abc'} 
-    }
-    loaders = {'yaml': yaml_loader}
-   
-    model = ModelSchema(file_path='test.yaml', 
-                        included_models=included_models, 
-                        loaders=loaders)
-    ```
-
-   You can also path directly the content of the file path in ``content`` attribute
-
-   The ``included_models`` is a mapping between model key and its accessor. It is used to replace any ``oarepo:use``
-   element. See the Referencing a model above.
-
-   The ``loaders`` handle loading of files - the key is lowercased file extension, value a function taking (schema,
-   path) and returning loaded content
-
-
-2. Create an instance of ``ModelBuilder``
-
-   To use the pre-installed set of builders and preprocessors, invoke:
-
-   ```python
-   from oarepo_model_builder.entrypoints \ 
-    import create_builder_from_entrypoints
-   
-   builder = create_builder_from_entrypoints()
-   ```
-
-   To have a complete control of builders and preprocessors, invoke:
-
-   ```python
-      from oarepo_model_builder.builder import ModelBuilder
-      from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-      from oarepo_model_builder.builders.mapping import MappingBuilder
-      from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
-      from oarepo_model_builder.outputs.mapping import MappingOutput
-      from oarepo_model_builder.outputs.python import PythonOutput
-      from oarepo_model_builder.property_preprocessors.text_keyword import TextKeywordPreprocessor
-      from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
-      from oarepo_model_builder.model_preprocessors.elasticsearch import ElasticsearchModelPreprocessor
-
-      builder = ModelBuilder(
-        output_builders=[JSONSchemaBuilder, MappingBuilder],
-        outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
-        model_preprocessors=[DefaultValuesModelPreprocessor, ElasticsearchModelPreprocessor],
-        property_preprocessors=[TextKeywordPreprocessor]
-      )    
-   ```   
-
-
-3. Invoke
-
-   ```python
-      builder.build(schema, output_directory)
-   ```
+To invoke the builder programmatically, see [using the API](docs/using-api.md).
 
 ## Extending the builder
 
