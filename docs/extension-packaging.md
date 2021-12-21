@@ -166,7 +166,8 @@ You can add dev dependencies as well by using 'dev-dependencies' key.
 To keep the builder and runtime part in the same package you would like to split the dependencies such that only runtime
 dependencies are installed in the "runtime" usage and no dependencies are installed in the "builder" case.
 
-To do so, mark your runtime dependencies as optional with the "extra" group named "runtime":
+To do so, mark your runtime dependencies as optional with the "extra" group named "runtime" and 
+add an optional builder extra:
 
 ```toml
 [tool.poetry]
@@ -178,9 +179,11 @@ authors = ["Mirek Simek <miroslav.simek@vscht.cz>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 invenio = { version = "^3.5.0", optional = true }         # this was added as optional
+oarepo-model-builder = { version = ">=0.9.1", optional = true }  # this was added as optional
 
 [tool.poetry.extras]
 runtime = ["invenio"]                               # here it is put to runtime group
+builder = ["oarepo-model-builder"]
 
 [tool.poetry.dev-dependencies]
 oarepo_model_builder = ">= 0.9.1"
@@ -215,5 +218,17 @@ class RegisterDependenciesPreprocessor(ModelPreprocessor):
             'version': "^1.0.0",
             'extras': ['runtime']
         }
-
 ```
+
+This way, when you develop the extension for the builder, you will have "builder" extra installed.
+When you develop the "runtime" part, you will have the "runtime" extra installed.
+
+User who installs the extension to oarepo-model-builder environment (either with `pip install my-extension` or 
+`pip install my-extension[builder]`) will have the builder part installed.
+
+User who uses oarepo-model-builder to generate the model will be covered as well, as the generated
+pyproject.toml will include the extension with runtime extras.
+
+But if this extension is used by someone out of the oarepo-model-builder ecosystem, he should be
+always guided to install it as ``pip install my-extension[runtime]`` as otherwise no dependencies
+will be installed.
