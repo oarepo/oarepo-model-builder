@@ -6,6 +6,9 @@ A library and command-line tool to generate invenio model project from a single 
 
 - [OARepo model builder](#oarepo-model-builder)
   - [CLI Usage](#cli-usage)
+    - [Installing model builder as dev dependency](#installing-model-builder-as-dev-dependency)
+    - [Installing model builder in a separate virtualenv](#installing-model-builder-in-a-separate-virtualenv)
+    - [Running model builder](#running-model-builder)
   - [Model file](#model-file)
     - [Model file structure](#model-file-structure)
     - ["model" section](#model-section)
@@ -17,6 +20,35 @@ A library and command-line tool to generate invenio model project from a single 
 <!--TOC-->
 
 ## CLI Usage
+
+To use the model builder client, you first have to install the model builder somewhere.
+
+### Installing model builder as dev dependency
+
+Initialize your new project with ``poetry create`` and then add model builder
+with ``poetry add --dev oarepo-model-builder``. This is the simplest solution but has a disadvantage - as poetry always
+installs dev dependencies in build & test, but not in production, in your development environment you will have extra
+packages installed. If you happen to use them, you will break your production build.
+
+### Installing model builder in a separate virtualenv
+
+Create a separate virtualenv and install model builder into it:
+
+```bash
+python3.10 -m venv .venv-builder
+(source .venv-builder/bin/activate; pip install -U pip setuptools wheel; pip install oarepo-model-builder)
+```
+
+Then for ease of use add the following aliases
+
+```bash
+alias oarepo-compile-model=".venv-builder/bin/oarepo-compile-model"
+alias oarepo-model-builder-pip=".venv-builder/bin/pip"
+```
+
+Use the ``oarepo-model-builder-pip`` if you need to install plugins to the model builder.
+
+### Running model builder
 
 ```bash
 oarepo-compile-model model.yaml
@@ -46,25 +78,23 @@ will compile the model.yaml into the current directory. Options:
 
 ## Model file
 
-A model is a json/yaml file including description of the model and processing settings.
-Example:
+A model is a json/yaml file including description of the model and processing settings. Example:
 
 ```yaml
 version: 1.0.0
-model: 
+model:
   properties:
     title:
       type: fulltext+keyword
       oarepo:ui:
         label: Title
       oarepo:mapping:
-         # anything in here will be put into the mapping file
-         # fulltext+keyword type automatically creates "type: text" 
-         # with subfield 'keyword' of type keyword
+      # anything in here will be put into the mapping file
+      # fulltext+keyword type automatically creates "type: text" 
+      # with subfield 'keyword' of type keyword
 settings:
   package: uct.titled_model 
 ```
-
 
 ### Model file structure
 
@@ -74,7 +104,7 @@ A model is a json/yaml file with the following structure:
 version: 1.0.0
 model:
   properties:
-    title: 
+    title:
       type: fulltext+keyword
 settings:
   <generic settings here>
@@ -92,10 +122,10 @@ This section is described in [model.md](docs/model.md)
 
 ### "settings" section
 
-The settings section contains various configuration settings. In most cases you want to set only 
-the `package` option as in above because all other settings are derived from it. Even the `package`
-option might be omitted - in this case the package name will be the last component of the output 
-directory (with dashes converted to underscores).
+The settings section contains various configuration settings. In most cases you want to set only the `package` option as
+in above because all other settings are derived from it. Even the `package`
+option might be omitted - in this case the package name will be the last component of the output directory (with dashes
+converted to underscores).
 
 The rest of the settings are described in [model-generic-settings.md](docs/model-generic-settings.md)
 
@@ -112,5 +142,4 @@ To invoke the builder programmatically, see [using the API](docs/using-api.md).
 
 ## Writing custom plugins
 
-See [writing plugins](docs/extending-api.md) if you want to extend the building process with your
-own plugins.
+See [writing plugins](docs/extending-api.md) if you want to extend the building process with your own plugins.

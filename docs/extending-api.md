@@ -13,6 +13,7 @@
   - [Builder pipeline](#builder-pipeline)
   - [Creating your own property preprocessor](#creating-your-own-property-preprocessor)
   - [Create your own Builders](#create-your-own-builders)
+  - [Packaging your extension](#packaging-your-extension)
 
 <!--TOC-->
 
@@ -66,3 +67,7 @@ See [template for property plugins](./extending-property.md)
 ## Create your own Builders
 
 See [template for builder plugins](./extending-builder.md)
+
+## Packaging your extension
+
+See [packaging your extension](./extension-packaging.md) for more details.
