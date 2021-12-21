@@ -39,6 +39,8 @@ build-backend = "poetry.core.masonry.api"
 020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
 030-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
 
+050-poetry = "oarepo_model_builder.builders.poetry:PoetryBuilder"
+
 100-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
 110-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
 120-invenio_record_metadata = "oarepo_model_builder.invenio.invenio_record_metadata:InvenioRecordMetadataBuilder"
