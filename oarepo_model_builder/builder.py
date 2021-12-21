@@ -161,28 +161,33 @@ class ModelBuilder:
     # private methods
 
     def _filter_classes(self, classes: List[Type[object]], plugin_type):
-        plugin_config = self.settings.plugins.get(plugin_type, None)
-        if not plugin_config:
+        if 'plugins' not in self.schema.schema or plugin_type not in self.schema.schema.plugins:
             return classes
-        disabled = plugin_config.get('disabled', [])
-        enabled = plugin_config.get('enabled', [])
+        plugin_config = self.schema.schema.plugins[plugin_type]
+
+        disabled = plugin_config.get('disable', [])
+        enabled = plugin_config.get('enable', [])
+        included = plugin_config.get('include', [])
+
+        if included:
+            enabled = [*enabled]   # will be adding inclusions so make a copy
+            classes = [*classes]
+            for incl in included:
+                package_name, class_name = incl.split(':')
+                class_type = getattr(importlib.import_module(package_name), class_name)
+                classes.append(class_type)
+                if enabled and class_type.TYPE not in enabled:
+                    enabled.append(class_type.TYPE)
 
         if disabled == '__all__':
             ret = []
-        elif isinstance(disabled, (list, tuple)):
-            ret = [c for c in classes if c.TYPE not in disabled]
         else:
-            raise AttributeError('Value of settings.plugin.*.disabled must be either '
-                                 'a list of names or string __all__ to disable all plugins.')
+            ret = [c for c in classes if c.TYPE not in disabled]
+
         if enabled:
             ret.extend(
                 [c for c in classes if c.TYPE in enabled]
             )
-            # add directly imported classes
-            for en in enabled:
-                if ':' in en:
-                    en = en.split(':', maxsplit=1)
-                    ret.append(getattr(importlib.import_module(en[0]), en[1]))
         return ret
 
     def _iterate_schema(self, schema: ModelSchema):

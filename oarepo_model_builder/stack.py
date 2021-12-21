@@ -75,7 +75,7 @@ class ModelBuilderStack:
     def process(self, on_element):
         self.stack = []
         try:
-            processing_order = self.schema.settings.processing_order
+            processing_order = self.schema.schema.processing_order
         except AttributeError:
             processing_order = None
         self._process_internal(None, self.schema.schema, on_element, processing_order)

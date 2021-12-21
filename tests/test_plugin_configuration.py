@@ -7,11 +7,9 @@ from oarepo_model_builder.schema import ModelSchema
 def test_output_disabled():
     builder = ModelBuilder()
     schema = ModelSchema('', {
-        'settings': {
-            'plugins': {
-                'output': {
-                    'disabled': '__all__'
-                }
+        'plugins': {
+            'output': {
+                'disable': '__all__'
             }
         }
     })
@@ -22,11 +20,9 @@ def test_output_disabled():
 def test_output_disabled_single():
     builder = ModelBuilder()
     schema = ModelSchema('', {
-        'settings': {
-            'plugins': {
-                'output': {
-                    'disabled': ['jsonschema']
-                }
+        'plugins': {
+            'output': {
+                'disable': ['jsonschema']
             }
         }
     })
@@ -37,14 +33,12 @@ def test_output_disabled_single():
 def test_output_enabled():
     builder = ModelBuilder()
     schema = ModelSchema('', {
-        'settings': {
-            'plugins': {
-                'output': {
-                    'disabled': '__all__',
-                    'enabled': [
-                        'mapping'
-                    ]
-                }
+        'plugins': {
+            'output': {
+                'disable': '__all__',
+                'enable': [
+                    'mapping'
+                ]
             }
         }
     })
@@ -55,13 +49,11 @@ def test_output_enabled():
 def test_output_enabled_import():
     builder = ModelBuilder()
     schema = ModelSchema('', {
-        'settings': {
-            'plugins': {
-                'output': {
-                    'enabled': [
-                        'oarepo_model_builder.outputs.mapping:MappingOutput'
-                    ]
-                }
+        'plugins': {
+            'output': {
+                'include': [
+                    'oarepo_model_builder.outputs.mapping:MappingOutput'
+                ]
             }
         }
     })

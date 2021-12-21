@@ -64,7 +64,7 @@ def load_model(model_filename, package, configs=(), black=True, isort=True, sets
     for s in sets:
         k, v = s.split('=', 1)
         schema.schema[k] = v
-    check_plugin_packages(schema.settings)
+    check_plugin_packages(schema)
     if package:
         schema.settings['package'] = package
     if 'python' not in schema.settings:
@@ -84,9 +84,9 @@ def load_config(schema, config, loaders):
         schema.loaders = old_loaders
 
 
-def check_plugin_packages(settings):
+def check_plugin_packages(schema):
     try:
-        required_packages = settings.plugins.packages
+        required_packages = schema.schema.plugins.packages
     except AttributeError:
         return
     import pkg_resources, subprocess

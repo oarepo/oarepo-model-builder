@@ -26,7 +26,6 @@ def test_include_invenio():
     builder.build(schema, '')
 
     data = builder.filesystem.open(os.path.join('test', 'services', 'schema.py')).read()
-    print(data)
 
     assert re.sub(r'\s', '', data) == re.sub(r'\s', '', """
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
