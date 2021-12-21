@@ -1,3 +1,57 @@
+# Builder plugins
+
+A builder is responsible for generating output file. It does not write to the filesystem
+directly but through Output classes - this way even if multiple builders modify a single
+file, the access is coordinated.
+
+<!--TOC-->
+
+- [Builder plugins](#builder-plugins)
+  - [Writing plugin](#writing-plugin)
+  - [Plugin registration](#plugin-registration)
+  - [Generating python files](#generating-python-files)
+  - [Overriding default templates](#overriding-default-templates)
+
+<!--TOC-->
+
+## Writing plugin
+
+```python
+class JSONSchemaBuilder(OutputBuilder):
+    output_file_name: str = None
+    output_file_type: str = None
+    parent_module_root_name: str = None
+
+    @process('/model')
+    def enter_model(self, stack: ModelBuilderStack):
+        output_name = self.settings[self.output_file_name]
+        self.output = self.builder.get_output('json', output_name)
+
+    @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
+    def model_element(self, stack: ModelBuilderStack):
+        # TODO: write the element at the top of the stack to the output
+        yield       # process children here
+        # TODO: tell the output that the element ended        
+```
+
+The file above shows how a schema builder might be implemented. When a model element is entered,
+an output is allocated via `self.builder.get_output` call. Then on schema elements (filtered by
+processing condition) these are written into the output. See `../oarepo_model_builder/builders/jsonschema.py`
+for complete sources.
+
+## Plugin registration
+
+A plugin is registered in entrypoints in group `oarepo_model_builder.builders`. 
+In poetry's pyproject.toml, this is written as:
+
+```toml
+[tool.poetry.plugins."oarepo_model_builder.builders"]
+020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
+```
+
+Note: plugins are loaded in the order given by the key and are evaluated in the same order.
+
+
 ## Generating python files
 
 The default python output is based on [libCST](https://github.com/Instagram/LibCST) that enables merging generated code
