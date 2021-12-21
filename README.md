@@ -12,7 +12,7 @@ A library and command-line tool to generate invenio model project from a single 
     - ["settings" section](#settings-section)
     - ["plugins" section](#plugins-section)
   - [Builder as a library (using via API)](#builder-as-a-library-using-via-api)
-  - [Extending the builder](#extending-the-builder)
+  - [Writing custom plugins](#writing-custom-plugins)
 
 <!--TOC-->
 
@@ -110,7 +110,7 @@ See [plugins and the processing order](docs/model-plugins.md) for details.
 
 To invoke the builder programmatically, see [using the API](docs/using-api.md).
 
-## Extending the builder
+## Writing custom plugins
 
 See [writing plugins](docs/extending-api.md) if you want to extend the building process with your
 own plugins.
