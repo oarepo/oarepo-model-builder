@@ -27,16 +27,18 @@ class PoetryBuilder(OutputBuilder):
         output.setdefault("tool.poetry.dependencies", "python", "^3.9")
 
         if 'runtime-dependencies' in self.schema.schema:
+            output.table("tool.poetry.dependencies")
             for dep, value in self.schema.schema.runtime_dependencies.items():
                 if isinstance(value, str):
                     value = {'version': value}
-                output.setdefault("tool.poetry.dependencies." + dep, *sum(value.items(), []))
+                output.setdefault("tool.poetry.dependencies." + dep, *sum((list(x) for x in value.items()), []))
 
         if 'dev-dependencies' in self.schema.schema:
+            output.table("tool.poetry.dev-dependencies")
             for dep, value in self.schema.schema.dev_dependencies.items():
                 if isinstance(value, str):
                     value = {'version': value}
-                output.setdefault("tool.poetry.dev-dependencies." + dep, *sum(value.items(), []))
+                output.setdefault("tool.poetry.dev-dependencies." + dep, *sum((list(x) for x in value.items()), []))
 
         if output.created:
             log(log.INFO, f"""To install the sample app, run
