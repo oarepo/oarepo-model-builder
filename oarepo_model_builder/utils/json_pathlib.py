@@ -64,7 +64,7 @@ class JSONPaths:
                 matched = False
                 for rec in self.paths[idx]:
                     if rec.condition:
-                        condition_result = rec.condition(PathCondition(subtree, extra_data=extra_data))
+                        condition_result = rec.condition(PathCondition(subtree), **(extra_data or {}))
                         if isinstance(condition_result, Iterable):
                             condition_result = any(condition_result)
                         if condition_result:
@@ -90,11 +90,10 @@ def path_to_regex(path):
 
 
 class PathCondition:
-    def __init__(self, start=None, subtree_list=(), extra_data=None):
+    def __init__(self, start=None, subtree_list=()):
         self._subtree_list = [*subtree_list]
         if start:
             self._subtree_list.append(start)
-        self._extra_data = extra_data or {}
 
     def _apply(self, p, subtree_list):
         if subtree_list:
@@ -121,8 +120,6 @@ class PathCondition:
                             yield subtree[p]
 
     def __getattr__(self, item):
-        if item in self._extra_data:
-            return self._extra_data[item]
         try:
             item = int(item)
         except:

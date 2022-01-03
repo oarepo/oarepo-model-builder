@@ -1,0 +1,16 @@
+
+{% for imp, imp_aliases in imports.items() %}
+{% for alias in imp_aliases %}
+import {{ imp }} as {{ alias }}
+{% endfor %}
+{% endfor %}
+
+{% for imp, alias in imported_classes.items() %}
+{% if imp is in_different_package %}
+{% if imp|base_name == alias %}
+from {{ imp|package_name }} import {{ imp|base_name }}
+{% else %}
+from {{ imp|package_name }} import {{ imp|base_name }} as {{ alias }}
+{% endif %}
+{% endif %}
+{% endfor %}

@@ -16,38 +16,6 @@ class ElasticsearchModelPreprocessor(ModelPreprocessor):
                         'v7': {
                             'mappings': {
                                 "properties": {
-                                    "id": {
-                                        "type": "keyword"
-                                    },
-                                    "created": {
-                                        "type": "date"
-                                    },
-                                    "updated": {
-                                        "type": "date"
-                                    },
-                                    "$schema": {
-                                        "type": "keyword"
-                                    },
-                                    "pid": {
-                                        "type": "object",
-                                        "properties": {
-                                            "pk": {
-                                                "type": "integer"
-                                            },
-                                            "pid_type": {
-                                                "type": "keyword"
-                                            },
-                                            "status": {
-                                                "type": "keyword"
-                                            },
-                                            "obj_type": {
-                                                "type": "keyword"
-                                            }
-                                        }
-                                    },
-                                    "uuid": {
-                                        "type": "keyword"
-                                    }
                                 }
                             }
                         }

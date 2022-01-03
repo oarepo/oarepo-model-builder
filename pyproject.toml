@@ -29,6 +29,7 @@ pyyaml = ["pyyaml"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^6"
+md-toc = "^8.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -37,6 +38,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.plugins."oarepo_model_builder.builders"]
 020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
 030-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+
+050-poetry = "oarepo_model_builder.builders.poetry:PoetryBuilder"
 
 100-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
 110-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
@@ -75,7 +78,9 @@ python = "oarepo_model_builder.outputs.python:PythonOutput"
 toml = "oarepo_model_builder.outputs.toml:TOMLOutput"
 
 [tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
-10-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
+100-type_shortcuts = "oarepo_model_builder.property_preprocessors.type_shortcuts:TypeShortcutsPreprocessor"
+500-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
+600-date = "oarepo_model_builder.property_preprocessors.date:DatePreprocessor"
 
 [tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
 01-default = "oarepo_model_builder.model_preprocessors.default_values:DefaultValuesModelPreprocessor"
@@ -91,6 +96,8 @@ yml = "oarepo_model_builder.loaders:yaml_loader"
 [tool.poetry.plugins."oarepo_model_builder.templates"]
 99-base_templates = "oarepo_model_builder.invenio"
 
+[tool.poetry.plugins."oarepo.models"]
+invenio = "oarepo_model_builder.builtin_models:invenio.json"
 
 [tool.poetry.scripts]
 oarepo-compile-model = "oarepo_model_builder.cli:run"

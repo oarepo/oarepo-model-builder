@@ -1,19 +1,22 @@
 import sys
 import libcst as cst
-from jinja2 import Environment, FunctionLoader
+from jinja2 import Environment, FunctionLoader, pass_context
 
 from oarepo_model_builder.templates import templates
 from oarepo_model_builder.outputs import OutputBase
 from oarepo_model_builder.utils.cst import MergingTransformer
+from oarepo_model_builder.utils.jinja import in_different_package, base_name, package_name, with_defined_prefix
 from oarepo_model_builder.utils.verbose import log
 
 
 class PythonOutput(OutputBase):
     TYPE = 'python'
+    cst = None
+    original_data = None
 
     def begin(self):
         try:
-            with self.builder.open(self.path) as f:
+            with self.builder.filesystem.open(self.path) as f:
                 self.original_data = f.read()
 
                 self.cst = cst.parse_module(self.original_data)
@@ -28,9 +31,9 @@ class PythonOutput(OutputBase):
     def finish(self):
         code = self.cst.code
         if code != self.original_data:
-            self.path.parent.mkdir(parents=True, exist_ok=True)
+            self.builder.filesystem.mkdir(self.path.parent)
             log(2, 'Saving %s', self.path)
-            with self.builder.open(self.path, mode='w') as f:
+            with self.builder.filesystem.open(self.path, mode='w') as f:
                 f.write(code)
             if self.builder.schema.settings.python.use_isort:
                 import isort
@@ -63,9 +66,23 @@ class PythonOutput(OutputBase):
             raise
         self.cst = self.cst.visit(MergingTransformer(rendered_cst))
 
-    def register_default_filters(self, env):
-        env.filters['package_name'] = lambda value: (value.rsplit('.', maxsplit=1)[0])
-        env.filters['base_name'] = lambda value: (value.rsplit('.', maxsplit=1)[1])
+    @staticmethod
+    def register_default_filters(env):
+        env.filters['package_name'] = package_name
+        env.filters['base_name'] = pass_context(
+            lambda context, value:
+            base_name(value)
+            if not with_defined_prefix(
+                context['settings'].python.always_defined_import_prefixes, value)
+            else value
+        )
+        env.tests['in_different_package'] = pass_context(
+            lambda context, value: in_different_package(context['current_package_name'], value)
+        )
+        env.tests['not_prefixed'] = pass_context(
+            lambda context, value: not with_defined_prefix(
+                context['settings'].python.always_defined_import_prefixes, value)
+        )
 
 
 class CSTPart:

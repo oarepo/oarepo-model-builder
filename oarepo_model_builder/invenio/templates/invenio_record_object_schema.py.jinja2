@@ -1,0 +1,13 @@
+{% for b in schema_bases %}
+{% if b is not_prefixed %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endif %}
+{% endfor %}
+
+{% include "imports" %}
+
+class {{ schema_class|base_name }}({% for b in schema_bases %}{{ b|base_name }}, {% endfor %}):
+    """{{ schema_class|base_name }} schema."""
+    {% for fld_name, fld_def in fields.items() %}
+    {{ fld_name }} = {{ fld_def }}
+    {% endfor %}

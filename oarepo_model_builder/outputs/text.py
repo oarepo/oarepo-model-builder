@@ -6,7 +6,7 @@ class TextOutput(OutputBase):
 
     def begin(self):
         try:
-            with self.builder.open(self.path) as f:
+            with self.builder.filesystem.open(self.path) as f:
                 self.text = self.original_data = f.read()
         except FileNotFoundError:
             self.original_data = None
@@ -18,5 +18,5 @@ class TextOutput(OutputBase):
 
     def finish(self):
         if self.text != self.original_data:
-            with self.builder.open(self.path, 'w') as f:
+            with self.builder.filesystem.open(self.path, 'w') as f:
                 f.write(self.text)

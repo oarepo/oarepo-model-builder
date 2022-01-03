@@ -9,7 +9,7 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
 class MultilangPreprocessor(PropertyPreprocessor):
     @process(model_builder=JSONSchemaBuilder,
              path='**/properties/*',
-             condition=lambda current: current.type == 'multilingual')
+             condition=lambda current, stack: current.type == 'multilingual')
     def modify_multilang_schema(self, data, stack, **kwargs):
         data['type'] = 'object'
         data['properties'] = {
@@ -24,7 +24,7 @@ class MultilangPreprocessor(PropertyPreprocessor):
 
     @process(model_builder=MappingBuilder,
              path='**/properties/*',
-             condition=lambda current: current.type == 'multilingual')
+             condition=lambda current, stack: current.type == 'multilingual')
     def modify_multilang_mapping(self, data, stack, **kwargs):
         raise ReplaceElement({
             stack.top.key: {
@@ -45,7 +45,7 @@ class MultilangPreprocessor(PropertyPreprocessor):
 
     @process(model_builder=InvenioRecordSchemaBuilder,
              path='**/properties/*',
-             condition=lambda current: current.type == 'multilingual')
+             condition=lambda current, stack: current.type == 'multilingual')
     def modify_multilang_marshmallow(self, data, stack, **kwargs):
         data['type'] = 'object'
         deepmerge(data.setdefault('oarepo:marshmallow', {}), {

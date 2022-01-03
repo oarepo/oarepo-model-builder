@@ -25,7 +25,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             package_path = settings.package.split('.')
             return Path(package_path[0]).joinpath(*package_path[1:])
 
-        self.set(settings, 'schema-version', lambda: '1.0.0')
+        self.set(settings, 'schema-version', lambda: schema.schema.get('version', '1.0.0'))
 
         self.set(settings, 'schema-name', lambda: f"{settings.kebap_package}-{settings.schema_version}.json")
 

@@ -18,7 +18,7 @@ class JSONOutput(OutputBase):
 
     def begin(self):
         try:
-            with self.builder.open(self.path) as f:
+            with self.builder.filesystem.open(self.path) as f:
                 self.original_data = json5.load(f)  # noqa
         except FileNotFoundError:
             self.original_data = None
@@ -34,9 +34,9 @@ class JSONOutput(OutputBase):
     def finish(self):
         data = self.stack.value
         if DeepDiff(data, self.original_data):
-            self.path.parent.mkdir(parents=True, exist_ok=True)
+            self.builder.filesystem.mkdir(self.path.parent)
             log(2, 'Saving %s', self.path)
-            with self.builder.open(self.path, mode='w') as f:
+            with self.builder.filesystem.open(self.path, mode='w') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
 
     def enter(self, key, el):

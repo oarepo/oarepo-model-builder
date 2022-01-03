@@ -1,6 +1,7 @@
 import copy
 import pathlib
 from typing import Dict, Callable
+from pathlib import Path
 
 import munch
 from jsonpointer import resolve_pointer
@@ -53,7 +54,7 @@ class ModelSchema:
     def merge(self, another):
         self.schema = munch.munchify(deepmerge(another, self.schema, []), factory=HyphenMunch)
 
-    def _load(self, file_path):
+    def _load(self, file_path, content=None):
         """
         Loads a json/json5 file on the path
 
@@ -62,12 +63,12 @@ class ModelSchema:
         """
         extension = pathlib.Path(file_path).suffix.lower()[1:]
         if extension in self.loaders:
-            return self.loaders[extension](file_path, self)
+            return self.loaders[extension](file_path, self, content=content)
 
         raise Exception(f'Can not load {file_path} - no loader has been found for extension {extension} '
                         f'in entry point group oarepo_model_builder.loaders')
 
-    def _load_included_file(self, file_id):
+    def _load_included_file(self, location):
         """
         Resolve and load an included file. Internal method called when loading schema.
         If the included file contains a json pointer,
@@ -76,27 +77,45 @@ class ModelSchema:
         :param file_id: the id of the included file, might contain #xpointer
         :return:    loaded json
         """
-        if '#' in file_id:
-            file_id, json_pointer = file_id.rsplit('#', 1)
+        if '#' in location:
+            file_id, json_pointer_or_id = location.rsplit('#', 1)
         else:
-            json_pointer = None
+            file_id = location
+            json_pointer_or_id = None
 
-        if file_id not in self.included_schemas:
-            raise IncludedFileNotFoundException(f'Included file {file_id} not found in includes')
+        if not file_id or file_id == '.':
+            ret = self.schema
+        elif file_id.startswith('.'):
+            # relative include
+            ret = self._load(self.abs_path.parent / file_id)
+        else:
+            if file_id not in self.included_schemas:
+                raise IncludedFileNotFoundException(f'Included file {file_id} not found in includes')
 
-        ret = self.included_schemas[file_id](self)
+            ret = self.included_schemas[file_id](self)
 
-        if json_pointer:
-            ret = resolve_pointer(ret, json_pointer)
+        if json_pointer_or_id:
+            if json_pointer_or_id.startswith('/'):
+                ret = resolve_pointer(ret, json_pointer_or_id)
+            else:
+                ret = resolve_id(ret, json_pointer_or_id)
+                if not ret:
+                    raise IncludedFileNotFoundException(f'Element with id {json_pointer_or_id} not found in {file_id}')
 
-        return copy.deepcopy(ret)
+        ret = copy.deepcopy(ret)
+        ret.pop('$id', None)
+        ret['oarepo:included-from'] = location
+        return ret
 
     def _resolve_references(self, element, stack):
         if isinstance(element, dict):
             if self.OAREPO_USE in element:
                 included_name = element.pop(self.OAREPO_USE)
-                included_data = self._load_included_file(included_name)
-                deepmerge(element, included_data, [])
+                if not isinstance(included_name, list):
+                    included_name = [included_name]
+                for name in included_name:
+                    included_data = self._load_included_file(name)
+                    deepmerge(element, included_data, [])
                 return self._resolve_references(element, stack)
             for k, v in element.items():
                 self._resolve_references(v, stack + [k])
@@ -104,4 +123,21 @@ class ModelSchema:
             for v in element:
                 self._resolve_references(v, stack)
 
+    @property
+    def abs_path(self):
+        return Path(self.file_path).absolute()
 
+
+def resolve_id(json, element_id):
+    if isinstance(json, dict):
+        if '$id' in json and json['$id'] == element_id:
+            return json
+        continue_with = json.values()
+    elif isinstance(json, (tuple, list)):
+        continue_with = json
+    else:
+        return None
+    for k in continue_with:
+        ret = resolve_id(k, element_id)
+        if ret is not None:
+            return ret

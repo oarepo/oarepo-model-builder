@@ -7,7 +7,7 @@ from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from tests.mock_open import MockOpen
+from tests.mock_filesystem import MockFilesystem
 from tests.multilang import MultilangPreprocessor
 
 try:
@@ -21,7 +21,7 @@ def test_simple_jsonschema_builder():
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        open=MockOpen()
+        filesystem=MockFilesystem()
     )
     builder.build(
         schema=ModelSchema(
@@ -49,7 +49,7 @@ def test_simple_jsonschema_builder():
         output_dir=''
     )
 
-    data = json5.load(builder.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
+    data = json5.load(builder.filesystem.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -66,7 +66,7 @@ def test_jsonschema_preprocessor():
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
-        open=MockOpen()
+        filesystem=MockFilesystem()
     )
 
     builder.build(
@@ -95,7 +95,7 @@ def test_jsonschema_preprocessor():
         output_dir=''
     )
 
-    data = json5.load(builder.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
+    data = json5.load(builder.filesystem.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {
@@ -131,7 +131,7 @@ def test_components():
                 TestJSONSchemaOutputComponent
             ]
         },
-        open=MockOpen()
+        filesystem=MockFilesystem()
     )
     builder.build(
         schema=ModelSchema(
@@ -159,7 +159,7 @@ def test_components():
         output_dir=''
     )
 
-    data = json5.load(builder.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
+    data = json5.load(builder.filesystem.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
 
     assert data == {
         'properties': {

@@ -16,7 +16,7 @@ def ensure_parent_modules(builder: ModelBuilder, path: Path,
     while path and path.name and depth < max_depth:
         depth += 1
         # 2nd sanity check - the path must not contain .git
-        if path.joinpath('.git').exists():
+        if builder.filesystem.exists(path.joinpath('.git')):
             break
 
         init_py_path = path.joinpath('__init__.py')
