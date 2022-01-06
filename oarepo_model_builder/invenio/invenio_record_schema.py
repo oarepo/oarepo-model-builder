@@ -189,6 +189,7 @@ def create_field(field_type, options=(), validators=(), definition=None):
     opts = [*options, *definition.get('options', [])]
     validators = [*validators, *definition.get('validators', [])]
     nested = definition.get('nested', False)
+    list_nested = definition.get('list_nested', False)
     if validators:
         opts.append(f'validate=[{",".join(validators)}]')
     kwargs = definition.get('field_args', '')
@@ -197,6 +198,8 @@ def create_field(field_type, options=(), validators=(), definition=None):
     ret = f'{field_type}({", ".join(opts)}{kwargs})'
     if nested:
         ret = f'ma_fields.Nested({ret})'
+    if list_nested:
+        ret = f'ma_fields.List(ma_fields.Nested({ret}))'
     return ret
 
 

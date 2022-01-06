@@ -1,5 +1,5 @@
 from libcst import CSTTransformer, ClassDef, FunctionDef, Module, SimpleStatementLine, Import, ImportFrom, Assign, Name, \
-    AssignTarget, List
+    AssignTarget, List, Expr
 
 
 class MergingTransformer(CSTTransformer):
@@ -93,6 +93,7 @@ class MergingTransformer(CSTTransformer):
 
         extra_imports = self._merge_imports(original_node)
         extra_assigns = self._merge_assigns(original_node)
+        extra_expressions = self._merge_expressions(original_node)
 
         self._pop()
 
@@ -102,7 +103,8 @@ class MergingTransformer(CSTTransformer):
                 *extra_imports,
                 *updated_node.body,
                 *parts_to_add,
-                *extra_assigns
+                *extra_assigns,
+                *extra_expressions
             ]
         )
 
@@ -110,6 +112,11 @@ class MergingTransformer(CSTTransformer):
         new_imports = self._extract_imports(self.stack[0][0])
         existing_imports = self._extract_imports(original_node.body)
         return self._merge_nodes(existing_imports, new_imports)
+
+    def _merge_expressions(self, original_node):
+        new_expressions = self._extract_expressions(self.stack[0][0])
+        existing_expressions = self._extract_expressions(original_node.body)
+        return self._merge_nodes(existing_expressions, new_expressions)
 
     def _merge_assigns(self, original_node):
         new_assigns = self._extract_assigns(self.stack[0][0])
@@ -148,6 +155,9 @@ class MergingTransformer(CSTTransformer):
 
     def _extract_imports(self, lines):
         return self._extract_top_level(lines, (Import, ImportFrom))
+
+    def _extract_expressions(self, lines):
+        return self._extract_top_level(lines, Expr)
 
     def _extract_assigns(self, lines):
         return self._extract_top_level(lines, Assign)
