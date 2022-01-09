@@ -42,8 +42,8 @@ python3.10 -m venv .venv-builder
 Then for ease of use add the following aliases
 
 ```bash
-alias oarepo-compile-model=".venv-builder/bin/oarepo-compile-model"
-alias oarepo-model-builder-pip=".venv-builder/bin/pip"
+alias oarepo-compile-model="$PWD/.venv-builder/bin/oarepo-compile-model"
+alias oarepo-model-builder-pip="$PWD/.venv-builder/bin/pip"
 ```
 
 Use the ``oarepo-model-builder-pip`` if you need to install plugins to the model builder.
