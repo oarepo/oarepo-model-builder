@@ -71,7 +71,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(settings.python, 'record-resource-class',
                  lambda: f'{settings.package}.resources.resource.{record_prefix}Resource')
         self.set(settings.python, 'record-permissions-class',
-                 lambda: f'{settings.package}.resources.permissions.{record_prefix}PermissionPolicy')
+                 lambda: f'{settings.package}.services.permissions.{record_prefix}PermissionPolicy')
 
         # service
         self.set(settings.python, 'record-service-class',
