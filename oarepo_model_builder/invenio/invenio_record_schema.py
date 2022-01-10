@@ -74,7 +74,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 schema_class = definition['class']
                 if '.' not in schema_class:
                     schema_class = package_name(
-                        self.settings.python.record_schema_metadata_class) + '.' + schema_class
+                        self.settings.python.record_schema_class) + '.' + schema_class
                 schema_class_base_classes = definition.get('base-classes', ['ma.Schema'])
                 generate_schema_class = definition.get('generate', False)
             if generate_schema_class:

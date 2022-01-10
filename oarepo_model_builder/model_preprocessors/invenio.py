@@ -24,8 +24,6 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             }
         })
 
-        settings.setdefault('top-level-metadata', True)
-
         record_prefix = settings.python.record_prefix
         self.set(settings.python, 'record-prefix-snake',
                  lambda: snake_case(settings.python.record_prefix))
@@ -83,8 +81,6 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         #   - schema
         self.set(settings.python, 'record-schema-class',
                  lambda: f'{settings.package}.services.schema.{record_prefix}Schema')
-        self.set(settings.python, 'record-schema-metadata-class',
-                 lambda: f'{settings.package}.services.schema.{record_prefix}MetadataSchema')
         #   - dumper
         self.set(settings.python, 'record-dumper-class',
                  lambda: f'{settings.package}.services.dumper.{record_prefix}Dumper')
@@ -104,16 +100,10 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: f'{settings.package}.views.create_blueprint_from_app')
 
         if 'model' in schema.schema:
-            if settings.top_level_metadata:
-                schema_class = settings.python.record_schema_class
-                schema_class_base_classes = settings.python.get('record_schema_bases', []) + [
-                    'ma.Schema'  # alias will be recognized automatically
-                ]
-            else:
-                schema_class = settings.python.record_schema_metadata_class,
-                schema_class_base_classes = settings.python.get('record_schema_metadata_bases', []) + [
-                    'ma.Schema'  # alias will be recognized automatically
-                ]
+            schema_class = settings.python.record_schema_class
+            schema_class_base_classes = settings.python.get('record_schema_metadata_bases', []) + [
+                'ma.Schema'  # alias will be recognized automatically
+            ]
 
             deepmerge(
                 schema.schema.model.setdefault('oarepo:marshmallow', {}),
