@@ -4,10 +4,14 @@
   },
   model: {
     properties: {
-      a: {
-        type: 'fulltext',
-        minLength: 5
+      metadata: {
+        properties: {
+          a: {
+            type: 'fulltext',
+            minLength: 5
+          }
+        }
       }
-    },
+    }
   }
 }

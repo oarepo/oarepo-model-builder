@@ -174,7 +174,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                     raise Exception(
                         f'Do not have marshmallow field generator for type "{data_type}" at path "{stack.path}". '
                         f'Either supply an existing schema class or instruct the compiler to generate one. '
-                        f'See the documentation for details.')
+                        f'See the documentation (docs/model.md, section oarepo:marshmallow) for details.')
                 raise Exception(
                     f'Do not have marshmallow field generator for type "{data_type}" at path "{stack.path}". '
                     f'Define it either in invenio_record_schema.py or in your own config')
@@ -194,9 +194,15 @@ def create_field(field_type, options=(), validators=(), definition=None):
     kwargs = definition.get('field_args', '')
     if kwargs and opts:
         kwargs = ', ' + kwargs
-    ret = f'{field_type}({", ".join(opts)}{kwargs})'
+    if not nested:
+        ret = f'{field_type}({", ".join(opts)}{kwargs})'
+    else:
+        ret = f'{field_type}'
     if nested:
-        ret = f'ma_fields.Nested({ret})'
+        if opts or kwargs:
+            ret = f'ma_fields.Nested({ret}, {", ".join(opts)}{kwargs})'
+        else:
+            ret = f'ma_fields.Nested({ret})'
     return ret
 
 

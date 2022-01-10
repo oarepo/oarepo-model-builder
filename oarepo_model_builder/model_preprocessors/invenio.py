@@ -81,6 +81,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         #   - schema
         self.set(settings.python, 'record-schema-class',
                  lambda: f'{settings.package}.services.schema.{record_prefix}Schema')
+        self.set(settings.python, 'record-schema-metadata-class',
+                 lambda: f'{settings.package}.services.schema.{record_prefix}MetadataSchema')
         #   - dumper
         self.set(settings.python, 'record-dumper-class',
                  lambda: f'{settings.package}.services.dumper.{record_prefix}Dumper')
@@ -101,6 +103,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
         if 'model' in schema.schema:
             schema_class = settings.python.record_schema_class
+            schema_metadata_class = settings.python.record_schema_metadata_class
             schema_class_base_classes = settings.python.get('record_schema_metadata_bases', []) + [
                 'ma.Schema'  # alias will be recognized automatically
             ]
@@ -112,6 +115,14 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                     'base-classes': schema_class_base_classes,
                     'generate': True
                 })
+            if 'properties' in schema.schema.model and 'metadata' in schema.schema.model.properties:
+                deepmerge(
+                    schema.schema.model.properties.metadata.setdefault('oarepo:marshmallow', {}),
+                    {
+                        'class': schema_metadata_class,
+                        'base-classes': schema_class_base_classes,
+                        'generate': True
+                    })
 
         # default import prefixes
         settings.python.setdefault('always-defined-import-prefixes', []).extend(
