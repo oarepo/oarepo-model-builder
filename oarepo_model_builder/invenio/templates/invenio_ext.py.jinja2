@@ -19,11 +19,11 @@ class {{ python.ext_class|base_name }}(object):
     def init_resource(self, app):
         """Initialize vocabulary resources."""
         self.service = app.config["{{ settings.python.config_service_class_key }}"](
-            config=app.config["{{settings.python.config_service_config_key}}"],
+            config=app.config["{{settings.python.config_service_config_key}}"](),
         )
         self.resource = app.config["{{ settings.python.config_resource_class_key }}"](
             service=self.service,
-            config=app.config["{{settings.python.config_resource_config_key}}"],
+            config=app.config["{{settings.python.config_resource_config_key}}"](),
         )
 
     def init_config(self, app):
