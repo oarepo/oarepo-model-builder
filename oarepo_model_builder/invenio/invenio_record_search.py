@@ -52,7 +52,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         print(data)
         if not self.search_options_stack:
             return
-        if schema_element_type == 'property' and data['type'] != "text":
+        print(data)
+        if schema_element_type == 'property' and data.type != "text" and data.type != "object" and data.type != "nested":
             definition = data.get(OAREPO_FACETS_PROPERTY, {})
             print('path', stack.path)
             name = self.process_name(stack.path, type = "name")

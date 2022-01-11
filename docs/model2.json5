@@ -1,0 +1,14 @@
+{
+  model: {
+    "oarepo:use": "invenio",
+    properties: {
+      metadata: {
+        properties: {
+          a: {
+            type: 'fulltext',
+          }
+        }
+      }
+    }
+  }
+}
