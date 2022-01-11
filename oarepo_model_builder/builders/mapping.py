@@ -39,11 +39,6 @@ class MappingBuilder(JSONBaseBuilder):
         )
         self.output.enter('mappings', {})
 
-        if self.settings.get('top-level-metadata'):
-            self.output.enter('properties', {})
-            self.output.enter('metadata', {})
-            self.output.primitive('type', 'object')
-
     def finish(self):
         super().finish()
 

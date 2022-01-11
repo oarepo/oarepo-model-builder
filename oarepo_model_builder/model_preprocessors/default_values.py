@@ -10,7 +10,8 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
     TYPE = 'default'
 
     def transform(self, schema: ModelSchema, settings: Dict):
-        self.set(settings, 'package', lambda: os.path.basename(os.getcwd()).replace('-', '_'))
+        self.set(settings, 'package',
+                 lambda: os.path.basename(schema.schema.get('output-directory', os.getcwd())).replace('-', '_'))
 
         self.set(settings, 'processing-order', lambda: ['settings', '*', 'model'])
 
@@ -59,6 +60,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
 
         self.set(settings, 'schema-server', lambda: 'http://localhost/schemas/')
 
-        self.set(settings, 'index-name', lambda: settings.package_base + '-' + os.path.basename(settings.mapping_file).replace('.json', ''))
+        self.set(settings, 'index-name',
+                 lambda: settings.package_base + '-' + os.path.basename(settings.mapping_file).replace('.json', ''))
 
         self.set(settings, 'collection-url', lambda: f'/{settings.package_base}/')

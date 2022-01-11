@@ -24,8 +24,6 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             }
         })
 
-        settings.setdefault('top-level-metadata', True)
-
         record_prefix = settings.python.record_prefix
         self.set(settings.python, 'record-prefix-snake',
                  lambda: snake_case(settings.python.record_prefix))
@@ -73,7 +71,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(settings.python, 'record-resource-class',
                  lambda: f'{settings.package}.resources.resource.{record_prefix}Resource')
         self.set(settings.python, 'record-permissions-class',
-                 lambda: f'{settings.package}.resources.permissions.{record_prefix}PermissionPolicy')
+                 lambda: f'{settings.package}.services.permissions.{record_prefix}PermissionPolicy')
 
         # service
         self.set(settings.python, 'record-service-class',
@@ -109,16 +107,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                  lambda: f'{settings.package}.views.create_blueprint_from_app')
 
         if 'model' in schema.schema:
-            if settings.top_level_metadata:
-                schema_class = settings.python.record_schema_class
-                schema_class_base_classes = settings.python.get('record_schema_bases', []) + [
-                    'ma.Schema'  # alias will be recognized automatically
-                ]
-            else:
-                schema_class = settings.python.record_schema_metadata_class,
-                schema_class_base_classes = settings.python.get('record_schema_metadata_bases', []) + [
-                    'ma.Schema'  # alias will be recognized automatically
-                ]
+            schema_class = settings.python.record_schema_class
+            schema_metadata_class = settings.python.record_schema_metadata_class
+            schema_class_base_classes = settings.python.get('record_schema_metadata_bases', []) + [
+                'ma.Schema'  # alias will be recognized automatically
+            ]
 
             deepmerge(
                 schema.schema.model.setdefault('oarepo:marshmallow', {}),
@@ -127,6 +120,14 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                     'base-classes': schema_class_base_classes,
                     'generate': True
                 })
+            if 'properties' in schema.schema.model and 'metadata' in schema.schema.model.properties:
+                deepmerge(
+                    schema.schema.model.properties.metadata.setdefault('oarepo:marshmallow', {}),
+                    {
+                        'class': schema_metadata_class,
+                        'base-classes': schema_class_base_classes,
+                        'generate': True
+                    })
 
         # default import prefixes
         settings.python.setdefault('always-defined-import-prefixes', []).extend(

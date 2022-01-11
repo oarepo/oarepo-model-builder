@@ -77,3 +77,5 @@ docs/migration/data
 /poetry.lock
 example/data
 .DS_Store
+
+test-model

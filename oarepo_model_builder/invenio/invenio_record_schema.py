@@ -74,7 +74,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 schema_class = definition['class']
                 if '.' not in schema_class:
                     schema_class = package_name(
-                        self.settings.python.record_schema_metadata_class) + '.' + schema_class
+                        self.settings.python.record_schema_class) + '.' + schema_class
                 schema_class_base_classes = definition.get('base-classes', ['ma.Schema'])
                 generate_schema_class = definition.get('generate', False)
             if generate_schema_class:
@@ -174,7 +174,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                     raise Exception(
                         f'Do not have marshmallow field generator for type "{data_type}" at path "{stack.path}". '
                         f'Either supply an existing schema class or instruct the compiler to generate one. '
-                        f'See the documentation for details.')
+                        f'See the documentation (docs/model.md, section oarepo:marshmallow) for details.')
                 raise Exception(
                     f'Do not have marshmallow field generator for type "{data_type}" at path "{stack.path}". '
                     f'Define it either in invenio_record_schema.py or in your own config')
@@ -194,9 +194,15 @@ def create_field(field_type, options=(), validators=(), definition=None):
     kwargs = definition.get('field_args', '')
     if kwargs and opts:
         kwargs = ', ' + kwargs
-    ret = f'{field_type}({", ".join(opts)}{kwargs})'
+    if not nested:
+        ret = f'{field_type}({", ".join(opts)}{kwargs})'
+    else:
+        ret = f'{field_type}'
     if nested:
-        ret = f'ma_fields.Nested({ret})'
+        if opts or kwargs:
+            ret = f'ma_fields.Nested({ret}, {", ".join(opts)}{kwargs})'
+        else:
+            ret = f'ma_fields.Nested({ret})'
     return ret
 
 

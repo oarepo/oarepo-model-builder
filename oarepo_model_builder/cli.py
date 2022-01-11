@@ -69,6 +69,7 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
               datetime.datetime.now(), model_filename, output_directory)
 
     schema = load_model(model_filename, package, configs, black, isort, sets)
+    schema.schema['output-directory'] = output_directory
     builder = create_builder_from_entrypoints()
     builder.build(schema, output_directory)
 

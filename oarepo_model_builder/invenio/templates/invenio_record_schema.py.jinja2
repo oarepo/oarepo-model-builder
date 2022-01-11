@@ -1,17 +1,7 @@
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
 
-{% if python.record_schema_metadata_class is in_different_package %}
-    from {{ python.record_schema_metadata_class|package_name }} import
-    {{ python.record_schema_metadata_class|base_name }}
-{% endif %}
-
 {% for b in python.record_schema_bases %}
     from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
 {% include "imports" %}
-
-{% if settings.top_level_metadata %}
-class {{ python.record_schema_class|base_name }}({% for b in python.record_schema_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecordSchema):
-    metadata = ma_fields.Nested({{ python.record_schema_metadata_class|base_name }}())
-{% endif %}

@@ -4,37 +4,14 @@
   },
   model: {
     properties: {
-      a: {
-        type: 'fulltext+keyword',
-        minLength: 5,
-        "oarepo:facets": {
-          field: 'TermsFacetTest(neco = "cosi")'
-        }
-      },
-      b: {
-        type: 'fulltext',
-        minLength: 5
-      },
-      c: {
-        type: 'fulltext+keyword',
-        minLength: 5,
-        "oarepo:facets": {
-          class: 'TestClass',
-          neco: 'cosi'
-        }
-      },
-      d: {
-        type: 'object',
+      metadata: {
         properties: {
-          title: {
-            type: 'keyword'
+          a: {
+            type: 'fulltext',
+            minLength: 5
           }
-        },
-        "oarepo:marshmallow": {
-          generate: true,
-          class: "neco"
         }
       }
-    },
+    }
   }
 }
