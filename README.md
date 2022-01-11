@@ -51,7 +51,7 @@ Use the ``oarepo-model-builder-pip`` if you need to install plugins to the model
 ### Running model builder
 
 ```bash
-oarepo-compile-model model.yaml
+oarepo-compile-model model.json5
 ```
 
 will compile the model.yaml into the current directory. Options:

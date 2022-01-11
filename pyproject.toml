@@ -22,7 +22,7 @@ Jinja2 = "^3.0.3"
 munch = "^2.5.0"
 isort = "^5.10.1"
 black = "^21.11b1"
-
+deepmerge = "^1.0.1"
 [tool.poetry.dev-dependencies]
 pytest = "^6"
 md-toc = "^8.1.0"

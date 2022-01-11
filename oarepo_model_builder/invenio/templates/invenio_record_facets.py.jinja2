@@ -1,0 +1,10 @@
+"""Facet definitions."""
+
+from invenio_records_resources.services.records.facets import TermsFacet
+
+
+{% for dict in search_options_data %}
+{% for key, value in dict.items()%}
+{{ key }} = {{ value }}
+{% endfor %}
+{% endfor %}

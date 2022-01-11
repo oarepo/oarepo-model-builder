@@ -19,7 +19,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
         data['type'] = 'string'
         return data
 
-    @process(model_builder=MappingBuilder,
+    @process(model_builder=(MappingBuilder,'invenio_record_search'),
              path='**/properties/*',
              condition=lambda current, stack: current.type == 'fulltext')
     def modify_fulltext_mapping(self, data, stack: ModelBuilderStack, **kwargs):
@@ -44,7 +44,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
         data['type'] = 'string'
         return data
 
-    @process(model_builder=MappingBuilder,
+    @process(model_builder=(MappingBuilder,'invenio_record_search'),
              path='**/properties/*',
              condition=lambda current, stack: current.type == 'keyword')
     def modify_keyword_mapping(self, data, stack: ModelBuilderStack, **kwargs):

@@ -88,9 +88,14 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         #   - dumper
         self.set(settings.python, 'record-dumper-class',
                  lambda: f'{settings.package}.services.dumper.{record_prefix}Dumper')
+        #   - facets
+        self.set(settings.python, 'record-facets-class',
+                 lambda: f'{settings.package}.services.facets.Test')
+
         #   - search
         self.set(settings.python, 'record-search-options-class',
                  lambda: f'{settings.package}.services.search.{record_prefix}SearchOptions')
+
 
         # alembic
         self.set(settings.python, 'record-schema-metadata-alembic',

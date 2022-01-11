@@ -35,9 +35,10 @@ class PropertyPreprocessor:
                 )
             )
         arr.sort()
-        for _prior, _lpath, path, _mid, condition, output_builder_type, method in arr:
-            self.json_paths.register(path, condition,
-                                     PropertyPreprocessor.PathMethodRecord(method, output_builder_type))
+        for _prior, _lpath, path, _mid, condition, output_builder_type_arr, method in arr:
+            for output_builder_type in output_builder_type_arr:
+                self.json_paths.register(path, condition,
+                                         PropertyPreprocessor.PathMethodRecord(method, output_builder_type))
 
     def begin(self, schema, settings):
         self.schema = schema
@@ -65,9 +66,14 @@ def process(model_builder, path, priority=0, condition=None):
         def wrapped(*args, **kwargs):
             return f(*args, **kwargs)
 
+        if not isinstance(model_builder, (list, tuple)):
+            model_builder_tuple = (model_builder,)
+        else:
+            model_builder_tuple = model_builder
+
         wrapped.model_builder_priority = priority
         wrapped.model_builder_output_builder_type = \
-            model_builder if isinstance(model_builder, str) else model_builder.TYPE
+            [x if isinstance(x, str) else x.TYPE for x in model_builder_tuple]
         wrapped.model_builder_path = path
         wrapped.model_builder_condition = condition
         return wrapped
