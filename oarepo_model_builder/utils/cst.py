@@ -1,5 +1,5 @@
 from libcst import CSTTransformer, ClassDef, FunctionDef, Module, SimpleStatementLine, Import, ImportFrom, Assign, Name, \
-    AssignTarget, List
+    AssignTarget, List, Expr
 
 
 class MergingTransformer(CSTTransformer):
@@ -142,7 +142,11 @@ class MergingTransformer(CSTTransformer):
                 raise NotImplementedError(f'Getting name of node type {type(lhs)} not implemented yet')
             return lhs.target.value
         elif isinstance(name_element, (Import, ImportFrom)):
-            return self.new_cst.code_for_node(name_element).strip()
+            return 'Import:' + self.new_cst.code_for_node(name_element).strip()
+        elif isinstance(name_element, (Expr, )):
+            return 'Expr:' + self.new_cst.code_for_node(name_element).strip()
+        elif isinstance(name_element, (FunctionDef, )):
+            return 'Function:' + name_element.name.value
         else:
             raise NotImplementedError(f'Getting name of node type {type(name_element)} not implemented yet')
 
