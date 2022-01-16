@@ -15,6 +15,7 @@ except ImportError:
 class JSONOutput(OutputBase):
     IGNORE_NODE = JSONStack.IGNORED_NODE
     IGNORE_SUBTREE = JSONStack.IGNORED_SUBTREE
+    TYPE = 'json'
 
     def begin(self):
         try:
