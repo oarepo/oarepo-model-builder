@@ -1,15 +1,16 @@
 {
-  settings: {
-    package: 'record_test',
-  },
   model: {
+    "oarepo:use": "invenio",
     properties: {
       metadata: {
         properties: {
           a: {
             type: 'fulltext',
-            minLength: 5
           }
+        },
+        'oarepo:marshmallow': {
+          class: 'neco.metadata.Neco',
+	generate: true
         }
       }
     }
