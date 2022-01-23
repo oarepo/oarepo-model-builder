@@ -4,7 +4,7 @@ from jinja2 import Environment, FunctionLoader, pass_context
 
 from oarepo_model_builder.templates import templates
 from oarepo_model_builder.outputs import OutputBase
-from oarepo_model_builder.utils.cst import MergingTransformer
+from oarepo_model_builder.utils.cst import MergingTransformer, merge
 from oarepo_model_builder.utils.jinja import in_different_package, base_name, package_name, with_defined_prefix
 from oarepo_model_builder.utils.verbose import log
 
@@ -64,7 +64,7 @@ class PythonOutput(OutputBase):
         except:
             print(rendered, file=sys.stderr)
             raise
-        self.cst = self.cst.visit(MergingTransformer(rendered_cst))
+        self.cst = merge(self.cst, rendered_cst)
 
     @staticmethod
     def register_default_filters(env):

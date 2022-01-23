@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from pathlib import Path
 
 from oarepo_model_builder.entrypoints import load_model, create_builder_from_entrypoints
 from tests.mock_filesystem import MockFilesystem
@@ -89,3 +90,63 @@ def test_generate_multiple_times():
     snapshot_2 = filesystem.snapshot()
 
     assert snapshot_1 == snapshot_2
+
+
+def test_incremental_builder():
+    schema = load_model(
+        'test.yaml', 'test',
+        model_content={
+            'model': {
+                'properties': {
+                    'a': {
+                        'type': 'string'
+                    }
+                }
+            }
+        }, isort=False, black=False)
+
+    filesystem = MockFilesystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, '')
+
+    schema = load_model(
+        'test.yaml', 'test',
+        model_content={
+            'model': {
+                'oarepo:use': 'invenio',
+                'properties': {
+                    'a': {
+                        'type': 'string'
+                    }
+                }
+            }
+        }, isort=False, black=False)
+
+    builder.build(schema, '')
+    snapshot_1 = filesystem.snapshot()
+
+    schema = load_model(
+        'test.yaml', 'test',
+        model_content={
+            'model': {
+                'oarepo:use': 'invenio',
+                'properties': {
+                    'a': {
+                        'type': 'string'
+                    }
+                }
+            }
+        }, isort=False, black=False)
+    filesystem = MockFilesystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, '')
+    snapshot_2 = filesystem.snapshot()
+
+    assert set(snapshot_1.keys()) == set(snapshot_2.keys())
+
+    for k, iteration_result in snapshot_1.items():
+        expected_result = snapshot_2[k]
+
+        assert iteration_result == expected_result

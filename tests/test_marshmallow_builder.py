@@ -207,4 +207,30 @@ def test_generate_nested_schema_array(fulltext_builder):
         data = f.read()
     assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(r'\s', '', data)
     assert 'classTestSchema(ma.Schema,):"""TestSchemaschema."""a=ma.List(ma_fields.Nested(B))' in re.sub(r'\s', '',
-                                                                                                           data)
+                                                                                                         data)
+
+
+def test_extend_existing(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            'type': 'keyword'
+        },
+        b={
+            'type': 'keyword'
+        }
+    )
+    fulltext_builder.filesystem = MockFilesystem()
+
+    with fulltext_builder.filesystem.open(os.path.join('test', 'services', 'schema.py'), 'w') as f:
+        f.write('''
+from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
+import marshmallow as ma
+import marshmallow.fields as ma_fields
+import marshmallow.validate as ma_valid
+class TestSchema(ma.Schema, ):
+    """TestSchema schema."""
+    a = ma_fields.String()''')
+
+    fulltext_builder.build(schema, output_dir='')
+    data = fulltext_builder.filesystem.read(os.path.join('test', 'services', 'schema.py'))
+    assert 'b = ma_fields.String()' in data

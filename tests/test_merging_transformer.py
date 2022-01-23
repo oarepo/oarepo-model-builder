@@ -2,7 +2,7 @@ import re
 
 import libcst as cst
 
-from oarepo_model_builder.utils.cst import MergingTransformer
+from oarepo_model_builder.utils.cst import MergingTransformer, mergers
 
 
 def test_new_class():
@@ -16,7 +16,7 @@ class Blah:
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 # comment start
@@ -38,7 +38,7 @@ class Blah:
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == existing_module.strip()
 
@@ -54,7 +54,7 @@ def a():
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 # comment start
@@ -79,7 +79,7 @@ def a():
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == existing_module.strip()
 
@@ -102,7 +102,7 @@ class Blah:
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 # comment start
@@ -134,7 +134,7 @@ class Blah:
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 # comment start
@@ -160,7 +160,7 @@ class Blah:
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 # comment start
@@ -193,17 +193,17 @@ from c import d, e
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 # comment start
-import pathlib
+from c import d
 from pathlib import (
     Blah
 )
 from c import d, e
-from c import d
 import b
+import pathlib
             """.strip()
 
 
@@ -216,7 +216,7 @@ BBB = "456"
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 AAA = "123"
@@ -233,7 +233,7 @@ BBB = "456"
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 CCC='456'
@@ -248,7 +248,7 @@ def test_merge_top_level_arrays():
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip().replace(' ', '') == """
 CCC=[1,2,3,4,5,6,]
@@ -261,7 +261,7 @@ def test_do_not_overwrite_top_level_vars():
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert transformed_cst.code.strip() == """
 CCC=234
@@ -280,7 +280,7 @@ class A:
     original_cst = cst.parse_module(existing_module)
     included_cst = cst.parse_module(included_module,
                                     config=original_cst.config_for_parsing)
-    transformed_cst = original_cst.visit(MergingTransformer(included_cst))
+    transformed_cst = original_cst.visit(MergingTransformer(included_cst, included_cst, mergers))
 
     assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
 class A:

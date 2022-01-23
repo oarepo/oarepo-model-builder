@@ -15,7 +15,7 @@ class InvenioSampleAppPoetryBuilder(OutputBuilder):
         )
 
         output.setdefault("tool.poetry.dependencies.invenio",
-                          'version', '^3.5.0a1',
+                          'version', '^3.5.0a3',
                           'extras', ["base", "auth", "metadata", "files", "postgresql", "elasticsearch7"],
                           'optional', True,
                           'allow-prereleases', True
