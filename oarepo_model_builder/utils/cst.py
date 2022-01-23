@@ -145,7 +145,7 @@ class ClassMerger(MergerBase):
 
 class AssignMerger(MergerBase):
     def merge(self, cst, existing_node, new_node):
-        # TODO: merge arrays, dictionaries etc
+        # TODO: merge dictionaries
         real_existing = self.real_node(existing_node)
         real_new = self.real_node(new_node)
         if isinstance(real_existing.value, List) or isinstance(real_new.value, List):
