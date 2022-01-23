@@ -4,21 +4,8 @@ from libcst import CSTTransformer, ClassDef, FunctionDef, SimpleStatementLine, I
     IndentedBlock, Element, Pass
 
 
-class StackItem:
-    def __init__(self, existing_node, new_node):
-        self.existing_node = existing_node
-        self.existing_members = defaultdict(list)
-        self.new_members = defaultdict(list)
-
-    def add_existing(self, item_type, item):
-        self.existing_members[item_type].append(item)
-
-    def add_new(self, item_type, item):
-        self.new_members[item_type].append(item)
-
-
-def merge(existing_cst, new_cst, top_cst=None):
-    return existing_cst.visit(MergingTransformer(top_cst or new_cst, new_cst, mergers))
+def merge(existing_cst, new_cst, top_cst=None, mergers=None, **kwargs):
+    return existing_cst.visit(MergingTransformer(top_cst or new_cst, new_cst, mergers or general_mergers, **kwargs))
 
 
 node_with_type = namedtuple('node_with_type', 'node, type')
@@ -145,7 +132,7 @@ class IdentityMerger(IdentityBaseMerger):
 
 class ClassMerger(MergerBase):
     def merge(self, cst, existing_node, new_node):
-        return existing_node.visit(MergingTransformer(cst, new_node, mergers, finalizer=self.finalize))
+        return merge(existing_node, new_node, cst, general_mergers, finalizer=self.finalize)
 
     def finalize(self, node, new_content):
         return node.with_changes(
@@ -168,7 +155,7 @@ class AssignMerger(MergerBase):
         return existing_node
 
     def merge_lists(self, cst, existing_list, new_list):
-        return existing_list.visit(MergingTransformer(cst, new_list, list_mergers, finalizer=self.finalize_list))
+        return merge(existing_list, new_list, cst, list_mergers, finalizer=self.finalize_list)
 
     def finalize_list(self, node, new_content):
         return node.with_changes(elements=new_content)
@@ -212,7 +199,7 @@ class ElementMerger(MergerBase):
         return cst.code_for_node(existing_node.value).strip() == cst.code_for_node(new_node.value).strip()
 
 
-mergers = {
+general_mergers = {
     ClassDef: ClassMerger(),
     Assign: AssignMerger(),
     Import: ImportMerger(),
