@@ -98,7 +98,6 @@ def test_generate_nested_schema_same_file(fulltext_builder):
 
     with fulltext_builder.filesystem.open(os.path.join('test', 'services', 'schema.py')) as f:
         data = f.read()
-    print(data)
     assert re.sub(r'\s', '', """class B(ma.Schema, ):
     \"""B schema.\"""
     

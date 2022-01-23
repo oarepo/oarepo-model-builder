@@ -198,12 +198,12 @@ from c import d, e
     assert transformed_cst.code.strip() == """
 # comment start
 from c import d
+import b
+import pathlib
 from pathlib import (
     Blah
 )
 from c import d, e
-import b
-import pathlib
             """.strip()
 
 

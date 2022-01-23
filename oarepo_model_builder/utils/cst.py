@@ -1,9 +1,7 @@
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
-from libcst import CSTTransformer, ClassDef, FunctionDef, Module, SimpleStatementLine, Import, ImportFrom, Assign, Name, \
-    AssignTarget, List, Expr, CSTVisitor, IndentedBlock, Element
-
-from typing import Dict, Type
+from libcst import CSTTransformer, ClassDef, FunctionDef, SimpleStatementLine, Import, ImportFrom, Assign, List, Expr, \
+    IndentedBlock, Element, Pass
 
 
 class StackItem:
@@ -23,6 +21,9 @@ def merge(existing_cst, new_cst, top_cst=None):
     return existing_cst.visit(MergingTransformer(top_cst or new_cst, new_cst, mergers))
 
 
+node_with_type = namedtuple('node_with_type', 'node, type')
+
+
 class MergingTransformer(CSTTransformer):
     def __init__(self, top_cst, new_cst, mergers, finalizer=None):
         super().__init__()
@@ -30,41 +31,62 @@ class MergingTransformer(CSTTransformer):
         self.new_cst = new_cst
         self.mergers = mergers
         self.finalizer = finalizer
+        self.node_type_category = {
+            Import: 'import',
+            ImportFrom: 'import',
+            ClassDef: 'classdef',
+            Assign: 'assign'
+        }
 
     def on_visit(self, node):  # do not process children
         return False
 
     def on_leave(self, original_node, updated_node):
-        existing = self.extract_body(updated_node)
-        new = self.extract_body(self.new_cst)
+        existing_list = self.extract_body(updated_node)
+        new_list = self.extract_body(self.new_cst)
 
         ret = []
-        for node_type, existing_nodes in existing.items():
-            if node_type not in new:
-                ret.extend(existing_nodes)
-                continue
-            new_nodes = new.pop(node_type)
+        existing_list = [node_with_type(e, self.get_node_type(e)) for e in existing_list]
+        new_list = [node_with_type(e, self.get_node_type(e)) for e in new_list]
 
-            merger = self.mergers.get(node_type, IdentityMerger())
-
-            for existing_node in existing_nodes:
-                for idx, new_node in enumerate(new_nodes):
-                    if merger.should_merge(self.top_cst, existing_node, new_node):
-                        ret.append(merger.merge(self.top_cst, existing_node, new_node))
-                        del new_nodes[idx]
+        last_type = None
+        for existing in existing_list:
+            if last_type is not None and last_type != existing.type:
+                while new_list and new_list[0].type == last_type:
+                    ret.append(new_list.pop().node)
+            last_type = existing.type
+            found = False
+            for idx, new in enumerate(new_list):
+                if new.type != existing.type:
+                    break
+                if type(self.real_node(new.node)) is type(self.real_node(existing.node)):
+                    merger = self.mergers.get(type(self.real_node(existing.node)), IdentityMerger())
+                    if merger.should_merge(self.top_cst, existing.node, new.node):
+                        ret.append(merger.merge(self.top_cst, existing.node, new.node))
+                        del new_list[idx]
+                        found = True
                         break
-                else:
-                    ret.append(existing_node)
+            if not found:
+                ret.append(existing.node)
 
-            ret.extend(new_nodes)
-        for node_type, new_nodes in new.items():
-            ret.extend(new_nodes)
+        for node in new_list:
+            ret.append(node.node)
+
         if self.finalizer:
             return self.finalizer(updated_node, ret)
         else:
             return updated_node.with_changes(
                 body=ret
             )
+
+    def real_node(self, node):
+        if isinstance(node, SimpleStatementLine):
+            return node.body[0]
+        return node
+
+    def get_node_type(self, node):
+        t = type(self.real_node(node))
+        return self.node_type_category.get(t, 'unknown')
 
     def extract_body(self, node):
         ret = defaultdict(list)
@@ -76,13 +98,7 @@ class MergingTransformer(CSTTransformer):
             raise Exception(f'Do not know how to get body from {node}')
         if isinstance(body, IndentedBlock):
             body = body.body
-        for n in body:
-            if isinstance(n, SimpleStatementLine):
-                node_type = type(n.body[0])
-            else:
-                node_type = type(n)
-            ret[node_type].append(n)
-        return ret
+        return body
 
 
 class MergerBase:
@@ -176,6 +192,10 @@ class ExprMerger(IdentityBaseMerger):
     pass
 
 
+class PassMerger(IdentityBaseMerger):
+    pass
+
+
 class FunctionMerger(MergerBase):
     def merge(self, cst, existing_node, new_node):
         return existing_node
@@ -198,7 +218,8 @@ mergers = {
     Import: ImportMerger(),
     ImportFrom: ImportFromMerger(),
     Expr: ExprMerger(),
-    FunctionDef: FunctionMerger()
+    FunctionDef: FunctionMerger(),
+    Pass: PassMerger()
 }
 
 list_mergers = {
