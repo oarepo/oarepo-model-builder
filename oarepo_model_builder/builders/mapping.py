@@ -18,7 +18,14 @@ class MappingBuilder(JSONBaseBuilder):
     def enter_model_element(self, stack: ModelBuilderStack):
         # ignore schema leaves different than "type" - for example, minLength, ...
         # that should not be present in mapping
-        if stack.top_type in (stack.LIST, stack.DICT) or stack.top.key == 'type':
+        if (
+                stack.top_type in (stack.LIST, stack.DICT) or
+
+                # ignore top-level type=object as it is not allowed
+                # in elasticsearch mapping (it is object automatically)
+                stack.level > 3 and stack.top.key == 'type'
+        ):
+
             self.model_element_enter(stack)
 
             # process children

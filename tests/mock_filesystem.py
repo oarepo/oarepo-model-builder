@@ -27,6 +27,10 @@ class MockFilesystem(AbstractFileSystem):
     def mkdir(self, path):
         pass
 
+    def read(self, path):
+        with self.open(path) as f:
+            return f.read()
+
     def snapshot(self):
         ret = {}
         for fname, io in self.files.items():

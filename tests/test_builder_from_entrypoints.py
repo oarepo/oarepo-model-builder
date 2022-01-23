@@ -44,10 +44,25 @@ class TestSchema(ma.Schema, ):
     
     updated = ma_fields.Date()
     
-    _schema = ma_fields.String(attribute='$schema')
+    _schema = ma_fields.String(data_key='$schema')
     
     uuid = ma_fields.String()    
     """)
+
+    data = builder.filesystem.read(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json'))
+    data = json.loads(data)
+    assert data == {
+        'mappings': {
+            'properties': {
+                '$schema': {'ignore_above': 50, 'type': 'keyword'},
+                'a': {'type': 'string'},
+                'created': {'type': 'date'},
+                'id': {'ignore_above': 50, 'type': 'keyword'},
+                'updated': {'type': 'date'},
+                'uuid': {'ignore_above': 50, 'type': 'keyword'}
+            },
+        }
+    }
 
 
 def test_generate_multiple_times():
