@@ -20,4 +20,6 @@ class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b
         provider=RecordIdProviderV2,
         context_cls = PIDFieldContext
     )
-    dumper = {{ python.record_dumper_class|base_name }}()
+    dumper_extensions = []
+    dumper = {{ python.record_dumper_class|base_name }}(extensions=dumper_extensions)
+
