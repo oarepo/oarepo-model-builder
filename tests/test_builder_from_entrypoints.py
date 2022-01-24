@@ -48,3 +48,29 @@ class TestSchema(ma.Schema, ):
     
     uuid = ma_fields.String()    
     """)
+
+
+def test_generate_multiple_times():
+    schema = load_model(
+        'test.yaml', 'test',
+        model_content={
+            'model': {
+                'oarepo:use': 'invenio',
+                'properties': {
+                    'a': {
+                        'type': 'string'
+                    }
+                }
+            }
+        }, isort=False, black=False)
+
+    filesystem = MockFilesystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, '')
+    snapshot_1 = filesystem.snapshot()
+
+    builder.build(schema, '')
+    snapshot_2 = filesystem.snapshot()
+
+    assert snapshot_1 == snapshot_2

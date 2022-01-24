@@ -26,3 +26,9 @@ class MockFilesystem(AbstractFileSystem):
 
     def mkdir(self, path):
         pass
+
+    def snapshot(self):
+        ret = {}
+        for fname, io in self.files.items():
+            ret[fname] = io.getvalue()
+        return ret
