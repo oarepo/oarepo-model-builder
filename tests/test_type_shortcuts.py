@@ -143,4 +143,4 @@ def build_jsonschema(model):
         ),
         output_dir=''
     )
-    return json5.load(builder.filesystem.open(os.path.join('test', 'records', 'jsonschemas', 'test-1.0.0.json')))
+    return json5.load(builder.filesystem.open(os.path.join('test', 'model', 'jsonschemas', 'test-1.0.0.json')))

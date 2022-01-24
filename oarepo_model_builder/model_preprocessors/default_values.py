@@ -33,24 +33,24 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             settings, 'schema-file', lambda: os.path.join(
                 settings.package_path,
-                'records',
+                'model',
                 'jsonschemas',
                 settings.schema_name
             )
         )
 
         self.set(
-            settings, 'mapping-package', lambda: f'{settings.package}.records.mappings'
+            settings, 'mapping-package', lambda: f'{settings.package}.model.mappings'
         )
 
         self.set(
-            settings, 'jsonschemas-package', lambda: f'{settings.package}.records.jsonschemas'
+            settings, 'jsonschemas-package', lambda: f'{settings.package}.model.jsonschemas'
         )
 
         self.set(
             settings, 'mapping-file', lambda: os.path.join(
                 settings.package_path,
-                'records',
+                'model',
                 'mappings',
                 'v7',
                 settings.package_base,

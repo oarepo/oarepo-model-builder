@@ -1,45 +1,32 @@
 {
-  settings: {
-    package: 'record_test',
-  },
   model: {
+    "oarepo:use": "invenio",
     properties: {
-      a: {
-        type: 'fulltext+keyword',
-        minLength: 5,
-        "oarepo:facets": {
-          field: 'TermsFacetTest(neco = "cosi")'
-        }
-      },
-      b: {
-        type: 'object',
-        minLength: 5,
-
-        "oarepo:marshmallow": {
-          generate: true,
-          class: "neco"
-        }
-      },
-      c: {
-        type: 'fulltext+keyword',
-        minLength: 5,
-        "oarepo:facets": {
-          class: 'TestClass',
-          neco: 'cosi'
-        }
-      },
-      d: {
-        type: 'object',
+      metadata: {
         properties: {
-          title: {
-            type: 'keyword'
+          a: {
+            type: 'fulltext+keyword',
+          },
+          b :{
+            properties: {
+              c: {
+                type: 'keyword'
+              }
+            },
+            'oarepo:mapping': {
+              type: 'nested'
+            },
+            'oarepo:marshmallow': {
+              class: 'nest.b.B',
+              generate: true
+            }
           }
         },
-        "oarepo:marshmallow": {
-          generate: true,
-          class: "neco"
+        'oarepo:marshmallow': {
+          class: 'neco.metadata.Neco',
+	generate: true
         }
       }
-    },
+    }
   }
 }

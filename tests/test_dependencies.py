@@ -42,7 +42,7 @@ def test_dev_dependencies():
             'test': '1.0.0'
         }
     })
-    print(data)
+
     assert "[tool.poetry.dev-dependencies]" in data
     assert """[tool.poetry.dev-dependencies.test]
 version = \"1.0.0\"""" in data
@@ -58,7 +58,6 @@ def test_dev_dependencies_with_extras():
             }
         }
     })
-    print(data)
     assert "[tool.poetry.dev-dependencies]" in data
     assert """[tool.poetry.dev-dependencies.test]
 version = \"1.0.0\"

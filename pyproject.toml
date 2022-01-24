@@ -25,7 +25,12 @@ black = "^21.11b1"
 deepmerge = "^1.0.1"
 [tool.poetry.dev-dependencies]
 pytest = "^6"
+invenio-records-resources = "^0.18.2"
 md-toc = "^8.1.0"
+#sqlalchemy_continuum = "^0.0.0"
+#elasticsearch = "^0.0.0"
+#elasticsearch_dsl = "^0.0.0"
+#invenio_search = "^0.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

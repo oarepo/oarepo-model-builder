@@ -49,14 +49,20 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             # skip children
             yield stack.SKIP
         data = stack.top.data
-        print(data)
+
         if not self.search_options_stack:
             return
-        print(data)
         if schema_element_type == 'property' and data.type != "text" and data.type != "object" and data.type != "nested":
             definition = data.get(OAREPO_FACETS_PROPERTY, {})
             print('path', stack.path)
             name = self.process_name(stack.path, type = "name")
+
+            if data.type== "fulltext+keyword":
+                name = name + '_keyword'
+            if name == "$schema":
+                name = "_schema"
+            if name == "id":
+                name = "_id"
 
             if 'field' in definition:
                 field = definition['field']
@@ -67,9 +73,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 field = self.process_name(stack.path, type = "field")
                 search_data.append(['field', field])
                 facets_class = definition.get('class', "TermsFacet")
-                print('def',  definition)
                 for key, value in definition.items():
-                    print(key, value)
                     if 'class' != key and 'field' != key:
                         search_data.append([key, value])
                 search_options = self.process_search_options(search_data, facets_class)
