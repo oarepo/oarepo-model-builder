@@ -116,7 +116,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.plugins."oarepo_model_builder.builders"]
 my-builder = "my_extension.builder.my_builder_plugin:MyBuilder"
 
-[tool.poetry.plugins."oarepo_model_builder.ouptuts"]
+[tool.poetry.plugins."oarepo_model_builder.outputs"]
 my-output = "my_extension.output.my_output_plugin:MyOutput"
 
 [tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
@@ -196,7 +196,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.plugins."oarepo_model_builder.builders"]
 my-extension-builder = "my_extension.builder.my_builder_plugin:MyBuilder"
 
-[tool.poetry.plugins."oarepo_model_builder.ouptuts"]
+[tool.poetry.plugins."oarepo_model_builder.outputs"]
 my-extension-output = "my_extension.output.my_output_plugin:MyOutput"
 
 [tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]

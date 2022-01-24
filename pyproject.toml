@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.9.10"
+version = "0.9.11"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
@@ -68,7 +68,7 @@ build-backend = "poetry.core.masonry.api"
 950-invenio_record_jsonschemas_poetry = "oarepo_model_builder.invenio.invenio_record_jsonschemas_poetry:InvenioRecordJSONSchemasPoetryBuilder"
 
 
-[tool.poetry.plugins."oarepo_model_builder.ouptuts"]
+[tool.poetry.plugins."oarepo_model_builder.outputs"]
 json = "oarepo_model_builder.outputs.json:JSONOutput"
 jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
 mapping = "oarepo_model_builder.outputs.mapping:MappingOutput"
