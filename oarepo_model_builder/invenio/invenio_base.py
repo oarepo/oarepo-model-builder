@@ -7,6 +7,7 @@ from oarepo_model_builder.utils.jinja import package_name
 class InvenioBaseClassPythonBuilder(PythonBuilder):
     class_config = None
     template = None
+    parent_modules = True
 
     def finish(self, **extra_kwargs):
         python_path = self.class_to_path(self.settings.python[self.class_config])
@@ -15,7 +16,8 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
                               **extra_kwargs)
 
     def process_template(self, python_path, template, **extra_kwargs):
-        self.create_parent_modules(python_path)
+        if self.parent_modules:
+            self.create_parent_modules(python_path)
         output: PythonOutput = self.builder.get_output(
             'python',
             python_path

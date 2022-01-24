@@ -151,6 +151,8 @@ class ModelBuilder:
 
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
             output.finish()
+            if output.executable:
+                self.filesystem.make_executable(output.path)
 
         return self.outputs
 
@@ -170,7 +172,7 @@ class ModelBuilder:
         included = plugin_config.get('include', [])
 
         if included:
-            enabled = [*enabled]   # will be adding inclusions so make a copy
+            enabled = [*enabled]  # will be adding inclusions so make a copy
             classes = [*classes]
             for incl in included:
                 package_name, class_name = incl.split(':')
@@ -197,7 +199,12 @@ class ModelBuilder:
             for proc in self.property_preprocessors:
                 proc.begin(schema, schema.settings)
 
-            self._iterate_schema_output_builder(schema, output_builder)
+            schema = output_builder.prepare(schema)
+            if isinstance(schema, (list, tuple)):
+                for s in schema:
+                    self._iterate_schema_output_builder(s, output_builder)
+            else:
+                self._iterate_schema_output_builder(schema, output_builder)
 
             for proc in self.property_preprocessors:
                 proc.finish()

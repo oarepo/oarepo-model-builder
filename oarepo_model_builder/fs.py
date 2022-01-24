@@ -11,6 +11,9 @@ class AbstractFileSystem:
     def mkdir(self, path):
         raise Exception('Not implemented')
 
+    def make_executable(self, path):
+        pass
+
 
 class FileSystem(AbstractFileSystem):
     def open(self, path, *args, **kwargs):
@@ -21,3 +24,6 @@ class FileSystem(AbstractFileSystem):
 
     def mkdir(self, path):
         Path(path).mkdir(exist_ok=True, parents=True)
+
+    def make_executable(self, path):
+        Path(path).chmod(0o777)

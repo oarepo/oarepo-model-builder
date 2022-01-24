@@ -18,4 +18,8 @@ TEMPLATES = {
     # utils and included
     "imports": "templates/imports.py.jinja2",
 
+    # scripts
+    "script-bootstrap": "templates/script_bootstrap.sh.jinja2",
+    "script-runserver": "templates/script_runserver.sh.jinja2",
+    "script-import-sample-data": "templates/script_import_sample_data.py.jinja2",
 }

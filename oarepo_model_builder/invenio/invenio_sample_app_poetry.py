@@ -21,13 +21,18 @@ class InvenioSampleAppPoetryBuilder(OutputBuilder):
                           'allow-prereleases', True
                           )
 
+        output.setdefault("tool.poetry.dependencies.pyyaml",
+                          'version', '>=6',
+                          'optional', True
+                          )
+
         output.setdefault("tool.poetry.dependencies.invenio-records-resources",
                           'version', '^0.17.3',
                           'optional', True,
                           'allow-prereleases', True
                           )
 
-        output.setdefault("tool.poetry.extras", 'sample-app', ['invenio', 'invenio-records-resources'])
+        output.setdefault("tool.poetry.extras", 'sample-app', ['invenio', 'invenio-records-resources', 'pyyaml'])
 
         if output.created:
             log(log.INFO, f"""To install the sample app, run

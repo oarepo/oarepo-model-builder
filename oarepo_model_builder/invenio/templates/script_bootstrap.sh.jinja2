@@ -1,0 +1,28 @@
+#!/bin/bash
+
+cd `dirname $0`/..
+
+set -e
+
+python -c 'import sys; exit(1) if sys.version_info.major < 3 or sys.version_info.major == 3 and sys.version_info.minor < 9 else exit(0)' || {
+  echo "Bad python version, use at least 3.9"
+  exit 1
+}
+
+python3 -mvenv .venv
+source .venv/bin/activate
+
+poetry install -E sample-app
+
+invenio db init
+invenio db create
+
+invenio index destroy --yes-i-know || true
+invenio index init --force
+
+openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
+  -keyout scripts/server.key -out scripts/server.crt -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+
+# invenio collect -v
+# invenio webpack buildall

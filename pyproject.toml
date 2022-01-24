@@ -22,6 +22,7 @@ Jinja2 = "^3.0.3"
 munch = "^2.5.0"
 isort = "^5.10.1"
 black = "^21.11b1"
+Faker = "^11.3.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6"
@@ -32,41 +33,45 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.plugins."oarepo_model_builder.builders"]
-020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
-030-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
+0020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
+0030-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
 
-050-poetry = "oarepo_model_builder.builders.poetry:PoetryBuilder"
+0050-poetry = "oarepo_model_builder.builders.poetry:PoetryBuilder"
 
-100-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
-110-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
-120-invenio_record_metadata = "oarepo_model_builder.invenio.invenio_record_metadata:InvenioRecordMetadataBuilder"
-130-invenio_record_schema = "oarepo_model_builder.invenio.invenio_record_schema:InvenioRecordSchemaBuilder"
+0100-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
+0110-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
+0120-invenio_record_metadata = "oarepo_model_builder.invenio.invenio_record_metadata:InvenioRecordMetadataBuilder"
+0130-invenio_record_schema = "oarepo_model_builder.invenio.invenio_record_schema:InvenioRecordSchemaBuilder"
 
-200-invenio_record_permissions = "oarepo_model_builder.invenio.invenio_record_permissions:InvenioRecordPermissionsBuilder"
+0200-invenio_record_permissions = "oarepo_model_builder.invenio.invenio_record_permissions:InvenioRecordPermissionsBuilder"
 
-300-invenio_record_search_options = "oarepo_model_builder.invenio.invenio_record_search:InvenioRecordSearchOptionsBuilder"
-310-invenio_record_service_config = "oarepo_model_builder.invenio.invenio_record_service_config:InvenioRecordServiceConfigBuilder"
-320-invenio_record_service = "oarepo_model_builder.invenio.invenio_record_service:InvenioRecordServiceBuilder"
-340-invenio_record_dumper = "oarepo_model_builder.invenio.invenio_record_dumper:InvenioRecordDumperBuilder"
+0300-invenio_record_search_options = "oarepo_model_builder.invenio.invenio_record_search:InvenioRecordSearchOptionsBuilder"
+0310-invenio_record_service_config = "oarepo_model_builder.invenio.invenio_record_service_config:InvenioRecordServiceConfigBuilder"
+0320-invenio_record_service = "oarepo_model_builder.invenio.invenio_record_service:InvenioRecordServiceBuilder"
+0340-invenio_record_dumper = "oarepo_model_builder.invenio.invenio_record_dumper:InvenioRecordDumperBuilder"
 
-400-invenio_record_resource_config = "oarepo_model_builder.invenio.invenio_record_resource_config:InvenioRecordResourceConfigBuilder"
-410-invenio_record_resource = "oarepo_model_builder.invenio.invenio_record_resource:InvenioRecordResourceBuilder"
-420-invenio_views = "oarepo_model_builder.invenio.invenio_views:InvenioViewsBuilder"
+0400-invenio_record_resource_config = "oarepo_model_builder.invenio.invenio_record_resource_config:InvenioRecordResourceConfigBuilder"
+0410-invenio_record_resource = "oarepo_model_builder.invenio.invenio_record_resource:InvenioRecordResourceBuilder"
+0420-invenio_views = "oarepo_model_builder.invenio.invenio_views:InvenioViewsBuilder"
 
-500-invenio_config = "oarepo_model_builder.invenio.invenio_config:InvenioConfigBuilder"
+0500-invenio_config = "oarepo_model_builder.invenio.invenio_config:InvenioConfigBuilder"
 
-600-invenio_ext = "oarepo_model_builder.invenio.invenio_ext:InvenioExtBuilder"
-610-invenio_ext_poetry = "oarepo_model_builder.invenio.invenio_ext_poetry:InvenioExtPoetryBuilder"
+0600-invenio_ext = "oarepo_model_builder.invenio.invenio_ext:InvenioExtBuilder"
+0610-invenio_ext_poetry = "oarepo_model_builder.invenio.invenio_ext_poetry:InvenioExtPoetryBuilder"
 
-700-invenio_ext = "oarepo_model_builder.invenio.invenio_proxies:InvenioProxiesBuilder"
+0700-invenio_ext = "oarepo_model_builder.invenio.invenio_proxies:InvenioProxiesBuilder"
 
-900-invenio_sample_app_poetry = "oarepo_model_builder.invenio.invenio_sample_app_poetry:InvenioSampleAppPoetryBuilder"
-910-invenio_record_metadata_alembic_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_alembic_poetry:InvenioRecordMetadataAlembicPoetryBuilder"
-920-invenio_record_metadata_models_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_models_poetry:InvenioRecordMetadataModelsPoetryBuilder"
-930-invenio_resource_poetry = "oarepo_model_builder.invenio.invenio_record_resource_poetry:InvenioRecordResourcePoetryBuilder"
-940-invenio_record_search_poetry = "oarepo_model_builder.invenio.invenio_record_search_poetry:InvenioRecordSearchPoetryBuilder"
-950-invenio_record_jsonschemas_poetry = "oarepo_model_builder.invenio.invenio_record_jsonschemas_poetry:InvenioRecordJSONSchemasPoetryBuilder"
+0900-invenio_sample_app_poetry = "oarepo_model_builder.invenio.invenio_sample_app_poetry:InvenioSampleAppPoetryBuilder"
+0910-invenio_record_metadata_alembic_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_alembic_poetry:InvenioRecordMetadataAlembicPoetryBuilder"
+0920-invenio_record_metadata_models_poetry = "oarepo_model_builder.invenio.invenio_record_metadata_models_poetry:InvenioRecordMetadataModelsPoetryBuilder"
+0930-invenio_resource_poetry = "oarepo_model_builder.invenio.invenio_record_resource_poetry:InvenioRecordResourcePoetryBuilder"
+0940-invenio_record_search_poetry = "oarepo_model_builder.invenio.invenio_record_search_poetry:InvenioRecordSearchPoetryBuilder"
+0950-invenio_record_jsonschemas_poetry = "oarepo_model_builder.invenio.invenio_record_jsonschemas_poetry:InvenioRecordJSONSchemasPoetryBuilder"
 
+1000-invenio_script_bootstrap = "oarepo_model_builder.invenio.invenio_script_bootstrap:InvenioScriptBootstrapBuilder"
+1010-invenio_script_runserver = "oarepo_model_builder.invenio.invenio_script_runserver:InvenioScriptRunServerBuilder"
+1020-invenio_script_import_sample_data = "oarepo_model_builder.invenio.invenio_script_import_sample_data:InvenioScriptImportSampleDataBuilder"
+1030-invenio_script_sample_data = "oarepo_model_builder.invenio.invenio_script_sample_data:InvenioScriptSampleDataBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.outputs"]
 json = "oarepo_model_builder.outputs.json:JSONOutput"
@@ -74,6 +79,9 @@ jsonschema = "oarepo_model_builder.outputs.jsonschema:JSONSchemaOutput"
 mapping = "oarepo_model_builder.outputs.mapping:MappingOutput"
 python = "oarepo_model_builder.outputs.python:PythonOutput"
 toml = "oarepo_model_builder.outputs.toml:TOMLOutput"
+diff = "oarepo_model_builder.outputs.diff:DiffOutput"
+text = "oarepo_model_builder.outputs.text:TextOutput"
+yaml = "oarepo_model_builder.outputs.yaml:YAMLOutput"
 
 [tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
 100-type_shortcuts = "oarepo_model_builder.property_preprocessors.type_shortcuts:TypeShortcutsPreprocessor"

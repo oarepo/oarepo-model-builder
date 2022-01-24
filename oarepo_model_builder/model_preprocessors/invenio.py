@@ -51,6 +51,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         # proxies
         self.set(settings.python, 'proxies-current-resource',
                  lambda: f'{settings.package}.proxies.current_resource')
+        self.set(settings.python, 'proxies-current-service',
+                 lambda: f'{settings.package}.proxies.current_service')
 
         # record
         self.set(settings.python, 'record-class',
@@ -128,3 +130,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         settings.python.setdefault('always-defined-import-prefixes', []).extend(
             ['ma', 'ma_fields', 'ma_valid']
         )
+
+        # script sample data importer
+        settings.python.setdefault('script-import-sample-data-cli', 'scripts.import_sample_data.cli')
+        settings.setdefault('script-import-sample-data', 'scripts/sample_data.yaml')

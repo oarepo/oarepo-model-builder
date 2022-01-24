@@ -60,6 +60,9 @@ class OutputBuilder:
     def finish(self):
         log.leave()
 
+    def prepare(self, schema):
+        return schema
+
     def process_element(self, stack: ModelBuilderStack):
         """
         Normally returns a generator with a single yield:

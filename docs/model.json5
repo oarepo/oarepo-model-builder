@@ -8,10 +8,16 @@
         properties: {
           a: {
             type: 'fulltext',
-            minLength: 5
+            minLength: 5,
+            'oarepo:sample': {
+              faker: 'name'
+            }
           }
         }
       }
     }
+  },
+  'oarepo:sample': {
+    records: 50
   }
 }

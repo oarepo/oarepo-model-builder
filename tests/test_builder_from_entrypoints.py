@@ -46,8 +46,6 @@ class TestSchema(ma.Schema, ):
     updated = ma_fields.Date()
     
     _schema = ma_fields.String(data_key='$schema')
-    
-    uuid = ma_fields.String()    
     """)
 
     data = builder.filesystem.read(os.path.join('test', 'records', 'mappings', 'v7', 'test', 'test-1.0.0.json'))
@@ -60,7 +58,6 @@ class TestSchema(ma.Schema, ):
                 'created': {'type': 'date'},
                 'id': {'ignore_above': 50, 'type': 'keyword'},
                 'updated': {'type': 'date'},
-                'uuid': {'ignore_above': 50, 'type': 'keyword'}
             },
         }
     }
@@ -126,6 +123,8 @@ def test_incremental_builder():
     builder.build(schema, '')
     snapshot_1 = filesystem.snapshot()
 
+    snapshot_1.pop(Path.cwd() / 'scripts/sample_data.yaml')     # these are always regenerated and random, so do not check them
+
     schema = load_model(
         'test.yaml', 'test',
         model_content={
@@ -143,6 +142,8 @@ def test_incremental_builder():
 
     builder.build(schema, '')
     snapshot_2 = filesystem.snapshot()
+
+    ret = snapshot_2.pop(Path.cwd() / 'scripts/sample_data.yaml')     # these are always regenerated and random, so do not check them
 
     assert set(snapshot_1.keys()) == set(snapshot_2.keys())
 

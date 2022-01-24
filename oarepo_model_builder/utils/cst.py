@@ -40,7 +40,7 @@ class MergingTransformer(CSTTransformer):
         for existing in existing_list:
             if last_type is not None and last_type != existing.type:
                 while new_list and new_list[0].type == last_type:
-                    ret.append(new_list.pop().node)
+                    ret.append(new_list.pop(0).node)
             last_type = existing.type
             found = False
             for idx, new in enumerate(new_list):

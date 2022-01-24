@@ -28,3 +28,8 @@ def ensure_parent_modules(builder: ModelBuilder, path: Path,
         if path.name == ends_at:
             break
         path = path.parent
+
+
+def ensure_directory(builder: ModelBuilder, path: Path | str):
+    target_path = Path(builder.output_dir) / path
+    builder.filesystem.mkdir(target_path)

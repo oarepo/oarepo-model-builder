@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+cd `dirname $0`/..
+
+set -e
+
+source .venv/bin/activate
+
+# export FLASK_DEBUG=1
+
+invenio run --cert scripts/server.crt --key scripts/server.key --port 5000
