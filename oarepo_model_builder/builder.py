@@ -196,20 +196,3 @@ class ModelBuilder:
                 [c for c in classes if c.TYPE in enabled]
             )
         return ret
-
-
-    def _iterate_schema_output_builder(self, schema: ModelSchema, output_builder: OutputBuilder):
-        def call_processors(stack, output_builder):
-            data = copy.deepcopy(stack.top.data)
-            for property_preprocessor in self.property_preprocessors:
-                data = property_preprocessor.process(output_builder.TYPE, data, stack) or data
-            return data
-
-        def on_element(stack):
-            data = call_processors(stack, output_builder)
-            if isinstance(data, ReplaceElement):
-                return data
-            stack.top.data = data
-            return output_builder.process_element(stack)
-
-        ModelBuilderStack(schema).process(on_element)

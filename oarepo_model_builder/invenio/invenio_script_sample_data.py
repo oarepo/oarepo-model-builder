@@ -22,14 +22,6 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
         super().__init__(builder, property_preprocessors)
         self.faker = faker.Faker()
 
-    def prepare(self, schema):
-        output_name = self.settings[self.output_file_name]
-        output = self.builder.get_output(self.output_file_type, output_name)
-        if not output.created:
-            return []
-        count = schema.settings.get('oarepo:sample', {}).get('count', 50)
-        return [copy.deepcopy(schema) for _ in range(count)]
-
     @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
     def model_element(self):
         schema_path = match_schema(self.stack)
@@ -50,6 +42,15 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             if not self.skip(self.stack):
                 if 'properties' in self.stack.top.data or 'items' in self.stack.top.data:
                     self.output.leave()
+
+    def build(self, schema):
+        output_name = schema.settings[self.output_file_name]
+        output = self.builder.get_output(self.output_file_type, output_name)
+        if not output.created:
+            return
+        count = schema.settings.get('oarepo:sample', {}).get('count', 50)
+        for _ in range(count):
+            return super().build(schema)
 
     def skip(self, stack):
         return stack.top.data.get('oarepo:sample', {}).get('skip', False)
