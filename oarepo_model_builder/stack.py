@@ -31,8 +31,7 @@ class ModelBuilderStack:
     PRIMITIVE = 'primitive'
     SKIP = 'skip'
 
-    def __init__(self, schema):
-        self.schema = schema
+    def __init__(self):
         self.stack = []
 
     def __getitem__(self, item):
@@ -71,63 +70,3 @@ class ModelBuilderStack:
     def _clear_path(self):
         if "path" in self.__dict__:
             del self.__dict__["path"]
-
-    def process(self, on_element):
-        self.stack = []
-        try:
-            processing_order = self.schema.schema.processing_order
-        except AttributeError:
-            processing_order = None
-        self._process_internal(None, self.schema.schema, on_element, processing_order)
-
-    def _process_internal(self, key, element, on_element, processing_order: List[str] = None):
-        popped = False
-
-        try:
-            # push the element to the stack
-            self.push(key, element)
-
-            # call the on_element function.
-            ret = on_element(self)
-
-            # if the result is not a generator,
-            if not isinstance(ret, Generator):
-                ret = iter([ret])
-
-            res = next(ret, '')
-
-            if res is self.SKIP:
-                return
-
-            match self.top_type:
-                case self.LIST:
-                    for idx, l in enumerate(self.top.data):
-                        self._process_internal(idx, l, on_element)
-                case self.DICT:
-                    items = list(self.top.data.items())
-                    if processing_order:
-                        def key_function(x):
-                            try:
-                                return processing_order.index(x)
-                            except ValueError:
-                                pass
-                            try:
-                                return processing_order.index('*')
-                            except ValueError:
-                                pass
-                            return len(processing_order)
-
-                        items.sort(key=key_function)
-                    for k, v in items:
-                        self._process_internal(k, v, on_element)
-
-            next(ret, '')
-
-        except ReplaceElement as re:
-            self.pop()
-            popped = True
-            for k, v in re.data.items():
-                self._process_internal(k, v, on_element)
-        finally:
-            if not popped:
-                self.pop()

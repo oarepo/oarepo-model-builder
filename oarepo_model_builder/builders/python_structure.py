@@ -8,8 +8,8 @@ class PythonStructureBuilder(PythonBuilder):
     TYPE = 'python_structure'
 
     @process('/model')
-    def model(self, stack: ModelBuilderStack):
-        yield
+    def model(self):
+        self.build_children()
         package_path = self.settings.package_path
 
         ensure_parent_modules(

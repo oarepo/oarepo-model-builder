@@ -52,8 +52,8 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         )
 
     @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
-    def enter_model_element(self, stack: ModelBuilderStack):
-        schema_path = match_schema(stack)
+    def enter_model_element(self):
+        schema_path = match_schema(self.stack)
         if isinstance(schema_path[-1], Ref):
             schema_element_type = schema_path[-1].element_type
         else:
@@ -62,7 +62,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         definition = None
         recurse = True
         if schema_element_type == 'properties':
-            parent = stack[-2].data
+            parent = self.stack[-2].data
             definition = parent.get(OAREPO_MARSHMALLOW_PROPERTY, {})
 
             # set nested if not already set
@@ -79,7 +79,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 generate_schema_class = definition.get('generate', False)
             if generate_schema_class:
                 self.marshmallow_stack.append(
-                    MarshmallowNode(schema_class, schema_class_base_classes, stack.top.data))
+                    MarshmallowNode(schema_class, schema_class_base_classes, self.stack.top.data))
                 # add nested to the definition
             else:
                 schema_element_type = 'nodef'
@@ -87,12 +87,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         if recurse:
             # process children
-            yield
-        else:
-            # skip children
-            yield stack.SKIP
+            self.build_children()
 
-        data = stack.top.data
+        data = self.stack.top.data
 
         if not self.marshmallow_stack:
             return
@@ -100,18 +97,18 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         marshmallow_stack_top = self.marshmallow_stack[-1]
 
         if schema_element_type == 'nodef':
-            definition = self.get_marshmallow_definition(data, stack, definition=definition)
+            definition = self.get_marshmallow_definition(data, self.stack, definition=definition)
             self.marshmallow_stack[-1].prepared_schema = definition
         elif schema_element_type == 'items':
-            definition = self.get_marshmallow_definition(data, stack)
+            definition = self.get_marshmallow_definition(data, self.stack)
             definition['field'] = f"ma.List({definition['field']})"
             self.marshmallow_stack[-1].prepared_schema = definition
         elif schema_element_type == 'property':
             prepared_schema = marshmallow_stack_top.pop_prepared_schema()
             if prepared_schema:
                 deepmerge(data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {}), prepared_schema)
-            definition = self.get_marshmallow_definition(data, stack)
-            key = definition.get('field_name', stack.top.key)
+            definition = self.get_marshmallow_definition(data, self.stack)
+            key = definition.get('field_name', self.stack.top.key)
             marshmallow_stack_top.add(key, definition['field'])
         elif schema_element_type == 'properties':
             node = self.marshmallow_stack.pop()

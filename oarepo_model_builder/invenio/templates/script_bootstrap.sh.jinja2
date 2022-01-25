@@ -14,8 +14,37 @@ source .venv/bin/activate
 
 poetry install -E sample-app
 
+# uninstall the current app so that metadata will not be created in invenio db create
+pip uninstall -y {{ settings.package_base.replace('_', '-') }}
+
+# create base tables
 invenio db init
 invenio db create
+
+# install back current app
+poetry install -E sample-app
+
+# create the branch
+invenio alembic revision "Create {{ settings.package_base }} branch."  -b {{ settings.package_base }} -p dbdbc1b19cf2 --empty
+
+# apply the branch
+invenio alembic upgrade heads
+
+# initial revision
+invenio alembic revision "Initial revision." -b {{ settings.package_base }}
+
+find {{ settings.package_base }}/alembic -name "*py" | while read FN; do
+    echo "$FN"
+    # import sqlalchemy_utils
+    sed -i '' 's/import sqlalchemy as sa/import sqlalchemy as sa\nimport sqlalchemy_utils/' "$FN"
+    # remove length=16 from UUIDType(length=16)
+    sed -i '' 's/UUIDType(length=16/UUIDType(/' "$FN"
+    # replace Text() with sa.Text()
+    sed -i '' 's/astext_type=Text()/astext_type=sa.Text()/' "$FN"
+done
+
+# create db tables
+invenio alembic upgrade heads
 
 invenio index destroy --yes-i-know || true
 invenio index init --force

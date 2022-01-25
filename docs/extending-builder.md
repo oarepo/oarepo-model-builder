@@ -23,14 +23,14 @@ class JSONSchemaBuilder(OutputBuilder):
     parent_module_root_name: str = None
 
     @process('/model')
-    def enter_model(self, stack: ModelBuilderStack):
+    def enter_model(self):
         output_name = self.settings[self.output_file_name]
         self.output = self.builder.get_output('json', output_name)
 
     @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
-    def model_element(self, stack: ModelBuilderStack):
+    def model_element(self):
         # TODO: write the element at the top of the stack to the output
-        yield       # process children here
+        self.build_children()
         # TODO: tell the output that the element ended        
 ```
 

@@ -22,4 +22,5 @@ TEMPLATES = {
     "script-bootstrap": "templates/script_bootstrap.sh.jinja2",
     "script-runserver": "templates/script_runserver.sh.jinja2",
     "script-import-sample-data": "templates/script_import_sample_data.py.jinja2",
+    "script-import-sample-data-shell": "templates/script_import_sample_data.sh.jinja2",
 }

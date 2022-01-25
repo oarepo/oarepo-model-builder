@@ -26,16 +26,16 @@ class PoetryBuilder(OutputBuilder):
 
         output.setdefault("tool.poetry.dependencies", "python", "^3.9")
 
-        if 'runtime-dependencies' in self.schema.schema:
+        if 'runtime-dependencies' in self.schema:
             output.table("tool.poetry.dependencies")
-            for dep, value in self.schema.schema.runtime_dependencies.items():
+            for dep, value in self.schema.runtime_dependencies.items():
                 if isinstance(value, str):
                     value = {'version': value}
                 output.setdefault("tool.poetry.dependencies." + dep, *sum((list(x) for x in value.items()), []))
 
-        if 'dev-dependencies' in self.schema.schema:
+        if 'dev-dependencies' in self.schema:
             output.table("tool.poetry.dev-dependencies")
-            for dep, value in self.schema.schema.dev_dependencies.items():
+            for dep, value in self.schema.dev_dependencies.items():
                 if isinstance(value, str):
                     value = {'version': value}
                 output.setdefault("tool.poetry.dev-dependencies." + dep, *sum((list(x) for x in value.items()), []))
