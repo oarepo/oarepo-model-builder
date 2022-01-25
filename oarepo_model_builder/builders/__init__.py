@@ -87,14 +87,15 @@ class OutputBuilder:
 
     def build_node(self, key, data):
         data = copy.deepcopy(data)
+        self.stack.push(key, data)
 
         try:
             for property_preprocessor in self.property_preprocessors:
                 data = property_preprocessor.process(self.TYPE, data, self.stack) or data
         except ReplaceElement as e:
             data = e
-
         if isinstance(data, ReplaceElement):
+            self.stack.pop()
             if data.data is not None:
                 if isinstance(data.data, dict):
                     for k, v in data.data.items():
@@ -105,7 +106,7 @@ class OutputBuilder:
                 else:
                     raise AttributeError(f'Do not know how to handle {type(data.data)} in ReplaceElement')
             return
-        self.stack.push(key, data)
+        self.stack.top.data = data
         self.process_stack_top()
         self.stack.pop()
 
@@ -146,9 +147,8 @@ class OutputBuilder:
             self.call_components('after_process_element', value=self.stack.top.data, stack=self.stack)
 
     @process('/model')
-    def enter_model(self, stack: ModelBuilderStack):
-        # do not skip /model
-        yield
+    def enter_model(self):
+        self.build_children()
 
     def call_components(self, method_name, value, **kwargs):
         for component in self.builder.get_output_builder_components(self.TYPE):

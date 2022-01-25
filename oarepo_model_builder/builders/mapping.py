@@ -15,30 +15,30 @@ class MappingBuilder(JSONBaseBuilder):
     parent_module_root_name = 'mappings'
 
     @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
-    def enter_model_element(self, stack: ModelBuilderStack):
+    def enter_model_element(self):
         # ignore schema leaves different than "type" - for example, minLength, ...
         # that should not be present in mapping
         if (
-                stack.top_type in (stack.LIST, stack.DICT) or
+                self.stack.top_type in (self.stack.LIST, self.stack.DICT) or
 
                 # ignore top-level type=object as it is not allowed
                 # in elasticsearch mapping (it is object automatically)
-                stack.level > 3 and stack.top.key == 'type'
+                self.stack.level > 3 and self.stack.top.key == 'type'
         ):
 
-            self.model_element_enter(stack)
+            self.model_element_enter()
 
             # process children
-            yield
+            self.build_children()
 
-            data = stack.top.data
+            data = self.stack.top.data
             if isinstance(data, dict) and 'oarepo:mapping' in data:
-                mapping = self.call_components('before_merge_mapping', data['oarepo:mapping'], stack=stack)
+                mapping = self.call_components('before_merge_mapping', data['oarepo:mapping'], stack=self.stack)
                 self.output.merge_mapping(mapping)
 
-            self.model_element_leave(stack)
+            self.model_element_leave()
 
-    def on_enter_model(self, output_name, stack: ModelBuilderStack):
+    def on_enter_model(self, output_name):
         ensure_parent_modules(self.builder, Path(output_name),
                               ends_at=self.parent_module_root_name)
         self.output.merge(

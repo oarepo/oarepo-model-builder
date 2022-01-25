@@ -1,10 +1,12 @@
 import copy
 from pathlib import Path
+from typing import List
 
 from oarepo_model_builder.stack import ModelBuilderStack
 from ..builder import ModelBuilder
 from ..builders import process
 from ..builders.json_base import JSONBaseBuilder
+from ..property_preprocessors import PropertyPreprocessor
 from ..utils.schema import is_schema_element, match_schema, Ref
 
 import faker
@@ -16,8 +18,8 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
     output_file_name = 'script-import-sample-data'
     parent_module_root_name = 'jsonschemas'
 
-    def __init__(self, builder: ModelBuilder):
-        super().__init__(builder)
+    def __init__(self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]):
+        super().__init__(builder, property_preprocessors)
         self.faker = faker.Faker()
 
     def prepare(self, schema):
@@ -29,30 +31,30 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
         return [copy.deepcopy(schema) for _ in range(count)]
 
     @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
-    def model_element(self, stack: ModelBuilderStack):
-        schema_path = match_schema(stack)
+    def model_element(self):
+        schema_path = match_schema(self.stack)
         if isinstance(schema_path[-1], Ref):
             schema_element_type = schema_path[-1].element_type
         else:
             schema_element_type = None
         if schema_element_type == 'property':
-            if not self.skip(stack):
-                if 'properties' in stack.top.data:
-                    self.output.enter(stack.top.key, {})
-                elif 'items' in stack.top.data:
-                    self.output.enter(stack.top.key, [])
+            if not self.skip(self.stack):
+                if 'properties' in self.stack.top.data:
+                    self.output.enter(self.stack.top.key, {})
+                elif 'items' in self.stack.top.data:
+                    self.output.enter(self.stack.top.key, [])
                 else:
-                    self.output.primitive(stack.top.key, self.generate_fake(stack))
-        yield
+                    self.output.primitive(self.stack.top.key, self.generate_fake(self.stack))
+        self.build_children()
         if schema_element_type == 'property':
-            if not self.skip(stack):
-                if 'properties' in stack.top.data or 'items' in stack.top.data:
+            if not self.skip(self.stack):
+                if 'properties' in self.stack.top.data or 'items' in self.stack.top.data:
                     self.output.leave()
 
     def skip(self, stack):
         return stack.top.data.get('oarepo:sample', {}).get('skip', False)
 
-    def on_enter_model(self, output_name, stack: ModelBuilderStack):
+    def on_enter_model(self, output_name):
         self.output.next_document()
 
     def generate_fake(self, stack):
