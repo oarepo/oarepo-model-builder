@@ -50,7 +50,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             return
         count = schema.settings.get('oarepo:sample', {}).get('count', 50)
         for _ in range(count):
-            return super().build(schema)
+            super().build(schema)
 
     def skip(self, stack):
         return stack.top.data.get('oarepo:sample', {}).get('skip', False)
