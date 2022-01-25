@@ -1,15 +1,16 @@
-import copy
-from pathlib import Path
 from typing import List
 
-from oarepo_model_builder.stack import ModelBuilderStack
+import faker
+from jinja2 import Environment, FunctionLoader
+
+from oarepo_model_builder.builders import OutputBuilder
+from oarepo_model_builder.builders.utils import ensure_directory
+from oarepo_model_builder.templates import templates
 from ..builder import ModelBuilder
 from ..builders import process
 from ..builders.json_base import JSONBaseBuilder
 from ..property_preprocessors import PropertyPreprocessor
 from ..utils.schema import is_schema_element, match_schema, Ref
-
-import faker
 
 
 class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
@@ -72,3 +73,22 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             else:
                 method = 'sentence'
         return getattr(self.faker, method)()
+
+
+class InvenioScriptSampleDataShellBuilder(OutputBuilder):
+    TYPE = 'invenio_script_runserver'
+
+    def finish(self):
+        context = {
+            'settings': self.schema.settings
+        }
+
+        env = Environment(
+            loader=FunctionLoader(lambda tn: templates.get_template(tn, context['settings'])),
+            autoescape=False,
+        )
+
+        ensure_directory(self.builder, 'scripts')
+        output = self.builder.get_output('diff', 'scripts/load_sample_data.sh')
+        output.write(env.get_template('script-import-sample-data-shell').render(context))
+        output.make_executable()

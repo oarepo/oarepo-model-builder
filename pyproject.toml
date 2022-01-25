@@ -72,6 +72,8 @@ build-backend = "poetry.core.masonry.api"
 1010-invenio_script_runserver = "oarepo_model_builder.invenio.invenio_script_runserver:InvenioScriptRunServerBuilder"
 1020-invenio_script_import_sample_data = "oarepo_model_builder.invenio.invenio_script_import_sample_data:InvenioScriptImportSampleDataBuilder"
 1030-invenio_script_sample_data = "oarepo_model_builder.invenio.invenio_script_sample_data:InvenioScriptSampleDataBuilder"
+1040-invenio_script_sample_data_shell = "oarepo_model_builder.invenio.invenio_script_sample_data:InvenioScriptSampleDataShellBuilder"
+
 
 [tool.poetry.plugins."oarepo_model_builder.outputs"]
 json = "oarepo_model_builder.outputs.json:JSONOutput"

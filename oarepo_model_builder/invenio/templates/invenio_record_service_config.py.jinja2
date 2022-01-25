@@ -28,7 +28,7 @@ class {{ python.record_service_config_class|base_name }}({% for b in python.reco
     @property
     def links_item(self):
         return {
-            "self": RecordLink("{{ settings.collection_url }}/{id}"),
+            "self": RecordLink("{{ settings.collection_url }}{id}"),
         }
 
     links_search = pagination_links("{{ settings.collection_url }}{?args*}")
