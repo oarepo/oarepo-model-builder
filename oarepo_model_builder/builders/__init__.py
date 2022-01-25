@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import copy
 import functools
 import inspect
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union, List
 
+from oarepo_model_builder.property_preprocessors import PropertyPreprocessor
 from oarepo_model_builder.utils.json_pathlib import JSONPaths
 from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement
 from oarepo_model_builder.utils.verbose import log
@@ -28,9 +30,12 @@ def process(path, priority=0, condition=None):
 
 class OutputBuilder:
     TYPE = None
+    stack: ModelBuilderStack
 
-    def __init__(self, builder: ModelBuilder):
+    def __init__(self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]):
         self.builder = builder
+        self.property_preprocessors = property_preprocessors
+        self.stack = None
         # TODO: move this to metaclass and initialize only once per class
         self.json_paths = JSONPaths()
         arr = []
@@ -54,35 +59,91 @@ class OutputBuilder:
     def begin(self, schema, settings):
         self.schema = schema
         self.settings = settings
+        self.stack = ModelBuilderStack()
+        self.stack.push(None, schema)
         log.enter(2, 'Creating %s', self.TYPE)
         pass
 
     def finish(self):
         log.leave()
 
-    def prepare(self, schema):
-        return schema
+    def build(self, schema):
+        self.begin(schema.schema, schema.settings)
 
-    def process_element(self, stack: ModelBuilderStack):
-        """
-        Normally returns a generator with a single yield:
-        1. first part is called on element start
-        2. yield causes that the content of the element is processed
-        3. generator is called again to finish the element
+        for proc in self.property_preprocessors:
+            proc.begin(schema, schema.settings)
 
-        If no generator is returned, the content of the element is not processed
-        """
         try:
-            self.call_components('before_process_element', value=stack.top.data, stack=stack)
-            for method in self.json_paths.match(stack.path, stack.top.data, extra_data={
-                'stack': stack
+            processing_order = self.schema.schema.processing_order
+        except AttributeError:
+            processing_order = None
+
+        self.build_children(ordering=processing_order)
+
+        for proc in self.property_preprocessors:
+            proc.finish()
+
+        self.finish()
+
+    def build_node(self, key, data):
+        data = copy.deepcopy(data)
+
+        try:
+            for property_preprocessor in self.property_preprocessors:
+                data = property_preprocessor.process(self.TYPE, data, self.stack) or data
+        except ReplaceElement as e:
+            data = e
+
+        if isinstance(data, ReplaceElement):
+            if data.data is not None:
+                if isinstance(data.data, dict):
+                    for k, v in data.data.items():
+                        self.build_node(k, v)
+                elif isinstance(data.data, (list, tuple)):
+                    for k, v in enumerate(data.data):
+                        self.build_node(k, v)
+                else:
+                    raise AttributeError(f'Do not know how to handle {type(data.data)} in ReplaceElement')
+            return
+        self.stack.push(key, data)
+        self.process_stack_top()
+        self.stack.pop()
+
+    def build_children(self, ordering=None):
+        data = self.stack.top.data
+        if isinstance(data, (list, tuple)):
+            for k, v in enumerate(data):
+                self.build_node(k, v)
+        elif isinstance(data, dict):
+            children = list(data.items())
+            if ordering:
+                def key_function(x):
+                    try:
+                        return ordering.index(x)
+                    except ValueError:
+                        pass
+                    try:
+                        return ordering.index('*')
+                    except ValueError:
+                        pass
+                    return len(ordering)
+
+                children = children.sort(key=key_function)
+            for k, v in children:
+                self.build_node(k, v)
+
+    def process_stack_top(self):
+        try:
+            self.call_components('before_process_element', value=self.stack.top.data, stack=self.stack)
+            for method in self.json_paths.match(self.stack.path, self.stack.top.data, extra_data={
+                'stack': self.stack
             }):
-                return method(stack)
+                return method()
             # do not skip stack top
-            if stack.level > 1:
-                return stack.SKIP
+            if self.stack.level <= 1:
+                self.build_children()
         finally:
-            self.call_components('after_process_element', value=stack.top.data, stack=stack)
+            self.call_components('after_process_element', value=self.stack.top.data, stack=self.stack)
 
     @process('/model')
     def enter_model(self, stack: ModelBuilderStack):

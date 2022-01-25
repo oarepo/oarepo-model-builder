@@ -14,11 +14,11 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     parent_module_root_name = 'jsonschemas'
 
     @process('/model/**', condition=lambda current, stack: is_schema_element(stack))
-    def model_element(self, stack: ModelBuilderStack):
-        self.model_element_enter(stack)
-        yield
-        self.model_element_leave(stack)
+    def model_element(self):
+        self.model_element_enter()
+        self.build_children()
+        self.model_element_leave()
 
-    def on_enter_model(self, output_name, stack: ModelBuilderStack):
+    def on_enter_model(self, output_name):
         ensure_parent_modules(self.builder, Path(output_name),
                               ends_at=self.parent_module_root_name)

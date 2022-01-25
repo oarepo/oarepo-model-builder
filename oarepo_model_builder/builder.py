@@ -137,17 +137,22 @@ class ModelBuilder:
         self.filtered_output_classes = {o.TYPE: o for o in self._filter_classes(self.output_classes, 'output')}
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
-        self.output_builders = [e(self) for e in self._filter_classes(self.output_builder_classes, 'builder')]
-        self.property_preprocessors = [e(self) for e in
-                                       self._filter_classes(self.property_preprocessor_classes, 'property')]
 
         for model_preprocessor in self._filter_classes(self.model_preprocessor_classes, 'model'):
             model_preprocessor(self).transform(schema, schema.settings)
 
-        # print(yaml.dump(json.loads(json.dumps(schema.schema, default=lambda s: str(s)))))
+        # noinspection PyTypeChecker
+        property_preprocessors: List[PropertyPreprocessor] = [
+            e(self) for e in
+            self._filter_classes(self.property_preprocessor_classes, 'property')
+        ]
 
-        # process the file
-        self._iterate_schema(schema)
+        output_builder_class: Type[OutputBuilder]
+        for output_builder_class in self._filter_classes(self.output_builder_classes, 'builder'):
+            output_builder = output_builder_class(
+                builder=self,
+                property_preprocessors=property_preprocessors)
+            output_builder.build(schema)
 
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
             output.finish()
@@ -192,24 +197,6 @@ class ModelBuilder:
             )
         return ret
 
-    def _iterate_schema(self, schema: ModelSchema):
-        for output_builder in self.output_builders:
-            output_builder.begin(schema, schema.settings)
-
-            for proc in self.property_preprocessors:
-                proc.begin(schema, schema.settings)
-
-            schema = output_builder.prepare(schema)
-            if isinstance(schema, (list, tuple)):
-                for s in schema:
-                    self._iterate_schema_output_builder(s, output_builder)
-            else:
-                self._iterate_schema_output_builder(schema, output_builder)
-
-            for proc in self.property_preprocessors:
-                proc.finish()
-
-            output_builder.finish()
 
     def _iterate_schema_output_builder(self, schema: ModelSchema, output_builder: OutputBuilder):
         def call_processors(stack, output_builder):
