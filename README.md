@@ -1,5 +1,7 @@
 # OARepo model builder
 
+## Work in progress
+
 A library and command-line tool to generate invenio model project from a single model file.
 
 <!--TOC-->
