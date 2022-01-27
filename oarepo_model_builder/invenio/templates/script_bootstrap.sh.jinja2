@@ -12,6 +12,11 @@ python -c 'import sys; exit(1) if sys.version_info.major < 3 or sys.version_info
 python3 -mvenv .venv
 source .venv/bin/activate
 
+mkdir -p .venv/var/instance/
+if [ -f scripts/invenio.cfg ] ; then
+    test -f .venv/var/instance/invenio.cfg || ln -s $PWD/scripts/invenio.cfg .venv/var/instance/invenio.cfg
+fi
+
 poetry install -E sample-app
 
 # uninstall the current app so that metadata will not be created in invenio db create
@@ -36,11 +41,11 @@ invenio alembic revision "Initial revision." -b {{ settings.package_base }}
 find {{ settings.package_base }}/alembic -name "*py" | while read FN; do
     echo "$FN"
     # import sqlalchemy_utils
-    sed -i '' 's/import sqlalchemy as sa/import sqlalchemy as sa\nimport sqlalchemy_utils/' "$FN"
+    sed -i 's/import sqlalchemy as sa/import sqlalchemy as sa\nimport sqlalchemy_utils/' "$FN"
     # remove length=16 from UUIDType(length=16)
-    sed -i '' 's/UUIDType(length=16/UUIDType(/' "$FN"
+    sed -i 's/UUIDType(length=16/UUIDType(/' "$FN"
     # replace Text() with sa.Text()
-    sed -i '' 's/astext_type=Text()/astext_type=sa.Text()/' "$FN"
+    sed -i 's/astext_type=Text()/astext_type=sa.Text()/' "$FN"
 done
 
 # create db tables
