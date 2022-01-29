@@ -1,16 +1,16 @@
 import itertools
-from .common import MergerBase, real_node, real_with_changes, merge, PythonContext
+from .common import MergerBase, merge, PythonContext
 from libcst import Arg
 from .mergers import call_mergers, expression_mergers
 
 
 class CallMerger(MergerBase):
     def should_merge(self, context: PythonContext, existing_node, new_node):
-        return real_node(existing_node).func.value == real_node(new_node).func.value
+        return existing_node.func.value == new_node.func.value
 
     def merge(self, context: PythonContext, existing_node, new_node):
-        existing_args, existing_kwargs = self.extract_args(real_node(existing_node))
-        new_args, new_kwargs = self.extract_args(real_node(new_node))
+        existing_args, existing_kwargs = self.extract_args(existing_node)
+        new_args, new_kwargs = self.extract_args(new_node)
         args = []
         for e, n in itertools.zip_longest(existing_args, new_args):
             args.append(self.merge_arg(context, e, n))
@@ -22,7 +22,7 @@ class CallMerger(MergerBase):
         for k, n in new_kwargs.items():
             args.append(n)
 
-        return real_with_changes(existing_node, args=args)
+        return existing_node.with_changes(args=args)
 
     def merge_arg(self, context: PythonContext, e, n):
         if e and n:
@@ -50,7 +50,6 @@ class ArgMerger(MergerBase):
         return True
 
     def merge(self, context: PythonContext, existing_node, new_node):
-        return real_with_changes(
-            existing_node,
+        return existing_node.with_changes(
             value=merge(context, existing_node.value, new_node.value, mergers=expression_mergers) or existing_node.value
         )

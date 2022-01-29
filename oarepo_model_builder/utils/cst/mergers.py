@@ -1,22 +1,38 @@
 import lazy_object_proxy
 from libcst import ClassDef, FunctionDef, Import, ImportFrom, Assign, Expr, \
-    Element, Pass, Call, Module, List, Tuple, Integer, Arg
+    Element, Pass, Call, Module, List, Tuple, Integer, Arg, SimpleStatementLine
 
 
 @lazy_object_proxy.Proxy
-def general_mergers():
-    from .indented_nodes import ModuleMerger, ClassMerger
-    from .simple_nodes import AssignMerger, ImportMerger, ImportFromMerger, ExprMerger, FunctionMerger, PassMerger
+def module_mergers():
+    from .indented_nodes import ModuleMerger
+    return {
+        Module: ModuleMerger()
+    }
+
+
+@lazy_object_proxy.Proxy
+def indented_block_mergers():
+    from .indented_nodes import ClassMerger
+    from .simple_nodes import SimpleStatementLineMerger, FunctionMerger
 
     return {
-        Module: ModuleMerger(),
+        SimpleStatementLine: SimpleStatementLineMerger(),
         ClassDef: ClassMerger(),
+        FunctionDef: FunctionMerger(),
+    }
+
+
+@lazy_object_proxy.Proxy
+def simple_line_mergers():
+    from .simple_nodes import AssignMerger, ImportMerger, ImportFromMerger, ExprMerger, PassMerger
+
+    return {
         Assign: AssignMerger(),
         Import: ImportMerger(),
         ImportFrom: ImportFromMerger(),
         Expr: ExprMerger(),
-        FunctionDef: FunctionMerger(),
-        Pass: PassMerger()
+        Pass: PassMerger(),
     }
 
 

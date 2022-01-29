@@ -1,8 +1,9 @@
+import functools
 from collections import namedtuple
 
 from libcst import SimpleStatementLine
 
-from .mergers import general_mergers
+from .mergers import module_mergers
 
 
 class PythonContext:
@@ -18,23 +19,6 @@ class PythonContext:
 
     def pop(self, node):
         self.stack.pop(node)
-
-
-def real_node(node):
-    if isinstance(node, SimpleStatementLine):
-        return node.body[0]
-    return node
-
-
-def real_with_changes(node, **kwargs):
-    if isinstance(node, SimpleStatementLine):
-        return node.with_changes(
-            body=[
-                node.body[0].with_changes(**kwargs)
-            ]
-        )
-    else:
-        return node.with_changes(**kwargs)
 
 
 node_with_type = namedtuple('node_with_type', 'node, type')
@@ -54,9 +38,9 @@ class MergerBase:
 
         Otherwise, None is returned
         """
-        if type(real_node(new_node)) is not type(real_node(existing_node)):
+        if type(new_node) is not type(existing_node):
             return None
-        merger = mergers.get(type(real_node(existing_node)), IdentityMerger())
+        merger = mergers.get(type(existing_node), IdentityMerger())
         if merger.should_merge(context, existing_node, new_node):
             return merger
         return None
@@ -74,7 +58,8 @@ class IdentityBaseMerger(MergerBase):
 
     def should_merge(self, context: PythonContext, existing_node, new_node):
         try:
-            return context.to_source_code(real_node(existing_node)).strip() == context.to_source_code(real_node(new_node)).strip()
+            return context.to_source_code(existing_node).strip() == context.to_source_code(
+                new_node).strip()
         except AttributeError:
             print('')
             raise
@@ -86,21 +71,18 @@ class IdentityMerger(IdentityBaseMerger):
 
     def should_merge(self, context: PythonContext, existing_node, new_node):
         print(
-            f'Warning: using naive merger for {type(real_node(existing_node))}'
+            f'Warning: using naive merger for {type(existing_node)}'
             f'>>>\n{context.to_source_code(existing_node).strip()}\n<<<')
         return super().should_merge(context, existing_node, new_node)
 
 
 def merge(context: PythonContext, existing_node, new_node, mergers=None):
     if not mergers:
-        mergers = general_mergers
+        mergers = module_mergers
 
-    real_existing = real_node(existing_node)
-    real_new = real_node(new_node)
-
-    if type(real_existing) is not type(real_new):
+    if type(existing_node) is not type(new_node):
         return None
-    merger = mergers.get(type(real_existing), IdentityMerger())
+    merger = mergers.get(type(existing_node), IdentityMerger())
     if merger.should_merge(context, existing_node, new_node):
         return merger.merge(context, existing_node, new_node)
     return None
