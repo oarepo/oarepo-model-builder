@@ -1,7 +1,7 @@
 from oarepo_model_builder.utils.cst.common import real_node, IdentityMerger
 
 
-def merge_lists_remove_duplicates(existing_list, new_list, cst, mergers):
+def merge_lists_remove_duplicates(existing_list, new_list, context, mergers):
     ret = []
     new_list = [*new_list]
 
@@ -15,8 +15,8 @@ def merge_lists_remove_duplicates(existing_list, new_list, cst, mergers):
                 continue
 
             merger = mergers.get(type(real_existing), IdentityMerger())
-            if merger.should_merge(cst, e, n):
-                ret.append(merger.merge(cst, e, n))
+            if merger.should_merge(context, e, n):
+                ret.append(merger.merge(context, e, n))
                 del new_list[idx]
                 break
         else:

@@ -1,6 +1,6 @@
 from libcst import Assign, Import, ImportFrom, ClassDef
 
-from .common import real_node, node_with_type, MergerBase, IdentityMerger, real_with_changes
+from .common import real_node, node_with_type, MergerBase, IdentityMerger, real_with_changes, PythonContext
 from .mergers import general_mergers
 
 
@@ -51,12 +51,12 @@ class PriorityMergerMixin:
 
 
 class ModuleMerger(PriorityMergerMixin, MergerBase):
-    def should_merge(self, cst, existing_node, new_node):
+    def should_merge(self, context: PythonContext, existing_node, new_node):
         return True
 
-    def merge(self, cst, existing_node, new_node):
+    def merge(self, context: PythonContext, existing_node, new_node):
         return self._merge_children_with_priorities(
-            existing_node, new_node, cst,
+            existing_node, new_node, context,
             mergers=general_mergers,
             node_type_category={
                 Import: 'import',
@@ -73,12 +73,12 @@ class ModuleMerger(PriorityMergerMixin, MergerBase):
 
 
 class ClassMerger(PriorityMergerMixin, MergerBase):
-    def should_merge(self, cst, existing_node, new_node):
+    def should_merge(self, context: PythonContext, existing_node, new_node):
         return existing_node.name.value == new_node.name.value
 
-    def merge(self, cst, existing_node, new_node):
+    def merge(self, context: PythonContext, existing_node, new_node):
         return self._merge_children_with_priorities(
-            existing_node, new_node, cst,
+            existing_node, new_node, context,
             mergers=general_mergers,
             node_type_category={
                 Import: 'import',
