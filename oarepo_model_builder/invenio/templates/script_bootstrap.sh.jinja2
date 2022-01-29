@@ -39,13 +39,15 @@ invenio alembic upgrade heads
 invenio alembic revision "Initial revision." -b {{ settings.package_base }}
 
 find {{ settings.package_base }}/alembic -name "*py" | while read FN; do
-    echo "$FN"
+    echo "Fixing sqlalchemy file $FN"
     # import sqlalchemy_utils
-    sed -i 's/import sqlalchemy as sa/import sqlalchemy as sa\nimport sqlalchemy_utils/' "$FN"
     # remove length=16 from UUIDType(length=16)
-    sed -i 's/UUIDType(length=16/UUIDType(/' "$FN"
     # replace Text() with sa.Text()
-    sed -i 's/astext_type=Text()/astext_type=sa.Text()/' "$FN"
+    cat "$FN" | \
+        sed 's/import sqlalchemy as sa/import sqlalchemy as sa\nimport sqlalchemy_utils/' | \
+        sed 's/UUIDType(length=16/UUIDType(/' | \
+        sed 's/astext_type=Text()/astext_type=sa.Text()/' >"$FN".replaced
+    mv "$FN".replaced "$FN"
 done
 
 # create db tables
