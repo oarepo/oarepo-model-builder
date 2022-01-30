@@ -10,9 +10,7 @@ class InvenioRecordMetadataModelsPoetryBuilder(OutputBuilder):
 
         output: TOMLOutput = self.builder.get_output("toml", "pyproject.toml")
 
-        metadata_package = self.settings.python.record_metadata_class.rsplit(
-            ".", maxsplit=1
-        )[0]
+        metadata_package = self.settings.python.record_metadata_class.rsplit(".", maxsplit=1)[0]
 
         output.set(
             "tool.poetry.plugins.'invenio_db.models'",

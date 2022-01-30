@@ -4,28 +4,20 @@ import json5
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
+from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.type_shortcuts import (
-    TypeShortcutsPreprocessor,
-)
+from oarepo_model_builder.property_preprocessors.type_shortcuts import TypeShortcutsPreprocessor
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
 
 def test_object():
-    data = build_jsonschema(
-        {"properties": {"a": {"properties": {"b": {"type": "string"}}}}}
-    )
+    data = build_jsonschema({"properties": {"a": {"properties": {"b": {"type": "string"}}}}})
 
     assert data == {
         "type": "object",
-        "properties": {
-            "a": {"type": "object", "properties": {"b": {"type": "string"}}}
-        },
+        "properties": {"a": {"type": "object", "properties": {"b": {"type": "string"}}}},
     }
 
 
@@ -93,7 +85,5 @@ def build_jsonschema(model):
         output_dir="",
     )
     return json5.load(
-        builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
+        builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
     )

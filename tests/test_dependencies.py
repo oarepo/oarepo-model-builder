@@ -17,15 +17,11 @@ def test_runtime_dependencies():
 version = \"1.0.0\""""
         in data
     )
-    assert data.index("[tool.poetry.dependencies]") < data.index(
-        "[tool.poetry.dependencies.test]"
-    )
+    assert data.index("[tool.poetry.dependencies]") < data.index("[tool.poetry.dependencies.test]")
 
 
 def test_runtime_dependencies_with_extras():
-    data = build(
-        {"runtime-dependencies": {"test": {"version": "1.0.0", "optional": True}}}
-    )
+    data = build({"runtime-dependencies": {"test": {"version": "1.0.0", "optional": True}}})
     assert "[tool.poetry.dependencies]" in data
     assert (
         """[tool.poetry.dependencies.test]
@@ -33,9 +29,7 @@ version = \"1.0.0\"
 optional = true"""
         in data
     )
-    assert data.index("[tool.poetry.dependencies]") < data.index(
-        "[tool.poetry.dependencies.test]"
-    )
+    assert data.index("[tool.poetry.dependencies]") < data.index("[tool.poetry.dependencies.test]")
 
 
 def test_dev_dependencies():

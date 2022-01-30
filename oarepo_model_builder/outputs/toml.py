@@ -66,9 +66,7 @@ class TOMLOutput(OutputBase):
         except NonExistentKey:
             return None
 
-    def set(
-        self, table, key, value, *others_key_values, key_type=tomlkit.items.KeyType.Bare
-    ):
+    def set(self, table, key, value, *others_key_values, key_type=tomlkit.items.KeyType.Bare):
         tbl = self.table(table)
         key = tomlkit.items.Key(key, key_type)
         tbl[key] = value

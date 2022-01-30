@@ -35,11 +35,17 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 ##
-## black-isort compatibility
+## black, isort
 ##
 
 [tool.isort]
 profile = "black"
+skip_gitignore = true
+line_length = 100
+
+[tool.black]
+line-length = 100
+
 
 ##
 ## plugin registration

@@ -23,9 +23,7 @@ class InvenioSampleAppPoetryBuilder(OutputBuilder):
             True,
         )
 
-        output.setdefault(
-            "tool.poetry.dependencies.pyyaml", "version", ">=6", "optional", True
-        )
+        output.setdefault("tool.poetry.dependencies.pyyaml", "version", ">=6", "optional", True)
 
         output.setdefault(
             "tool.poetry.dependencies.invenio-records-resources",

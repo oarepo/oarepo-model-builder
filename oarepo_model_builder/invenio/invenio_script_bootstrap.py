@@ -12,9 +12,7 @@ class InvenioScriptBootstrapBuilder(OutputBuilder):
         context = {"settings": self.schema.settings}
 
         env = Environment(
-            loader=FunctionLoader(
-                lambda tn: templates.get_template(tn, context["settings"])
-            ),
+            loader=FunctionLoader(lambda tn: templates.get_template(tn, context["settings"])),
             autoescape=False,
         )
 

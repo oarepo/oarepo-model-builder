@@ -53,8 +53,6 @@ class ArgMerger(MergerBase):
 
     def merge(self, context: PythonContext, existing_node, new_node):
         return existing_node.with_changes(
-            value=merge(
-                context, existing_node.value, new_node.value, mergers=expression_mergers
-            )
+            value=merge(context, existing_node.value, new_node.value, mergers=expression_mergers)
             or existing_node.value
         )

@@ -3,9 +3,7 @@ import os
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders import OutputBuilderComponent
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
+from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
@@ -34,9 +32,7 @@ def test_simple_jsonschema_builder():
                     "python": {"use_isort": False, "use_black": False},
                 },
                 "model": {
-                    "properties": {
-                        "a": {"type": "string", "oarepo:ui": {"class": "bolder"}}
-                    }
+                    "properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}
                 },
             },
         ),
@@ -44,9 +40,7 @@ def test_simple_jsonschema_builder():
     )
 
     data = json5.load(
-        builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
+        builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
     )
 
     assert data == {"properties": {"a": {"type": "string"}}}
@@ -70,9 +64,7 @@ def test_jsonschema_preprocessor():
                     "python": {"use_isort": False, "use_black": False},
                 },
                 "model": {
-                    "properties": {
-                        "a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}
-                    }
+                    "properties": {"a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}}
                 },
             },
         ),
@@ -80,9 +72,7 @@ def test_jsonschema_preprocessor():
     )
 
     data = json5.load(
-        builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
+        builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
     )
 
     assert data == {
@@ -107,9 +97,7 @@ def test_components():
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        output_builder_components={
-            JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]
-        },
+        output_builder_components={JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]},
         filesystem=MockFilesystem(),
     )
     builder.build(
@@ -121,9 +109,7 @@ def test_components():
                     "python": {"use_isort": False, "use_black": False},
                 },
                 "model": {
-                    "properties": {
-                        "a": {"type": "string", "oarepo:ui": {"class": "bolder"}}
-                    }
+                    "properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}
                 },
             },
         ),
@@ -131,9 +117,7 @@ def test_components():
     )
 
     data = json5.load(
-        builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
+        builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
     )
 
     assert data == {"properties": {"a": {"type": "integer"}}}

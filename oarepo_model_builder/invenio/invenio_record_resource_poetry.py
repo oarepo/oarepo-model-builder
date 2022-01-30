@@ -10,9 +10,7 @@ class InvenioRecordResourcePoetryBuilder(OutputBuilder):
 
         output: TOMLOutput = self.builder.get_output("toml", "pyproject.toml")
 
-        register_function = self.settings.python.create_blueprint_from_app.rsplit(
-            ".", maxsplit=1
-        )
+        register_function = self.settings.python.create_blueprint_from_app.rsplit(".", maxsplit=1)
 
         output.set(
             "tool.poetry.plugins.'invenio_base.api_blueprints'",

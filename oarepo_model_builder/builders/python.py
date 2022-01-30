@@ -11,9 +11,7 @@ class PythonBuilder(OutputBuilder):
         return Path(*mod)
 
     def create_parent_modules(self, python_path):
-        ensure_parent_modules(
-            self.builder, python_path, max_depth=len(python_path.parts)
-        )
+        ensure_parent_modules(self.builder, python_path, max_depth=len(python_path.parts))
 
     def class_to_path(self, class_name):
         return self.module_to_path(class_name.rsplit(".", maxsplit=1)[0])

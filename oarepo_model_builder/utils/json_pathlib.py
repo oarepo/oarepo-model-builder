@@ -38,9 +38,7 @@ class JSONPaths:
             self.paths.append([])
             self.path_regex_list.append(path_to_regex(path))
         path_locators = self.paths[self.path_to_index[path]]
-        path_locators.append(
-            JSONPathRecord(path=path, condition=condition, value=value)
-        )
+        path_locators.append(JSONPathRecord(path=path, condition=condition, value=value))
 
     @cached_property
     def path_regex(self):

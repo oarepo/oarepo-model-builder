@@ -26,9 +26,7 @@ class Log:
             self(verbosity, fmt, *args, logger=logger, **kwargs)
             level += 1
 
-        self.stack.append(
-            Log.LogStackEntry(verbosity=verbosity, indent=level, logger=logger)
-        )
+        self.stack.append(Log.LogStackEntry(verbosity=verbosity, indent=level, logger=logger))
 
     def leave(self, fmt=None, *args, **kwargs):
         top = self.stack.pop()

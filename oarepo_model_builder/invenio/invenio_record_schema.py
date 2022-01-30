@@ -72,19 +72,13 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 schema_class = definition["class"]
                 if "." not in schema_class:
                     schema_class = (
-                        package_name(self.settings.python.record_schema_class)
-                        + "."
-                        + schema_class
+                        package_name(self.settings.python.record_schema_class) + "." + schema_class
                     )
-                schema_class_base_classes = definition.get(
-                    "base-classes", ["ma.Schema"]
-                )
+                schema_class_base_classes = definition.get("base-classes", ["ma.Schema"])
                 generate_schema_class = definition.get("generate", False)
             if generate_schema_class:
                 self.marshmallow_stack.append(
-                    MarshmallowNode(
-                        schema_class, schema_class_base_classes, self.stack.top.data
-                    )
+                    MarshmallowNode(schema_class, schema_class_base_classes, self.stack.top.data)
                 )
                 # add nested to the definition
             else:
@@ -103,9 +97,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         marshmallow_stack_top = self.marshmallow_stack[-1]
 
         if schema_element_type == "nodef":
-            definition = self.get_marshmallow_definition(
-                data, self.stack, definition=definition
-            )
+            definition = self.get_marshmallow_definition(data, self.stack, definition=definition)
             self.marshmallow_stack[-1].prepared_schema = definition
         elif schema_element_type == "items":
             definition = self.get_marshmallow_definition(data, self.stack)
@@ -114,9 +106,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         elif schema_element_type == "property":
             prepared_schema = marshmallow_stack_top.pop_prepared_schema()
             if prepared_schema:
-                deepmerge(
-                    data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {}), prepared_schema
-                )
+                deepmerge(data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {}), prepared_schema)
             definition = self.get_marshmallow_definition(data, self.stack)
             key = definition.get("field_name", self.stack.top.key)
             marshmallow_stack_top.add(key, definition["field"])
@@ -165,9 +155,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 if not with_defined_prefix(
                     self.settings.python.always_defined_import_prefixes, class_name
                 ):
-                    class_base_name = self.imported_classes[
-                        definition["class"]
-                    ] = base_name(class_name)
+                    class_base_name = self.imported_classes[definition["class"]] = base_name(
+                        class_name
+                    )
                 else:
                     class_base_name = class_name
             else:

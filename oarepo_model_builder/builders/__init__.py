@@ -32,9 +32,7 @@ class OutputBuilder:
     TYPE = None
     stack: ModelBuilderStack
 
-    def __init__(
-        self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]
-    ):
+    def __init__(self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]):
         self.builder = builder
         self.property_preprocessors = property_preprocessors
         self.stack = None
@@ -93,9 +91,7 @@ class OutputBuilder:
 
         try:
             for property_preprocessor in self.property_preprocessors:
-                data = (
-                    property_preprocessor.process(self.TYPE, data, self.stack) or data
-                )
+                data = property_preprocessor.process(self.TYPE, data, self.stack) or data
         except ReplaceElement as e:
             data = e
         if isinstance(data, ReplaceElement):

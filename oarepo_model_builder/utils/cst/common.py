@@ -6,9 +6,7 @@ from libcst import CSTNode
 
 from .mergers import module_mergers
 
-DecisionRequired = namedtuple(
-    "DecisionRequired", "existing_node, new_node, explanation"
-)
+DecisionRequired = namedtuple("DecisionRequired", "existing_node, new_node, explanation")
 
 
 @dataclass
@@ -29,9 +27,7 @@ class PythonContext:
         return self.cst.code_for_node(node)
 
     def push(self, existing_node: CSTNode, new_node: CSTNode):
-        self.stack.append(
-            PythonContextItem(existing_node=existing_node, new_node=new_node)
-        )
+        self.stack.append(PythonContextItem(existing_node=existing_node, new_node=new_node))
 
     def pop(self):
         self.stack.pop()
@@ -40,12 +36,8 @@ class PythonContext:
     def top(self):
         return self.stack[-1]
 
-    def add_decision_required(
-        self, existing_node: CSTNode, new_node: CSTNode, explanation: str
-    ):
-        self.top.decisions.append(
-            DecisionRequired(existing_node, new_node, explanation)
-        )
+    def add_decision_required(self, existing_node: CSTNode, new_node: CSTNode, explanation: str):
+        self.top.decisions.append(DecisionRequired(existing_node, new_node, explanation))
 
 
 node_with_type = namedtuple("node_with_type", "node, type")

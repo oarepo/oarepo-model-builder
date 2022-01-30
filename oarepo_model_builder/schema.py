@@ -56,9 +56,7 @@ class ModelSchema:
         return self.schema.settings
 
     def merge(self, another):
-        self.schema = munch.munchify(
-            deepmerge(another, self.schema, []), factory=HyphenMunch
-        )
+        self.schema = munch.munchify(deepmerge(another, self.schema, []), factory=HyphenMunch)
 
     def _load(self, file_path, content=None):
         """

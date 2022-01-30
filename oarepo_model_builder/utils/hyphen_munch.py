@@ -5,9 +5,7 @@ import munch
 
 class HyphenMunch(munch.AutoMunch):
     def __setitem__(self, key, value):
-        if isinstance(value, Mapping) and not isinstance(
-            value, (munch.AutoMunch, munch.Munch)
-        ):
+        if isinstance(value, Mapping) and not isinstance(value, (munch.AutoMunch, munch.Munch)):
             value = munch.munchify(value, HyphenMunch)
         return super().__setitem__(key, value)
 

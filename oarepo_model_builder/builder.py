@@ -6,12 +6,7 @@ from typing import Dict, List, Type
 
 import yaml
 
-from .builders import (
-    ModelBuilderStack,
-    OutputBuilder,
-    OutputBuilderComponent,
-    ReplaceElement,
-)
+from .builders import ModelBuilderStack, OutputBuilder, OutputBuilderComponent, ReplaceElement
 from .fs import AbstractFileSystem, FileSystem
 from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
@@ -145,23 +140,16 @@ class ModelBuilder:
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
 
-        for model_preprocessor in self._filter_classes(
-            self.model_preprocessor_classes, "model"
-        ):
+        for model_preprocessor in self._filter_classes(self.model_preprocessor_classes, "model"):
             model_preprocessor(self).transform(schema, schema.settings)
 
         # noinspection PyTypeChecker
         property_preprocessors: List[PropertyPreprocessor] = [
-            e(self)
-            for e in self._filter_classes(
-                self.property_preprocessor_classes, "property"
-            )
+            e(self) for e in self._filter_classes(self.property_preprocessor_classes, "property")
         ]
 
         output_builder_class: Type[OutputBuilder]
-        for output_builder_class in self._filter_classes(
-            self.output_builder_classes, "builder"
-        ):
+        for output_builder_class in self._filter_classes(self.output_builder_classes, "builder"):
             output_builder = output_builder_class(
                 builder=self, property_preprocessors=property_preprocessors
             )
@@ -181,10 +169,7 @@ class ModelBuilder:
     # private methods
 
     def _filter_classes(self, classes: List[Type[object]], plugin_type):
-        if (
-            "plugins" not in self.schema.schema
-            or plugin_type not in self.schema.schema.plugins
-        ):
+        if "plugins" not in self.schema.schema or plugin_type not in self.schema.schema.plugins:
             return classes
         plugin_config = self.schema.schema.plugins[plugin_type]
 

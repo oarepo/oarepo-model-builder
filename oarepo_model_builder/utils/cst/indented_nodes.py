@@ -22,13 +22,9 @@ class PriorityMergerMixin:
 
         ret = []
         existing_list = [
-            node_with_type(e, self.get_node_type(node_type_category, e))
-            for e in existing_list
+            node_with_type(e, self.get_node_type(node_type_category, e)) for e in existing_list
         ]
-        new_list = [
-            node_with_type(e, self.get_node_type(node_type_category, e))
-            for e in new_list
-        ]
+        new_list = [node_with_type(e, self.get_node_type(node_type_category, e)) for e in new_list]
 
         last_type = None
         for existing in existing_list:

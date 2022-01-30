@@ -1,8 +1,6 @@
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import (
-    InvenioRecordSchemaBuilder,
-)
+from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
 from oarepo_model_builder.utils.deepmerge import deepmerge
@@ -102,9 +100,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
                 "fields": {
                     "keyword": {
                         "type": "keyword",
-                        "ignore_above": self.settings["elasticsearch"][
-                            "keyword-ignore-above"
-                        ],
+                        "ignore_above": self.settings["elasticsearch"]["keyword-ignore-above"],
                     }
                 }
             },
@@ -117,8 +113,6 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
         path="**/properties/*",
         condition=lambda current, stack: current.type == "fulltext+keyword",
     )
-    def modify_fulltext_keyword_marshmallow(
-        self, data, stack: ModelBuilderStack, **kwargs
-    ):
+    def modify_fulltext_keyword_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
         data["type"] = "string"
         return data

@@ -49,16 +49,12 @@ class PythonOutput(OutputBase):
             if self.builder.schema.settings.python.use_black:
                 import subprocess
 
-                subprocess.call(
-                    ["black", "-q", "--experimental-string-processing", str(self.path)]
-                )
+                subprocess.call(["black", "-q", "--experimental-string-processing", str(self.path)])
 
     def merge(self, template_name, context, filters=None):
         # template is a loadable resource
         env = Environment(
-            loader=FunctionLoader(
-                lambda tn: templates.get_template(tn, context["settings"])
-            ),
+            loader=FunctionLoader(lambda tn: templates.get_template(tn, context["settings"])),
             autoescape=False,
         )
         self.register_default_filters(env)
@@ -67,15 +63,11 @@ class PythonOutput(OutputBase):
 
         rendered = env.get_template(template_name).render(context)
         try:
-            rendered_cst = cst.parse_module(
-                rendered, config=self.cst.config_for_parsing
-            )
+            rendered_cst = cst.parse_module(rendered, config=self.cst.config_for_parsing)
         except:
             print(rendered, file=sys.stderr)
             raise
-        self.cst = (
-            merge(PythonContext(rendered_cst), self.cst, rendered_cst) or self.cst
-        )
+        self.cst = merge(PythonContext(rendered_cst), self.cst, rendered_cst) or self.cst
 
     @staticmethod
     def register_default_filters(env):
@@ -88,9 +80,7 @@ class PythonOutput(OutputBase):
             else value
         )
         env.tests["in_different_package"] = pass_context(
-            lambda context, value: in_different_package(
-                context["current_package_name"], value
-            )
+            lambda context, value: in_different_package(context["current_package_name"], value)
         )
         env.tests["not_prefixed"] = pass_context(
             lambda context, value: not with_defined_prefix(

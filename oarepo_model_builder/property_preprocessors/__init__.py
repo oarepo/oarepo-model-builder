@@ -53,10 +53,7 @@ class PropertyPreprocessor:
         for method, _output_builder_type in self.json_paths.match(
             stack.path, stack.top.data, extra_data={"stack": stack}
         ):
-            if (
-                _output_builder_type == "*"
-                or output_builder_type == _output_builder_type
-            ):
+            if _output_builder_type == "*" or output_builder_type == _output_builder_type:
                 return method(data, stack=stack)
 
     def process(self, output_builder_type: str, data, stack: ModelBuilderStack):

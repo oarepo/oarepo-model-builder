@@ -20,9 +20,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
     output_file_name = "script-import-sample-data"
     parent_module_root_name = "jsonschemas"
 
-    def __init__(
-        self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]
-    ):
+    def __init__(self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]):
         super().__init__(builder, property_preprocessors)
         self.faker = faker.Faker()
 
@@ -40,16 +38,11 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
                 elif "items" in self.stack.top.data:
                     self.output.enter(self.stack.top.key, [])
                 else:
-                    self.output.primitive(
-                        self.stack.top.key, self.generate_fake(self.stack)
-                    )
+                    self.output.primitive(self.stack.top.key, self.generate_fake(self.stack))
         self.build_children()
         if schema_element_type == "property":
             if not self.skip(self.stack):
-                if (
-                    "properties" in self.stack.top.data
-                    or "items" in self.stack.top.data
-                ):
+                if "properties" in self.stack.top.data or "items" in self.stack.top.data:
                     self.output.leave()
 
     def build(self, schema):
@@ -90,15 +83,11 @@ class InvenioScriptSampleDataShellBuilder(OutputBuilder):
         context = {"settings": self.schema.settings}
 
         env = Environment(
-            loader=FunctionLoader(
-                lambda tn: templates.get_template(tn, context["settings"])
-            ),
+            loader=FunctionLoader(lambda tn: templates.get_template(tn, context["settings"])),
             autoescape=False,
         )
 
         ensure_directory(self.builder, "scripts")
         output = self.builder.get_output("diff", "scripts/load_sample_data.sh")
-        output.write(
-            env.get_template("script-import-sample-data-shell").render(context)
-        )
+        output.write(env.get_template("script-import-sample-data-shell").render(context))
         output.make_executable()

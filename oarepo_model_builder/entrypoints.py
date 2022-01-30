@@ -11,12 +11,8 @@ from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 def create_builder_from_entrypoints(**kwargs):
     output_classes = load_entry_points_list("oarepo_model_builder.outputs")
     builder_classes = load_entry_points_list("oarepo_model_builder.builders")
-    preprocess_classes = load_entry_points_list(
-        "oarepo_model_builder.property_preprocessors"
-    )
-    model_preprocessor_classes = load_entry_points_list(
-        "oarepo_model_builder.model_preprocessors"
-    )
+    preprocess_classes = load_entry_points_list("oarepo_model_builder.property_preprocessors")
+    model_preprocessor_classes = load_entry_points_list("oarepo_model_builder.model_preprocessors")
 
     builder_types = [x.TYPE for x in builder_classes]
     output_builder_components = {

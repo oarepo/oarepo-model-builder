@@ -55,9 +55,7 @@ def test_loading_jsonpath_resource():
 
 
 def test_loading_current():
-    schema = ModelSchema(
-        "/tmp/path.json", {"b": {"oarepo:use": "#/a"}, "a": {"a": True}}
-    )
+    schema = ModelSchema("/tmp/path.json", {"b": {"oarepo:use": "#/a"}, "a": {"a": True}})
     assert schema.schema == {
         "settings": {"plugins": {}},
         "b": {"oarepo:included-from": "#/a", "a": True},

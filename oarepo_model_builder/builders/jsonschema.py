@@ -21,6 +21,4 @@ class JSONSchemaBuilder(JSONBaseBuilder):
         self.model_element_leave()
 
     def on_enter_model(self, output_name):
-        ensure_parent_modules(
-            self.builder, Path(output_name), ends_at=self.parent_module_root_name
-        )
+        ensure_parent_modules(self.builder, Path(output_name), ends_at=self.parent_module_root_name)

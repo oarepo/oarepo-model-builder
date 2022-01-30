@@ -15,9 +15,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             settings,
             {
                 "python": {
-                    "record_prefix": camel_case(
-                        settings.package.rsplit(".", maxsplit=1)[-1]
-                    ),
+                    "record_prefix": camel_case(settings.package.rsplit(".", maxsplit=1)[-1]),
                     # just make sure that the templates is always there
                     "templates": {},
                     "marshmallow": {"mapping": {}},
@@ -33,9 +31,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         )
 
         # config
-        self.set(
-            settings.python, "config-package", lambda: f"{settings.package}.config"
-        )
+        self.set(settings.python, "config-package", lambda: f"{settings.package}.config")
         self.set(
             settings.python,
             "config-dummy-class",
@@ -68,9 +64,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "ext-class",
             lambda: f"{settings.package}.ext.{record_prefix}Ext",
         )
-        self.set(
-            settings.python, "flask-extension-name", lambda: f"{settings.package_base}"
-        )
+        self.set(settings.python, "flask-extension-name", lambda: f"{settings.package_base}")
 
         # proxies
         self.set(
@@ -101,9 +95,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{record_prefix.lower()}_metadata",
         )
         #   - poetry
-        self.set(
-            settings.python, "record-mapping-poetry", lambda: f"{settings.package_base}"
-        )
+        self.set(settings.python, "record-mapping-poetry", lambda: f"{settings.package_base}")
         self.set(
             settings.python,
             "record-jsonschemas-poetry",
@@ -174,9 +166,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{settings.package_base}",
         )
 
-        self.set(
-            settings.python, "record-resource-blueprint-name", lambda: record_prefix
-        )
+        self.set(settings.python, "record-resource-blueprint-name", lambda: record_prefix)
         self.set(
             settings.python,
             "create-blueprint-from-app",
@@ -186,9 +176,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         if "model" in schema.schema:
             schema_class = settings.python.record_schema_class
             schema_metadata_class = settings.python.record_schema_metadata_class
-            schema_class_base_classes = settings.python.get(
-                "record_schema_metadata_bases", []
-            ) + [
+            schema_class_base_classes = settings.python.get("record_schema_metadata_bases", []) + [
                 "ma.Schema"  # alias will be recognized automatically
             ]
 
@@ -200,14 +188,9 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                     "generate": True,
                 },
             )
-            if (
-                "properties" in schema.schema.model
-                and "metadata" in schema.schema.model.properties
-            ):
+            if "properties" in schema.schema.model and "metadata" in schema.schema.model.properties:
                 deepmerge(
-                    schema.schema.model.properties.metadata.setdefault(
-                        "oarepo:marshmallow", {}
-                    ),
+                    schema.schema.model.properties.metadata.setdefault("oarepo:marshmallow", {}),
                     {
                         "class": schema_metadata_class,
                         "base-classes": schema_class_base_classes,

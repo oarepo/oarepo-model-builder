@@ -13,9 +13,9 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             settings,
             "package",
-            lambda: os.path.basename(
-                schema.schema.get("output-directory", os.getcwd())
-            ).replace("-", "_"),
+            lambda: os.path.basename(schema.schema.get("output-directory", os.getcwd())).replace(
+                "-", "_"
+            ),
         )
 
         self.set(settings, "processing-order", lambda: ["settings", "*", "model"])
@@ -35,9 +35,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             package_path = settings.package.split(".")
             return Path(package_path[0]).joinpath(*package_path[1:])
 
-        self.set(
-            settings, "schema-version", lambda: schema.schema.get("version", "1.0.0")
-        )
+        self.set(settings, "schema-version", lambda: schema.schema.get("version", "1.0.0"))
 
         self.set(
             settings,
@@ -53,9 +51,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             ),
         )
 
-        self.set(
-            settings, "mapping-package", lambda: f"{settings.package}.records.mappings"
-        )
+        self.set(settings, "mapping-package", lambda: f"{settings.package}.records.mappings")
 
         self.set(
             settings,

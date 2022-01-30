@@ -19,9 +19,7 @@ class InvenioRecordMetadataAlembicPoetryBuilder(OutputBuilder):
 
         python_path = self.settings.package_path / "alembic" / "__init__.py"
         # create parent modules if they do not exist
-        ensure_parent_modules(
-            self.builder, python_path, max_depth=len(python_path.parts)
-        )
+        ensure_parent_modules(self.builder, python_path, max_depth=len(python_path.parts))
 
         # and create empty __init__.py
         init_builder = self.builder.get_output("python", python_path)

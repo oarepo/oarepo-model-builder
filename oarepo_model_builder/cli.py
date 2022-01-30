@@ -22,8 +22,7 @@ from oarepo_model_builder.utils.verbose import log
 @click.command()
 @click.option(
     "--output-directory",
-    help="Output directory where the generated files will be placed. "
-    'Defaults to "."',
+    help="Output directory where the generated files will be placed. " 'Defaults to "."',
 )
 @click.option(
     "--package",
@@ -53,16 +52,10 @@ from oarepo_model_builder.utils.verbose import log
     "after the evaluation all globals are set on the model.",
     multiple=True,
 )
-@click.option(
-    "--isort/--skip-isort", default=True, help="Call isort on generated sources"
-)
-@click.option(
-    "--black/--skip-black", default=True, help="Call black on generated sources"
-)
+@click.option("--isort/--skip-isort", default=True, help="Call isort on generated sources")
+@click.option("--black/--skip-black", default=True, help="Call black on generated sources")
 @click.argument("model_filename")
-def run(
-    output_directory, package, sets, configs, model_filename, verbosity, isort, black
-):
+def run(output_directory, package, sets, configs, model_filename, verbosity, isort, black):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
@@ -70,9 +63,7 @@ def run(
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
     os.environ["PATH"] = (
-        str(Path(sys.argv[0]).parent.absolute())
-        + os.pathsep
-        + os.environ.get("PATH", "")
+        str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get("PATH", "")
     )
 
     if not output_directory:

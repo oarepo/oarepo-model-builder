@@ -7,9 +7,7 @@ if TYPE_CHECKING:
     from oarepo_model_builder.builder import ModelBuilder
 
 
-def ensure_parent_modules(
-    builder: ModelBuilder, path: Path, *, ends_at: str = None, max_depth=5
-):
+def ensure_parent_modules(builder: ModelBuilder, path: Path, *, ends_at: str = None, max_depth=5):
     depth = 0
     path = path.parent
     # 1st sanity check - maximum depth, path must not be a UNC drive name
