@@ -1,21 +1,13 @@
 import datetime
-import json
 import logging
 import os
 import sys
 from pathlib import Path
 
 import click
-import yaml
 
-from oarepo_model_builder.entrypoints import (
-    create_builder_from_entrypoints,
-    load_entry_points_dict,
-    load_included_models_from_entry_points,
-    load_model,
-)
-from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
+from oarepo_model_builder.conflict_resolvers import AutomaticResolver, InteractiveResolver
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.utils.verbose import log
 
 
@@ -54,8 +46,9 @@ from oarepo_model_builder.utils.verbose import log
 )
 @click.option("--isort/--skip-isort", default=True, help="Call isort on generated sources")
 @click.option("--black/--skip-black", default=True, help="Call black on generated sources")
+@click.option("--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"]))
 @click.argument("model_filename")
-def run(output_directory, package, sets, configs, model_filename, verbosity, isort, black):
+def run(output_directory, package, sets, configs, model_filename, verbosity, isort, black, resolve_conflicts):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
@@ -87,8 +80,14 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
 
     schema = load_model(model_filename, package, configs, black, isort, sets)
     schema.schema["output-directory"] = output_directory
+
+    if not resolve_conflicts or resolve_conflicts == "debug":
+        resolver = InteractiveResolver(resolve_conflicts == "debug")
+    else:
+        resolver = AutomaticResolver(resolve_conflicts)
+
     builder = create_builder_from_entrypoints()
-    builder.build(schema, output_directory)
+    builder.build(schema, output_directory, resolver)
 
     log.leave("Done")
 

@@ -12,6 +12,7 @@ from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
 from .property_preprocessors import PropertyPreprocessor
 from .schema import ModelSchema
+from .utils.cst import ConflictResolver
 
 
 class ModelBuilder:
@@ -125,7 +126,7 @@ class ModelBuilder:
         return self.output_builder_components.get(output_builder_type, ())
 
     # main entry point
-    def build(self, schema: ModelSchema, output_dir: str | Path):
+    def build(self, schema: ModelSchema, output_dir: str | Path, resolver: ConflictResolver = None):
         """
         compile the schema to output directory
 
@@ -133,6 +134,7 @@ class ModelBuilder:
         :param output_dir:  output directory where to put generated files
         :return:            the outputs (self.outputs)
         """
+        self.conflict_resolver = resolver
         self.set_schema(schema)
         self.filtered_output_classes = {o.TYPE: o for o in self._filter_classes(self.output_classes, "output")}
         self.output_dir = Path(output_dir).absolute()  # noqa

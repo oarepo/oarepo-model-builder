@@ -62,7 +62,10 @@ class PythonOutput(OutputBase):
         except:
             print(rendered, file=sys.stderr)
             raise
-        self.cst = merge(PythonContext(rendered_cst), self.cst, rendered_cst) or self.cst
+        self.cst = (
+            merge(PythonContext(rendered_cst, conflict_resolver=self.builder.conflict_resolver), self.cst, rendered_cst)
+            or self.cst
+        )
 
     @staticmethod
     def register_default_filters(env):

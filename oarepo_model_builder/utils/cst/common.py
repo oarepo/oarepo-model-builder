@@ -17,12 +17,17 @@ class OperationPerformed(Enum):
     REMOVAL = 3
 
 
-class Decision(Enum):
+class ConflictResolution(Enum):
     KEEP_PREVIOUS = 1
     KEEP_NEW = 2
     KEEP_MERGED = 3
     REMOVE = 4
     NEW_AS_TODO = 5
+
+
+class ConflictResolver:
+    def resolve_conflict(self, context, existing_node, new_node, merged_node) -> ConflictResolution:
+        return ConflictResolution.KEEP_PREVIOUS
 
 
 @dataclass
@@ -36,7 +41,7 @@ class PythonContextItem:
 @dataclass
 class PythonContext:
     cst: Module
-    decider: Callable[["PythonContext", CSTNode, CSTNode, CSTNode, str], Decision] = None
+    conflict_resolver: ConflictResolver = None
     stack: List[PythonContextItem] = field(default_factory=list, init=False)
 
     REMOVED = object()
@@ -57,11 +62,7 @@ class PythonContext:
         return self.stack[-1]
 
     def decide(
-        self,
-        existing_node: CSTNode | None,
-        new_node: CSTNode | None,
-        merged_node: CSTNode | None,
-        explanation: str = None,
+        self, existing_node: CSTNode | None, new_node: CSTNode | None, merged_node: CSTNode | None
     ) -> CSTNode | object:
 
         logger.debug(
@@ -80,36 +81,36 @@ class PythonContext:
         if existing_node is self.top.existing_node:
             # processing existing node. If there was any decision in children, do not decide here
             if top.operations:
-                decision = Decision.KEEP_MERGED
+                decision = ConflictResolution.KEEP_MERGED
             if len(self.stack) > 1:
                 top = self.stack[-2]
         if _get_source_code(self, existing_node) == _get_source_code(self, new_node):
-            decision = Decision.KEEP_PREVIOUS
+            decision = ConflictResolution.KEEP_PREVIOUS
         if decision is None:
             if existing_node:
-                decision = Decision.KEEP_PREVIOUS
+                decision = ConflictResolution.KEEP_PREVIOUS
             else:
-                decision = Decision.KEEP_NEW
+                decision = ConflictResolution.KEEP_NEW
 
-            if self.decider:
-                decision = self.decider(self, existing_node, new_node, merged_node, explanation)
+            if self.conflict_resolver:
+                decision = self.conflict_resolver.resolve_conflict(self, existing_node, new_node, merged_node)
             decider_called = True
 
         logger.debug("---> %s %s", "<decider returned>" if decider_called else "<automatic>", decision)
         logger.debug("")
         match decision:
-            case Decision.KEEP_PREVIOUS:
+            case ConflictResolution.KEEP_PREVIOUS:
                 return existing_node
-            case Decision.KEEP_NEW:
+            case ConflictResolution.KEEP_NEW:
                 top.operations.add(OperationPerformed.ADD)
                 return new_node
-            case Decision.KEEP_MERGED:
+            case ConflictResolution.KEEP_MERGED:
                 top.operations.add(OperationPerformed.CHANGE)
                 return merged_node
-            case Decision.REMOVE:
+            case ConflictResolution.REMOVE:
                 top.operations.add(OperationPerformed.REMOVAL)
                 return self.REMOVED
-            case Decision.NEW_AS_TODO:
+            case ConflictResolution.NEW_AS_TODO:
                 top.new_as_comment = True
                 return existing_node
         raise Exception("Unknown decision")
