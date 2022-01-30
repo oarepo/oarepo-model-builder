@@ -134,9 +134,7 @@ class ModelBuilder:
         :return:            the outputs (self.outputs)
         """
         self.set_schema(schema)
-        self.filtered_output_classes = {
-            o.TYPE: o for o in self._filter_classes(self.output_classes, "output")
-        }
+        self.filtered_output_classes = {o.TYPE: o for o in self._filter_classes(self.output_classes, "output")}
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
 
@@ -150,9 +148,7 @@ class ModelBuilder:
 
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(self.output_builder_classes, "builder"):
-            output_builder = output_builder_class(
-                builder=self, property_preprocessors=property_preprocessors
-            )
+            output_builder = output_builder_class(builder=self, property_preprocessors=property_preprocessors)
             output_builder.build(schema)
 
         for output in sorted(self.outputs.values(), key=lambda x: x.path):

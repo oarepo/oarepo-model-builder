@@ -200,9 +200,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
     with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema.py")) as f:
         data = f.read()
     assert re.sub(r"\s", "", "from c import B") in re.sub(r"\s", "", data)
-    assert 'classTestSchema(ma.Schema,):"""TestSchemaschema."""a=ma_fields.Nested(B)' in re.sub(
-        r"\s", "", data
-    )
+    assert 'classTestSchema(ma.Schema,):"""TestSchemaschema."""a=ma_fields.Nested(B)' in re.sub(r"\s", "", data)
 
 
 def test_generate_nested_schema_array(fulltext_builder):
@@ -225,9 +223,8 @@ def test_generate_nested_schema_array(fulltext_builder):
     with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema.py")) as f:
         data = f.read()
     assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(r"\s", "", data)
-    assert (
-        'classTestSchema(ma.Schema,):"""TestSchemaschema."""a=ma.List(ma_fields.Nested(B))'
-        in re.sub(r"\s", "", data)
+    assert 'classTestSchema(ma.Schema,):"""TestSchemaschema."""a=ma.List(ma_fields.Nested(B))' in re.sub(
+        r"\s", "", data
     )
 
 

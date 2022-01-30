@@ -104,9 +104,7 @@ class OutputBuilder:
                     for k, v in enumerate(data.data):
                         self.build_node(k, v)
                 else:
-                    raise AttributeError(
-                        f"Do not know how to handle {type(data.data)} in ReplaceElement"
-                    )
+                    raise AttributeError(f"Do not know how to handle {type(data.data)} in ReplaceElement")
             return
         self.stack.top.data = data
         self.process_stack_top()
@@ -138,20 +136,14 @@ class OutputBuilder:
 
     def process_stack_top(self):
         try:
-            self.call_components(
-                "before_process_element", value=self.stack.top.data, stack=self.stack
-            )
-            for method in self.json_paths.match(
-                self.stack.path, self.stack.top.data, extra_data={"stack": self.stack}
-            ):
+            self.call_components("before_process_element", value=self.stack.top.data, stack=self.stack)
+            for method in self.json_paths.match(self.stack.path, self.stack.top.data, extra_data={"stack": self.stack}):
                 return method()
             # do not skip stack top
             if self.stack.level <= 1:
                 self.build_children()
         finally:
-            self.call_components(
-                "after_process_element", value=self.stack.top.data, stack=self.stack
-            )
+            self.call_components("after_process_element", value=self.stack.top.data, stack=self.stack)
 
     @process("/model")
     def enter_model(self):
@@ -165,14 +157,10 @@ class OutputBuilder:
 
 
 class OutputBuilderComponent:
-    def before_process_element(
-        self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs
-    ):
+    def before_process_element(self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs):
         return value
 
-    def after_process_element(
-        self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs
-    ):
+    def after_process_element(self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs):
         return value
 
 

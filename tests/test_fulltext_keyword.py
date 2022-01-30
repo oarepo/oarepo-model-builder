@@ -48,17 +48,13 @@ def test_fulltext(fulltext_builder):
     fulltext_builder.build(schema, output_dir="")
 
     data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
+        fulltext_builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
     )
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
     data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
-        )
+        fulltext_builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
     )
 
     assert data == {
@@ -76,17 +72,13 @@ def test_keyword(fulltext_builder):
     fulltext_builder.build(schema, output_dir="")
 
     data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
+        fulltext_builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
     )
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
     data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
-        )
+        fulltext_builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
     )
 
     assert data == {
@@ -104,17 +96,13 @@ def test_fulltext_keyword(fulltext_builder):
     fulltext_builder.build(schema, output_dir="")
 
     data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
+        fulltext_builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
     )
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
     data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
-        )
+        fulltext_builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
     )
 
     assert data == {

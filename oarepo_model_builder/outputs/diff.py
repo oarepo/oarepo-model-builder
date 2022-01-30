@@ -23,9 +23,7 @@ class DiffOutput(OutputBase):
             if self.original_data:
                 lines = [
                     x[2:]
-                    for x in Differ().compare(
-                        self.original_data.splitlines(), self.text.splitlines()
-                    )
+                    for x in Differ().compare(self.original_data.splitlines(), self.text.splitlines())
                     if x[0] != "?"
                 ]
             else:

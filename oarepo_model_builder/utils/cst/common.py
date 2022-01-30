@@ -1,27 +1,39 @@
 from collections import namedtuple
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Callable, List
 
-from libcst import CSTNode
+from libcst import CSTNode, Module
 
 from .mergers import module_mergers
 
-DecisionRequired = namedtuple("DecisionRequired", "existing_node, new_node, explanation")
+
+class Level(Enum):
+    ADD = 1
+    CHANGE = 2
+    REMOVE = 3
+
+
+class Decision(Enum):
+    KEEP_PREVIOUS = 1
+    KEEP_NEW = 2
+    KEEP_MERGED = 3
+    REMOVE = 4
+    NEW_AS_TODO = 5
 
 
 @dataclass
 class PythonContextItem:
     existing_node: CSTNode
     new_node: CSTNode
-    decisions = List[DecisionRequired]
+    todos: List[CSTNode] = field(default_factory=list)
 
 
+@dataclass
 class PythonContext:
-    stack: List[PythonContextItem]
-
-    def __init__(self, cst):
-        self.cst = cst
-        self.stack = []
+    cst: Module
+    decider: Callable[["PythonContext", Level, CSTNode, CSTNode, str], Decision] = None
+    stack: List[PythonContextItem] = field(default_factory=list, init=False)
 
     def to_source_code(self, node):
         return self.cst.code_for_node(node)
@@ -36,8 +48,10 @@ class PythonContext:
     def top(self):
         return self.stack[-1]
 
-    def add_decision_required(self, existing_node: CSTNode, new_node: CSTNode, explanation: str):
-        self.top.decisions.append(DecisionRequired(existing_node, new_node, explanation))
+    def decide(self, level: Level, existing_node: CSTNode, new_node: CSTNode, explanation: str) -> Decision:
+        if self.decider:
+            return self.decider(self, level, existing_node, new_node, explanation)
+        return Decision.KEEP_PREVIOUS
 
 
 node_with_type = namedtuple("node_with_type", "node, type")
@@ -77,10 +91,7 @@ class IdentityBaseMerger(MergerBase):
 
     def should_merge(self, context: PythonContext, existing_node, new_node):
         try:
-            return (
-                context.to_source_code(existing_node).strip()
-                == context.to_source_code(new_node).strip()
-            )
+            return context.to_source_code(existing_node).strip() == context.to_source_code(new_node).strip()
         except AttributeError:
             print("")
             raise

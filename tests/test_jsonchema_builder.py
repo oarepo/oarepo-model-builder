@@ -31,17 +31,13 @@ def test_simple_jsonschema_builder():
                     "package": "test",
                     "python": {"use_isort": False, "use_black": False},
                 },
-                "model": {
-                    "properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}
-                },
+                "model": {"properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}},
             },
         ),
         output_dir="",
     )
 
-    data = json5.load(
-        builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
-    )
+    data = json5.load(builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")))
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
@@ -63,17 +59,13 @@ def test_jsonschema_preprocessor():
                     "package": "test",
                     "python": {"use_isort": False, "use_black": False},
                 },
-                "model": {
-                    "properties": {"a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}}
-                },
+                "model": {"properties": {"a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}}},
             },
         ),
         output_dir="",
     )
 
-    data = json5.load(
-        builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
-    )
+    data = json5.load(builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")))
 
     assert data == {
         "properties": {
@@ -108,16 +100,12 @@ def test_components():
                     "package": "test",
                     "python": {"use_isort": False, "use_black": False},
                 },
-                "model": {
-                    "properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}
-                },
+                "model": {"properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}},
             },
         ),
         output_dir="",
     )
 
-    data = json5.load(
-        builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
-    )
+    data = json5.load(builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")))
 
     assert data == {"properties": {"a": {"type": "integer"}}}

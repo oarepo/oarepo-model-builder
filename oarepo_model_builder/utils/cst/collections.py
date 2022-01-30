@@ -8,15 +8,11 @@ class ElementMerger(MergerBase):
     """list element"""
 
     def should_merge(self, context: PythonContext, existing_node, new_node):
-        return self.get_node_merger(
-            context, existing_node.value, new_node.value, expression_mergers
-        )
+        return self.get_node_merger(context, existing_node.value, new_node.value, expression_mergers)
 
     def merge(self, context: PythonContext, existing_node, new_node):
         return existing_node.with_changes(
-            value=self.check_and_merge(
-                context, existing_node.value, new_node.value, expression_mergers
-            )
+            value=self.check_and_merge(context, existing_node.value, new_node.value, expression_mergers)
             or existing_node.value
         )
 

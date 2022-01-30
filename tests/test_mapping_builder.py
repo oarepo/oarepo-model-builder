@@ -31,18 +31,14 @@ def test_simple_mapping_builder():
                     "python": {"use_isort": False, "use_black": False},
                     "elasticsearch": {"version": "v7", "templates": {"v7": {}}},
                 },
-                "model": {
-                    "properties": {"a": {"type": "string", "oarepo:mapping": {"type": "text"}}}
-                },
+                "model": {"properties": {"a": {"type": "string", "oarepo:mapping": {"type": "text"}}}},
             },
         ),
         output_dir="",
     )
 
     data = json5.load(
-        builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
-        )
+        builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
     )
 
     assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
@@ -73,9 +69,7 @@ def test_mapping_preprocessor():
     )
 
     data = json5.load(
-        builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
-        )
+        builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
     )
 
     assert data == {

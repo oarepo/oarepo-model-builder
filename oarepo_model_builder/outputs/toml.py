@@ -78,9 +78,7 @@ class TOMLOutput(OutputBase):
             key = tomlkit.items.Key(key, key_type)
             tbl[key] = value
 
-    def setdefault(
-        self, table, key, value, *others_key_values, key_type=tomlkit.items.KeyType.Bare
-    ):
+    def setdefault(self, table, key, value, *others_key_values, key_type=tomlkit.items.KeyType.Bare):
         tbl = self.table(table)
 
         key = tomlkit.items.Key(key, key_type)

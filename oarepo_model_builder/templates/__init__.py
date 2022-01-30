@@ -27,9 +27,7 @@ class TemplateRegistry:
         if path.exists():
             with path.open() as f:
                 return f.read()
-        raise AttributeError(
-            f"Template with key {template_key} has not been found, file at path {path} does not exist"
-        )
+        raise AttributeError(f"Template with key {template_key} has not been found, file at path {path} does not exist")
 
 
 templates = TemplateRegistry()

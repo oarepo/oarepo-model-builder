@@ -13,9 +13,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             settings,
             "package",
-            lambda: os.path.basename(schema.schema.get("output-directory", os.getcwd())).replace(
-                "-", "_"
-            ),
+            lambda: os.path.basename(schema.schema.get("output-directory", os.getcwd())).replace("-", "_"),
         )
 
         self.set(settings, "processing-order", lambda: ["settings", "*", "model"])
@@ -46,9 +44,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             settings,
             "schema-file",
-            lambda: os.path.join(
-                settings.package_path, "records", "jsonschemas", settings.schema_name
-            ),
+            lambda: os.path.join(settings.package_path, "records", "jsonschemas", settings.schema_name),
         )
 
         self.set(settings, "mapping-package", lambda: f"{settings.package}.records.mappings")
@@ -77,9 +73,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             settings,
             "index-name",
-            lambda: settings.package_base
-            + "-"
-            + os.path.basename(settings.mapping_file).replace(".json", ""),
+            lambda: settings.package_base + "-" + os.path.basename(settings.mapping_file).replace(".json", ""),
         )
 
         self.set(settings, "collection-url", lambda: f"/{settings.package_base}/")

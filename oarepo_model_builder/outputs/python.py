@@ -6,12 +6,7 @@ from jinja2 import Environment, FunctionLoader, pass_context
 from oarepo_model_builder.outputs import OutputBase
 from oarepo_model_builder.templates import templates
 from oarepo_model_builder.utils.cst import PythonContext, merge
-from oarepo_model_builder.utils.jinja import (
-    base_name,
-    in_different_package,
-    package_name,
-    with_defined_prefix,
-)
+from oarepo_model_builder.utils.jinja import base_name, in_different_package, package_name, with_defined_prefix
 from oarepo_model_builder.utils.verbose import log
 
 
@@ -74,9 +69,7 @@ class PythonOutput(OutputBase):
         env.filters["package_name"] = package_name
         env.filters["base_name"] = pass_context(
             lambda context, value: base_name(value)
-            if not with_defined_prefix(
-                context["settings"].python.always_defined_import_prefixes, value
-            )
+            if not with_defined_prefix(context["settings"].python.always_defined_import_prefixes, value)
             else value
         )
         env.tests["in_different_package"] = pass_context(

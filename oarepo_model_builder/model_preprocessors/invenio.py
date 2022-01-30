@@ -199,12 +199,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 )
 
         # default import prefixes
-        settings.python.setdefault("always-defined-import-prefixes", []).extend(
-            ["ma", "ma_fields", "ma_valid"]
-        )
+        settings.python.setdefault("always-defined-import-prefixes", []).extend(["ma", "ma_fields", "ma_valid"])
 
         # script sample data importer
-        settings.python.setdefault(
-            "script-import-sample-data-cli", "scripts.import_sample_data.cli"
-        )
+        settings.python.setdefault("script-import-sample-data-cli", "scripts.import_sample_data.cli")
         settings.setdefault("script-import-sample-data", "scripts/sample_data.yaml")

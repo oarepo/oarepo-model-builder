@@ -62,9 +62,7 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
 
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
-    os.environ["PATH"] = (
-        str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get("PATH", "")
-    )
+    os.environ["PATH"] = str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get("PATH", "")
 
     if not output_directory:
         output_directory = os.getcwd()

@@ -16,9 +16,7 @@ def create_builder_from_entrypoints(**kwargs):
 
     builder_types = [x.TYPE for x in builder_classes]
     output_builder_components = {
-        builder_type: load_entry_points_list(
-            f"oarepo_model_builder.builder_components.{builder_type}"
-        )
+        builder_type: load_entry_points_list(f"oarepo_model_builder.builder_components.{builder_type}")
         for builder_type in builder_types
     }
 

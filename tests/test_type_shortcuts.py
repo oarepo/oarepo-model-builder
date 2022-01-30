@@ -31,9 +31,7 @@ def test_array():
 
 
 def test_object_inside_array():
-    data = build_jsonschema(
-        {"properties": {"a": {"items": {"properties": {"b": {"type": "string"}}}}}}
-    )
+    data = build_jsonschema({"properties": {"a": {"items": {"properties": {"b": {"type": "string"}}}}}})
 
     assert data == {
         "type": "object",
@@ -47,9 +45,7 @@ def test_object_inside_array():
 
 
 def test_array_brackets():
-    data = build_jsonschema(
-        {"properties": {"a[]": {"type": "string", "minLength[]": "just-for-test"}}}
-    )
+    data = build_jsonschema({"properties": {"a[]": {"type": "string", "minLength[]": "just-for-test"}}})
 
     assert data == {
         "type": "object",
@@ -84,6 +80,4 @@ def build_jsonschema(model):
         ),
         output_dir="",
     )
-    return json5.load(
-        builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
-    )
+    return json5.load(builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")))

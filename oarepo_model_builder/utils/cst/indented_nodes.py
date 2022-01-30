@@ -14,16 +14,12 @@ class PriorityMergerMixin:
         t = type(node)
         return node_type_category.get(t, "unknown")
 
-    def _merge_children_with_priorities(
-        self, existing_node, updated_node, top_cst, mergers, node_type_category
-    ):
+    def _merge_children_with_priorities(self, existing_node, updated_node, top_cst, mergers, node_type_category):
         existing_list = self.extract_body(existing_node)
         new_list = self.extract_body(updated_node)
 
         ret = []
-        existing_list = [
-            node_with_type(e, self.get_node_type(node_type_category, e)) for e in existing_list
-        ]
+        existing_list = [node_with_type(e, self.get_node_type(node_type_category, e)) for e in existing_list]
         new_list = [node_with_type(e, self.get_node_type(node_type_category, e)) for e in new_list]
 
         last_type = None

@@ -47,9 +47,7 @@ class TestSchema(ma.Schema, ):
     """,
     )
 
-    data = builder.filesystem.read(
-        os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
-    )
+    data = builder.filesystem.read(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
     data = json.loads(data)
     assert data == {
         "mappings": {

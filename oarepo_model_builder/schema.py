@@ -96,9 +96,7 @@ class ModelSchema:
             ret = self._load(self.abs_path.parent / file_id)
         else:
             if file_id not in self.included_schemas:
-                raise IncludedFileNotFoundException(
-                    f"Included file {file_id} not found in includes"
-                )
+                raise IncludedFileNotFoundException(f"Included file {file_id} not found in includes")
 
             ret = self.included_schemas[file_id](self)
 
@@ -108,9 +106,7 @@ class ModelSchema:
             else:
                 ret = resolve_id(ret, json_pointer_or_id)
                 if not ret:
-                    raise IncludedFileNotFoundException(
-                        f"Element with id {json_pointer_or_id} not found in {file_id}"
-                    )
+                    raise IncludedFileNotFoundException(f"Element with id {json_pointer_or_id} not found in {file_id}")
 
         ret = copy.deepcopy(ret)
         ret.pop("$id", None)

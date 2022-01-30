@@ -40,9 +40,7 @@ def test_dev_dependencies():
 version = \"1.0.0\""""
         in data
     )
-    assert data.index("[tool.poetry.dev-dependencies]") < data.index(
-        "[tool.poetry.dev-dependencies.test]"
-    )
+    assert data.index("[tool.poetry.dev-dependencies]") < data.index("[tool.poetry.dev-dependencies.test]")
 
 
 def test_dev_dependencies_with_extras():
@@ -54,9 +52,7 @@ version = \"1.0.0\"
 optional = true"""
         in data
     )
-    assert data.index("[tool.poetry.dev-dependencies]") < data.index(
-        "[tool.poetry.dev-dependencies.test]"
-    )
+    assert data.index("[tool.poetry.dev-dependencies]") < data.index("[tool.poetry.dev-dependencies.test]")
 
 
 def build(kwargs={}):

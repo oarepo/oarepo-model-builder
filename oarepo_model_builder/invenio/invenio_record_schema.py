@@ -71,9 +71,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if "class" in definition:
                 schema_class = definition["class"]
                 if "." not in schema_class:
-                    schema_class = (
-                        package_name(self.settings.python.record_schema_class) + "." + schema_class
-                    )
+                    schema_class = package_name(self.settings.python.record_schema_class) + "." + schema_class
                 schema_class_base_classes = definition.get("base-classes", ["ma.Schema"])
                 generate_schema_class = definition.get("generate", False)
             if generate_schema_class:
@@ -127,9 +125,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         if not definition:
             definition = data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {})
 
-        definition = self.call_components(
-            "invenio_before_set_marshmallow_definition", definition, stack=stack
-        )
+        definition = self.call_components("invenio_before_set_marshmallow_definition", definition, stack=stack)
 
         data_type = data.get("type", "object")
         generator = self.schema.settings.python.marshmallow.mapping.get(data_type, None)
@@ -152,12 +148,8 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         if "class" in definition:
             class_name = definition["class"]
             if "." in class_name:
-                if not with_defined_prefix(
-                    self.settings.python.always_defined_import_prefixes, class_name
-                ):
-                    class_base_name = self.imported_classes[definition["class"]] = base_name(
-                        class_name
-                    )
+                if not with_defined_prefix(self.settings.python.always_defined_import_prefixes, class_name):
+                    class_base_name = self.imported_classes[definition["class"]] = base_name(class_name)
                 else:
                     class_base_name = class_name
             else:
@@ -165,9 +157,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
             # generate instance of the class, filling the options and validators
 
-            definition["field"] = create_field(
-                class_base_name, options=(), validators=(), definition=definition
-            )
+            definition["field"] = create_field(class_base_name, options=(), validators=(), definition=definition)
             return definition
 
         # if no generator from settings, get the default one
@@ -187,9 +177,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         # and generate the field
         definition["field"] = generator(data, definition, self.schema, self.imports)
-        definition = self.call_components(
-            "invenio_after_set_marshmallow_definition", definition, stack=stack
-        )
+        definition = self.call_components("invenio_after_set_marshmallow_definition", definition, stack=stack)
         return definition
 
 
@@ -236,12 +224,7 @@ def marshmallow_integer_generator(data, definition, schema, imports):
     exclusive_minimum = data.get("exclusiveMinimum", None)
     exclusive_maximum = data.get("exclusiveMaximum", None)
 
-    if (
-        minimum is not None
-        or maximum is not None
-        or exclusive_minimum is not None
-        or exclusive_maximum is not None
-    ):
+    if minimum is not None or maximum is not None or exclusive_minimum is not None or exclusive_maximum is not None:
         validators.append(
             f"ma_valid.Range("
             f'min={minimum or exclusive_minimum or "None"}, max={maximum or exclusive_maximum or "None"}, '
