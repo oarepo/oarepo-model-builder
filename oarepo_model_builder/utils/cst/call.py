@@ -2,7 +2,7 @@ import itertools
 
 from libcst import Arg
 
-from .common import MergerBase, PythonContext, merge
+from .common import IdentityMerger, MergerBase, PythonContext, merge
 from .mergers import call_mergers, expression_mergers
 
 
@@ -14,25 +14,20 @@ class CallMerger(MergerBase):
         existing_args, existing_kwargs = self.extract_args(existing_node)
         new_args, new_kwargs = self.extract_args(new_node)
         args = []
+        merger = ArgMerger()
         for e, n in itertools.zip_longest(existing_args, new_args):
-            args.append(self.merge_arg(context, e, n))
+            args.append(merger.merge(context, e, n))
 
         for k, e in existing_kwargs.items():
             n = new_kwargs.pop(k, None)
-            args.append(self.merge_arg(context, e, n))
+            args.append(merger.merge(context, e, n))
 
         for k, n in new_kwargs.items():
-            args.append(n)
+            args.append(merger.merge(context, None, n))
 
         args = [x for x in args if x is not context.REMOVED]
 
         return existing_node.with_changes(args=args)
-
-    def merge_arg(self, context: PythonContext, e, n):
-        if e and n:
-            merged = self.check_and_merge(context, e, n, call_mergers)
-            return merged or e
-        return e or n
 
     def extract_args(self, n):
         args = []
@@ -54,6 +49,8 @@ class ArgMerger(MergerBase):
         return True
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
-        return existing_node.with_changes(
-            value=merge(context, existing_node.value, new_node.value, mergers=expression_mergers) or existing_node.value
-        )
+        existing_value = existing_node.value
+        new_value = new_node.value
+        merger = expression_mergers.get(type(existing_value), IdentityMerger())
+        merged_value = merger.merge(context, existing_value, new_value)
+        return existing_node.with_changes(value=merged_value)

@@ -1,16 +1,14 @@
 from collections import namedtuple
 from dataclasses import dataclass, field
 from enum import Enum
+from logging import getLogger
 from typing import Callable, List, Set
 
-from libcst import CSTNode, Module
+from libcst import Arg, CSTNode, Element, Module
 
 from .mergers import module_mergers
 
-from logging import getLogger
-
-
-logger = getLogger('oarepo_model_builder.cst')
+logger = getLogger("oarepo_model_builder.cst")
 
 
 class OperationPerformed(Enum):
@@ -45,7 +43,7 @@ class PythonContext:
 
     def to_source_code(self, node):
         if not node:
-            return ''
+            return ""
         return self.cst.code_for_node(node)
 
     def push(self, existing_node: CSTNode, new_node: CSTNode):
@@ -59,26 +57,35 @@ class PythonContext:
         return self.stack[-1]
 
     def decide(
-            self,
-            existing_node: CSTNode | None,
-            new_node: CSTNode | None,
-            merged_node: CSTNode | None,
-            explanation: str = None,
+        self,
+        existing_node: CSTNode | None,
+        new_node: CSTNode | None,
+        merged_node: CSTNode | None,
+        explanation: str = None,
     ) -> CSTNode | object:
 
         logger.debug(
-            f'\nDecide called with operations {self.top.operations} on node {type(existing_node or new_node).__name__} {id(existing_node)}')
-        logger.debug('Existing: ', self.to_source_code(existing_node))
-        logger.debug('New     : ', self.to_source_code(new_node))
-        logger.debug('Merged  : ', self.to_source_code(merged_node))
+            "\nDecide called with operations %s on node %s %s",
+            self.top.operations,
+            type(existing_node or new_node).__name__,
+            id(existing_node),
+        )
+        logger.debug("Existing: %s", self.to_source_code(existing_node))
+        logger.debug("New     : %s", self.to_source_code(new_node))
+        logger.debug("Merged  : %s", self.to_source_code(merged_node))
 
         top = self.top
+        decider_called = False
+        decision = None
         if existing_node is self.top.existing_node:
             # processing existing node. If there was any decision in children, do not decide here
-            decision = Decision.KEEP_MERGED
+            if top.operations:
+                decision = Decision.KEEP_MERGED
             if len(self.stack) > 1:
                 top = self.stack[-2]
-        else:
+        if _get_source_code(self, existing_node) == _get_source_code(self, new_node):
+            decision = Decision.KEEP_PREVIOUS
+        if decision is None:
             if existing_node:
                 decision = Decision.KEEP_PREVIOUS
             else:
@@ -86,8 +93,10 @@ class PythonContext:
 
             if self.decider:
                 decision = self.decider(self, existing_node, new_node, merged_node, explanation)
-        logger.debug('---> ', decision)
-        logger.debug('')
+            decider_called = True
+
+        logger.debug("---> %s %s", "<decider returned>" if decider_called else "<automatic>", decision)
+        logger.debug("")
         match decision:
             case Decision.KEEP_PREVIOUS:
                 return existing_node
@@ -103,7 +112,7 @@ class PythonContext:
             case Decision.NEW_AS_TODO:
                 top.new_as_comment = True
                 return existing_node
-        raise Exception('Unknown decision')
+        raise Exception("Unknown decision")
 
 
 node_with_type = namedtuple("node_with_type", "node, type")
@@ -182,3 +191,9 @@ def merge(context: PythonContext, existing_node, new_node, mergers=None):
     if merger.should_merge(context, existing_node, new_node):
         return merger.merge(context, existing_node, new_node)
     return None
+
+
+def _get_source_code(context, node):
+    if isinstance(node, (Arg, Element)):
+        node = node.value
+    return context.to_source_code(node)

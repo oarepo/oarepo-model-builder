@@ -1,5 +1,5 @@
 from oarepo_model_builder.utils.cst import PythonContext
-from oarepo_model_builder.utils.cst.common import MergerBase, IdentityMerger
+from oarepo_model_builder.utils.cst.common import IdentityMerger, MergerBase
 from oarepo_model_builder.utils.cst.mergers import expression_mergers
 
 
@@ -12,7 +12,7 @@ class ElementMerger(MergerBase):
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         return existing_node.with_changes(
             value=self.check_and_merge(context, existing_node.value, new_node.value, expression_mergers)
-                  or existing_node.value
+            or existing_node.value
         )
 
 
@@ -49,7 +49,6 @@ class DictMerger(MergerBase):
             merger = mergers.get(type(el), IdentityMerger())
             ret.append(merger.merge(context, None, el))
         return existing_node.with_changes(elements=[x for x in ret if x is not context.REMOVED])
-
 
 
 def merge_lists_remove_duplicates(context: PythonContext, existing_list, new_list, mergers):
