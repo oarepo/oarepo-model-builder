@@ -1,17 +1,22 @@
 from collections import namedtuple
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, List
+from typing import Callable, List, Set
 
 from libcst import CSTNode, Module
 
 from .mergers import module_mergers
 
+from logging import getLogger
 
-class Level(Enum):
+
+logger = getLogger('oarepo_model_builder.cst')
+
+
+class OperationPerformed(Enum):
     ADD = 1
     CHANGE = 2
-    REMOVE = 3
+    REMOVAL = 3
 
 
 class Decision(Enum):
@@ -26,16 +31,21 @@ class Decision(Enum):
 class PythonContextItem:
     existing_node: CSTNode
     new_node: CSTNode
-    todos: List[CSTNode] = field(default_factory=list)
+    operations: Set[OperationPerformed] = field(default_factory=set, init=False)
+    new_as_comment: bool = field(default=False, init=False)
 
 
 @dataclass
 class PythonContext:
     cst: Module
-    decider: Callable[["PythonContext", Level, CSTNode, CSTNode, str], Decision] = None
+    decider: Callable[["PythonContext", CSTNode, CSTNode, CSTNode, str], Decision] = None
     stack: List[PythonContextItem] = field(default_factory=list, init=False)
 
+    REMOVED = object()
+
     def to_source_code(self, node):
+        if not node:
+            return ''
         return self.cst.code_for_node(node)
 
     def push(self, existing_node: CSTNode, new_node: CSTNode):
@@ -48,10 +58,52 @@ class PythonContext:
     def top(self):
         return self.stack[-1]
 
-    def decide(self, level: Level, existing_node: CSTNode, new_node: CSTNode, explanation: str) -> Decision:
-        if self.decider:
-            return self.decider(self, level, existing_node, new_node, explanation)
-        return Decision.KEEP_PREVIOUS
+    def decide(
+            self,
+            existing_node: CSTNode | None,
+            new_node: CSTNode | None,
+            merged_node: CSTNode | None,
+            explanation: str = None,
+    ) -> CSTNode | object:
+
+        logger.debug(
+            f'\nDecide called with operations {self.top.operations} on node {type(existing_node or new_node).__name__} {id(existing_node)}')
+        logger.debug('Existing: ', self.to_source_code(existing_node))
+        logger.debug('New     : ', self.to_source_code(new_node))
+        logger.debug('Merged  : ', self.to_source_code(merged_node))
+
+        top = self.top
+        if existing_node is self.top.existing_node:
+            # processing existing node. If there was any decision in children, do not decide here
+            decision = Decision.KEEP_MERGED
+            if len(self.stack) > 1:
+                top = self.stack[-2]
+        else:
+            if existing_node:
+                decision = Decision.KEEP_PREVIOUS
+            else:
+                decision = Decision.KEEP_NEW
+
+            if self.decider:
+                decision = self.decider(self, existing_node, new_node, merged_node, explanation)
+        logger.debug('---> ', decision)
+        logger.debug('')
+        match decision:
+            case Decision.KEEP_PREVIOUS:
+                return existing_node
+            case Decision.KEEP_NEW:
+                top.operations.add(OperationPerformed.ADD)
+                return new_node
+            case Decision.KEEP_MERGED:
+                top.operations.add(OperationPerformed.CHANGE)
+                return merged_node
+            case Decision.REMOVE:
+                top.operations.add(OperationPerformed.REMOVAL)
+                return self.REMOVED
+            case Decision.NEW_AS_TODO:
+                top.new_as_comment = True
+                return existing_node
+        raise Exception('Unknown decision')
 
 
 node_with_type = namedtuple("node_with_type", "node, type")
@@ -59,6 +111,17 @@ node_with_type = namedtuple("node_with_type", "node, type")
 
 class MergerBase:
     def merge(self, context: PythonContext, existing_node, new_node):
+        try:
+            context.push(existing_node, new_node)
+            if existing_node and new_node:
+                ret = self.merge_internal(context, existing_node, new_node)
+            else:
+                ret = existing_node or new_node
+            return context.decide(existing_node, new_node, ret)
+        finally:
+            context.pop()
+
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         raise NotImplementedError()
 
     def should_merge(self, context: PythonContext, existing_node, new_node):
@@ -86,7 +149,7 @@ class MergerBase:
 
 
 class IdentityBaseMerger(MergerBase):
-    def merge(self, context: PythonContext, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         return existing_node
 
     def should_merge(self, context: PythonContext, existing_node, new_node):
@@ -98,7 +161,7 @@ class IdentityBaseMerger(MergerBase):
 
 
 class IdentityMerger(IdentityBaseMerger):
-    def merge(self, context: PythonContext, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         return existing_node
 
     def should_merge(self, context: PythonContext, existing_node, new_node):

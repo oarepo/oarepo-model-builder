@@ -10,7 +10,7 @@ class CallMerger(MergerBase):
     def should_merge(self, context: PythonContext, existing_node, new_node):
         return existing_node.func.value == new_node.func.value
 
-    def merge(self, context: PythonContext, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         existing_args, existing_kwargs = self.extract_args(existing_node)
         new_args, new_kwargs = self.extract_args(new_node)
         args = []
@@ -23,6 +23,8 @@ class CallMerger(MergerBase):
 
         for k, n in new_kwargs.items():
             args.append(n)
+
+        args = [x for x in args if x is not context.REMOVED]
 
         return existing_node.with_changes(args=args)
 
@@ -51,7 +53,7 @@ class ArgMerger(MergerBase):
         # always merge with another arg
         return True
 
-    def merge(self, context: PythonContext, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         return existing_node.with_changes(
             value=merge(context, existing_node.value, new_node.value, mergers=expression_mergers) or existing_node.value
         )

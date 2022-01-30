@@ -14,7 +14,7 @@ class PriorityMergerMixin:
         t = type(node)
         return node_type_category.get(t, "unknown")
 
-    def _merge_children_with_priorities(self, existing_node, updated_node, top_cst, mergers, node_type_category):
+    def _merge_children_with_priorities(self, context, existing_node, updated_node, mergers, node_type_category):
         existing_list = self.extract_body(existing_node)
         new_list = self.extract_body(updated_node)
 
@@ -24,26 +24,29 @@ class PriorityMergerMixin:
 
         last_type = None
         for existing in existing_list:
+            merger = mergers.get(type(existing.node), IdentityMerger())
             if last_type is not None and last_type != existing.type:
                 while new_list and new_list[0].type == last_type:
-                    ret.append(new_list.pop(0).node)
+                    new_node = new_list.pop(0).node
+                    new_merger = mergers.get(type(new_node), IdentityMerger())
+                    ret.append(new_merger.merge(context, None, new_node))
             last_type = existing.type
             found = False
             for idx, new in enumerate(new_list):
                 if new.type != existing.type:
                     break
                 if type(new.node) is type(existing.node):
-                    merger = mergers.get(type(existing.node), IdentityMerger())
-                    if merger.should_merge(top_cst, existing.node, new.node):
-                        ret.append(merger.merge(top_cst, existing.node, new.node))
+                    if merger.should_merge(context, existing.node, new.node):
+                        ret.append(merger.merge(context, existing.node, new.node))
                         del new_list[idx]
                         found = True
                         break
             if not found:
-                ret.append(existing.node)
+                ret.append(merger.merge(context, existing.node, None))
 
         for node in new_list:
-            ret.append(node.node)
+            merger = mergers.get(type(node.node), IdentityMerger())
+            ret.append(merger.merge(context, None, node.node))
 
         return self.finalize(existing_node, ret)
 
@@ -55,11 +58,11 @@ class ModuleMerger(PriorityMergerMixin, MergerBase):
     def should_merge(self, context: PythonContext, existing_node, new_node):
         return True
 
-    def merge(self, context: PythonContext, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         return self._merge_children_with_priorities(
+            context,
             existing_node,
             new_node,
-            context,
             mergers=indented_block_mergers,
             node_type_category={
                 Import: "import",
@@ -80,23 +83,19 @@ class ClassMerger(PriorityMergerMixin, MergerBase):
     def should_merge(self, context: PythonContext, existing_node, new_node):
         return existing_node.name.value == new_node.name.value
 
-    def merge(self, context: PythonContext, existing_node, new_node):
-        try:
-            context.push(existing_node, new_node)
-            return self._merge_children_with_priorities(
-                existing_node,
-                new_node,
-                context,
-                mergers=indented_block_mergers,
-                node_type_category={
-                    Import: "import",
-                    ImportFrom: "import",
-                    ClassDef: "classdef",
-                    Assign: "assign",
-                },
-            )
-        finally:
-            context.pop()
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
+        return self._merge_children_with_priorities(
+            context,
+            existing_node,
+            new_node,
+            mergers=indented_block_mergers,
+            node_type_category={
+                Import: "import",
+                ImportFrom: "import",
+                ClassDef: "classdef",
+                Assign: "assign",
+            },
+        )
 
     def extract_body(self, node):
         return node.body.body

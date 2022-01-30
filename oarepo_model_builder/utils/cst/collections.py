@@ -1,7 +1,6 @@
 from oarepo_model_builder.utils.cst import PythonContext
-from oarepo_model_builder.utils.cst.common import MergerBase, merge
+from oarepo_model_builder.utils.cst.common import MergerBase, IdentityMerger
 from oarepo_model_builder.utils.cst.mergers import expression_mergers
-from oarepo_model_builder.utils.cst.utils import merge_lists_remove_duplicates
 
 
 class ElementMerger(MergerBase):
@@ -10,10 +9,10 @@ class ElementMerger(MergerBase):
     def should_merge(self, context: PythonContext, existing_node, new_node):
         return self.get_node_merger(context, existing_node.value, new_node.value, expression_mergers)
 
-    def merge(self, context: PythonContext, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         return existing_node.with_changes(
             value=self.check_and_merge(context, existing_node.value, new_node.value, expression_mergers)
-            or existing_node.value
+                  or existing_node.value
         )
 
 
@@ -21,10 +20,10 @@ class ListMerger(MergerBase):
     def should_merge(self, context: PythonContext, existing_node, new_node):
         return True
 
-    def merge(self, context: PythonContext, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         return existing_node.with_changes(
             elements=merge_lists_remove_duplicates(
-                existing_node.elements, new_node.elements, context, expression_mergers
+                context, existing_node.elements, new_node.elements, expression_mergers
             )
         )
 
@@ -33,25 +32,45 @@ class DictMerger(MergerBase):
     def should_merge(self, context: PythonContext, existing_node, new_node):
         return True
 
-    def merge(self, context: PythonContext, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         ret = []
+        mergers = expression_mergers
         existing_elements = {el.key.value: el for el in existing_node.elements}
         new_elements = {el.key.value: el for el in new_node.elements}
         for k, el in existing_elements.items():
+            merger = mergers.get(type(el), IdentityMerger())
             if k not in new_elements:
-                ret.append(el)
+                ret.append(merger.merge(context, el, None))
             else:
-                ret.append(
-                    el.with_changes(
-                        value=merge(
-                            context,
-                            el.value,
-                            new_elements.pop(k).value,
-                            expression_mergers,
-                        )
-                        or el.value
-                    )
-                )
+                new_element = new_elements.pop(k)
+                ret.append(merger.merge(context, el, new_element))
+
         for k, el in new_elements.items():
-            ret.append(el)
-        return existing_node.with_changes(elements=ret)
+            merger = mergers.get(type(el), IdentityMerger())
+            ret.append(merger.merge(context, None, el))
+        return existing_node.with_changes(elements=[x for x in ret if x is not context.REMOVED])
+
+
+
+def merge_lists_remove_duplicates(context: PythonContext, existing_list, new_list, mergers):
+    ret = []
+    new_list = [*new_list]
+
+    for e in existing_list:
+        merger = mergers.get(type(e), IdentityMerger())
+
+        for idx, n in enumerate(new_list):
+            if type(e) is not type(n):
+                continue
+            if merger.should_merge(context, e, n):
+                ret.append(merger.merge(context, e, n))
+                del new_list[idx]
+                break
+        else:
+            ret.append(merger.merge(context, e, None))
+
+    for n in new_list:
+        merger = mergers.get(type(n), IdentityMerger())
+        ret.append(merger.merge(context, None, n))
+
+    return [x for x in ret if x is not context.REMOVED]
