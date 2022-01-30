@@ -6,19 +6,22 @@ from oarepo_model_builder.utils.cst.mergers import expression_mergers
 class ElementMerger(MergerBase):
     """list element"""
 
-    def should_merge(self, context: PythonContext, existing_node, new_node):
-        return self.get_node_merger(context, existing_node.value, new_node.value, expression_mergers)
+    def identity(self, context: PythonContext, node):
+        node_value = node.value
+        merger = expression_mergers.get(type(node_value), IdentityMerger())
+        return merger.identity(context, node_value)
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
-        return existing_node.with_changes(
-            value=self.check_and_merge(context, existing_node.value, new_node.value, expression_mergers)
-            or existing_node.value
-        )
+        existing_value = existing_node.value
+        new_value = new_node.value
+
+        merger = expression_mergers.get(type(existing_value), IdentityMerger())
+        return existing_node.with_changes(value=merger.merge(context, existing_value, new_value))
 
 
 class ListMerger(MergerBase):
-    def should_merge(self, context: PythonContext, existing_node, new_node):
-        return True
+    def identity(self, context: PythonContext, node):
+        return node
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         return existing_node.with_changes(
@@ -29,8 +32,8 @@ class ListMerger(MergerBase):
 
 
 class DictMerger(MergerBase):
-    def should_merge(self, context: PythonContext, existing_node, new_node):
-        return True
+    def identity(self, context: PythonContext, node):
+        return node
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         ret = []
@@ -57,11 +60,13 @@ def merge_lists_remove_duplicates(context: PythonContext, existing_list, new_lis
 
     for e in existing_list:
         merger = mergers.get(type(e), IdentityMerger())
+        e_identity = merger.identity(context, e)
 
         for idx, n in enumerate(new_list):
-            if type(e) is not type(n):
+            if not isinstance(n, type(e)):
                 continue
-            if merger.should_merge(context, e, n):
+            n_identity = merger.identity(context, n)
+            if e_identity.deep_equals(n_identity):
                 ret.append(merger.merge(context, e, n))
                 del new_list[idx]
                 break

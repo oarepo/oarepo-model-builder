@@ -35,8 +35,8 @@ class PriorityMergerMixin:
             for idx, new in enumerate(new_list):
                 if new.type != existing.type:
                     break
-                if type(new.node) is type(existing.node):
-                    if merger.should_merge(context, existing.node, new.node):
+                if isinstance(existing.node, type(new.node)):
+                    if merger.identity(context, existing.node).deep_equals(merger.identity(context, new.node)):
                         ret.append(merger.merge(context, existing.node, new.node))
                         del new_list[idx]
                         found = True
@@ -55,8 +55,8 @@ class PriorityMergerMixin:
 
 
 class ModuleMerger(PriorityMergerMixin, MergerBase):
-    def should_merge(self, context: PythonContext, existing_node, new_node):
-        return True
+    def identity(self, context, node):
+        return node
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         return self._merge_children_with_priorities(
@@ -80,8 +80,8 @@ class ModuleMerger(PriorityMergerMixin, MergerBase):
 
 
 class ClassMerger(PriorityMergerMixin, MergerBase):
-    def should_merge(self, context: PythonContext, existing_node, new_node):
-        return existing_node.name.value == new_node.name.value
+    def identity(self, context, node):
+        return node.name
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         return self._merge_children_with_priorities(

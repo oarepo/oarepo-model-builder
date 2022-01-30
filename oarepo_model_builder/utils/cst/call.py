@@ -7,8 +7,8 @@ from .mergers import call_mergers, expression_mergers
 
 
 class CallMerger(MergerBase):
-    def should_merge(self, context: PythonContext, existing_node, new_node):
-        return existing_node.func.value == new_node.func.value
+    def identity(self, context: PythonContext, node):
+        return node.func
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         existing_args, existing_kwargs = self.extract_args(existing_node)
@@ -44,9 +44,8 @@ class CallMerger(MergerBase):
 
 
 class ArgMerger(MergerBase):
-    def should_merge(self, context: PythonContext, existing_node, new_node):
-        # always merge with another arg
-        return True
+    def identity(self, context: PythonContext, node):
+        return node
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         existing_value = existing_node.value
