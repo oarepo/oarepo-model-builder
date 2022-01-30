@@ -1,6 +1,8 @@
 import itertools
-from .common import MergerBase, merge, PythonContext
+
 from libcst import Arg
+
+from .common import MergerBase, PythonContext, merge
 from .mergers import call_mergers, expression_mergers
 
 
@@ -40,7 +42,7 @@ class CallMerger(MergerBase):
                 else:
                     args.append(arg)
             else:
-                raise Exception(f'Unsupported clause in call args {type(arg)}')
+                raise Exception(f"Unsupported clause in call args {type(arg)}")
         return args, kwargs
 
 
@@ -51,5 +53,8 @@ class ArgMerger(MergerBase):
 
     def merge(self, context: PythonContext, existing_node, new_node):
         return existing_node.with_changes(
-            value=merge(context, existing_node.value, new_node.value, mergers=expression_mergers) or existing_node.value
+            value=merge(
+                context, existing_node.value, new_node.value, mergers=expression_mergers
+            )
+            or existing_node.value
         )

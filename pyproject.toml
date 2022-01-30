@@ -9,6 +9,7 @@ packages = [
     { include = "oarepo_model_builder" }
 ]
 
+
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 json5 = { version = "^0.9.6" }
@@ -32,6 +33,17 @@ md-toc = "^8.1.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+##
+## black-isort compatibility
+##
+
+[tool.isort]
+profile = "black"
+
+##
+## plugin registration
+##
 
 [tool.poetry.plugins."oarepo_model_builder.builders"]
 0020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"

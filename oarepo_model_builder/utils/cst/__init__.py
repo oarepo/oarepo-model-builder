@@ -1,3 +1,3 @@
-from .common import merge, PythonContext
+from .common import PythonContext, merge
 
-__all__ = ['merge', 'PythonContext']
+__all__ = ["merge", "PythonContext"]

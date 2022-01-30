@@ -2,7 +2,7 @@ import re
 
 import libcst as cst
 
-from oarepo_model_builder.utils.cst import merge, PythonContext
+from oarepo_model_builder.utils.cst import PythonContext, merge
 
 
 def test_new_class():
@@ -14,16 +14,20 @@ class Blah:
     pass    
     """.strip()
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 # comment start
 class Blah:
     # comment
     pass    
     """.strip()
+    )
 
 
 def test_existing_class():
@@ -36,8 +40,9 @@ class Blah:
     included_module = existing_module
 
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
     assert transformed_cst.code.strip() == existing_module.strip()
@@ -52,16 +57,20 @@ def a():
     return 1
         """.strip()
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 # comment start
 def a():
     # comment
     return 1    
     """.strip()
+    )
 
 
 def test_existing_function():
@@ -77,8 +86,9 @@ def a():
         """.strip()
 
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
     assert transformed_cst.code.strip() == existing_module.strip()
@@ -100,11 +110,14 @@ class Blah:
         """.strip()
 
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 # comment start
 class Blah:
     # comment before
@@ -114,6 +127,7 @@ class Blah:
     def a(self):
         return 1 
     """.strip()
+    )
 
 
 def test_existing_method():
@@ -132,17 +146,21 @@ class Blah:
         """.strip()
 
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 # comment start
 class Blah:
     # comment before
     def b(self):
         return 2
     """.strip()
+    )
 
 
 def test_new_include():
@@ -158,11 +176,14 @@ class Blah:
     pass
         """.strip()
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 # comment start
 import pathlib
 from pathlib import (
@@ -172,6 +193,7 @@ from pathlib import (
 class Blah:
     pass
         """.strip()
+    )
 
 
 def test_existing_include():
@@ -191,11 +213,14 @@ from c import d
 from c import d, e
             """.strip()
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 # comment start
 from c import d
 import b
@@ -205,6 +230,7 @@ from pathlib import (
 )
 from c import d, e
             """.strip()
+    )
 
 
 def test_top_level_vars():
@@ -214,14 +240,18 @@ AAA = "123"
 BBB = "456"
             """.strip()
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 AAA = "123"
 BBB = "456"
             """.strip()
+    )
 
 
 def test_top_level_merged_vars():
@@ -231,41 +261,53 @@ AAA = "123"
 BBB = "456"
             """.strip()
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 CCC='456'
 AAA = "123"
 BBB = "456"
             """.strip()
+    )
 
 
 def test_merge_top_level_arrays():
     existing_module = "CCC=[1,2,3]"
     included_module = """CCC=[4,5,6,1]"""
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip().replace(' ', '') == """
+    assert (
+        transformed_cst.code.strip().replace(" ", "")
+        == """
 CCC=[1,2,3,4,5,6,]
             """.strip()
+    )
 
 
 def test_do_not_overwrite_top_level_vars():
     existing_module = "CCC=234"
     included_module = """CCC=438"""
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert transformed_cst.code.strip() == """
+    assert (
+        transformed_cst.code.strip()
+        == """
 CCC=234
             """.strip()
+    )
 
 
 def test_merge_class_arrays():
@@ -278,14 +320,19 @@ class A:
     CCC=[4,5,6]
     """
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(
+        r"[\t\n ]",
+        "",
+        """
 class A:
 CCC=[1,2,3,4,5,6]
-            """)
+            """,
+    )
 
 
 def test_merge_arguments():
@@ -296,11 +343,14 @@ a = blah(1, 2, 3)
 a = blah(1, 2, 4)   
 """
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', existing_module)
+    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(
+        r"[\t\n ]", "", existing_module
+    )
 
 
 def test_merge_kwarguments():
@@ -311,13 +361,18 @@ a = blah(1, 2, b=3)
 a = blah(1, 2, d=4)   
 """
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(
+        r"[\t\n ]",
+        "",
+        """
 a = blah(1, 2, b=3, d=4)    
-    """)
+    """,
+    )
 
 
 def test_merge_argument_list():
@@ -328,13 +383,18 @@ a = blah(1, 2, [3])
 a = blah(1, 2, [4])   
 """
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(
+        r"[\t\n ]",
+        "",
+        """
 a = blah(1, 2, [3, 4])    
-    """)
+    """,
+    )
 
 
 def test_merge_kwargument_list():
@@ -345,13 +405,18 @@ a = blah(1, 2, b=[3])
 a = blah(1, 2, b=[4])   
 """
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(
+        r"[\t\n ]",
+        "",
+        """
 a = blah(1, 2, b=[3, 4])    
-    """)
+    """,
+    )
 
 
 def test_dict_merge():
@@ -362,13 +427,18 @@ a = {'a': 1, 'b': 2}
 a = {'c': 3}
     """
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(
+        r"[\t\n ]",
+        "",
+        """
     a = {'a': 1, 'b': 2, 'c': 3}
-        """)
+        """,
+    )
 
 
 def test_dict_merge_overwrite():
@@ -379,10 +449,15 @@ a = {'a': 1}
 a = {'a': 2}
         """
     original_cst = cst.parse_module(existing_module)
-    included_cst = cst.parse_module(included_module,
-                                    config=original_cst.config_for_parsing)
+    included_cst = cst.parse_module(
+        included_module, config=original_cst.config_for_parsing
+    )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(
+        r"[\t\n ]",
+        "",
+        """
         a = {'a': 1}
-            """)
+            """,
+    )

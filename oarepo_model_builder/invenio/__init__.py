@@ -14,10 +14,8 @@ TEMPLATES = {
     "config": "templates/invenio_config.py.jinja2",
     "ext": "templates/invenio_ext.py.jinja2",
     "proxies": "templates/invenio_proxies.py.jinja2",
-
     # utils and included
     "imports": "templates/imports.py.jinja2",
-
     # scripts
     "script-bootstrap": "templates/script_bootstrap.sh.jinja2",
     "script-runserver": "templates/script_runserver.sh.jinja2",

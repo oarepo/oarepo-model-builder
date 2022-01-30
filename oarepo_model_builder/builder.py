@@ -2,16 +2,21 @@ import copy
 import importlib
 import json
 from pathlib import Path
-from typing import List, Dict, Type
+from typing import Dict, List, Type
 
 import yaml
 
-from .builders import OutputBuilder, ModelBuilderStack, ReplaceElement, OutputBuilderComponent
-from .fs import FileSystem, AbstractFileSystem
+from .builders import (
+    ModelBuilderStack,
+    OutputBuilder,
+    OutputBuilderComponent,
+    ReplaceElement,
+)
+from .fs import AbstractFileSystem, FileSystem
+from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
 from .property_preprocessors import PropertyPreprocessor
 from .schema import ModelSchema
-from .model_preprocessors import ModelPreprocessor
 
 
 class ModelBuilder:
@@ -67,13 +72,13 @@ class ModelBuilder:
     filesystem: AbstractFileSystem
 
     def __init__(
-            self,
-            outputs: List[type(OutputBase)] = (),
-            output_builders: List[type(OutputBuilder)] = (),
-            property_preprocessors: List[type(PropertyPreprocessor)] = (),
-            model_preprocessors: List[type(ModelPreprocessor)] = (),
-            output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
-            filesystem=FileSystem()
+        self,
+        outputs: List[type(OutputBase)] = (),
+        output_builders: List[type(OutputBuilder)] = (),
+        property_preprocessors: List[type(PropertyPreprocessor)] = (),
+        model_preprocessors: List[type(ModelPreprocessor)] = (),
+        output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
+        filesystem=FileSystem(),
     ):
         """
         Initializes the builder
@@ -84,15 +89,15 @@ class ModelBuilder:
         """
         self.output_builder_classes = [*output_builders]
         for o in outputs:
-            assert o.TYPE, f'output_type not set up on class {o}'
+            assert o.TYPE, f"output_type not set up on class {o}"
         self.output_classes = [*outputs]
         self.property_preprocessor_classes = [*property_preprocessors]
         self.model_preprocessor_classes = [*model_preprocessors]
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
         if output_builder_components:
             self.output_builder_components = {
-                builder_type: [x() for x in components] for builder_type, components in
-                output_builder_components.items()
+                builder_type: [x() for x in components]
+                for builder_type, components in output_builder_components.items()
             }
         else:
             self.output_builder_components = {}
@@ -134,24 +139,32 @@ class ModelBuilder:
         :return:            the outputs (self.outputs)
         """
         self.set_schema(schema)
-        self.filtered_output_classes = {o.TYPE: o for o in self._filter_classes(self.output_classes, 'output')}
+        self.filtered_output_classes = {
+            o.TYPE: o for o in self._filter_classes(self.output_classes, "output")
+        }
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
 
-        for model_preprocessor in self._filter_classes(self.model_preprocessor_classes, 'model'):
+        for model_preprocessor in self._filter_classes(
+            self.model_preprocessor_classes, "model"
+        ):
             model_preprocessor(self).transform(schema, schema.settings)
 
         # noinspection PyTypeChecker
         property_preprocessors: List[PropertyPreprocessor] = [
-            e(self) for e in
-            self._filter_classes(self.property_preprocessor_classes, 'property')
+            e(self)
+            for e in self._filter_classes(
+                self.property_preprocessor_classes, "property"
+            )
         ]
 
         output_builder_class: Type[OutputBuilder]
-        for output_builder_class in self._filter_classes(self.output_builder_classes, 'builder'):
+        for output_builder_class in self._filter_classes(
+            self.output_builder_classes, "builder"
+        ):
             output_builder = output_builder_class(
-                builder=self,
-                property_preprocessors=property_preprocessors)
+                builder=self, property_preprocessors=property_preprocessors
+            )
             output_builder.build(schema)
 
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
@@ -168,31 +181,32 @@ class ModelBuilder:
     # private methods
 
     def _filter_classes(self, classes: List[Type[object]], plugin_type):
-        if 'plugins' not in self.schema.schema or plugin_type not in self.schema.schema.plugins:
+        if (
+            "plugins" not in self.schema.schema
+            or plugin_type not in self.schema.schema.plugins
+        ):
             return classes
         plugin_config = self.schema.schema.plugins[plugin_type]
 
-        disabled = plugin_config.get('disable', [])
-        enabled = plugin_config.get('enable', [])
-        included = plugin_config.get('include', [])
+        disabled = plugin_config.get("disable", [])
+        enabled = plugin_config.get("enable", [])
+        included = plugin_config.get("include", [])
 
         if included:
             enabled = [*enabled]  # will be adding inclusions so make a copy
             classes = [*classes]
             for incl in included:
-                package_name, class_name = incl.split(':')
+                package_name, class_name = incl.split(":")
                 class_type = getattr(importlib.import_module(package_name), class_name)
                 classes.append(class_type)
                 if enabled and class_type.TYPE not in enabled:
                     enabled.append(class_type.TYPE)
 
-        if disabled == '__all__':
+        if disabled == "__all__":
             ret = []
         else:
             ret = [c for c in classes if c.TYPE not in disabled]
 
         if enabled:
-            ret.extend(
-                [c for c in classes if c.TYPE in enabled]
-            )
+            ret.extend([c for c in classes if c.TYPE in enabled])
         return ret

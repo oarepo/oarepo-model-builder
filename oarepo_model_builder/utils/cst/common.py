@@ -1,25 +1,21 @@
-import functools
 from collections import namedtuple
+from dataclasses import dataclass
 from typing import List
 
 from libcst import CSTNode
 
 from .mergers import module_mergers
-from dataclasses import dataclass
-from enum import Enum
 
-
-class DecisionLevel(Enum):
-    ok = 0
-    decision = 1
-    warning = 2
+DecisionRequired = namedtuple(
+    "DecisionRequired", "existing_node, new_node, explanation"
+)
 
 
 @dataclass
 class PythonContextItem:
     existing_node: CSTNode
     new_node: CSTNode
-    decision_level: DecisionLevel = DecisionLevel.ok
+    decisions = List[DecisionRequired]
 
 
 class PythonContext:
@@ -33,7 +29,9 @@ class PythonContext:
         return self.cst.code_for_node(node)
 
     def push(self, existing_node: CSTNode, new_node: CSTNode):
-        self.stack.append(PythonContextItem(existing_node=existing_node, new_node=new_node))
+        self.stack.append(
+            PythonContextItem(existing_node=existing_node, new_node=new_node)
+        )
 
     def pop(self):
         self.stack.pop()
@@ -42,12 +40,15 @@ class PythonContext:
     def top(self):
         return self.stack[-1]
 
-    def set_decision_level(self, level: DecisionLevel):
-        if level.value > self.top.decision_level.value:
-            self.top.decision_level = level
+    def add_decision_required(
+        self, existing_node: CSTNode, new_node: CSTNode, explanation: str
+    ):
+        self.top.decisions.append(
+            DecisionRequired(existing_node, new_node, explanation)
+        )
 
 
-node_with_type = namedtuple('node_with_type', 'node, type')
+node_with_type = namedtuple("node_with_type", "node, type")
 
 
 class MergerBase:
@@ -84,10 +85,12 @@ class IdentityBaseMerger(MergerBase):
 
     def should_merge(self, context: PythonContext, existing_node, new_node):
         try:
-            return context.to_source_code(existing_node).strip() == context.to_source_code(
-                new_node).strip()
+            return (
+                context.to_source_code(existing_node).strip()
+                == context.to_source_code(new_node).strip()
+            )
         except AttributeError:
-            print('')
+            print("")
             raise
 
 
@@ -97,8 +100,9 @@ class IdentityMerger(IdentityBaseMerger):
 
     def should_merge(self, context: PythonContext, existing_node, new_node):
         print(
-            f'Warning: using naive merger for {type(existing_node)}'
-            f'>>>\n{context.to_source_code(existing_node).strip()}\n<<<')
+            f"Warning: using naive merger for {type(existing_node)}"
+            f">>>\n{context.to_source_code(existing_node).strip()}\n<<<"
+        )
         return super().should_merge(context, existing_node, new_node)
 
 

@@ -2,7 +2,7 @@ from oarepo_model_builder.outputs import OutputBase
 
 
 class TextOutput(OutputBase):
-    TYPE = 'text'
+    TYPE = "text"
 
     def begin(self):
         try:
@@ -10,7 +10,7 @@ class TextOutput(OutputBase):
                 self.text = self.original_data = f.read()
         except FileNotFoundError:
             self.original_data = None
-            self.text = ''
+            self.text = ""
 
     @property
     def created(self):
@@ -18,5 +18,5 @@ class TextOutput(OutputBase):
 
     def finish(self):
         if self.text != self.original_data:
-            with self.builder.filesystem.open(self.path, 'w') as f:
+            with self.builder.filesystem.open(self.path, "w") as f:
                 f.write(self.text)
