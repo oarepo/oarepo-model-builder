@@ -1,6 +1,7 @@
 import lazy_object_proxy
 from libcst import ClassDef, FunctionDef, Import, ImportFrom, Assign, Expr, \
-    Element, Pass, Call, Module, List, Tuple, Integer, Arg, SimpleStatementLine
+    Element, Pass, Call, Module, List, Tuple, Integer, Arg, SimpleStatementLine, \
+    SimpleString, Name, Dict
 
 
 @lazy_object_proxy.Proxy
@@ -47,12 +48,18 @@ def call_mergers():
 @lazy_object_proxy.Proxy
 def expression_mergers():
     from .call import CallMerger
-    from .simple_nodes import ListMerger, IntegerMerger, ElementMerger, ExprMerger
+    from .simple_nodes import IntegerMerger, ExprMerger, SimpleStringMerger, NameMerger
+    from oarepo_model_builder.utils.cst.collections import DictMerger
+    from oarepo_model_builder.utils.cst.collections import ListMerger
+    from oarepo_model_builder.utils.cst.collections import ElementMerger
     return {
         Call: CallMerger(),
         List: ListMerger(),
         Tuple: ListMerger(),
         Integer: IntegerMerger(),
         Element: ElementMerger(),
-        Expr: ExprMerger()
+        SimpleString: SimpleStringMerger(),
+        Name: NameMerger(),
+        Expr: ExprMerger(),
+        Dict: DictMerger()
     }

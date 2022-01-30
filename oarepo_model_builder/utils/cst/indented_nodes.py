@@ -79,15 +79,19 @@ class ClassMerger(PriorityMergerMixin, MergerBase):
         return existing_node.name.value == new_node.name.value
 
     def merge(self, context: PythonContext, existing_node, new_node):
-        return self._merge_children_with_priorities(
-            existing_node, new_node, context,
-            mergers=indented_block_mergers,
-            node_type_category={
-                Import: 'import',
-                ImportFrom: 'import',
-                ClassDef: 'classdef',
-                Assign: 'assign'
-            })
+        try:
+            context.push(existing_node, new_node)
+            return self._merge_children_with_priorities(
+                existing_node, new_node, context,
+                mergers=indented_block_mergers,
+                node_type_category={
+                    Import: 'import',
+                    ImportFrom: 'import',
+                    ClassDef: 'classdef',
+                    Assign: 'assign'
+                })
+        finally:
+            context.pop()
 
     def extract_body(self, node):
         return node.body.body

@@ -352,3 +352,37 @@ a = blah(1, 2, b=[4])
     assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
 a = blah(1, 2, b=[3, 4])    
     """)
+
+
+def test_dict_merge():
+    existing_module = """
+a = {'a': 1, 'b': 2}  
+        """
+    included_module = """
+a = {'c': 3}
+    """
+    original_cst = cst.parse_module(existing_module)
+    included_cst = cst.parse_module(included_module,
+                                    config=original_cst.config_for_parsing)
+    transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
+
+    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+    a = {'a': 1, 'b': 2, 'c': 3}
+        """)
+
+
+def test_dict_merge_overwrite():
+    existing_module = """
+a = {'a': 1}  
+            """
+    included_module = """
+a = {'a': 2}
+        """
+    original_cst = cst.parse_module(existing_module)
+    included_cst = cst.parse_module(included_module,
+                                    config=original_cst.config_for_parsing)
+    transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
+
+    assert re.sub(r'[\t\n ]', '', transformed_cst.code) == re.sub(r'[\t\n ]', '', """
+        a = {'a': 1}
+            """)

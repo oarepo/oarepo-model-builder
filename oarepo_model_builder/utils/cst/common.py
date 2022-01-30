@@ -1,12 +1,30 @@
 import functools
 from collections import namedtuple
+from typing import List
 
-from libcst import SimpleStatementLine
+from libcst import CSTNode
 
 from .mergers import module_mergers
+from dataclasses import dataclass
+from enum import Enum
+
+
+class DecisionLevel(Enum):
+    ok = 0
+    decision = 1
+    warning = 2
+
+
+@dataclass
+class PythonContextItem:
+    existing_node: CSTNode
+    new_node: CSTNode
+    decision_level: DecisionLevel = DecisionLevel.ok
 
 
 class PythonContext:
+    stack: List[PythonContextItem]
+
     def __init__(self, cst):
         self.cst = cst
         self.stack = []
@@ -14,11 +32,19 @@ class PythonContext:
     def to_source_code(self, node):
         return self.cst.code_for_node(node)
 
-    def push(self, node):
-        self.stack.push(node)
+    def push(self, existing_node: CSTNode, new_node: CSTNode):
+        self.stack.append(PythonContextItem(existing_node=existing_node, new_node=new_node))
 
-    def pop(self, node):
-        self.stack.pop(node)
+    def pop(self):
+        self.stack.pop()
+
+    @property
+    def top(self):
+        return self.stack[-1]
+
+    def set_decision_level(self, level: DecisionLevel):
+        if level.value > self.top.decision_level.value:
+            self.top.decision_level = level
 
 
 node_with_type = namedtuple('node_with_type', 'node, type')
