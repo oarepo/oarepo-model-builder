@@ -143,6 +143,7 @@ def test_incremental_builder():
     builder.build(schema, '')
     snapshot_2 = filesystem.snapshot()
 
+
     ret = snapshot_2.pop(Path.cwd() / 'scripts/sample_data.yaml')     # these are always regenerated and random, so do not check them
 
     assert set(snapshot_1.keys()) == set(snapshot_2.keys())
