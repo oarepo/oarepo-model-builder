@@ -5,6 +5,7 @@ from pathlib import Path
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from tests.mock_filesystem import MockFilesystem
+from tests.utils import assert_python_equals
 
 
 def test_include_invenio():
@@ -133,5 +134,5 @@ def test_incremental_builder():
 
     for k, iteration_result in snapshot_1.items():
         expected_result = snapshot_2[k]
-
-        assert iteration_result == expected_result
+        # normally handled by black
+        assert_python_equals(iteration_result.replace(",'_id'", ",\n'_id'"), expected_result)

@@ -50,7 +50,8 @@ class DictMerger(MergerBase):
 
         for k, el in new_elements.items():
             merger = mergers.get(type(el), IdentityMerger())
-            ret.append(merger.merge(context, None, el))
+            merged = merger.merge(context, None, el)
+            ret.append(merged)
         return existing_node.with_changes(elements=[x for x in ret if x is not context.REMOVED])
 
 
