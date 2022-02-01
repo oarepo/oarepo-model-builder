@@ -92,6 +92,10 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(settings.python, 'record-search-options-class',
                  lambda: f'{settings.package}.services.search.{record_prefix}SearchOptions')
 
+        #   - facets
+        self.set(settings.python, 'record-facets-class',
+                 lambda: f'{settings.package}.services.facets.Test')
+
         # alembic
         self.set(settings.python, 'record-schema-metadata-alembic',
                  lambda: f'{settings.package_base}')
