@@ -7,6 +7,7 @@ from oarepo_model_builder.utils.jinja import package_name
 
 OAREPO_FACETS_PROPERTY = 'oarepo:facets'
 
+
 class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
     TYPE = 'invenio_record_search'
     class_config = 'record-search-options-class'
@@ -144,3 +145,4 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 name = name + '.' + path
 
         return name
+

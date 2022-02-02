@@ -1,25 +1,21 @@
-from .common import MergerBase, real_node, real_with_changes, IdentityBaseMerger
-from .mergers import expression_mergers
-from .utils import merge_lists_remove_duplicates
+import logging
+
+from libcst import Assign, Integer
+
+from .common import IdentityBaseMerger, IdentityMerger, MergerBase, PythonContext
+from .mergers import expression_mergers, simple_line_mergers
+
+log = logging.getLogger("oarepo_model_builder.cst")
 
 
 class AssignMerger(MergerBase):
-    def merge(self, cst, existing_node, new_node):
-        real_existing = real_node(existing_node)
-        real_new = real_node(new_node)
-        merged_value = self.check_and_merge(cst, real_existing.value, real_new.value, expression_mergers)
-        if merged_value:
-            return real_with_changes(
-                existing_node,
-                value=merged_value
-            )
-        return existing_node
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
+        merger = expression_mergers.get(type(existing_node.value or new_node.value), IdentityMerger())
+        merged_value = merger.merge(context, existing_node.value, new_node.value)
+        return existing_node.with_changes(value=merged_value)
 
-    def node_to_name(self, node):
-        return tuple(sorted([x.target.value for x in real_node(node).targets]))
-
-    def should_merge(self, cst, existing_node, new_node):
-        return self.node_to_name(existing_node) == self.node_to_name(new_node)
+    def identity(self, context, node):
+        return Assign(targets=node.targets, value=Integer(value="1"))
 
 
 class ImportMerger(IdentityBaseMerger):
@@ -42,34 +38,33 @@ class IntegerMerger(IdentityBaseMerger):
     pass
 
 
+class SimpleStringMerger(IdentityBaseMerger):
+    pass
+
+
+class NameMerger(IdentityBaseMerger):
+    pass
+
+
 class FunctionMerger(MergerBase):
-    def merge(self, cst, existing_node, new_node):
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
         return existing_node
 
-    def should_merge(self, cst, existing_node, new_node):
-        return existing_node.name.value == new_node.name.value
+    def identity(self, context, node):
+        return node.name
 
 
-class ElementMerger(MergerBase):
-    """ list element """
+class SimpleStatementLineMerger(MergerBase):
+    def identity(self, context, node):
+        assert len(node.body) == 1
+        body = node.body[0]
+        if type(body) in simple_line_mergers:
+            return simple_line_mergers[type(body)].identity(context, body)
+        log.error("Could not find node %s in simple_line_mergers", type(node))
+        return node.body[0]
 
-    def should_merge(self, cst, existing_node, new_node):
-        return self.get_node_merger(cst, existing_node.value, new_node.value, expression_mergers)
-
-    def merge(self, cst, existing_node, new_node):
-        return real_with_changes(
-            existing_node,
-            value=self.check_and_merge(cst, existing_node.value, new_node.value,
-                                       expression_mergers) or existing_node.value
-        )
-
-
-class ListMerger(MergerBase):
-    def should_merge(self, cst, existing_node, new_node):
-        return True
-
-    def merge(self, cst, existing_node, new_node):
-        return real_with_changes(existing_node, elements=merge_lists_remove_duplicates(
-            real_node(existing_node).elements, real_node(new_node).elements,
-            cst, expression_mergers
-        ))
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
+        existing_body = existing_node.body[0] if existing_node else None
+        new_body = new_node.body[0] if new_node else None
+        merger = simple_line_mergers.get(type(existing_body or new_body), IdentityMerger())
+        return existing_node.with_changes(body=[merger.merge(context, existing_body, new_body)])

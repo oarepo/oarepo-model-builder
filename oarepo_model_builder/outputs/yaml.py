@@ -1,18 +1,17 @@
 import json
 
+import yaml
 from deepdiff import DeepDiff
 
+from ..utils.verbose import log
 from . import OutputBase
 from .json_stack import JSONStack
-from ..utils.verbose import log
-
-import yaml
 
 
 class YAMLOutput(OutputBase):
     IGNORE_NODE = JSONStack.IGNORED_NODE
     IGNORE_SUBTREE = JSONStack.IGNORED_SUBTREE
-    TYPE = 'yaml'
+    TYPE = "yaml"
 
     def begin(self):
         self._created = True
@@ -43,8 +42,8 @@ class YAMLOutput(OutputBase):
         self._created = False
         if DeepDiff(self.documents, self.original_data):
             self.builder.filesystem.mkdir(self.path.parent)
-            log(2, 'Saving %s', self.path)
-            with self.builder.filesystem.open(self.path, mode='w') as f:
+            log(2, "Saving %s", self.path)
+            with self.builder.filesystem.open(self.path, mode="w") as f:
                 yaml.safe_dump_all(self.documents, f)
 
     @property

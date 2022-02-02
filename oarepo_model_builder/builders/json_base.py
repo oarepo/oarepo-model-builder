@@ -10,7 +10,7 @@ class JSONBaseBuilder(OutputBuilder):
     def model_element_enter(self):
         top = self.stack.top
         data = top.data
-        data = self.call_components('model_element_enter', data, stack=self.stack)
+        data = self.call_components("model_element_enter", data, stack=self.stack)
         match self.stack.top_type:
             case self.stack.PRIMITIVE:
                 self.output.primitive(top.key, data)
@@ -20,11 +20,11 @@ class JSONBaseBuilder(OutputBuilder):
                 self.output.enter(top.key, {})
 
     def model_element_leave(self):
-        self.call_components('model_element_leave', self.stack.top.data, stack=self.stack)
+        self.call_components("model_element_leave", self.stack.top.data, stack=self.stack)
         if self.stack.top_type != self.stack.PRIMITIVE:
             self.output.leave()
 
-    @process('/model')
+    @process("/model")
     def enter_model(self):
         output_name = self.settings[self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)

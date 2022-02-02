@@ -1,42 +1,80 @@
 import lazy_object_proxy
-from libcst import ClassDef, FunctionDef, Import, ImportFrom, Assign, Expr, \
-    Element, Pass, Call, Module, List, Tuple, Integer, Arg
+from libcst import (
+    Arg,
+    Assign,
+    Call,
+    ClassDef,
+    Dict,
+    Element,
+    Expr,
+    FunctionDef,
+    Import,
+    ImportFrom,
+    Integer,
+    List,
+    Module,
+    Name,
+    Pass,
+    SimpleStatementLine,
+    SimpleString,
+    Tuple,
+)
 
 
 @lazy_object_proxy.Proxy
-def general_mergers():
-    from .indented_nodes import ModuleMerger, ClassMerger
-    from .simple_nodes import AssignMerger, ImportMerger, ImportFromMerger, ExprMerger, FunctionMerger, PassMerger
+def module_mergers():
+    from .indented_nodes import ModuleMerger
+
+    return {Module: ModuleMerger()}
+
+
+@lazy_object_proxy.Proxy
+def indented_block_mergers():
+    from .indented_nodes import ClassMerger
+    from .simple_nodes import FunctionMerger, SimpleStatementLineMerger
 
     return {
-        Module: ModuleMerger(),
+        SimpleStatementLine: SimpleStatementLineMerger(),
         ClassDef: ClassMerger(),
+        FunctionDef: FunctionMerger(),
+    }
+
+
+@lazy_object_proxy.Proxy
+def simple_line_mergers():
+    from .simple_nodes import AssignMerger, ExprMerger, ImportFromMerger, ImportMerger, PassMerger
+
+    return {
         Assign: AssignMerger(),
         Import: ImportMerger(),
         ImportFrom: ImportFromMerger(),
         Expr: ExprMerger(),
-        FunctionDef: FunctionMerger(),
-        Pass: PassMerger()
+        Pass: PassMerger(),
     }
 
 
 @lazy_object_proxy.Proxy
 def call_mergers():
     from .call import ArgMerger
-    return {
-        Arg: ArgMerger()
-    }
+
+    return {Arg: ArgMerger()}
 
 
 @lazy_object_proxy.Proxy
 def expression_mergers():
+    from oarepo_model_builder.utils.cst.collections import DictMerger, ElementMerger, ListMerger
+
     from .call import CallMerger
-    from .simple_nodes import ListMerger, IntegerMerger, ElementMerger, ExprMerger
+    from .simple_nodes import ExprMerger, IntegerMerger, NameMerger, SimpleStringMerger
+
     return {
         Call: CallMerger(),
         List: ListMerger(),
         Tuple: ListMerger(),
         Integer: IntegerMerger(),
         Element: ElementMerger(),
-        Expr: ExprMerger()
+        SimpleString: SimpleStringMerger(),
+        Name: NameMerger(),
+        Expr: ExprMerger(),
+        Dict: DictMerger(),
     }

@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict, namedtuple
 from functools import cached_property
-from typing import List, Iterable
+from typing import Iterable, List
 
 """
 A path is a sequence of names separated by '/' with an optional 
@@ -15,7 +15,7 @@ Any expression with the current should return an iterator or list of results (ma
 If any is truish, the condition is interpreted as matching.
 """
 
-JSONPathRecord = namedtuple('JSONPathRecord', 'path, condition, value')
+JSONPathRecord = namedtuple("JSONPathRecord", "path, condition, value")
 
 
 class JSONPaths:
@@ -38,15 +38,11 @@ class JSONPaths:
             self.paths.append([])
             self.path_regex_list.append(path_to_regex(path))
         path_locators = self.paths[self.path_to_index[path]]
-        path_locators.append(JSONPathRecord(
-            path=path,
-            condition=condition,
-            value=value
-        ))
+        path_locators.append(JSONPathRecord(path=path, condition=condition, value=value))
 
     @cached_property
     def path_regex(self):
-        return re.compile('|'.join(f'({x})' for x in self.path_regex_list))
+        return re.compile("|".join(f"({x})" for x in self.path_regex_list))
 
     def match(self, path=None, subtree=None, extra_data=None):
         """
@@ -79,14 +75,14 @@ class JSONPaths:
 
 
 def path_to_regex(path):
-    split_path = [x for x in re.split('(/)', path) if x]
+    split_path = [x for x in re.split("(/)", path) if x]
 
     def fragment_to_regex(f):
-        if f == '**':
-            return '.+'
-        return f.replace('*', '[^/]+')
+        if f == "**":
+            return ".+"
+        return f.replace("*", "[^/]+")
 
-    return ''.join(fragment_to_regex(x) for x in split_path)
+    return "".join(fragment_to_regex(x) for x in split_path)
 
 
 class PathCondition:
@@ -97,7 +93,7 @@ class PathCondition:
 
     def _apply(self, p, subtree_list):
         if subtree_list:
-            if p == '*':
+            if p == "*":
                 for subtree in subtree_list:
                     itr = []
                     if isinstance(subtree, dict):
@@ -105,10 +101,10 @@ class PathCondition:
                     elif isinstance(subtree, list):
                         itr = subtree
                     yield from itr
-            elif p == '**':
-                first_level = list(self._apply('*', subtree_list))
+            elif p == "**":
+                first_level = list(self._apply("*", subtree_list))
                 yield from first_level
-                yield from self._apply('**', first_level)
+                yield from self._apply("**", first_level)
             else:
                 for subtree in subtree_list:
                     # match the path element and descend if found

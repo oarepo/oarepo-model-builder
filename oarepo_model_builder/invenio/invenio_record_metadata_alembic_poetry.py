@@ -5,35 +5,28 @@ from ..utils.verbose import log
 
 
 class InvenioRecordMetadataAlembicPoetryBuilder(OutputBuilder):
-    TYPE = 'invenio_record_metadata_alembic_poetry'
+    TYPE = "invenio_record_metadata_alembic_poetry"
 
     def finish(self):
         super().finish()
 
-        output: TOMLOutput = self.builder.get_output(
-            'toml',
-            'pyproject.toml'
+        output: TOMLOutput = self.builder.get_output("toml", "pyproject.toml")
+        output.set(
+            "tool.poetry.plugins.'invenio_db.alembic'",
+            self.settings.python.record_schema_metadata_alembic,
+            f"{self.settings.package}:alembic",
         )
-        output.set("tool.poetry.plugins.'invenio_db.alembic'",
-                   self.settings.python.record_schema_metadata_alembic,
-                   f'{self.settings.package}:alembic'
-                   )
 
-        python_path = self.settings.package_path / 'alembic' / '__init__.py'
+        python_path = self.settings.package_path / "alembic" / "__init__.py"
         # create parent modules if they do not exist
-        ensure_parent_modules(
-            self.builder,
-            python_path,
-            max_depth=len(python_path.parts)
-        )
+        ensure_parent_modules(self.builder, python_path, max_depth=len(python_path.parts))
 
         # and create empty __init__.py
-        init_builder = self.builder.get_output(
-            'python',
-            python_path
-        )
+        init_builder = self.builder.get_output("python", python_path)
         if init_builder.created:
-            log(log.INFO, f"""Do not forget to run:
+            log(
+                log.INFO,
+                f"""Do not forget to run:
     
     # if the initial database does not exist yet 
     invenio db init
@@ -57,4 +50,5 @@ class InvenioRecordMetadataAlembicPoetryBuilder(OutputBuilder):
     
     # create db tables
     invenio alembic upgrade heads
-            """)
+            """,
+            )

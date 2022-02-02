@@ -6,15 +6,14 @@ from oarepo_model_builder.fs import AbstractFileSystem
 
 
 class MockFilesystem(AbstractFileSystem):
-
     def __init__(self):
         self.files: Dict[str, StringIO] = {}
 
-    def open(self, path: str, mode: str = 'r'):
+    def open(self, path: str, mode: str = "r"):
         path = Path(path).absolute()
-        if mode == 'r':
+        if mode == "r":
             if not path in self.files:
-                raise FileNotFoundError(f'File {path} not found. Known files {[f for f in self.files]}')
+                raise FileNotFoundError(f"File {path} not found. Known files {[f for f in self.files]}")
             return StringIO(self.files[path].getvalue())
         self.files[path] = StringIO()
         self.files[path].close = lambda: None

@@ -22,14 +22,14 @@ class ModelBuilderStackEntry:
         return self.key == other.key and not DeepDiff(self.key, other.key)
 
     def __str__(self):
-        return f'{self.key} - {self.data}'
+        return f"{self.key} - {self.data}"
 
 
 class ModelBuilderStack:
-    DICT = 'dict'
-    LIST = 'list'
-    PRIMITIVE = 'primitive'
-    SKIP = 'skip'
+    DICT = "dict"
+    LIST = "list"
+    PRIMITIVE = "primitive"
+    SKIP = "skip"
 
     def __init__(self):
         self.stack = []
@@ -65,7 +65,7 @@ class ModelBuilderStack:
 
     @cached_property
     def path(self):
-        return '/' + '/'.join(x.key for x in self.stack if x.key)
+        return "/" + "/".join(x.key for x in self.stack if x.key)
 
     def _clear_path(self):
         if "path" in self.__dict__:

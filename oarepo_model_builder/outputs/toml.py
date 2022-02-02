@@ -1,11 +1,12 @@
+import tomlkit
+import tomlkit.items
 from tomlkit.exceptions import NonExistentKey
 
 from oarepo_model_builder.outputs import OutputBase
-import tomlkit, tomlkit.items
 
 
 class TOMLOutput(OutputBase):
-    TYPE = 'toml'
+    TYPE = "toml"
 
     def begin(self):
         try:
@@ -29,7 +30,7 @@ class TOMLOutput(OutputBase):
                 return self.toml[_key]
             except KeyError:
                 pass
-            if '.' not in key:
+            if "." not in key:
                 return None
             if '"' in key:
                 key = [*key.split('"')[:2]]
@@ -38,7 +39,7 @@ class TOMLOutput(OutputBase):
             else:
                 key = [key, None]
 
-            key_seq = [x for x in key[0].split('.') if x]
+            key_seq = [x for x in key[0].split(".") if x]
             if key[1]:
                 key_seq.append(key[1])
 
@@ -94,5 +95,5 @@ class TOMLOutput(OutputBase):
     def finish(self):
         out = tomlkit.dumps(self.toml, sort_keys=True)
         if out != self.parsed:
-            with self.builder.filesystem.open(self.path, 'w') as f:
+            with self.builder.filesystem.open(self.path, "w") as f:
                 f.write(tomlkit.dumps(self.toml))

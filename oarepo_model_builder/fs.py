@@ -3,13 +3,13 @@ from pathlib import Path
 
 class AbstractFileSystem:
     def open(self, path, *args, **kwargs):
-        raise Exception('Not implemented')
+        raise Exception("Not implemented")
 
     def exists(self, path):
-        raise Exception('Not implemented')
+        raise Exception("Not implemented")
 
     def mkdir(self, path):
-        raise Exception('Not implemented')
+        raise Exception("Not implemented")
 
     def make_executable(self, path):
         pass

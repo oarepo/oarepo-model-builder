@@ -1,9 +1,10 @@
-from oarepo_model_builder.outputs import OutputBase
 from difflib import Differ
+
+from oarepo_model_builder.outputs import OutputBase
 
 
 class DiffOutput(OutputBase):
-    TYPE = 'diff'
+    TYPE = "diff"
 
     def begin(self):
         try:
@@ -11,7 +12,7 @@ class DiffOutput(OutputBase):
                 self.text = self.original_data = f.read()
         except FileNotFoundError:
             self.original_data = None
-            self.text = ''
+            self.text = ""
 
     @property
     def created(self):
@@ -23,13 +24,13 @@ class DiffOutput(OutputBase):
                 lines = [
                     x[2:]
                     for x in Differ().compare(self.original_data.splitlines(), self.text.splitlines())
-                    if x[0] != '?'
+                    if x[0] != "?"
                 ]
             else:
                 lines = [self.text]
 
-            with self.builder.filesystem.open(self.path, 'w') as f:
-                f.write('\n'.join(lines))
+            with self.builder.filesystem.open(self.path, "w") as f:
+                f.write("\n".join(lines))
 
     def write(self, text):
         self.text = text

@@ -1,34 +1,33 @@
 import itertools
-from .common import MergerBase, real_node, real_with_changes, merge
+
 from libcst import Arg
+
+from .common import IdentityMerger, MergerBase, PythonContext, merge
 from .mergers import call_mergers, expression_mergers
 
 
 class CallMerger(MergerBase):
-    def should_merge(self, cst, existing_node, new_node):
-        return real_node(existing_node).func.value == real_node(new_node).func.value
+    def identity(self, context: PythonContext, node):
+        return node.func
 
-    def merge(self, cst, existing_node, new_node):
-        existing_args, existing_kwargs = self.extract_args(real_node(existing_node))
-        new_args, new_kwargs = self.extract_args(real_node(new_node))
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
+        existing_args, existing_kwargs = self.extract_args(existing_node)
+        new_args, new_kwargs = self.extract_args(new_node)
         args = []
+        merger = ArgMerger()
         for e, n in itertools.zip_longest(existing_args, new_args):
-            args.append(self.merge_arg(cst, e, n))
+            args.append(merger.merge(context, e, n))
 
         for k, e in existing_kwargs.items():
             n = new_kwargs.pop(k, None)
-            args.append(self.merge_arg(cst, e, n))
+            args.append(merger.merge(context, e, n))
 
         for k, n in new_kwargs.items():
-            args.append(n)
+            args.append(merger.merge(context, None, n))
 
-        return real_with_changes(existing_node, args=args)
+        args = [x for x in args if x is not context.REMOVED]
 
-    def merge_arg(self, cst, e, n):
-        if e and n:
-            merged = self.check_and_merge(cst, e, n, call_mergers)
-            return merged or e
-        return e or n
+        return existing_node.with_changes(args=args)
 
     def extract_args(self, n):
         args = []
@@ -40,17 +39,17 @@ class CallMerger(MergerBase):
                 else:
                     args.append(arg)
             else:
-                raise Exception(f'Unsupported clause in call args {type(arg)}')
+                raise Exception(f"Unsupported clause in call args {type(arg)}")
         return args, kwargs
 
 
 class ArgMerger(MergerBase):
-    def should_merge(self, cst, existing_node, new_node):
-        # always merge with another arg
-        return True
+    def identity(self, context: PythonContext, node):
+        return node
 
-    def merge(self, cst, existing_node, new_node):
-        return real_with_changes(
-            existing_node,
-            value=merge(existing_node.value, new_node.value, cst, mergers=expression_mergers) or existing_node.value
-        )
+    def merge_internal(self, context: PythonContext, existing_node, new_node):
+        existing_value = existing_node.value
+        new_value = new_node.value
+        merger = expression_mergers.get(type(existing_value), IdentityMerger())
+        merged_value = merger.merge(context, existing_value, new_value)
+        return existing_node.with_changes(value=merged_value)

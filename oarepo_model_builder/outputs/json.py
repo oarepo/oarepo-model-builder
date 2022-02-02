@@ -2,9 +2,9 @@ import json
 
 from deepdiff import DeepDiff
 
+from ..utils.verbose import log
 from . import OutputBase
 from .json_stack import JSONStack
-from ..utils.verbose import log
 
 try:
     import json5
@@ -15,7 +15,7 @@ except ImportError:
 class JSONOutput(OutputBase):
     IGNORE_NODE = JSONStack.IGNORED_NODE
     IGNORE_SUBTREE = JSONStack.IGNORED_SUBTREE
-    TYPE = 'json'
+    TYPE = "json"
 
     def begin(self):
         try:
@@ -36,8 +36,8 @@ class JSONOutput(OutputBase):
         data = self.stack.value
         if DeepDiff(data, self.original_data):
             self.builder.filesystem.mkdir(self.path.parent)
-            log(2, 'Saving %s', self.path)
-            with self.builder.filesystem.open(self.path, mode='w') as f:
+            log(2, "Saving %s", self.path)
+            with self.builder.filesystem.open(self.path, mode="w") as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
 
     def enter(self, key, el):

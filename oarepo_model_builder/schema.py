@@ -1,7 +1,7 @@
 import copy
 import pathlib
-from typing import Dict, Callable
 from pathlib import Path
+from typing import Callable, Dict
 
 import munch
 from jsonpointer import resolve_pointer
@@ -12,11 +12,15 @@ from .utils.hyphen_munch import HyphenMunch
 
 
 class ModelSchema:
-    OAREPO_USE = 'oarepo:use'
+    OAREPO_USE = "oarepo:use"
 
-    def __init__(self, file_path, content=None,
-                 included_models: Dict[str, Callable] = None,
-                 loaders=None):
+    def __init__(
+        self,
+        file_path,
+        content=None,
+        included_models: Dict[str, Callable] = None,
+        loaders=None,
+    ):
         """
         Creates and parses model schema
 
@@ -37,8 +41,8 @@ class ModelSchema:
 
         self._resolve_references(self.schema, [])
 
-        self.schema.setdefault('settings', {})
-        self.schema['settings'].setdefault('plugins', {})
+        self.schema.setdefault("settings", {})
+        self.schema["settings"].setdefault("plugins", {})
         self.schema = munch.munchify(self.schema, factory=HyphenMunch)
 
     def get(self, key):
@@ -65,8 +69,10 @@ class ModelSchema:
         if extension in self.loaders:
             return self.loaders[extension](file_path, self, content=content)
 
-        raise Exception(f'Can not load {file_path} - no loader has been found for extension {extension} '
-                        f'in entry point group oarepo_model_builder.loaders')
+        raise Exception(
+            f"Can not load {file_path} - no loader has been found for extension {extension} "
+            f"in entry point group oarepo_model_builder.loaders"
+        )
 
     def _load_included_file(self, location):
         """
@@ -77,34 +83,34 @@ class ModelSchema:
         :param file_id: the id of the included file, might contain #xpointer
         :return:    loaded json
         """
-        if '#' in location:
-            file_id, json_pointer_or_id = location.rsplit('#', 1)
+        if "#" in location:
+            file_id, json_pointer_or_id = location.rsplit("#", 1)
         else:
             file_id = location
             json_pointer_or_id = None
 
-        if not file_id or file_id == '.':
+        if not file_id or file_id == ".":
             ret = self.schema
-        elif file_id.startswith('.'):
+        elif file_id.startswith("."):
             # relative include
             ret = self._load(self.abs_path.parent / file_id)
         else:
             if file_id not in self.included_schemas:
-                raise IncludedFileNotFoundException(f'Included file {file_id} not found in includes')
+                raise IncludedFileNotFoundException(f"Included file {file_id} not found in includes")
 
             ret = self.included_schemas[file_id](self)
 
         if json_pointer_or_id:
-            if json_pointer_or_id.startswith('/'):
+            if json_pointer_or_id.startswith("/"):
                 ret = resolve_pointer(ret, json_pointer_or_id)
             else:
                 ret = resolve_id(ret, json_pointer_or_id)
                 if not ret:
-                    raise IncludedFileNotFoundException(f'Element with id {json_pointer_or_id} not found in {file_id}')
+                    raise IncludedFileNotFoundException(f"Element with id {json_pointer_or_id} not found in {file_id}")
 
         ret = copy.deepcopy(ret)
-        ret.pop('$id', None)
-        ret['oarepo:included-from'] = location
+        ret.pop("$id", None)
+        ret["oarepo:included-from"] = location
         return ret
 
     def _resolve_references(self, element, stack):
@@ -130,7 +136,7 @@ class ModelSchema:
 
 def resolve_id(json, element_id):
     if isinstance(json, dict):
-        if '$id' in json and json['$id'] == element_id:
+        if "$id" in json and json["$id"] == element_id:
             return json
         continue_with = json.values()
     elif isinstance(json, (tuple, list)):

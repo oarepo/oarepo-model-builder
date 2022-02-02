@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.9.14"
+version = "0.9.15"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
@@ -8,6 +8,7 @@ readme = "README.md"
 packages = [
     { include = "oarepo_model_builder" }
 ]
+
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
@@ -32,6 +33,23 @@ md-toc = "^8.1.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+##
+## black, isort
+##
+
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+line_length = 120
+
+[tool.black]
+line-length = 120
+
+
+##
+## plugin registration
+##
 
 [tool.poetry.plugins."oarepo_model_builder.builders"]
 0020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"

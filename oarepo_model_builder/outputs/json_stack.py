@@ -6,6 +6,7 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
 
 class JSONStack:
     """Hierarchic json builder."""
+
     IGNORED_SUBTREE = object()
     IGNORED_NODE = object()
 
@@ -43,7 +44,7 @@ class JSONStack:
                     assert key == len(top)
                     top.append(el)
             else:
-                raise NotImplemented(f'Set for datatype {type(top)} is not implemented')
+                raise NotImplemented(f"Set for datatype {type(top)} is not implemented")
             self.stack.append(el)
 
     def pop(self):

@@ -6,25 +6,29 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
 
 
 class DatePreprocessor(PropertyPreprocessor):
-    TYPE = 'date'
+    TYPE = "date"
 
-    @process(model_builder=JSONSchemaBuilder,
-             path='**/properties/*',
-             condition=lambda current, stack: current.type == 'date')
+    @process(
+        model_builder=JSONSchemaBuilder,
+        path="**/properties/*",
+        condition=lambda current, stack: current.type == "date",
+    )
     def modify_date_jsonschema(self, data, stack: ModelBuilderStack, **kwargs):
-        data['type'] = 'string'
-        data.setdefault('format', 'date')
+        data["type"] = "string"
+        data.setdefault("format", "date")
         return data
 
-    @process(model_builder=InvenioRecordSchemaBuilder,
-             path='**/properties/*',
-             condition=lambda current, stack: current.type == 'date')
+    @process(
+        model_builder=InvenioRecordSchemaBuilder,
+        path="**/properties/*",
+        condition=lambda current, stack: current.type == "date",
+    )
     def modify_date_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
         deepmerge(
-            data.setdefault('oarepo:marshmallow', {}),
+            data.setdefault("oarepo:marshmallow", {}),
             {
-                'class': 'ma_fields.Date'
+                "class": "ma_fields.Date"
                 # TODO: validators, such as minDate, maxDate, minDateExclusive, maxDateExclusive
-            }
+            },
         )
         return data

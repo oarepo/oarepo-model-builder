@@ -36,7 +36,7 @@ class DictValidator(SchemaPathValidator):
     def __init__(self, dict=None, primitives=None):
         self.dict = dict or {}
         if primitives:
-            for p in primitives.split(','):
+            for p in primitives.split(","):
                 p = p.strip()
                 if not p:
                     continue
@@ -80,43 +80,41 @@ class Ref(SchemaPathValidator):
         return str(self)
 
 
-Ref.refs['type'] = DictValidator(dict={
-    "properties": Ref('properties', 'properties'),
-    "patternProperties": Ref('patternProperties', 'properties'),
-    "additionalProperties": Ref('additionalProperties', 'additionalProperties'),
-    "propertyNames": Ref('propertyNames', 'propertyNames'),
-    "items": Ref('items', 'type'),
-    "prefixItems": Ref('prefixItems', 'type'),
-    "contains": Ref('contains', 'type'),
-    "type": Ref('type', 'type_value')
-},
+Ref.refs["type"] = DictValidator(
+    dict={
+        "properties": Ref("properties", "properties"),
+        "patternProperties": Ref("patternProperties", "properties"),
+        "additionalProperties": Ref("additionalProperties", "additionalProperties"),
+        "propertyNames": Ref("propertyNames", "propertyNames"),
+        "items": Ref("items", "type"),
+        "prefixItems": Ref("prefixItems", "type"),
+        "contains": Ref("contains", "type"),
+        "type": Ref("type", "type_value"),
+    },
     primitives="enum,const,"  # enums and consts
-               "required,minProperties,maxProperties,"  # object
-               "minItems,maxItems,uniqueItems,minContains,maxContains,"  # array
-               "minLength,maxLength,pattern,format,"  # string
-               "minimum,exclusiveMinimum,maximum,exclusiveMaximum,multipleOf"  # numbers
+    "required,minProperties,maxProperties,"  # object
+    "minItems,maxItems,uniqueItems,minContains,maxContains,"  # array
+    "minLength,maxLength,pattern,format,"  # string
+    "minimum,exclusiveMinimum,maximum,exclusiveMaximum,multipleOf",  # numbers
 )
 
-Ref.refs['additionalProperties'] = DictValidator(primitives='type')
+Ref.refs["additionalProperties"] = DictValidator(primitives="type")
 
-Ref.refs['propertyNames'] = DictValidator(primitives='pattern'),
+Ref.refs["propertyNames"] = (DictValidator(primitives="pattern"),)
 
-Ref.refs['properties'] = AnyKeyDictValidator(Ref('property', 'type'))
+Ref.refs["properties"] = AnyKeyDictValidator(Ref("property", "type"))
 
-Ref.refs['type_value'] = PrimitiveValidator()
+Ref.refs["type_value"] = PrimitiveValidator()
 
 schema_paths = DictValidator(
     {
         "$vocabulary": AnyKeyDictValidator(primitive),
-        "properties": Ref('properties', 'properties')
-    }, primitives='$schema,$id,type'
+        "properties": Ref("properties", "properties"),
+    },
+    primitives="$schema,$id,type",
 )
 
-model_paths = DictValidator(
-    {
-        'model': schema_paths
-    }
-)
+model_paths = DictValidator({"model": schema_paths})
 
 
 def match_schema(stack: ModelBuilderStack):

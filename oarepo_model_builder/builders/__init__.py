@@ -3,11 +3,11 @@ from __future__ import annotations
 import copy
 import functools
 import inspect
-from typing import TYPE_CHECKING, Union, List
+from typing import TYPE_CHECKING, List, Union
 
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor
-from oarepo_model_builder.utils.json_pathlib import JSONPaths
 from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement
+from oarepo_model_builder.utils.json_pathlib import JSONPaths
 from oarepo_model_builder.utils.verbose import log
 
 if TYPE_CHECKING:
@@ -40,7 +40,7 @@ class OutputBuilder:
         self.json_paths = JSONPaths()
         arr = []
         for name, method in inspect.getmembers(self, inspect.ismethod):
-            if not hasattr(method, 'model_builder_priority'):
+            if not hasattr(method, "model_builder_priority"):
                 continue
             arr.append(
                 (
@@ -49,7 +49,7 @@ class OutputBuilder:
                     method.model_builder_path,
                     id(method),
                     method.model_builder_condition,
-                    method
+                    method,
                 )
             )
         arr.sort()
@@ -61,7 +61,7 @@ class OutputBuilder:
         self.settings = settings
         self.stack = ModelBuilderStack()
         self.stack.push(None, schema)
-        log.enter(2, 'Creating %s', self.TYPE)
+        log.enter(2, "Creating %s", self.TYPE)
         pass
 
     def finish(self):
@@ -104,7 +104,7 @@ class OutputBuilder:
                     for k, v in enumerate(data.data):
                         self.build_node(k, v)
                 else:
-                    raise AttributeError(f'Do not know how to handle {type(data.data)} in ReplaceElement')
+                    raise AttributeError(f"Do not know how to handle {type(data.data)} in ReplaceElement")
             return
         self.stack.top.data = data
         self.process_stack_top()
@@ -118,13 +118,14 @@ class OutputBuilder:
         elif isinstance(data, dict):
             children = list(data.items())
             if ordering:
+
                 def key_function(x):
                     try:
                         return ordering.index(x)
                     except ValueError:
                         pass
                     try:
-                        return ordering.index('*')
+                        return ordering.index("*")
                     except ValueError:
                         pass
                     return len(ordering)
@@ -135,18 +136,16 @@ class OutputBuilder:
 
     def process_stack_top(self):
         try:
-            self.call_components('before_process_element', value=self.stack.top.data, stack=self.stack)
-            for method in self.json_paths.match(self.stack.path, self.stack.top.data, extra_data={
-                'stack': self.stack
-            }):
+            self.call_components("before_process_element", value=self.stack.top.data, stack=self.stack)
+            for method in self.json_paths.match(self.stack.path, self.stack.top.data, extra_data={"stack": self.stack}):
                 return method()
             # do not skip stack top
             if self.stack.level <= 1:
                 self.build_children()
         finally:
-            self.call_components('after_process_element', value=self.stack.top.data, stack=self.stack)
+            self.call_components("after_process_element", value=self.stack.top.data, stack=self.stack)
 
-    @process('/model')
+    @process("/model")
     def enter_model(self):
         self.build_children()
 
@@ -165,9 +164,4 @@ class OutputBuilderComponent:
         return value
 
 
-__all__ = [
-    'process',
-    'OutputBuilder',
-    'ModelBuilderStack',
-    'ReplaceElement'
-]
+__all__ = ["process", "OutputBuilder", "ModelBuilderStack", "ReplaceElement"]

@@ -14,8 +14,8 @@ class HyphenMunch(munch.AutoMunch):
             return super().__getitem__(key)
         except:
             try:
-                key = key.replace('_', '-')
+                key = key.replace("_", "-")
                 return super().__getitem__(key)
             except:
-                key = key.replace('-', '_')
+                key = key.replace("-", "_")
                 return super().__getitem__(key)

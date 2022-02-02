@@ -1,9 +1,9 @@
 def package_name(value):
-    return value.rsplit('.', maxsplit=1)[0]
+    return value.rsplit(".", maxsplit=1)[0]
 
 
 def base_name(value):
-    return value.rsplit('.', maxsplit=1)[-1]
+    return value.rsplit(".", maxsplit=1)[-1]
 
 
 def in_different_package(current_package_name, value):
