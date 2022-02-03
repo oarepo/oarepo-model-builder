@@ -1,13 +1,10 @@
 from collections import defaultdict
 
 from oarepo_model_builder.builders import process
-from oarepo_model_builder.stack import ModelBuilderStack
-
-from ..outputs.json_stack import JSONStack
+from .invenio_base import InvenioBaseClassPythonBuilder
 from ..utils.deepmerge import deepmerge
 from ..utils.jinja import base_name, package_name, with_defined_prefix
 from ..utils.schema import Ref, is_schema_element, match_schema
-from .invenio_base import InvenioBaseClassPythonBuilder
 
 OAREPO_MARSHMALLOW_PROPERTY = "oarepo:marshmallow"
 
@@ -44,9 +41,6 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.imported_classes = {}
 
     def finish(self):
-        # TODO: generate subschemas as well
-        # TODO: generate arrays as well
-        # TODO: handle required
         super().finish(imports=self.imports, imported_classes=self.imported_classes)
 
     @process("/model/**", condition=lambda current, stack: is_schema_element(stack))
@@ -110,15 +104,19 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             marshmallow_stack_top.add(key, definition["field"])
         elif schema_element_type == "properties":
             node = self.marshmallow_stack.pop()
+            class_name = node.schema_class_name
+            if class_name.startswith('.'):
+                class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
+
             self.process_template(
-                self.class_to_path(node.schema_class_name),
+                self.class_to_path(class_name),
                 "object-schema",
-                schema_class=node.schema_class_name,
+                schema_class=class_name,
                 schema_bases=node.schema_class_bases,
                 fields=node.fields,
                 imports=self.imports,
                 imported_classes=self.imported_classes,
-                current_package_name=package_name(node.schema_class_name),
+                current_package_name=package_name(class_name),
             )
 
     def get_marshmallow_definition(self, data, stack, definition=None):
@@ -147,9 +145,11 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         if "class" in definition:
             class_name = definition["class"]
+            if class_name.startswith('.'):
+                class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
             if "." in class_name:
                 if not with_defined_prefix(self.settings.python.always_defined_import_prefixes, class_name):
-                    class_base_name = self.imported_classes[definition["class"]] = base_name(class_name)
+                    class_base_name = self.imported_classes[class_name] = base_name(class_name)
                 else:
                     class_base_name = class_name
             else:
@@ -239,3 +239,15 @@ default_marshmallow_generators = {
     "string": marshmallow_string_generator,
     "integer": marshmallow_integer_generator,
 }
+
+
+def resolve_relative_classname(class_name, base_class_name):
+    base_class_name = base_class_name.rsplit('.', maxsplit=1)[0]
+    class_name = class_name[1:]
+    if '.' in class_name:
+        # always go one level up
+        class_name = '.' + class_name
+    while class_name.startswith('.'):
+        class_name = class_name[1:]
+        base_class_name = base_class_name.rsplit('.', maxsplit=1)[0]
+    return base_class_name + '.' + class_name
