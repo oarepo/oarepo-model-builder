@@ -43,8 +43,8 @@ def test_include_invenio():
     schema = load_model(
         'test.yaml', 'test',
         model_content={
+            'oarepo:use': 'invenio',
             'model': {
-                'oarepo:use': 'invenio',
                 'properties': {
                     'a': {
                         'type': 'fulltext+keyword'
@@ -129,8 +129,8 @@ def test_nested():
     schema = load_model(
         'test.yaml', 'test',
         model_content={
+            'oarepo:use': 'invenio',
             'model': {
-                'oarepo:use': 'invenio',
                 'properties': {
                     'b': {
                         'properties': {
@@ -241,8 +241,8 @@ def test_search_class():
     schema = load_model(
         'test.yaml', 'test',
         model_content={
+            'oarepo:use': 'invenio',
             'model': {
-                'oarepo:use': 'invenio',
                 'properties': {
                     'a': {
                         'type': 'fulltext+keyword'

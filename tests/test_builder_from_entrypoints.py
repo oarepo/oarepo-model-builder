@@ -12,7 +12,7 @@ def test_include_invenio():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"model": {"oarepo:use": "invenio", "properties": {"a": {"type": "string"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "string"}}}},
         isort=False,
         black=False,
     )
@@ -67,7 +67,7 @@ def test_generate_multiple_times():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"model": {"oarepo:use": "invenio", "properties": {"a": {"type": "string"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "string"}}}},
         isort=False,
         black=False,
     )
@@ -101,7 +101,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"model": {"oarepo:use": "invenio", "properties": {"a": {"type": "string"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "string"}}}},
         isort=False,
         black=False,
     )
@@ -116,7 +116,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"model": {"oarepo:use": "invenio", "properties": {"a": {"type": "string"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "string"}}}},
         isort=False,
         black=False,
     )

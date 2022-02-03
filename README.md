@@ -84,16 +84,19 @@ A model is a json/yaml file including description of the model and processing se
 
 ```yaml
 version: 1.0.0
+oarepo:use: invenio
 model:
   properties:
-    title:
-      type: fulltext+keyword
-      oarepo:ui:
-        label: Title
-      oarepo:mapping:
-      # anything in here will be put into the mapping file
-      # fulltext+keyword type automatically creates "type: text" 
-      # with subfield 'keyword' of type keyword
+    metadata:
+      properties:
+        title:
+          type: fulltext+keyword
+          oarepo:ui:
+            label: Title
+          oarepo:mapping:
+          # anything in here will be put into the mapping file
+          # fulltext+keyword type automatically creates "type: text" 
+          # with subfield 'keyword' of type keyword
 settings:
   package: uct.titled_model 
 ```

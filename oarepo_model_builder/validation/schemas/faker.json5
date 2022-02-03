@@ -1,0 +1,25 @@
+{
+  "jsonschema-property": {
+    "properties": {
+      "oarepo:sample": {
+        "type": "object",
+        "properties": {
+          "skip": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "faker": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
