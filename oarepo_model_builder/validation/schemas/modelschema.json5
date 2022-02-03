@@ -36,6 +36,26 @@
       },
       "items": {
         "$ref": "#/$defs/jsonschema-property"
+      },
+      // recognized text properties
+      "minLength": {
+        "type": "integer"
+      },
+      "maxLength": {
+        "type": "integer"
+      },
+      // number properties
+      "minimum": {
+        "type": "number"
+      },
+      "exclusiveMinimum": {
+        "type": "number"
+      },
+      "maximum": {
+        "type": "number"
+      },
+      "exclusiveMaximum": {
+        "type": "number"
       }
     }
   }
