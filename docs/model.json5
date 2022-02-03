@@ -1,4 +1,5 @@
 {
+  "oarepo:use": "invenio",
   settings: {
     package: 'record_test',
   },

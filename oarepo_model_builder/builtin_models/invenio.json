@@ -1,31 +1,33 @@
 {
-  "properties": {
-    "id": {
-      "type": "keyword",
-      "oarepo:sample": {
-        "skip": true
-      }
-    },
-    "created": {
-      "type": "date",
-      "oarepo:sample": {
-        "skip": true
-      }
-    },
-    "updated": {
-      "type": "date",
-      "oarepo:sample": {
-        "skip": true
-      }
-    },
-    "$schema": {
-      "type": "keyword",
-      "oarepo:marshmallow": {
-        "field_name": "_schema",
-        "field_args": "data_key='$schema'"
+  "model": {
+    "properties": {
+      "id": {
+        "type": "keyword",
+        "oarepo:sample": {
+          "skip": true
+        }
       },
-      "oarepo:sample": {
-        "skip": true
+      "created": {
+        "type": "date",
+        "oarepo:sample": {
+          "skip": true
+        }
+      },
+      "updated": {
+        "type": "date",
+        "oarepo:sample": {
+          "skip": true
+        }
+      },
+      "$schema": {
+        "type": "keyword",
+        "oarepo:marshmallow": {
+          "field_name": "_schema",
+          "field_args": "data_key='$schema'"
+        },
+        "oarepo:sample": {
+          "skip": true
+        }
       }
     }
   }

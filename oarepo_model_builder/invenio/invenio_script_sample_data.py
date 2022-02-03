@@ -73,7 +73,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
                 method = stack.top.key
             else:
                 method = "sentence"
-        return getattr(self.faker, method)()
+        return getattr(self.faker, method)(**params)
 
 
 class InvenioScriptSampleDataShellBuilder(OutputBuilder):
