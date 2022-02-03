@@ -78,8 +78,8 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
         output_directory,
     )
 
-    schema = load_model(model_filename, package, configs, black, isort, sets)
-    schema.schema["output-directory"] = output_directory
+    model = load_model(model_filename, package, configs, black, isort, sets)
+    model.schema["output-directory"] = output_directory
 
     if not resolve_conflicts or resolve_conflicts == "debug":
         resolver = InteractiveResolver(resolve_conflicts == "debug")
@@ -87,7 +87,7 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
         resolver = AutomaticResolver(resolve_conflicts)
 
     builder = create_builder_from_entrypoints()
-    builder.build(schema, output_directory, resolver)
+    builder.build(model, output_directory, resolver)
 
     log.leave("Done")
 

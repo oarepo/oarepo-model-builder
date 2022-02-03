@@ -1,0 +1,11 @@
+{
+  "jsonschema-property": {
+    "properties": {
+      "type": {
+        "enum": [
+          "date",
+        ]
+      }
+    }
+  }
+}

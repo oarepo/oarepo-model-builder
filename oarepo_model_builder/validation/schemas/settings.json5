@@ -1,0 +1,205 @@
+{
+  "settings": {
+    "type": "object",
+    "properties": {
+      "plugins": {
+        "$ref": "#/$defs/settings-plugins"
+      },
+      "python": {
+        "$ref": "#/$defs/settings-python"
+      },
+      "package": {
+        "type": "string"
+      },
+      "package-path": {
+        "type": "string"
+      },
+      "jsonschemas-package": {
+        "type": "string"
+      },
+      "mapping-file": {
+        "type": "string"
+      },
+      "collection-url": {
+        "type": "string"
+      },
+      "schema-name": {
+        "type": "string"
+      },
+      "index-name": {
+        "type": "string"
+      },
+      "script-import-sample-data": {
+        "type": "string"
+      },
+      "kebap-package": {
+        "type": "string"
+      },
+      "elasticsearch": {
+        "$ref": "#/$defs/settings-elasticsearch"
+      },
+      "schema-file": {
+        "type": "string"
+      },
+      "package-base": {
+        "type": "string"
+      },
+      "mapping-package": {
+        "type": "string"
+      },
+      "schema-server": {
+        "type": "string"
+      },
+      "schema-version": {
+        "type": "string"
+      },
+      "processing-order": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "package-base-upper": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": false
+  },
+  "settings-plugins": {
+    "type": "object",
+    "properties": {
+    },
+    "additionalProperties": false
+  },
+  "settings-python": {
+    "type": "object",
+    "properties": {
+      "use_black": {
+        "type": "boolean"
+      },
+      "use_isort": {
+        "type": "boolean"
+      },
+      "always-defined-import-prefixes": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "config-dummy-class": {
+        "type": "string"
+      },
+      "config-package": {
+        "type": "string"
+      },
+      "config-resource-class-key": {
+        "type": "string"
+      },
+      "config-resource-config-key": {
+        "type": "string"
+      },
+      "config-service-class-key": {
+        "type": "string"
+      },
+      "config-service-config-key": {
+        "type": "string"
+      },
+      "create-blueprint-from-app": {
+        "type": "string"
+      },
+      "ext-class": {
+        "type": "string"
+      },
+      "flask-extension-name": {
+        "type": "string"
+      },
+      "marshmallow": {
+        "type": "object",
+        "properties": {
+          "mapping": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        }
+      },
+      "proxies-current-resource": {
+        "type": "string"
+      },
+      "proxies-current-service": {
+        "type": "string"
+      },
+      "record-class": {
+        "type": "string"
+      },
+      "record-dumper-class": {
+        "type": "string"
+      },
+      "record-facets-class": {
+        "type": "string"
+      },
+      "record-jsonschemas-poetry": {
+        "type": "string"
+      },
+      "record-mapping-poetry": {
+        "type": "string"
+      },
+      "record-metadata-class": {
+        "type": "string"
+      },
+      "record-metadata-table-name": {
+        "type": "string"
+      },
+      "record-permissions-class": {
+        "type": "string"
+      },
+      "record-prefix-snake": {
+        "type": "string"
+      },
+      "record-resource-blueprint-name": {
+        "type": "string"
+      },
+      "record-resource-class": {
+        "type": "string"
+      },
+      "record-resource-config-class": {
+        "type": "string"
+      },
+      "record-schema-class": {
+        "type": "string"
+      },
+      "record-schema-metadata-alembic": {
+        "type": "string"
+      },
+      "record-schema-metadata-class": {
+        "type": "string"
+      },
+      "record-schema-metadata-poetry": {
+        "type": "string"
+      },
+      "record-search-options-class": {
+        "type": "string"
+      },
+      "record-service-class": {
+        "type": "string"
+      },
+      "record-service-config-class": {
+        "type": "string"
+      },
+      "record_prefix": {
+        "type": "string"
+      },
+      "script-import-sample-data-cli": {
+        "type": "string"
+      },
+      "templates": {
+        "type": "object",
+        "patternProperties": {
+          "^.*$": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "additionalProperties": false
+  }
+}

@@ -65,6 +65,7 @@ def build(kwargs={}):
     )
     filesystem = MockFilesystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.skip_schema_validation = True
     builder.build(schema, "")
     data = builder.filesystem.open("pyproject.toml").read()
     return data

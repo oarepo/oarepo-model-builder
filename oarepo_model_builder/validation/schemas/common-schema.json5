@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "#/$defs/root"
+    }
+  ],
+  "$defs": {
+    "root": {
+      "type": "object",
+      "properties": {
+        "settings": {
+          "$ref": "#/$defs/settings"
+        },
+        "model": {
+          "$ref": "#/$defs/model"
+        }
+      },
+      "additionalProperties": false,
+    }
+  }
+}

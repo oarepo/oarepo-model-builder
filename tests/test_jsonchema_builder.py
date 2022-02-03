@@ -24,7 +24,7 @@ def test_simple_jsonschema_builder():
         filesystem=MockFilesystem(),
     )
     builder.build(
-        schema=ModelSchema(
+        model=ModelSchema(
             "",
             {
                 "settings": {
@@ -49,10 +49,21 @@ def test_jsonschema_preprocessor():
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
         filesystem=MockFilesystem(),
+        included_validation_schemas=[
+            {
+                "jsonschema-property": {
+                    "properties": {
+                        "type": {
+                            "enum": ["multilingual"]
+                        }
+                    }
+                }
+            }
+        ]
     )
 
     builder.build(
-        schema=ModelSchema(
+        model=ModelSchema(
             "",
             {
                 "settings": {
@@ -93,7 +104,7 @@ def test_components():
         filesystem=MockFilesystem(),
     )
     builder.build(
-        schema=ModelSchema(
+        model=ModelSchema(
             "",
             {
                 "settings": {

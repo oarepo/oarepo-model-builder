@@ -1,0 +1,13 @@
+{
+  "jsonschema-property": {
+    "properties": {
+      "type": {
+        "enum": [
+          "fulltext",
+          "keyword",
+          "fulltext+keyword"
+        ]
+      }
+    }
+  }
+}
