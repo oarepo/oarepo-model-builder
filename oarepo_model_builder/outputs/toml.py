@@ -25,7 +25,7 @@ class TOMLOutput(OutputBase):
 
     def table(self, key, key_type=tomlkit.items.KeyType.Bare):
         def get_by_key(key):
-            _key = tomlkit.items.Key(key, key_type)
+            _key = create_key(key, key_type)
             try:
                 return self.toml[_key]
             except KeyError:
@@ -45,7 +45,7 @@ class TOMLOutput(OutputBase):
 
             t = self.toml
             for k in key_seq:
-                _key = tomlkit.items.Key(k, key_type)
+                _key = create_key(k, key_type)
                 try:
                     t = t[_key]
                 except KeyError:
@@ -56,7 +56,7 @@ class TOMLOutput(OutputBase):
         if t is not None:
             return t
         t = tomlkit.table()
-        self.toml.append(tomlkit.items.Key(key, key_type), t)
+        self.toml.append(create_key(key, key_type), t)
         return t
 
     def get(self, table, key):
@@ -68,20 +68,20 @@ class TOMLOutput(OutputBase):
 
     def set(self, table, key, value, *others_key_values, key_type=tomlkit.items.KeyType.Bare):
         tbl = self.table(table)
-        key = tomlkit.items.Key(key, key_type)
+        key = create_key(key, key_type)
         tbl[key] = value
         while others_key_values:
             key = others_key_values[0]
             value = others_key_values[1]
             others_key_values = others_key_values[2:]
 
-            key = tomlkit.items.Key(key, key_type)
+            key = create_key(key, key_type)
             tbl[key] = value
 
     def setdefault(self, table, key, value, *others_key_values, key_type=tomlkit.items.KeyType.Bare):
         tbl = self.table(table)
 
-        key = tomlkit.items.Key(key, key_type)
+        key = create_key(key, key_type)
         tbl.setdefault(key, value)
 
         while others_key_values:
@@ -89,7 +89,7 @@ class TOMLOutput(OutputBase):
             value = others_key_values[1]
             others_key_values = others_key_values[2:]
 
-            key = tomlkit.items.Key(key, key_type)
+            key = create_key(key, key_type)
             tbl.setdefault(key, value)
 
     def finish(self):
@@ -97,3 +97,7 @@ class TOMLOutput(OutputBase):
         if out != self.parsed:
             with self.builder.filesystem.open(self.path, "w") as f:
                 f.write(tomlkit.dumps(self.toml))
+
+
+def create_key(key, key_type=tomlkit.items.KeyType.Bare):
+    return tomlkit.items.SingleKey(key, t=key_type)

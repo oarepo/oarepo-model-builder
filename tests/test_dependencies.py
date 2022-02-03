@@ -6,6 +6,7 @@ from tests.mock_filesystem import MockFilesystem
 
 def test_no_dependencies():
     data = build()
+    print(data)
     assert data.startswith("[tool.poetry]")
 
 
