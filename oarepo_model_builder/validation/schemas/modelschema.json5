@@ -1,0 +1,62 @@
+{
+  "model": {
+    "allOf": [
+      {
+        "$ref": "#/$defs/jsonschema-object"
+      }
+    ],
+    "unevaluatedProperties": false
+  },
+  "jsonschema-object": {
+    "type": "object",
+    "properties": {
+      "properties": {
+        "type": "object",
+        "patternProperties": {
+          "^.*$": {
+            "$ref": "#/$defs/jsonschema-property"
+          }
+        }
+      }
+    },
+  },
+  "jsonschema-property": {
+    "type": "object",
+    "properties": {
+      "type": {
+        "type": "string",
+        "enum": [
+          "string",
+          "boolean",
+          "number",
+          "integer",
+          "array",
+          "object"
+        ]
+      },
+      "items": {
+        "$ref": "#/$defs/jsonschema-property"
+      },
+      // recognized text properties
+      "minLength": {
+        "type": "integer"
+      },
+      "maxLength": {
+        "type": "integer"
+      },
+      // number properties
+      "minimum": {
+        "type": "number"
+      },
+      "exclusiveMinimum": {
+        "type": "number"
+      },
+      "maximum": {
+        "type": "number"
+      },
+      "exclusiveMaximum": {
+        "type": "number"
+      }
+    }
+  }
+}

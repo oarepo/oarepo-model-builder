@@ -1,0 +1,26 @@
+{
+  "settings-elasticsearch": {
+    "type": "object",
+    "properties": {
+      "version": {
+        "type": "string",
+        "enum": [
+          "v7"
+        ]
+      },
+      "keyword-ignore-above": {
+        "type": "number"
+      },
+      "templates": {
+        "type": "object",
+        "properties": {
+          "v7": {
+            "type": "object",
+            "additionalProperties": true
+            // ES mapping section, no schema for it yet
+          }
+        }
+      }
+    }
+  }
+}

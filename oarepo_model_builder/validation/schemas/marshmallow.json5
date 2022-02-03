@@ -1,0 +1,32 @@
+{
+  "model": {
+    "allOf": [
+      {
+        "$ref": "#/$defs/marshmallow"
+      }
+    ]
+  },
+  "marshmallow": {
+    "type": "object",
+    "properties": {
+      "oarepo:marshmallow": {
+        "type": "object",
+        "properties": {
+          "base-classes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "class": {
+            "type": "string"
+          },
+          "generate": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+  }
+}

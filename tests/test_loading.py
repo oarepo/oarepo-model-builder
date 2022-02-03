@@ -22,7 +22,7 @@ def test_loading_included_resource():
     )
     assert schema.schema == {
         "settings": {"plugins": {}},
-        "a": {"oarepo:included-from": "test1", "included": "test1"},
+        "a": {"included": "test1"},
     }
 
 
@@ -34,7 +34,6 @@ def test_loading_included_resource_root():
     )
     assert schema.schema == {
         "settings": {"plugins": {}},
-        "oarepo:included-from": "test1",
         "included": "test1",
     }
 
@@ -47,7 +46,6 @@ def test_loading_jsonpath_resource():
     )
     assert schema.schema == {
         "settings": {"plugins": {}},
-        "oarepo:included-from": "test1#/test/a",
         "included": "test1",
     }
 
@@ -56,7 +54,7 @@ def test_loading_current():
     schema = ModelSchema("/tmp/path.json", {"b": {"oarepo:use": "#/a"}, "a": {"a": True}})
     assert schema.schema == {
         "settings": {"plugins": {}},
-        "b": {"oarepo:included-from": "#/a", "a": True},
+        "b": {"a": True},
         "a": {"a": True},
     }
 
@@ -65,7 +63,7 @@ def test_loading_current_by_id():
     schema = ModelSchema("/tmp/path.json", {"b": {"oarepo:use": "#id"}, "a": {"$id": "id", "a": True}})
     assert schema.schema == {
         "settings": {"plugins": {}},
-        "b": {"oarepo:included-from": "#id", "a": True},
+        "b": {"a": True},
         "a": {"$id": "id", "a": True},
     }
 
@@ -80,5 +78,5 @@ def test_loading_external_by_id():
     )
     assert schema.schema == {
         "settings": {"plugins": {}},
-        "b": {"oarepo:included-from": "aa#id", "a": True},
+        "b": {"a": True},
     }

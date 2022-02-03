@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.9.15"
+version = "0.9.16"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
@@ -25,6 +25,7 @@ isort = "^5.10.1"
 black = "^21.11b1"
 Faker = "^11.3.0"
 lazy-object-proxy = "^1.7.1"
+jsonschema = {extras = ["format"], version = "^4.4.0"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6"
@@ -125,6 +126,14 @@ yml = "oarepo_model_builder.loaders:yaml_loader"
 
 [tool.poetry.plugins."oarepo.models"]
 invenio = "oarepo_model_builder.builtin_models:invenio.json"
+
+[tool.poetry.plugins."oarepo.model_schemas"]
+es-strings = "oarepo_model_builder.validation.schemas:es_strings.json5"
+date = "oarepo_model_builder.validation.schemas:date.json5"
+marshmallow = "oarepo_model_builder.validation.schemas:marshmallow.json5"
+settings = "oarepo_model_builder.validation.schemas:settings.json5"
+modelschema = "oarepo_model_builder.validation.schemas:modelschema.json5"
+elasticsearch = "oarepo_model_builder.validation.schemas:elasticsearch.json5"
 
 [tool.poetry.scripts]
 oarepo-compile-model = "oarepo_model_builder.cli:run"

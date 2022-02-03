@@ -110,7 +110,6 @@ class ModelSchema:
 
         ret = copy.deepcopy(ret)
         ret.pop("$id", None)
-        ret["oarepo:included-from"] = location
         return ret
 
     def _resolve_references(self, element, stack):

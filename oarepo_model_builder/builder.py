@@ -13,6 +13,7 @@ from .outputs import OutputBase
 from .property_preprocessors import PropertyPreprocessor
 from .schema import ModelSchema
 from .utils.cst import ConflictResolver
+from .validation import validate_model
 
 
 class ModelBuilder:
@@ -68,13 +69,14 @@ class ModelBuilder:
     filesystem: AbstractFileSystem
 
     def __init__(
-        self,
-        outputs: List[type(OutputBase)] = (),
-        output_builders: List[type(OutputBuilder)] = (),
-        property_preprocessors: List[type(PropertyPreprocessor)] = (),
-        model_preprocessors: List[type(ModelPreprocessor)] = (),
-        output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
-        filesystem=FileSystem(),
+            self,
+            outputs: List[type(OutputBase)] = (),
+            output_builders: List[type(OutputBuilder)] = (),
+            property_preprocessors: List[type(PropertyPreprocessor)] = (),
+            model_preprocessors: List[type(ModelPreprocessor)] = (),
+            output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
+            included_validation_schemas=None,
+            filesystem=FileSystem(),
     ):
         """
         Initializes the builder
@@ -98,6 +100,8 @@ class ModelBuilder:
         else:
             self.output_builder_components = {}
         self.filesystem = filesystem
+        self.included_validation_schemas = included_validation_schemas or []
+        self.skip_schema_validation = False     # set to True in some tests
 
     def get_output(self, output_type: str, path: str | Path):
         """
@@ -126,22 +130,28 @@ class ModelBuilder:
         return self.output_builder_components.get(output_builder_type, ())
 
     # main entry point
-    def build(self, schema: ModelSchema, output_dir: str | Path, resolver: ConflictResolver = None):
+    def build(self, model: ModelSchema, output_dir: str | Path, resolver: ConflictResolver = None):
         """
         compile the schema to output directory
 
-        :param schema:      the model schema
+        :param model:      the model schema
         :param output_dir:  output directory where to put generated files
         :return:            the outputs (self.outputs)
         """
         self.conflict_resolver = resolver
-        self.set_schema(schema)
+        self.set_schema(model)
         self.filtered_output_classes = {o.TYPE: o for o in self._filter_classes(self.output_classes, "output")}
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
 
+        if not self.skip_schema_validation:
+            validate_model(model, self.included_validation_schemas)
+
         for model_preprocessor in self._filter_classes(self.model_preprocessor_classes, "model"):
-            model_preprocessor(self).transform(schema, schema.settings)
+            model_preprocessor(self).transform(model, model.settings)
+
+        if not self.skip_schema_validation:
+            validate_model(model, self.included_validation_schemas)
 
         # noinspection PyTypeChecker
         property_preprocessors: List[PropertyPreprocessor] = [
@@ -151,7 +161,7 @@ class ModelBuilder:
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(self.output_builder_classes, "builder"):
             output_builder = output_builder_class(builder=self, property_preprocessors=property_preprocessors)
-            output_builder.build(schema)
+            output_builder.build(model)
 
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
             output.finish()

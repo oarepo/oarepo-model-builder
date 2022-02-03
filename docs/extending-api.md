@@ -71,3 +71,19 @@ See [template for builder plugins](./extending-builder.md)
 ## Packaging your extension
 
 See [packaging your extension](./extension-packaging.md) for more details.
+
+## Extending model schema
+
+If the extension modifies the model json schema, you have
+to provide respective schema snippets. Create your own
+json5 file (see for example oarepo_model_builder/validation/schemas/es_strings.json5)
+and register it in entrypoints:
+
+```toml
+[tool.poetry.plugins."oarepo.model_schemas"]
+es-strings = "oarepo_model_builder.validation.schemas:es_strings.json5"
+```
+
+This file will be loaded and its content merged into the '$defs' section
+of the main schema (located at oarepo_model_builder/validation/schemas/common-schema.json5)
+

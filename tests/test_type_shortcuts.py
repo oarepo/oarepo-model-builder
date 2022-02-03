@@ -68,7 +68,7 @@ def build_jsonschema(model):
         filesystem=MockFilesystem(),
     )
     builder.build(
-        schema=ModelSchema(
+        model=ModelSchema(
             "",
             {
                 "settings": {
