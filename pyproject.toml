@@ -134,6 +134,7 @@ marshmallow = "oarepo_model_builder.validation.schemas:marshmallow.json5"
 settings = "oarepo_model_builder.validation.schemas:settings.json5"
 modelschema = "oarepo_model_builder.validation.schemas:modelschema.json5"
 elasticsearch = "oarepo_model_builder.validation.schemas:elasticsearch.json5"
+faker = "oarepo_model_builder.validation.schemas:faker.json5"
 
 [tool.poetry.scripts]
 oarepo-compile-model = "oarepo_model_builder.cli:run"
