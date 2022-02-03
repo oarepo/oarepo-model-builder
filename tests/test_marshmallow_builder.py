@@ -90,26 +90,26 @@ def test_generate_nested_schema_same_file(fulltext_builder):
     with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema.py")) as f:
         data = f.read()
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class B(ma.Schema, ):
-    \"""B schema.\"""
-    
-    b = ma_fields.String()""",
-        )
-        in re.sub(r"\s", "", data)
+            re.sub(
+                r"\s",
+                "",
+                """class B(ma.Schema, ):
+        \"""B schema.\"""
+        
+        b = ma_fields.String()""",
+            )
+            in re.sub(r"\s", "", data)
     )
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema, ):
-    \"""TestSchema schema.\"""
-    
-    a = ma_fields.Nested(B)""",
-        )
-        in re.sub(r"\s", "", data)
+            re.sub(
+                r"\s",
+                "",
+                """class TestSchema(ma.Schema, ):
+        \"""TestSchema schema.\"""
+        
+        a = ma_fields.Nested(B)""",
+            )
+            in re.sub(r"\s", "", data)
     )
 
 
@@ -134,15 +134,15 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         data = f.read()
 
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema, ):
-    \"""TestSchema schema.\"""
-
-    a = ma_fields.Nested(B)""",
-        )
-        in re.sub(r"\s", "", data)
+            re.sub(
+                r"\s",
+                "",
+                """class TestSchema(ma.Schema, ):
+        \"""TestSchema schema.\"""
+    
+        a = ma_fields.Nested(B)""",
+            )
+            in re.sub(r"\s", "", data)
     )
 
     assert "from test.services.schema2 import B" in data
@@ -170,15 +170,15 @@ def test_use_nested_schema_same_file(fulltext_builder):
         data = f.read()
 
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema, ):
-    \"""TestSchema schema.\"""
-    
-    a = ma_fields.Nested(B)""",
-        )
-        in re.sub(r"\s", "", data)
+            re.sub(
+                r"\s",
+                "",
+                """class TestSchema(ma.Schema, ):
+        \"""TestSchema schema.\"""
+        
+        a = ma_fields.Nested(B)""",
+            )
+            in re.sub(r"\s", "", data)
     )
     assert "classB(ma.Schema,)" not in re.sub(r"\s", "", data)
 
@@ -247,3 +247,153 @@ class TestSchema(ma.Schema, ):
     fulltext_builder.build(schema, output_dir="")
     data = fulltext_builder.filesystem.read(os.path.join("test", "services", "schema.py"))
     assert "b = ma_fields.String()" in data
+
+
+def test_generate_nested_schema_relative_same_package(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "oarepo:marshmallow": {
+                "class": ".schema2.B",
+                "generate": True,
+            },
+            "properties": {
+                "b": {
+                    "type": "string",
+                }
+            },
+        }
+    )
+    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.build(schema, output_dir="")
+
+    with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema.py")) as f:
+        data = f.read()
+
+    assert (
+            re.sub(
+                r"\s",
+                "",
+                """class TestSchema(ma.Schema, ):
+        \"""TestSchema schema.\"""
+    
+        a = ma_fields.Nested(B)""",
+            )
+            in re.sub(r"\s", "", data)
+    )
+
+    assert "from test.services.schema2 import B" in data
+
+    with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema2.py")) as f:
+        data = f.read()
+    assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(r"\s", "", data)
+
+
+def test_generate_nested_schema_relative_same_file(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "oarepo:marshmallow": {
+                "class": ".B",
+                "generate": True,
+            },
+            "properties": {
+                "b": {
+                    "type": "string",
+                }
+            },
+        }
+    )
+    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.build(schema, output_dir="")
+
+    with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema.py")) as f:
+        data = f.read()
+
+    assert (
+            re.sub(
+                r"\s",
+                "",
+                """class TestSchema(ma.Schema, ):
+        \"""TestSchema schema.\"""
+
+        a = ma_fields.Nested(B)""",
+            )
+            in re.sub(r"\s", "", data)
+    )
+
+
+def test_generate_nested_schema_relative_same_package(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "oarepo:marshmallow": {
+                "class": ".schema2.B",
+                "generate": True,
+            },
+            "properties": {
+                "b": {
+                    "type": "string",
+                }
+            },
+        }
+    )
+    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.build(schema, output_dir="")
+
+    with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema.py")) as f:
+        data = f.read()
+
+    assert (
+            re.sub(
+                r"\s",
+                "",
+                """class TestSchema(ma.Schema, ):
+        \"""TestSchema schema.\"""
+
+        a = ma_fields.Nested(B)""",
+            )
+            in re.sub(r"\s", "", data)
+    )
+
+    assert "from test.services.schema2 import B" in data
+
+    with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema2.py")) as f:
+        data = f.read()
+    assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(r"\s", "", data)
+
+
+def test_generate_nested_schema_relative_upper(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "oarepo:marshmallow": {
+                "class": "..schema2.B",
+                "generate": True,
+            },
+            "properties": {
+                "b": {
+                    "type": "string",
+                }
+            },
+        }
+    )
+    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.build(schema, output_dir="")
+
+    with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema.py")) as f:
+        data = f.read()
+
+    assert (
+            re.sub(
+                r"\s",
+                "",
+                """class TestSchema(ma.Schema, ):
+        \"""TestSchema schema.\"""
+
+        a = ma_fields.Nested(B)""",
+            )
+            in re.sub(r"\s", "", data)
+    )
+
+    assert "from test.schema2 import B" in data
+
+    with fulltext_builder.filesystem.open(os.path.join("test", "schema2.py")) as f:
+        data = f.read()
+    assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(r"\s", "", data)
