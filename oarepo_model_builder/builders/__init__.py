@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import functools
 import inspect
+import sys
 from typing import TYPE_CHECKING, List, Union
 
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor
@@ -36,6 +37,7 @@ class OutputBuilder:
         self.builder = builder
         self.property_preprocessors = property_preprocessors
         self.stack = None
+        self.silent_exceptions = False
         # TODO: move this to metaclass and initialize only once per class
         self.json_paths = JSONPaths()
         arr = []
@@ -62,7 +64,7 @@ class OutputBuilder:
         self.stack = ModelBuilderStack()
         self.stack.push(None, schema)
         log.enter(2, "Creating %s", self.TYPE)
-        pass
+        self.silent_exceptions = False
 
     def finish(self):
         log.leave()
@@ -86,29 +88,35 @@ class OutputBuilder:
         self.finish()
 
     def build_node(self, key, data):
-        data = copy.deepcopy(data)
-        self.stack.push(key, data)
-
         try:
-            for property_preprocessor in self.property_preprocessors:
-                data = property_preprocessor.process(self.TYPE, data, self.stack) or data
-        except ReplaceElement as e:
-            data = e
-        if isinstance(data, ReplaceElement):
+            data = copy.deepcopy(data)
+            self.stack.push(key, data)
+
+            try:
+                for property_preprocessor in self.property_preprocessors:
+                    data = property_preprocessor.process(self.TYPE, data, self.stack) or data
+            except ReplaceElement as e:
+                data = e
+            if isinstance(data, ReplaceElement):
+                self.stack.pop()
+                if data.data is not None:
+                    if isinstance(data.data, dict):
+                        for k, v in data.data.items():
+                            self.build_node(k, v)
+                    elif isinstance(data.data, (list, tuple)):
+                        for k, v in enumerate(data.data):
+                            self.build_node(k, v)
+                    else:
+                        raise AttributeError(f"Do not know how to handle {type(data.data)} in ReplaceElement")
+                return
+            self.stack.top.data = data
+            self.process_stack_top()
             self.stack.pop()
-            if data.data is not None:
-                if isinstance(data.data, dict):
-                    for k, v in data.data.items():
-                        self.build_node(k, v)
-                elif isinstance(data.data, (list, tuple)):
-                    for k, v in enumerate(data.data):
-                        self.build_node(k, v)
-                else:
-                    raise AttributeError(f"Do not know how to handle {type(data.data)} in ReplaceElement")
-            return
-        self.stack.top.data = data
-        self.process_stack_top()
-        self.stack.pop()
+        except Exception as e:
+            if not self.silent_exceptions:
+                self.silent_exceptions = True
+                print(f'Error on handling path {self.stack.path}: {e}', file=sys.stderr)
+            raise
 
     def build_children(self, ordering=None):
         data = self.stack.top.data

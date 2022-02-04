@@ -49,7 +49,7 @@ class JSONOutput(OutputBase):
             self.stack.pop()
 
     def primitive(self, key, value):
-        if key:
+        if key is not None:
             self.stack.push(key, value)
             self.stack.pop()
 

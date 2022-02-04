@@ -65,7 +65,7 @@ class ModelBuilderStack:
 
     @cached_property
     def path(self):
-        return "/" + "/".join(x.key for x in self.stack if x.key)
+        return "/" + "/".join(str(x.key) for x in self.stack if x.key)
 
     def _clear_path(self):
         if "path" in self.__dict__:

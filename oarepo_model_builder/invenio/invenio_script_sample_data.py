@@ -35,15 +35,16 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             if not self.skip(self.stack):
                 if "properties" in self.stack.top.data:
                     self.output.enter(self.stack.top.key, {})
+                    self.build_children()
+                    self.output.leave()
                 elif "items" in self.stack.top.data:
                     self.output.enter(self.stack.top.key, [])
+                    self.build_children()
+                    self.output.leave()
                 else:
                     self.output.primitive(self.stack.top.key, self.generate_fake(self.stack))
-        self.build_children()
-        if schema_element_type == "property":
-            if not self.skip(self.stack):
-                if "properties" in self.stack.top.data or "items" in self.stack.top.data:
-                    self.output.leave()
+        else:
+            self.build_children()
 
     def build(self, schema):
         output_name = schema.settings[self.output_file_name]

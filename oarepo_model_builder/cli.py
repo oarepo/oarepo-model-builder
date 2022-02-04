@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 import sys
+import traceback
 from pathlib import Path
 
 import click
@@ -52,24 +53,34 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
+    try:
+        run_internal(output_directory, model_filename, package, configs, resolve_conflicts, sets, black, isort, verbosity)
+    except Exception as e:
+        if verbosity >= 2:
+            print(e, file=sys.stderr)
+            traceback.print_exc()
+        elif verbosity >= 1:
+            print(e, file=sys.stderr)
+            traceback.print_exc(limit=-5)
+        else:
+            print(e, file=sys.stderr)
+        sys.exit(1)
 
+
+def run_internal(output_directory, model_filename, package, configs, resolve_conflicts, sets, black, isort, verbosity):
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
     os.environ["PATH"] = str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get("PATH", "")
-
     if not output_directory:
         output_directory = os.getcwd()
-
     # set the logging level, it will be warning - 1 (that is, 29) if not verbose,
     # so that warnings only will be emitted. With each verbosity level
     # it will decrease
     logging.basicConfig(level=logging.INFO - verbosity, format="")
-
     Path(output_directory).mkdir(parents=True, exist_ok=True)
     handler = logging.FileHandler(Path(output_directory) / "installation.log", "a")
     handler.setLevel(logging.INFO)
     logging.root.addHandler(handler)
-
     log.enter(
         0,
         "\n\n%s\n\nProcessing model %s into output directory %s",
@@ -77,20 +88,15 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
         model_filename,
         output_directory,
     )
-
     model = load_model(model_filename, package, configs, black, isort, sets)
     model.schema["output-directory"] = output_directory
-
     if not resolve_conflicts or resolve_conflicts == "debug":
         resolver = InteractiveResolver(resolve_conflicts == "debug")
     else:
         resolver = AutomaticResolver(resolve_conflicts)
-
     builder = create_builder_from_entrypoints()
     builder.build(model, output_directory, resolver)
-
     log.leave("Done")
-
     print(f"Log saved to {Path(output_directory) / 'installation.log'}")
 
 

@@ -218,6 +218,14 @@ def marshmallow_string_generator(data, definition, schema, imports):
 
 
 def marshmallow_integer_generator(data, definition, schema, imports):
+    return marshmallow_generic_number_generator("ma_fields.Integer", data, definition, schema, imports)
+
+
+def marshmallow_number_generator(data, definition, schema, imports):
+    return marshmallow_generic_number_generator("ma_fields.Float", data, definition, schema, imports)
+
+
+def marshmallow_generic_number_generator(datatype, data, definition, schema, imports):
     validators = []
     minimum = data.get("minimum", None)
     maximum = data.get("maximum", None)
@@ -230,7 +238,7 @@ def marshmallow_integer_generator(data, definition, schema, imports):
             f'min={minimum or exclusive_minimum or "None"}, max={maximum or exclusive_maximum or "None"}, '
             f"min_inclusive={exclusive_minimum is None}, max_inclusive={exclusive_maximum is None})"
         )
-    return create_field("ma_fields.Integer", [], validators, definition)
+    return create_field(datatype, [], validators, definition)
 
 
 # TODO: rest of supported schema types
@@ -238,6 +246,7 @@ def marshmallow_integer_generator(data, definition, schema, imports):
 default_marshmallow_generators = {
     "string": marshmallow_string_generator,
     "integer": marshmallow_integer_generator,
+    "number": marshmallow_number_generator,
 }
 
 
