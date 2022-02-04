@@ -1,0 +1,17 @@
+{
+  "jsonschema-property": {
+    "properties": {
+      "oarepo:facets": {
+        "type": "object",
+        "properties": {
+          "class": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

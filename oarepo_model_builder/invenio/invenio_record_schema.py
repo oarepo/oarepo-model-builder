@@ -40,6 +40,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.imports["marshmallow.fields"].add("ma_fields")
         self.imports["marshmallow.validate"].add("ma_valid")
         self.imported_classes = {}
+        self.generated_classes = set()
 
     def finish(self):
         super().finish(imports=self.imports, imported_classes=self.imported_classes)
@@ -62,13 +63,18 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if "nested" not in definition:
                 definition["nested"] = True
 
-            generate_schema_class = False
+            generate_schema_class = definition.get("generate", True)
+            schema_class = None  # to make pycharm happy
+            schema_class_base_classes = None
+            if generate_schema_class:
+                if "class" not in definition:
+                    definition["class"] = self.stack.top.key.title()
             if "class" in definition:
                 schema_class = definition["class"]
                 if "." not in schema_class:
                     schema_class = package_name(self.settings.python.record_schema_class) + "." + schema_class
                 schema_class_base_classes = definition.get("base-classes", ["ma.Schema"])
-                generate_schema_class = definition.get("generate", False)
+
             if generate_schema_class:
                 self.marshmallow_stack.append(
                     MarshmallowNode(schema_class, schema_class_base_classes, self.stack.top.data)
@@ -94,7 +100,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             self.marshmallow_stack[-1].prepared_schema = definition
         elif schema_element_type == "items":
             definition = self.get_marshmallow_definition(data, self.stack)
-            definition["field"] = f"ma.List({definition['field']})"
+            definition["field"] = f"ma_fields.List({definition['field']})"
             self.marshmallow_stack[-1].prepared_schema = definition
         elif schema_element_type == "property":
             prepared_schema = marshmallow_stack_top.pop_prepared_schema()
@@ -108,17 +114,18 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             class_name = node.schema_class_name
             if class_name.startswith("."):
                 class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
-
-            self.process_template(
-                self.class_to_path(class_name),
-                "object-schema",
-                schema_class=class_name,
-                schema_bases=node.schema_class_bases,
-                fields=node.fields,
-                imports=self.imports,
-                imported_classes=self.imported_classes,
-                current_package_name=package_name(class_name),
-            )
+            if class_name not in self.generated_classes:
+                self.generated_classes.add(class_name)
+                self.process_template(
+                    self.class_to_path(class_name),
+                    "object-schema",
+                    schema_class=class_name,
+                    schema_bases=node.schema_class_bases,
+                    fields=node.fields,
+                    imports=self.imports,
+                    imported_classes=self.imported_classes,
+                    current_package_name=package_name(class_name),
+                )
 
     def get_marshmallow_definition(self, data, stack, definition=None):
         if not definition:

@@ -16,6 +16,21 @@ except ImportError:
 
 
 def test_simple_mapping_builder():
+    model = {"properties": {"a": {"type": "string", "oarepo:mapping": {"type": "text"}}}}
+    data = build_model(model)
+
+    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
+
+
+def test_array_mapping_builder():
+    model = {"properties": {
+        "a": {"type": "array", "items": {"type": "string", "oarepo:mapping": {"type": "text"}}}}}
+    data = build_model(model)
+
+    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
+
+
+def build_model(model):
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
@@ -31,17 +46,15 @@ def test_simple_mapping_builder():
                     "python": {"use_isort": False, "use_black": False},
                     "elasticsearch": {"version": "v7", "templates": {"v7": {}}},
                 },
-                "model": {"properties": {"a": {"type": "string", "oarepo:mapping": {"type": "text"}}}},
+                "model": model,
             },
         ),
         output_dir="",
     )
-
     data = json5.load(
         builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
     )
-
-    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
+    return data
 
 
 def test_mapping_preprocessor():

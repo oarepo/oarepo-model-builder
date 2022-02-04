@@ -29,14 +29,19 @@ def model_json_schema():
 
 
 def validate_model(model, extra_validation_schemas=None):
+    schema = copy.deepcopy(model_json_schema)
     if extra_validation_schemas:
-        schema = copy.deepcopy(model_json_schema)
         for e in extra_validation_schemas:
             schema["$defs"] = deepmerge(e, schema["$defs"], listmerge="extend")
     else:
         schema = model_json_schema
+
     validator = Draft202012Validator(schema)
-    errors = list(validator.iter_errors(json.loads(json.dumps(model.schema, default=lambda s: repr(s)))))
+
+    data = json.loads(json.dumps(model.schema, default=lambda s: repr(s)))
+    replace_array_keys(data)
+
+    errors = list(validator.iter_errors(data))
 
     if not errors:
         return True
@@ -48,3 +53,15 @@ def validate_model(model, extra_validation_schemas=None):
         print(f'         schema path "/{"/".join(str(x) for x in err.schema_path)}"')
 
     raise InvalidModelException("Invalid model")
+
+
+def replace_array_keys(schema):
+    if isinstance(schema, (list, tuple)):
+        for l in schema:
+            replace_array_keys(l)
+    elif isinstance(schema, dict):
+        for k, v in list(schema.items()):
+            replace_array_keys(v)
+            if k.endswith("[]"):
+                del schema[k]
+                schema[k[:-2]] = v

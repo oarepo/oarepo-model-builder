@@ -1,28 +1,30 @@
 {
   "model": {
-    "allOf": [
-      {
+    "type": "object",
+    "properties": {
+      "properties": {
         "$ref": "#/$defs/jsonschema-object"
-      }
-    ],
+      },
+    },
     "unevaluatedProperties": false
   },
   "jsonschema-object": {
     "type": "object",
-    "properties": {
-      "properties": {
-        "type": "object",
-        "patternProperties": {
-          "^.*$": {
-            "$ref": "#/$defs/jsonschema-property"
-          }
-        }
+    "patternProperties": {
+      "^.*$": {
+        "$ref": "#/$defs/jsonschema-property"
       }
     },
+    "unevaluatedProperties": false,
+    "minProperties": 1    // empty object is not allowed in the current schema
   },
   "jsonschema-property": {
     "type": "object",
+    "unevaluatedProperties": false,
     "properties": {
+      "description": {
+        "type": "string"
+      },
       "type": {
         "type": "string",
         "enum": [
@@ -36,6 +38,9 @@
       },
       "items": {
         "$ref": "#/$defs/jsonschema-property"
+      },
+      "properties": {
+        "$ref": "#/$defs/jsonschema-object"
       },
       // recognized text properties
       "minLength": {
@@ -56,6 +61,16 @@
       },
       "exclusiveMaximum": {
         "type": "number"
+      },
+      "required": {
+        "type": "boolean"
+      },
+      // recognized array properties
+      "minContains": {
+        "type": "integer"
+      },
+      "maxContains": {
+        "type": "integer"
       }
     }
   }

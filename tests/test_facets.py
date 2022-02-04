@@ -58,7 +58,6 @@ def test_include_invenio():
 
     filesystem = MockFilesystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
-
     builder.build(schema, "")
 
     data = builder.filesystem.open(os.path.join("test", "services", "facets.py")).read()
@@ -143,11 +142,11 @@ def test_nested():
                             "f": {
                                 "properties": {"g": {"type": "keyword"}},
                                 "oarepo:mapping": {"type": "nested"},
-                                "oarepo:marshmallow": {"class": "nest.f.F", "generate": "true"},
+                                "oarepo:marshmallow": {"class": "nest.f.F", "generate": True},
                             },
                         },
                         "oarepo:mapping": {"type": "nested"},
-                        "oarepo:marshmallow": {"class": "nest.b.B", "generate": "true"},
+                        "oarepo:marshmallow": {"class": "nest.b.B", "generate": True},
                     }
                 }
             },
