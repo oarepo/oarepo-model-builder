@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import Callable, List
 
 import faker
 import faker.providers
@@ -36,9 +36,7 @@ class Provider:
         return rnd / 10
 
     def sample_object(self):
-        return {
-            self.generator.word(): self.generator.word() for _ in range(self.generator.random.randrange(1, 5, 1))
-        }
+        return {self.generator.word(): self.generator.word() for _ in range(self.generator.random.randrange(1, 5, 1))}
 
     def constant(self, value):
         return value
@@ -57,17 +55,18 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
         super().__init__(builder, property_preprocessors)
         self.generator = SampleDataGenerator()
         from faker.config import PROVIDERS
+
         self.faker = faker.Faker(
             generator=self.generator,
             providers=[
-                'oarepo_model_builder.invenio.invenio_script_sample_data',
+                "oarepo_model_builder.invenio.invenio_script_sample_data",
                 *PROVIDERS,
-            ])
+            ],
+        )
 
-        self.sample_data_providers = \
-            load_entry_points_list('oarepo_model_builder.sample_data_providers') + [
-                faker_provider
-            ]
+        self.sample_data_providers = load_entry_points_list("oarepo_model_builder.sample_data_providers") + [
+            faker_provider
+        ]
 
     @process("/model/**", condition=lambda current, stack: is_schema_element(stack))
     def model_element(self):
@@ -139,21 +138,22 @@ def faker_provider(faker, stack, params):
         if stack.top.key in faker.formatters:
             method = stack.top.key
         else:
-            data_type = stack.top.data.get('type')
-            if data_type == 'integer':
-                method = 'random_int'
-            elif data_type == 'number':
-                method = 'random_float'
-            elif data_type == 'date':
-                method = 'date'
-            elif data_type == 'object':
+            data_type = stack.top.data.get("type")
+            if data_type == "integer":
+                method = "random_int"
+            elif data_type == "number":
+                method = "random_float"
+            elif data_type == "date":
+                method = "date"
+            elif data_type == "object":
                 # it is an object with unknown properties, return a sample object
-                method = 'sample_object'
-            elif data_type in ('string', 'keyword', 'fulltext', 'fulltext+keyword'):
-                method = 'sentence'
+                method = "sample_object"
+            elif data_type in ("string", "keyword", "fulltext", "fulltext+keyword"):
+                method = "sentence"
             else:
                 print(
-                    f"Warning: do not know how to generate sample data for {data_type} at path {stack.path}, using plain string rule")
+                    f"Warning: do not know how to generate sample data for {data_type} at path {stack.path}, using plain string rule"
+                )
                 method = "sentence"
     return getattr(faker, method)(**params)
 

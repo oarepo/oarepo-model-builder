@@ -1,4 +1,4 @@
-def deepmerge(target, source, stack=None, listmerge='overwrite'):
+def deepmerge(target, source, stack=None, listmerge="overwrite"):
     if stack is None:
         stack = []
 
@@ -19,12 +19,12 @@ def deepmerge(target, source, stack=None, listmerge='overwrite'):
                 raise AttributeError(
                     f"Incompatible source and target on path {stack}: source {source}, target {target}"
                 )
-            if listmerge == 'overwrite':
+            if listmerge == "overwrite":
                 for idx in range(min(len(source), len(target))):
                     target[idx] = deepmerge(target[idx], source[idx], stack + [idx], listmerge=listmerge)
                 for idx in range(len(target), len(source)):
                     target.append(source[idx])
-            elif listmerge == 'extend':
+            elif listmerge == "extend":
                 target.extend(source)
             else:
                 raise AttributeError('listmerge must be one of "overwrite" or "extend"')

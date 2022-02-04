@@ -50,17 +50,7 @@ def test_mapping_preprocessor():
         outputs=[MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
-        included_validation_schemas=[
-            {
-                "jsonschema-property": {
-                    "properties": {
-                        "type": {
-                            "enum": ["multilingual"]
-                        }
-                    }
-                }
-            }
-        ],
+        included_validation_schemas=[{"jsonschema-property": {"properties": {"type": {"enum": ["multilingual"]}}}}],
         filesystem=MockFilesystem(),
     )
 

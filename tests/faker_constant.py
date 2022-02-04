@@ -5,7 +5,7 @@ from faker.providers import BaseProvider
 
 class Provider(BaseProvider):
     def sentence(self):
-        return 'test'
+        return "test"
 
     def random_int(self, min: int = 0, max: int = 9999, step: int = 1) -> int:
         return 1
@@ -14,4 +14,4 @@ class Provider(BaseProvider):
         return 1.2
 
     def date(self):
-        return '2022-01-02'
+        return "2022-01-02"

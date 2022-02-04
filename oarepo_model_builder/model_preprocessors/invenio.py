@@ -155,8 +155,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         )
 
         #   - facets
-        self.set(settings.python, 'record-facets-class',
-                 lambda: f'{settings.package}.services.facets.Test')
+        self.set(settings.python, "record-facets-class", lambda: f"{settings.package}.services.facets.Test")
 
         # alembic
         self.set(

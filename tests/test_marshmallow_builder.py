@@ -90,26 +90,26 @@ def test_generate_nested_schema_same_file(fulltext_builder):
     with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema.py")) as f:
         data = f.read()
     assert (
-            re.sub(
-                r"\s",
-                "",
-                """class B(ma.Schema, ):
+        re.sub(
+            r"\s",
+            "",
+            """class B(ma.Schema, ):
         \"""B schema.\"""
         
         b = ma_fields.String()""",
-            )
-            in re.sub(r"\s", "", data)
+        )
+        in re.sub(r"\s", "", data)
     )
     assert (
-            re.sub(
-                r"\s",
-                "",
-                """class TestSchema(ma.Schema, ):
+        re.sub(
+            r"\s",
+            "",
+            """class TestSchema(ma.Schema, ):
         \"""TestSchema schema.\"""
         
         a = ma_fields.Nested(B)""",
-            )
-            in re.sub(r"\s", "", data)
+        )
+        in re.sub(r"\s", "", data)
     )
 
 
@@ -134,15 +134,15 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         data = f.read()
 
     assert (
-            re.sub(
-                r"\s",
-                "",
-                """class TestSchema(ma.Schema, ):
+        re.sub(
+            r"\s",
+            "",
+            """class TestSchema(ma.Schema, ):
         \"""TestSchema schema.\"""
     
         a = ma_fields.Nested(B)""",
-            )
-            in re.sub(r"\s", "", data)
+        )
+        in re.sub(r"\s", "", data)
     )
 
     assert "from test.services.schema2 import B" in data
@@ -170,15 +170,15 @@ def test_use_nested_schema_same_file(fulltext_builder):
         data = f.read()
 
     assert (
-            re.sub(
-                r"\s",
-                "",
-                """class TestSchema(ma.Schema, ):
+        re.sub(
+            r"\s",
+            "",
+            """class TestSchema(ma.Schema, ):
         \"""TestSchema schema.\"""
         
         a = ma_fields.Nested(B)""",
-            )
-            in re.sub(r"\s", "", data)
+        )
+        in re.sub(r"\s", "", data)
     )
     assert "classB(ma.Schema,)" not in re.sub(r"\s", "", data)
 
@@ -270,15 +270,15 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         data = f.read()
 
     assert (
-            re.sub(
-                r"\s",
-                "",
-                """class TestSchema(ma.Schema, ):
+        re.sub(
+            r"\s",
+            "",
+            """class TestSchema(ma.Schema, ):
         \"""TestSchema schema.\"""
     
         a = ma_fields.Nested(B)""",
-            )
-            in re.sub(r"\s", "", data)
+        )
+        in re.sub(r"\s", "", data)
     )
 
     assert "from test.services.schema2 import B" in data
@@ -309,15 +309,15 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
         data = f.read()
 
     assert (
-            re.sub(
-                r"\s",
-                "",
-                """class TestSchema(ma.Schema, ):
+        re.sub(
+            r"\s",
+            "",
+            """class TestSchema(ma.Schema, ):
         \"""TestSchema schema.\"""
 
         a = ma_fields.Nested(B)""",
-            )
-            in re.sub(r"\s", "", data)
+        )
+        in re.sub(r"\s", "", data)
     )
 
 
@@ -342,15 +342,15 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         data = f.read()
 
     assert (
-            re.sub(
-                r"\s",
-                "",
-                """class TestSchema(ma.Schema, ):
+        re.sub(
+            r"\s",
+            "",
+            """class TestSchema(ma.Schema, ):
         \"""TestSchema schema.\"""
 
         a = ma_fields.Nested(B)""",
-            )
-            in re.sub(r"\s", "", data)
+        )
+        in re.sub(r"\s", "", data)
     )
 
     assert "from test.services.schema2 import B" in data
@@ -381,15 +381,15 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         data = f.read()
 
     assert (
-            re.sub(
-                r"\s",
-                "",
-                """class TestSchema(ma.Schema, ):
+        re.sub(
+            r"\s",
+            "",
+            """class TestSchema(ma.Schema, ):
         \"""TestSchema schema.\"""
 
         a = ma_fields.Nested(B)""",
-            )
-            in re.sub(r"\s", "", data)
+        )
+        in re.sub(r"\s", "", data)
     )
 
     assert "from test.schema2 import B" in data

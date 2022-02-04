@@ -54,7 +54,9 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
     try:
-        run_internal(output_directory, model_filename, package, configs, resolve_conflicts, sets, black, isort, verbosity)
+        run_internal(
+            output_directory, model_filename, package, configs, resolve_conflicts, sets, black, isort, verbosity
+        )
     except Exception as e:
         if verbosity >= 2:
             print(e, file=sys.stderr)

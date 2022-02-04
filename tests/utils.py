@@ -2,8 +2,8 @@ from collections import defaultdict
 
 
 def assert_python_equals(actual, expected):
-    actual_lines = [x.strip() for x in actual.split('\n')]
-    expected_lines = [x.strip() for x in expected.split('\n')]
+    actual_lines = [x.strip() for x in actual.split("\n")]
+    expected_lines = [x.strip() for x in expected.split("\n")]
 
     expected_by_content = defaultdict(list)
     for lineno, line in enumerate(expected_lines):
@@ -20,10 +20,10 @@ def assert_python_equals(actual, expected):
         if actual_line in expected_by_content and expected_by_content[actual_line]:
             last_line = expected_by_content[actual_line].pop(0)
         else:
-            print('Expected lines:\n')
+            print("Expected lines:\n")
             print_lines_around(expected_lines, last_line)
 
-            print('Actual lines:\n')
+            print("Actual lines:\n")
             print_lines_around(actual_lines, actual_line_no)
 
             raise AssertionError(f"Actual line {actual_line_no + 1} '{actual_line}' not in expected lines")

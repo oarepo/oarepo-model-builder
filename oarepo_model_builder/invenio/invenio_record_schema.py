@@ -1,10 +1,11 @@
 from collections import defaultdict
 
 from oarepo_model_builder.builders import process
-from .invenio_base import InvenioBaseClassPythonBuilder
+
 from ..utils.deepmerge import deepmerge
 from ..utils.jinja import base_name, package_name, with_defined_prefix
 from ..utils.schema import Ref, is_schema_element, match_schema
+from .invenio_base import InvenioBaseClassPythonBuilder
 
 OAREPO_MARSHMALLOW_PROPERTY = "oarepo:marshmallow"
 
@@ -105,7 +106,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         elif schema_element_type == "properties":
             node = self.marshmallow_stack.pop()
             class_name = node.schema_class_name
-            if class_name.startswith('.'):
+            if class_name.startswith("."):
                 class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
 
             self.process_template(
@@ -145,7 +146,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         if "class" in definition:
             class_name = definition["class"]
-            if class_name.startswith('.'):
+            if class_name.startswith("."):
                 class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
             if "." in class_name:
                 if not with_defined_prefix(self.settings.python.always_defined_import_prefixes, class_name):
@@ -251,12 +252,12 @@ default_marshmallow_generators = {
 
 
 def resolve_relative_classname(class_name, base_class_name):
-    base_class_name = base_class_name.rsplit('.', maxsplit=1)[0]
+    base_class_name = base_class_name.rsplit(".", maxsplit=1)[0]
     class_name = class_name[1:]
-    if '.' in class_name:
+    if "." in class_name:
         # always go one level up
-        class_name = '.' + class_name
-    while class_name.startswith('.'):
+        class_name = "." + class_name
+    while class_name.startswith("."):
         class_name = class_name[1:]
-        base_class_name = base_class_name.rsplit('.', maxsplit=1)[0]
-    return base_class_name + '.' + class_name
+        base_class_name = base_class_name.rsplit(".", maxsplit=1)[0]
+    return base_class_name + "." + class_name

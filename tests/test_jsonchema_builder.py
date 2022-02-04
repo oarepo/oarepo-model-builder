@@ -49,17 +49,7 @@ def test_jsonschema_preprocessor():
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
         filesystem=MockFilesystem(),
-        included_validation_schemas=[
-            {
-                "jsonschema-property": {
-                    "properties": {
-                        "type": {
-                            "enum": ["multilingual"]
-                        }
-                    }
-                }
-            }
-        ]
+        included_validation_schemas=[{"jsonschema-property": {"properties": {"type": {"enum": ["multilingual"]}}}}],
     )
 
     builder.build(

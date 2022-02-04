@@ -35,7 +35,7 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
             return
 
         if element_type in ("property", "items"):
-            if "properties" in data or 'additionalProperties' in data or 'unprocessedProperties' in data:
+            if "properties" in data or "additionalProperties" in data or "unprocessedProperties" in data:
                 data["type"] = "object"
             elif "items" in data:
                 data["type"] = "array"

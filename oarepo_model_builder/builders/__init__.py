@@ -115,7 +115,7 @@ class OutputBuilder:
         except Exception as e:
             if not self.silent_exceptions:
                 self.silent_exceptions = True
-                print(f'Error on handling path {self.stack.path}: {e}', file=sys.stderr)
+                print(f"Error on handling path {self.stack.path}: {e}", file=sys.stderr)
             raise
 
     def build_children(self, ordering=None):

@@ -69,14 +69,14 @@ class ModelBuilder:
     filesystem: AbstractFileSystem
 
     def __init__(
-            self,
-            outputs: List[type(OutputBase)] = (),
-            output_builders: List[type(OutputBuilder)] = (),
-            property_preprocessors: List[type(PropertyPreprocessor)] = (),
-            model_preprocessors: List[type(ModelPreprocessor)] = (),
-            output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
-            included_validation_schemas=None,
-            filesystem=FileSystem(),
+        self,
+        outputs: List[type(OutputBase)] = (),
+        output_builders: List[type(OutputBuilder)] = (),
+        property_preprocessors: List[type(PropertyPreprocessor)] = (),
+        model_preprocessors: List[type(ModelPreprocessor)] = (),
+        output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
+        included_validation_schemas=None,
+        filesystem=FileSystem(),
     ):
         """
         Initializes the builder
@@ -102,7 +102,7 @@ class ModelBuilder:
             self.output_builder_components = {}
         self.filesystem = filesystem
         self.included_validation_schemas = included_validation_schemas or []
-        self.skip_schema_validation = False     # set to True in some tests
+        self.skip_schema_validation = False  # set to True in some tests
 
     def get_output(self, output_type: str, path: str | Path):
         """
