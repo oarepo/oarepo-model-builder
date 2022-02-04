@@ -89,6 +89,7 @@ class ModelBuilder:
         for o in outputs:
             assert o.TYPE, f"output_type not set up on class {o}"
         self.output_classes = [*outputs]
+        self.outputs = {}
         self.property_preprocessor_classes = [*property_preprocessors]
         self.model_preprocessor_classes = [*model_preprocessors]
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
@@ -163,12 +164,15 @@ class ModelBuilder:
             output_builder = output_builder_class(builder=self, property_preprocessors=property_preprocessors)
             output_builder.build(model)
 
+        self._save_outputs()
+
+        return self.outputs
+
+    def _save_outputs(self):
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
             output.finish()
             if output.executable:
                 self.filesystem.make_executable(output.path)
-
-        return self.outputs
 
     def set_schema(self, schema):
         self.schema = schema

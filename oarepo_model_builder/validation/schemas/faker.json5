@@ -13,6 +13,9 @@
           "params": {
             "type": "object",
             "additionalProperties": true
+          },
+          "count": {    // only for an array
+            "type": "integer"
           }
         },
         "additionalProperties": false
