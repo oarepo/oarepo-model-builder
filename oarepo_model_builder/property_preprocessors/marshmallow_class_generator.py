@@ -1,6 +1,7 @@
 from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
+from oarepo_model_builder.utils.camelcase import camel_case
 
 
 class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
@@ -27,7 +28,7 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
         definition = data.setdefault("oarepo:marshmallow", {})
         if "class" in definition:
             return
-        definition["class"] = (key or self.get_property_name(stack)).title()
+        definition["class"] = camel_case(key or self.get_property_name(stack)) + "Schema"
 
     def get_property_name(self, stack):
         for el in reversed(stack.stack):

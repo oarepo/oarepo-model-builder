@@ -88,10 +88,10 @@ class ModelBuilder:
         self.output_builder_classes = [*output_builders]
         for o in outputs:
             assert o.TYPE, f"output_type not set up on class {o}"
-        self.output_classes = [*outputs]
+        self.output_classes = [*(outputs or [])]
         self.outputs = {}
-        self.property_preprocessor_classes = [*property_preprocessors]
-        self.model_preprocessor_classes = [*model_preprocessors]
+        self.property_preprocessor_classes = [*(property_preprocessors or [])]
+        self.model_preprocessor_classes = [*(model_preprocessors or [])]
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
         if output_builder_components:
             self.output_builder_components = {

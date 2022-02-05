@@ -30,6 +30,10 @@ class JSONBaseBuilder(OutputBuilder):
         self.output = self.builder.get_output(self.output_file_type, output_name)
         self.on_enter_model(output_name)
         self.build_children()
+        self.on_leave_model()
 
     def on_enter_model(self, output_name):
+        pass
+
+    def on_leave_model(self):
         pass

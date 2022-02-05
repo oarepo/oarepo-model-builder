@@ -200,14 +200,14 @@ def create_field(field_type, options=(), validators=(), definition=None):
         ret = f"{field_type}"
     if nested:
         if opts or kwargs:
-            ret = f'ma_fields.Nested({ret}, {", ".join(opts)}{kwargs})'
+            ret = f'ma_fields.Nested(lambda: {ret}(), {", ".join(opts)}{kwargs})'
         else:
-            ret = f"ma_fields.Nested({ret})"
+            ret = f"ma_fields.Nested(lambda: {ret}())"
     if list_nested:
         if opts or kwargs:
-            ret = f'ma_fields.List(ma_fields.Nested({ret}, {", ".join(opts)}{kwargs}))'
+            ret = f'ma_fields.List(ma_fields.Nested(lambda: {ret}(), {", ".join(opts)}{kwargs}))'
         else:
-            ret = f"ma_fields.List(ma_fields.Nested({ret}))"
+            ret = f"ma_fields.List(ma_fields.Nested(lambda: {ret}()))"
     return ret
 
 
