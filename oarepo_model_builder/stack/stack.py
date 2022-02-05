@@ -1,7 +1,8 @@
 from functools import cached_property
-from typing import Generator, List
 
 from deepdiff import DeepDiff
+
+from .schema import SchemaPathValidator, model_paths, Ref
 
 
 class ReplaceElement(Exception):
@@ -11,9 +12,13 @@ class ReplaceElement(Exception):
 
 
 class ModelBuilderStackEntry:
-    def __init__(self, key=None, data=None):
+    key: str
+    schema: SchemaPathValidator
+
+    def __init__(self, key: str, data, schema: SchemaPathValidator):
         self.key = key
         self.data = data
+        self.schema = schema
 
     def __getitem__(self, item):
         return self.data[item]
@@ -23,6 +28,16 @@ class ModelBuilderStackEntry:
 
     def __str__(self):
         return f"{self.key} - {self.data}"
+
+    @property
+    def schema_valid(self):
+        return self.schema.valid
+
+    @property
+    def schema_element_type(self):
+        if self.schema_valid and isinstance(self.schema, Ref):
+            return self.schema.element_type
+        return None
 
 
 class ModelBuilderStack:
@@ -39,7 +54,11 @@ class ModelBuilderStack:
 
     def push(self, key, el):
         self._clear_path()
-        self.stack.append(ModelBuilderStackEntry(key, el))
+        if not self.stack:
+            entry = ModelBuilderStackEntry(key, el, model_paths)
+        else:
+            entry = ModelBuilderStackEntry(key, el, self.top.schema.get(key))
+        self.stack.append(entry)
 
     def pop(self):
         self._clear_path()
@@ -70,3 +89,9 @@ class ModelBuilderStack:
     def _clear_path(self):
         if "path" in self.__dict__:
             del self.__dict__["path"]
+
+    @property
+    def schema_valid(self):
+        if not self.stack:
+            return False
+        return self.top.schema_valid

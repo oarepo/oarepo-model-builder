@@ -3,7 +3,6 @@ from oarepo_model_builder.utils.jinja import package_name
 
 from ..outputs.json_stack import JSONStack
 from ..utils.hyphen_munch import HyphenMunch
-from ..utils.schema import Ref, is_schema_element, match_schema
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 OAREPO_FACETS_PROPERTY = "oarepo:facets"
@@ -34,13 +33,9 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             **extra_kwargs,
         )
 
-    @process("/model/**", condition=lambda current, stack: is_schema_element(stack))
+    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
-        schema_path = match_schema(self.stack)
-        if isinstance(schema_path[-1], Ref):
-            schema_element_type = schema_path[-1].element_type
-        else:
-            schema_element_type = None
+        schema_element_type = self.stack.top.schema_element_type
 
         definition = None
         recurse = True

@@ -1,8 +1,5 @@
 from pathlib import Path
 
-from oarepo_model_builder.stack import ModelBuilderStack
-
-from ..utils.schema import is_schema_element
 from . import process
 from .json_base import JSONBaseBuilder
 from .utils import ensure_parent_modules
@@ -14,7 +11,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     output_file_name = "schema-file"
     parent_module_root_name = "jsonschemas"
 
-    @process("/model/**", condition=lambda current, stack: is_schema_element(stack))
+    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
         self.model_element_enter()
         self.build_children()

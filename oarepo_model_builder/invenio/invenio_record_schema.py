@@ -4,7 +4,6 @@ from oarepo_model_builder.builders import process
 
 from ..utils.deepmerge import deepmerge
 from ..utils.jinja import base_name, package_name, with_defined_prefix
-from ..utils.schema import Ref, is_schema_element, match_schema
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 OAREPO_MARSHMALLOW_PROPERTY = "oarepo:marshmallow"
@@ -45,13 +44,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
     def finish(self):
         super().finish(imports=self.imports, imported_classes=self.imported_classes)
 
-    @process("/model/**", condition=lambda current, stack: is_schema_element(stack))
+    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
-        schema_path = match_schema(self.stack)
-        if isinstance(schema_path[-1], Ref):
-            schema_element_type = schema_path[-1].element_type
-        else:
-            schema_element_type = None
+        schema_element_type = self.stack.top.schema_element_type
 
         definition = None
         recurse = True

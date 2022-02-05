@@ -1,10 +1,5 @@
-from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
-from oarepo_model_builder.utils.deepmerge import deepmerge
-from oarepo_model_builder.utils.schema import Ref, is_schema_element, match_schema
 
 
 class TypeShortcutsPreprocessor(PropertyPreprocessor):
@@ -13,17 +8,16 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
     @process(
         model_builder="*",
         path="/model/**",
-        condition=lambda current, stack: is_schema_element(stack),
+        condition=lambda current, stack: stack.schema_valid,
     )
     def modify_type_shortcuts(self, data, stack: ModelBuilderStack, **kwargs):
-        schema_types = match_schema(stack)
-        top = schema_types[-1]
+        top = stack.top
 
-        if not isinstance(top, Ref):
+        if not top.schema_element_type:
             return data
 
-        self.set_type(top.element_type, data)
-        self.set_child_arrays(top.element_type, data)
+        self.set_type(top.schema_element_type, data)
+        self.set_child_arrays(top.schema_element_type, data)
 
         return data
 
@@ -63,7 +57,7 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
     @process(
         model_builder="*",
         path="/model",
-        condition=lambda current, stack: is_schema_element(stack),
+        condition=lambda current, stack: stack.schema_valid,
     )
     def add_model_type(self, data, stack: ModelBuilderStack, **kwargs):
         if "type" not in data:

@@ -13,7 +13,6 @@ from ..builders import process
 from ..builders.json_base import JSONBaseBuilder
 from ..entrypoints import load_entry_points_list
 from ..property_preprocessors import PropertyPreprocessor
-from ..utils.schema import Ref, is_schema_element, match_schema
 
 
 class SampleDataGenerator(faker.Generator):
@@ -68,13 +67,10 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             faker_provider
         ]
 
-    @process("/model/**", condition=lambda current, stack: is_schema_element(stack))
+    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
-        schema_path = match_schema(self.stack)
-        if isinstance(schema_path[-1], Ref):
-            schema_element_type = schema_path[-1].element_type
-        else:
-            schema_element_type = None
+        schema_element_type = self.stack.top.schema_element_type
+
         if schema_element_type == "property":
             self.generate_property(self.stack.top.key)
         elif schema_element_type == "items":
