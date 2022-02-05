@@ -23,17 +23,18 @@ class PropertyPreprocessor:
         for name, method in inspect.getmembers(self, inspect.ismethod):
             if not hasattr(method, "model_builder_priority"):
                 continue
-            arr.append(
-                (
-                    -method.model_builder_priority,
-                    -len(method.model_builder_path),
-                    method.model_builder_path,
-                    id(method),
-                    method.model_builder_condition,
-                    method.model_builder_output_builder_type,
-                    method,
+            for ot in method.model_builder_output_builder_types:
+                arr.append(
+                    (
+                        -method.model_builder_priority,
+                        -len(method.model_builder_path),
+                        method.model_builder_path,
+                        id(method),
+                        method.model_builder_condition,
+                        ot,
+                        method,
+                    )
                 )
-            )
         arr.sort()
         for _prior, _lpath, path, _mid, condition, output_builder_type, method in arr:
             self.json_paths.register(
@@ -51,7 +52,7 @@ class PropertyPreprocessor:
 
     def _call_method(self, data, stack: ModelBuilderStack, output_builder_type):
         for method, _output_builder_type in self.json_paths.match(
-            stack.path, stack.top.data, extra_data={"stack": stack}
+                stack.path, stack.top.data, extra_data={"stack": stack}
         ):
             if _output_builder_type == "*" or output_builder_type == _output_builder_type:
                 return method(data, stack=stack)
@@ -61,15 +62,24 @@ class PropertyPreprocessor:
 
 
 def process(model_builder, path, priority=0, condition=None):
+    """
+    :param model_builder either a single builder, its TYPE property or a list of builders or their TYPEs
+    """
+    def convert_type(model_builder_types):
+        if not isinstance(model_builder_types, (list, tuple)):
+            model_builder_types = [model_builder_types]
+        return [
+            model_builder if isinstance(model_builder, str) else model_builder.TYPE
+            for model_builder in model_builder_types
+        ]
+
     def wrapper(f):
         @functools.wraps(f)
         def wrapped(*args, **kwargs):
             return f(*args, **kwargs)
 
         wrapped.model_builder_priority = priority
-        wrapped.model_builder_output_builder_type = (
-            model_builder if isinstance(model_builder, str) else model_builder.TYPE
-        )
+        wrapped.model_builder_output_builder_types = convert_type(model_builder)
         wrapped.model_builder_path = path
         wrapped.model_builder_condition = condition
         return wrapped
