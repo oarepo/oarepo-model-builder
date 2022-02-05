@@ -2,7 +2,7 @@ from functools import cached_property
 
 from deepdiff import DeepDiff
 
-from .schema import SchemaPathValidator, model_paths, Ref
+from .schema import Ref, SchemaPathValidator, model_paths
 
 
 class ReplaceElement(Exception):

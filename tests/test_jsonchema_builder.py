@@ -22,19 +22,16 @@ def test_simple_jsonschema_builder():
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         filesystem=MockFilesystem(),
-        included_validation_schemas=[{
-            "jsonschema-property": {
-                "properties": {
-                    "type": {
-                        "enum": ["multilingual"]
-                    },
-                    "oarepo:ui": {
-                        "type": "object",
-                        "additionalProperties": True
+        included_validation_schemas=[
+            {
+                "jsonschema-property": {
+                    "properties": {
+                        "type": {"enum": ["multilingual"]},
+                        "oarepo:ui": {"type": "object", "additionalProperties": True},
                     }
                 }
             }
-        }],
+        ],
     )
     builder.build(
         model=ModelSchema(
@@ -62,19 +59,16 @@ def test_jsonschema_preprocessor():
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
         filesystem=MockFilesystem(),
-        included_validation_schemas=[{
-            "jsonschema-property": {
-                "properties": {
-                    "type": {
-                        "enum": ["multilingual"]
-                    },
-                    "oarepo:ui": {
-                        "type": "object",
-                        "additionalProperties": True
+        included_validation_schemas=[
+            {
+                "jsonschema-property": {
+                    "properties": {
+                        "type": {"enum": ["multilingual"]},
+                        "oarepo:ui": {"type": "object", "additionalProperties": True},
                     }
                 }
             }
-        }],
+        ],
     )
 
     builder.build(
@@ -117,19 +111,16 @@ def test_components():
         model_preprocessors=[DefaultValuesModelPreprocessor],
         output_builder_components={JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]},
         filesystem=MockFilesystem(),
-        included_validation_schemas=[{
-            "jsonschema-property": {
-                "properties": {
-                    "type": {
-                        "enum": ["multilingual"]
-                    },
-                    "oarepo:ui": {
-                        "type": "object",
-                        "additionalProperties": True
+        included_validation_schemas=[
+            {
+                "jsonschema-property": {
+                    "properties": {
+                        "type": {"enum": ["multilingual"]},
+                        "oarepo:ui": {"type": "object", "additionalProperties": True},
                     }
                 }
             }
-        }],
+        ],
     )
     builder.build(
         model=ModelSchema(

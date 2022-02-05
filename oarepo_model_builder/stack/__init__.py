@@ -1,4 +1,3 @@
-from .stack import ReplaceElement, ModelBuilderStackEntry, ModelBuilderStack
+from .stack import ModelBuilderStack, ModelBuilderStackEntry, ReplaceElement
 
-
-__all__ = ['ReplaceElement', 'ModelBuilderStack', 'ModelBuilderStackEntry']
+__all__ = ["ReplaceElement", "ModelBuilderStack", "ModelBuilderStackEntry"]

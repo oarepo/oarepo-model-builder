@@ -25,12 +25,12 @@ class MappingBuilder(JSONBaseBuilder):
             and self.stack.top.key == "type"
         ):
             element_type = self.stack.top.schema_element_type
-            if element_type == 'items':
+            if element_type == "items":
                 # do not output "items" container
                 self.build_children()
                 self.merge_mapping(self.stack.top.data)
                 return
-            elif element_type == 'type' and self.stack.top.data == 'array':
+            elif element_type == "type" and self.stack.top.data == "array":
                 # do not output "type=array"
                 return
 

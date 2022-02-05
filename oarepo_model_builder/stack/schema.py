@@ -1,4 +1,3 @@
-
 class SchemaPathValidator:
     valid = False
 
