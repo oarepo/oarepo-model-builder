@@ -1,6 +1,7 @@
-from typing import List
+from typing import Callable, List
 
 import faker
+import faker.providers
 from jinja2 import Environment, FunctionLoader
 
 from oarepo_model_builder.builders import OutputBuilder
@@ -10,8 +11,37 @@ from oarepo_model_builder.templates import templates
 from ..builder import ModelBuilder
 from ..builders import process
 from ..builders.json_base import JSONBaseBuilder
+from ..entrypoints import load_entry_points_list
 from ..property_preprocessors import PropertyPreprocessor
-from ..utils.schema import Ref, is_schema_element, match_schema
+
+
+class SampleDataGenerator(faker.Generator):
+    def __init__(self, **config):
+        super().__init__(**config)
+        self.formatters = set()
+
+    def set_formatter(self, name: str, method: Callable) -> None:
+        self.formatters.add(name)
+        return super().set_formatter(name, method)
+
+
+# provider for Faker
+class Provider:
+    def __init__(self, generator) -> None:
+        self.generator = generator
+
+    def random_float(self):
+        rnd = self.generator.random.randrange(-100, 100 + 1, 1)
+        return rnd / 10
+
+    def sample_object(self):
+        return {self.generator.word(): self.generator.word() for _ in range(self.generator.random.randrange(1, 5, 1))}
+
+    def constant(self, value):
+        return value
+
+
+SKIP = "skip"
 
 
 class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
@@ -22,37 +52,61 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
 
     def __init__(self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]):
         super().__init__(builder, property_preprocessors)
-        self.faker = faker.Faker()
+        self.generator = SampleDataGenerator()
+        from faker.config import PROVIDERS
 
-    @process("/model/**", condition=lambda current, stack: is_schema_element(stack))
+        self.faker = faker.Faker(
+            generator=self.generator,
+            providers=[
+                "oarepo_model_builder.invenio.invenio_script_sample_data",
+                *PROVIDERS,
+            ],
+        )
+
+        self.sample_data_providers = load_entry_points_list("oarepo_model_builder.sample_data_providers") + [
+            faker_provider
+        ]
+
+    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
-        schema_path = match_schema(self.stack)
-        if isinstance(schema_path[-1], Ref):
-            schema_element_type = schema_path[-1].element_type
+        schema_element_type = self.stack.top.schema_element_type
+
+        if schema_element_type == "property":
+            self.generate_property(self.stack.top.key)
+        elif schema_element_type == "items":
+            # the count is in the oarepo:sample section above the "items" element, so need to look at [-2], not the top
+            count = self.get_count(self.stack[-2].data, None)
+            if count is None:
+                count = self.faker.random_int(1, 5)
+            for key in range(count):
+                self.generate_property(key)
         else:
-            schema_element_type = None
-        if schema_element_type == "property":
-            if not self.skip(self.stack):
-                if "properties" in self.stack.top.data:
-                    self.output.enter(self.stack.top.key, {})
-                elif "items" in self.stack.top.data:
-                    self.output.enter(self.stack.top.key, [])
-                else:
-                    self.output.primitive(self.stack.top.key, self.generate_fake(self.stack))
-        self.build_children()
-        if schema_element_type == "property":
-            if not self.skip(self.stack):
-                if "properties" in self.stack.top.data or "items" in self.stack.top.data:
-                    self.output.leave()
+            self.build_children()
+
+    def generate_property(self, key):
+        if not self.skip(self.stack):
+            if "properties" in self.stack.top.data:
+                self.output.enter(key, {})
+                self.build_children()
+                self.output.leave()
+            elif "items" in self.stack.top.data:
+                self.output.enter(key, [])
+                self.build_children()
+                self.output.leave()
+            else:
+                self.output.primitive(key, self.generate_fake(self.stack))
 
     def build(self, schema):
         output_name = schema.settings[self.output_file_name]
         output = self.builder.get_output(self.output_file_type, output_name)
         if not output.created:
             return
-        count = schema.settings.get("oarepo:sample", {}).get("count", 50)
+        count = self.get_count(schema.schema)
         for _ in range(count):
             super().build(schema)
+
+    def get_count(self, schema, default_count=50):
+        return schema.get("oarepo:sample", {}).get("count", default_count)
 
     def skip(self, stack):
         return stack.top.data.get("oarepo:sample", {}).get("skip", False)
@@ -65,15 +119,39 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
         method = None
         if "oarepo:sample" in stack.top.data:
             config = stack.top.data["oarepo:sample"]
-            method = config.get("faker")
             params = config.get("params", params)
 
-        if not method:
-            if hasattr(self.faker, stack.top.key):
-                method = stack.top.key
-            else:
+        for provider in self.sample_data_providers:
+            ret = provider(self.faker, stack, params)
+            if ret is not SKIP:
+                return ret
+
+
+def faker_provider(faker, stack, params):
+    config = stack.top.data.get("oarepo:sample", {})
+    method = config.get("faker")
+    if not method:
+        if stack.top.key in faker.formatters:
+            method = stack.top.key
+        else:
+            data_type = stack.top.data.get("type")
+            if data_type == "integer":
+                method = "random_int"
+            elif data_type == "number":
+                method = "random_float"
+            elif data_type == "date":
+                method = "date"
+            elif data_type == "object":
+                # it is an object with unknown properties, return a sample object
+                method = "sample_object"
+            elif data_type in ("string", "keyword", "fulltext", "fulltext+keyword"):
                 method = "sentence"
-        return getattr(self.faker, method)(**params)
+            else:
+                print(
+                    f"Warning: do not know how to generate sample data for {data_type} at path {stack.path}, using plain string rule"
+                )
+                method = "sentence"
+    return getattr(faker, method)(**params)
 
 
 class InvenioScriptSampleDataShellBuilder(OutputBuilder):

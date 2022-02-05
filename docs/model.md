@@ -35,6 +35,22 @@ mapping and marshmallow files with a custom ``PropertyPreprocessor`` - see later
 ``oarepo:documentation`` is a section that is currently ignored. In general, sections that are not recognized are
 ignored by default.
 
+## Required fields
+
+For the sake of lucidity, model does not place required
+elements to one "required" array but expects the requirement
+defined on the concrete element (such as in marshmallow schema).
+For example:
+
+```yaml
+model: # this is like the root of the json schema 
+  properties:
+    title:
+      type: text
+      required: true
+```
+
+
 ## Shortcuts
 
 A ``type: object`` is redundant in models. If there is a `properties` child, the object type is added automatically.

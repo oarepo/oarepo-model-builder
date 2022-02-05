@@ -12,6 +12,9 @@ python -c 'import sys; exit(1) if sys.version_info.major < 3 or sys.version_info
 python3 -mvenv .venv
 source .venv/bin/activate
 
+pip install -U pip wheel
+pip install setuptools==59.6.0      # needed by celery
+
 mkdir -p .venv/var/instance/
 if [ -f scripts/invenio.cfg ] ; then
     test -f .venv/var/instance/invenio.cfg || ln -s $PWD/scripts/invenio.cfg .venv/var/instance/invenio.cfg

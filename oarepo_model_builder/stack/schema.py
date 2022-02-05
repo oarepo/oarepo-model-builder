@@ -1,6 +1,3 @@
-from oarepo_model_builder.stack import ModelBuilderStack
-
-
 class SchemaPathValidator:
     valid = False
 
@@ -115,23 +112,3 @@ schema_paths = DictValidator(
 )
 
 model_paths = DictValidator({"model": schema_paths})
-
-
-def match_schema(stack: ModelBuilderStack):
-    sc = model_paths
-    parents = [sc]
-    for entry in stack.stack:
-        key = entry.key
-        if key is None:
-            continue
-        if isinstance(key, int):
-            continue
-        sc = sc.get(key)
-        if not sc.valid:
-            return None
-        parents.append(sc)
-    return parents
-
-
-def is_schema_element(stack: ModelBuilderStack):
-    return match_schema(stack) is not None

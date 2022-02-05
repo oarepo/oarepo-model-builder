@@ -119,6 +119,8 @@ class ModelSchema:
                 if not isinstance(included_name, list):
                     included_name = [included_name]
                 for name in included_name:
+                    if not name:
+                        raise IncludedFileNotFoundException(f"No file for oarepo:include at path {'/'.join(stack)}")
                     included_data = self._load_included_file(name)
                     deepmerge(element, included_data, [])
                 return self._resolve_references(element, stack)

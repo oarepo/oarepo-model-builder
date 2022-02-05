@@ -14,6 +14,18 @@
         },
         "model": {
           "$ref": "#/$defs/model"
+        },
+        "version": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "output-directory": {
+          "type": "string"
+        },
+        "$defs": {
+          "$ref": "#/$defs/jsonschema-object"
         }
       },
       "additionalProperties": false,

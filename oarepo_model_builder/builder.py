@@ -69,14 +69,14 @@ class ModelBuilder:
     filesystem: AbstractFileSystem
 
     def __init__(
-            self,
-            outputs: List[type(OutputBase)] = (),
-            output_builders: List[type(OutputBuilder)] = (),
-            property_preprocessors: List[type(PropertyPreprocessor)] = (),
-            model_preprocessors: List[type(ModelPreprocessor)] = (),
-            output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
-            included_validation_schemas=None,
-            filesystem=FileSystem(),
+        self,
+        outputs: List[type(OutputBase)] = (),
+        output_builders: List[type(OutputBuilder)] = (),
+        property_preprocessors: List[type(PropertyPreprocessor)] = (),
+        model_preprocessors: List[type(ModelPreprocessor)] = (),
+        output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
+        included_validation_schemas=None,
+        filesystem=FileSystem(),
     ):
         """
         Initializes the builder
@@ -88,9 +88,10 @@ class ModelBuilder:
         self.output_builder_classes = [*output_builders]
         for o in outputs:
             assert o.TYPE, f"output_type not set up on class {o}"
-        self.output_classes = [*outputs]
-        self.property_preprocessor_classes = [*property_preprocessors]
-        self.model_preprocessor_classes = [*model_preprocessors]
+        self.output_classes = [*(outputs or [])]
+        self.outputs = {}
+        self.property_preprocessor_classes = [*(property_preprocessors or [])]
+        self.model_preprocessor_classes = [*(model_preprocessors or [])]
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
         if output_builder_components:
             self.output_builder_components = {
@@ -101,7 +102,7 @@ class ModelBuilder:
             self.output_builder_components = {}
         self.filesystem = filesystem
         self.included_validation_schemas = included_validation_schemas or []
-        self.skip_schema_validation = False     # set to True in some tests
+        self.skip_schema_validation = False  # set to True in some tests
 
     def get_output(self, output_type: str, path: str | Path):
         """
@@ -163,12 +164,15 @@ class ModelBuilder:
             output_builder = output_builder_class(builder=self, property_preprocessors=property_preprocessors)
             output_builder.build(model)
 
+        self._save_outputs()
+
+        return self.outputs
+
+    def _save_outputs(self):
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
             output.finish()
             if output.executable:
                 self.filesystem.make_executable(output.path)
-
-        return self.outputs
 
     def set_schema(self, schema):
         self.schema = schema

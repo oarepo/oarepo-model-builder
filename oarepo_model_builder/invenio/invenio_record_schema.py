@@ -1,10 +1,10 @@
 from collections import defaultdict
 
 from oarepo_model_builder.builders import process
-from .invenio_base import InvenioBaseClassPythonBuilder
+
 from ..utils.deepmerge import deepmerge
 from ..utils.jinja import base_name, package_name, with_defined_prefix
-from ..utils.schema import Ref, is_schema_element, match_schema
+from .invenio_base import InvenioBaseClassPythonBuilder
 
 OAREPO_MARSHMALLOW_PROPERTY = "oarepo:marshmallow"
 
@@ -39,17 +39,14 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.imports["marshmallow.fields"].add("ma_fields")
         self.imports["marshmallow.validate"].add("ma_valid")
         self.imported_classes = {}
+        self.generated_classes = set()
 
     def finish(self):
         super().finish(imports=self.imports, imported_classes=self.imported_classes)
 
-    @process("/model/**", condition=lambda current, stack: is_schema_element(stack))
+    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
-        schema_path = match_schema(self.stack)
-        if isinstance(schema_path[-1], Ref):
-            schema_element_type = schema_path[-1].element_type
-        else:
-            schema_element_type = None
+        schema_element_type = self.stack.top.schema_element_type
 
         definition = None
         recurse = True
@@ -61,13 +58,18 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if "nested" not in definition:
                 definition["nested"] = True
 
-            generate_schema_class = False
+            generate_schema_class = definition.get("generate", True)
+            schema_class = None  # to make pycharm happy
+            schema_class_base_classes = None
+            if generate_schema_class:
+                if "class" not in definition:
+                    definition["class"] = self.stack.top.key.title()
             if "class" in definition:
                 schema_class = definition["class"]
                 if "." not in schema_class:
                     schema_class = package_name(self.settings.python.record_schema_class) + "." + schema_class
                 schema_class_base_classes = definition.get("base-classes", ["ma.Schema"])
-                generate_schema_class = definition.get("generate", False)
+
             if generate_schema_class:
                 self.marshmallow_stack.append(
                     MarshmallowNode(schema_class, schema_class_base_classes, self.stack.top.data)
@@ -93,7 +95,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             self.marshmallow_stack[-1].prepared_schema = definition
         elif schema_element_type == "items":
             definition = self.get_marshmallow_definition(data, self.stack)
-            definition["field"] = f"ma.List({definition['field']})"
+            definition["field"] = f"ma_fields.List({definition['field']})"
             self.marshmallow_stack[-1].prepared_schema = definition
         elif schema_element_type == "property":
             prepared_schema = marshmallow_stack_top.pop_prepared_schema()
@@ -105,19 +107,20 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         elif schema_element_type == "properties":
             node = self.marshmallow_stack.pop()
             class_name = node.schema_class_name
-            if class_name.startswith('.'):
+            if class_name.startswith("."):
                 class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
-
-            self.process_template(
-                self.class_to_path(class_name),
-                "object-schema",
-                schema_class=class_name,
-                schema_bases=node.schema_class_bases,
-                fields=node.fields,
-                imports=self.imports,
-                imported_classes=self.imported_classes,
-                current_package_name=package_name(class_name),
-            )
+            if class_name not in self.generated_classes:
+                self.generated_classes.add(class_name)
+                self.process_template(
+                    self.class_to_path(class_name),
+                    "object-schema",
+                    schema_class=class_name,
+                    schema_bases=node.schema_class_bases,
+                    fields=node.fields,
+                    imports=self.imports,
+                    imported_classes=self.imported_classes,
+                    current_package_name=package_name(class_name),
+                )
 
     def get_marshmallow_definition(self, data, stack, definition=None):
         if not definition:
@@ -145,7 +148,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         if "class" in definition:
             class_name = definition["class"]
-            if class_name.startswith('.'):
+            if class_name.startswith("."):
                 class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
             if "." in class_name:
                 if not with_defined_prefix(self.settings.python.always_defined_import_prefixes, class_name):
@@ -197,14 +200,14 @@ def create_field(field_type, options=(), validators=(), definition=None):
         ret = f"{field_type}"
     if nested:
         if opts or kwargs:
-            ret = f'ma_fields.Nested({ret}, {", ".join(opts)}{kwargs})'
+            ret = f'ma_fields.Nested(lambda: {ret}(), {", ".join(opts)}{kwargs})'
         else:
-            ret = f"ma_fields.Nested({ret})"
+            ret = f"ma_fields.Nested(lambda: {ret}())"
     if list_nested:
         if opts or kwargs:
-            ret = f'ma_fields.List(ma_fields.Nested({ret}, {", ".join(opts)}{kwargs}))'
+            ret = f'ma_fields.List(ma_fields.Nested(lambda: {ret}(), {", ".join(opts)}{kwargs}))'
         else:
-            ret = f"ma_fields.List(ma_fields.Nested({ret}))"
+            ret = f"ma_fields.List(ma_fields.Nested(lambda: {ret}()))"
     return ret
 
 
@@ -218,6 +221,14 @@ def marshmallow_string_generator(data, definition, schema, imports):
 
 
 def marshmallow_integer_generator(data, definition, schema, imports):
+    return marshmallow_generic_number_generator("ma_fields.Integer", data, definition, schema, imports)
+
+
+def marshmallow_number_generator(data, definition, schema, imports):
+    return marshmallow_generic_number_generator("ma_fields.Float", data, definition, schema, imports)
+
+
+def marshmallow_generic_number_generator(datatype, data, definition, schema, imports):
     validators = []
     minimum = data.get("minimum", None)
     maximum = data.get("maximum", None)
@@ -230,7 +241,7 @@ def marshmallow_integer_generator(data, definition, schema, imports):
             f'min={minimum or exclusive_minimum or "None"}, max={maximum or exclusive_maximum or "None"}, '
             f"min_inclusive={exclusive_minimum is None}, max_inclusive={exclusive_maximum is None})"
         )
-    return create_field("ma_fields.Integer", [], validators, definition)
+    return create_field(datatype, [], validators, definition)
 
 
 # TODO: rest of supported schema types
@@ -238,16 +249,17 @@ def marshmallow_integer_generator(data, definition, schema, imports):
 default_marshmallow_generators = {
     "string": marshmallow_string_generator,
     "integer": marshmallow_integer_generator,
+    "number": marshmallow_number_generator,
 }
 
 
 def resolve_relative_classname(class_name, base_class_name):
-    base_class_name = base_class_name.rsplit('.', maxsplit=1)[0]
+    base_class_name = base_class_name.rsplit(".", maxsplit=1)[0]
     class_name = class_name[1:]
-    if '.' in class_name:
+    if "." in class_name:
         # always go one level up
-        class_name = '.' + class_name
-    while class_name.startswith('.'):
+        class_name = "." + class_name
+    while class_name.startswith("."):
         class_name = class_name[1:]
-        base_class_name = base_class_name.rsplit('.', maxsplit=1)[0]
-    return base_class_name + '.' + class_name
+        base_class_name = base_class_name.rsplit(".", maxsplit=1)[0]
+    return base_class_name + "." + class_name

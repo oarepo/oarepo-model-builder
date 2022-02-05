@@ -4,22 +4,22 @@ import re
 from io import StringIO
 from pathlib import Path
 from typing import Dict
-from oarepo_model_builder.entrypoints import load_model, create_builder_from_entrypoints
-from oarepo_model_builder.fs import AbstractFileSystem
 
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
+from oarepo_model_builder.fs import AbstractFileSystem
 
 # from tests.mock_filesystem import MockFilesystem
 
-class MockFilesystem(AbstractFileSystem):
 
+class MockFilesystem(AbstractFileSystem):
     def __init__(self):
         self.files: Dict[str, StringIO] = {}
 
-    def open(self, path: str, mode: str = 'r'):
+    def open(self, path: str, mode: str = "r"):
         path = Path(path).absolute()
-        if mode == 'r':
+        if mode == "r":
             if not path in self.files:
-                raise FileNotFoundError(f'File {path} not found. Known files {[f for f in self.files]}')
+                raise FileNotFoundError(f"File {path} not found. Known files {[f for f in self.files]}")
             return StringIO(self.files[path].getvalue())
         self.files[path] = StringIO()
         self.files[path].close = lambda: None
@@ -41,31 +41,30 @@ class MockFilesystem(AbstractFileSystem):
 
 def test_include_invenio():
     schema = load_model(
-        'test.yaml', 'test',
+        "test.yaml",
+        "test",
         model_content={
-            'oarepo:use': 'invenio',
-            'model': {
-                'properties': {
-                    'a': {
-                        'type': 'fulltext+keyword'
-                    },
-                    'b': {
-                        'type': 'keyword',
-                        'oarepo:facets': {
-                            'field': 'TermsFacet(field="cosi")'
-                        }
-                    }
+            "oarepo:use": "invenio",
+            "model": {
+                "properties": {
+                    "a": {"type": "fulltext+keyword"},
+                    "b": {"type": "keyword", "oarepo:facets": {"field": 'TermsFacet(field="cosi")'}},
                 }
-            }
-        }, isort=False, black=False)
+            },
+        },
+        isort=False,
+        black=False,
+    )
 
     filesystem = MockFilesystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "")
 
-    builder.build(schema, '')
-
-    data = builder.filesystem.open(os.path.join('test', 'services', 'facets.py')).read()
-    assert re.sub(r'\s', '', data) == re.sub(r'\s', '', """
+    data = builder.filesystem.open(os.path.join("test", "services", "facets.py")).read()
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
 \"""Facet definitions.\"""
 
 from invenio_records_resources.services.records.facets import TermsFacet
@@ -122,59 +121,50 @@ updated = TermsFacet(field = "updated")
 
 
 _schema = TermsFacet(field = "$schema")
-    """)
+    """,
+    )
 
 
 def test_nested():
     schema = load_model(
-        'test.yaml', 'test',
+        "test.yaml",
+        "test",
         model_content={
-            'oarepo:use': 'invenio',
-            'model': {
-                'properties': {
-                    'b': {
-                        'properties': {
-                            'c': {
-                                'type': 'keyword',
+            "oarepo:use": "invenio",
+            "model": {
+                "properties": {
+                    "b": {
+                        "properties": {
+                            "c": {
+                                "type": "keyword",
                             },
-                            'd': {
-                                'type': 'fulltext+keyword'
+                            "d": {"type": "fulltext+keyword"},
+                            "f": {
+                                "properties": {"g": {"type": "keyword"}},
+                                "oarepo:mapping": {"type": "nested"},
+                                "oarepo:marshmallow": {"class": "nest.f.F", "generate": True},
                             },
-                            'f':
-                                {
-                                    'properties': {
-                                        'g': {
-                                            'type': 'keyword'
-                                        }
-                                    },
-                                    'oarepo:mapping': {
-                                        'type': 'nested'
-                                    },
-                                    'oarepo:marshmallow': {
-                                        'class': 'nest.f.F',
-                                        'generate': 'true'
-                                    }
-                                }
                         },
-                        'oarepo:mapping': {
-                            'type': 'nested'
-                        },
-                        'oarepo:marshmallow': {
-                            'class': 'nest.b.B',
-                            'generate': 'true'
-                        }
+                        "oarepo:mapping": {"type": "nested"},
+                        "oarepo:marshmallow": {"class": "nest.b.B", "generate": True},
                     }
                 }
-            }
-        }, isort=False, black=False)
+            },
+        },
+        isort=False,
+        black=False,
+    )
 
     filesystem = MockFilesystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, '')
+    builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join('test', 'services', 'facets.py')).read()
-    assert re.sub(r'\s', '', data) == re.sub(r'\s', '', """
+    data = builder.filesystem.open(os.path.join("test", "services", "facets.py")).read()
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
 \"""Facet definitions.\"""
 
 from invenio_records_resources.services.records.facets import TermsFacet
@@ -235,35 +225,37 @@ updated = TermsFacet(field = "updated")
 
 
 _schema = TermsFacet(field = "$schema")
-    """)
+    """,
+    )
+
 
 def test_search_class():
     schema = load_model(
-        'test.yaml', 'test',
+        "test.yaml",
+        "test",
         model_content={
-            'oarepo:use': 'invenio',
-            'model': {
-                'properties': {
-                    'a': {
-                        'type': 'fulltext+keyword'
-                    },
-                    'b': {
-                        'type': 'keyword',
-                        'oarepo:facets': {
-                            'field': 'TermsFacet(field="cosi")'
-                        }
-                    }
+            "oarepo:use": "invenio",
+            "model": {
+                "properties": {
+                    "a": {"type": "fulltext+keyword"},
+                    "b": {"type": "keyword", "oarepo:facets": {"field": 'TermsFacet(field="cosi")'}},
                 }
-            }
-        }, isort=False, black=False)
+            },
+        },
+        isort=False,
+        black=False,
+    )
 
     filesystem = MockFilesystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, '')
+    builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join('test', 'services', 'search.py')).read()
-    assert re.sub(r'\s', '', data) == re.sub(r'\s', '', """
+    data = builder.filesystem.open(os.path.join("test", "services", "search.py")).read()
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
 from . import facets
 
@@ -299,4 +291,5 @@ class TestSearchOptions(InvenioSearchOptions):
 
 
     }
-    """)
+    """,
+    )

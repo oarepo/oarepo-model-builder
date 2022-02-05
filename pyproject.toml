@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.9.18"
+version = "0.9.19"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
@@ -30,6 +30,7 @@ jsonschema = {extras = ["format"], version = "^4.4.0"}
 [tool.poetry.dev-dependencies]
 pytest = "^6"
 md-toc = "^8.1.0"
+pytest-mock = "^3.7.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -109,6 +110,8 @@ yaml = "oarepo_model_builder.outputs.yaml:YAMLOutput"
 100-type_shortcuts = "oarepo_model_builder.property_preprocessors.type_shortcuts:TypeShortcutsPreprocessor"
 500-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
 600-date = "oarepo_model_builder.property_preprocessors.date:DatePreprocessor"
+700-number = "oarepo_model_builder.property_preprocessors.number:NumberPreprocessor"
+700-marshmallow-class = "oarepo_model_builder.property_preprocessors.marshmallow_class_generator:MarshmallowClassGeneratorPreprocessor"
 
 [tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
 01-default = "oarepo_model_builder.model_preprocessors.default_values:DefaultValuesModelPreprocessor"
@@ -134,6 +137,9 @@ marshmallow = "oarepo_model_builder.validation.schemas:marshmallow.json5"
 settings = "oarepo_model_builder.validation.schemas:settings.json5"
 modelschema = "oarepo_model_builder.validation.schemas:modelschema.json5"
 elasticsearch = "oarepo_model_builder.validation.schemas:elasticsearch.json5"
+faker = "oarepo_model_builder.validation.schemas:faker.json5"
+mapping = "oarepo_model_builder.validation.schemas:mapping.json5"
+facets = "oarepo_model_builder.validation.schemas:facets.json5"
 
 [tool.poetry.scripts]
 oarepo-compile-model = "oarepo_model_builder.cli:run"

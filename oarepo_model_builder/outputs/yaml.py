@@ -55,7 +55,7 @@ class YAMLOutput(OutputBase):
         self._created = value
 
     def enter(self, key, el):
-        if key:
+        if key is not None:
             self.stack.push(key, el)
 
     def leave(self):
@@ -63,7 +63,7 @@ class YAMLOutput(OutputBase):
             self.stack.pop()
 
     def primitive(self, key, value):
-        if key:
+        if key is not None:
             self.stack.push(key, value)
             self.stack.pop()
 

@@ -17,66 +17,22 @@ except ImportError:
 
 
 def test_simple_jsonschema_builder():
-    builder = ModelBuilder(
-        output_builders=[JSONSchemaBuilder],
-        outputs=[JSONSchemaOutput, PythonOutput],
-        model_preprocessors=[DefaultValuesModelPreprocessor],
-        filesystem=MockFilesystem(),
-    )
-    builder.build(
-        model=ModelSchema(
-            "",
-            {
-                "settings": {
-                    "package": "test",
-                    "python": {"use_isort": False, "use_black": False},
-                },
-                "model": {"properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}},
-            },
-        ),
-        output_dir="",
-    )
-
-    data = json5.load(builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")))
+    data = build({"properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}})
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
 
+def test_required():
+    data = build({"properties": {"a": {"type": "string", "required": True, "oarepo:ui": {"class": "bolder"}}}})
+
+    assert data == {"properties": {"a": {"type": "string"}}, "required": ["a"]}
+
+
 def test_jsonschema_preprocessor():
-    builder = ModelBuilder(
-        output_builders=[JSONSchemaBuilder],
-        outputs=[JSONSchemaOutput, PythonOutput],
-        model_preprocessors=[DefaultValuesModelPreprocessor],
+    data = build(
+        {"properties": {"a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}}},
         property_preprocessors=[MultilangPreprocessor],
-        filesystem=MockFilesystem(),
-        included_validation_schemas=[
-            {
-                "jsonschema-property": {
-                    "properties": {
-                        "type": {
-                            "enum": ["multilingual"]
-                        }
-                    }
-                }
-            }
-        ]
     )
-
-    builder.build(
-        model=ModelSchema(
-            "",
-            {
-                "settings": {
-                    "package": "test",
-                    "python": {"use_isort": False, "use_black": False},
-                },
-                "model": {"properties": {"a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}}},
-            },
-        ),
-        output_dir="",
-    )
-
-    data = json5.load(builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")))
 
     assert data == {
         "properties": {
@@ -96,12 +52,32 @@ class TestJSONSchemaOutputComponent(OutputBuilderComponent):
 
 
 def test_components():
+    data = build(
+        {"properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}},
+        output_builder_components={JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]},
+    )
+
+    assert data == {"properties": {"a": {"type": "integer"}}}
+
+
+def build(model, output_builder_components=None, property_preprocessors=None):
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        output_builder_components={JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]},
+        output_builder_components=output_builder_components,
         filesystem=MockFilesystem(),
+        property_preprocessors=property_preprocessors,
+        included_validation_schemas=[
+            {
+                "jsonschema-property": {
+                    "properties": {
+                        "type": {"enum": ["multilingual"]},
+                        "oarepo:ui": {"type": "object", "additionalProperties": True},
+                    }
+                }
+            }
+        ],
     )
     builder.build(
         model=ModelSchema(
@@ -111,12 +87,10 @@ def test_components():
                     "package": "test",
                     "python": {"use_isort": False, "use_black": False},
                 },
-                "model": {"properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}},
+                "model": model,
             },
         ),
         output_dir="",
     )
-
     data = json5.load(builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")))
-
-    assert data == {"properties": {"a": {"type": "integer"}}}
+    return data

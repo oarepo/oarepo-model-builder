@@ -2,7 +2,8 @@ import re
 
 
 def camel_case(s):
-    s = re.sub(r"(_|-)+", " ", s).title().replace(" ", "")
+    s = re.split("_|-", s)
+    s = [x[0].title() + x[1:] for x in s]
     return "".join(s)
 
 

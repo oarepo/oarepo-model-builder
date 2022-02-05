@@ -1,4 +1,4 @@
-from oarepo_model_builder.utils.schema import model_paths
+from oarepo_model_builder.stack.schema import model_paths
 
 
 def path_valid(*path):

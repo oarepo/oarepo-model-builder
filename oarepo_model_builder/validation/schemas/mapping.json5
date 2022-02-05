@@ -1,0 +1,10 @@
+{
+  "jsonschema-property": {
+    "properties": {
+      "oarepo:mapping": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}
