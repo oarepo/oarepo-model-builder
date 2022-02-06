@@ -122,12 +122,12 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             params = config.get("params", params)
 
         for provider in self.sample_data_providers:
-            ret = provider(self.faker, stack, params)
+            ret = provider(self.faker, self.settings, stack, params)
             if ret is not SKIP:
                 return ret
 
 
-def faker_provider(faker, stack, params):
+def faker_provider(faker, settings, stack, params):
     config = stack.top.data.get("oarepo:sample", {})
     method = config.get("faker")
     if not method:
