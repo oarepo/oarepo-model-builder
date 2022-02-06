@@ -13,39 +13,39 @@ from tests.mock_filesystem import MockFilesystem
 
 
 def test_object():
-    data = build_jsonschema({"properties": {"a": {"properties": {"b": {"type": "string"}}}}})
+    data = build_jsonschema({"properties": {"a": {"properties": {"b": {"type": "keyword"}}}}})
 
     assert data == {
         "type": "object",
-        "properties": {"a": {"type": "object", "properties": {"b": {"type": "string"}}}},
+        "properties": {"a": {"type": "object", "properties": {"b": {"type": "keyword"}}}},
     }
 
 
 def test_array():
-    data = build_jsonschema({"properties": {"a": {"items": {"type": "string"}}}})
+    data = build_jsonschema({"properties": {"a": {"items": {"type": "keyword"}}}})
 
     assert data == {
         "type": "object",
-        "properties": {"a": {"type": "array", "items": {"type": "string"}}},
+        "properties": {"a": {"type": "array", "items": {"type": "keyword"}}},
     }
 
 
 def test_object_inside_array():
-    data = build_jsonschema({"properties": {"a": {"items": {"properties": {"b": {"type": "string"}}}}}})
+    data = build_jsonschema({"properties": {"a": {"items": {"properties": {"b": {"type": "keyword"}}}}}})
 
     assert data == {
         "type": "object",
         "properties": {
             "a": {
                 "type": "array",
-                "items": {"type": "object", "properties": {"b": {"type": "string"}}},
+                "items": {"type": "object", "properties": {"b": {"type": "keyword"}}},
             }
         },
     }
 
 
 def test_array_brackets():
-    data = build_jsonschema({"properties": {"a[]": {"type": "string", "minLength[]": 5}}})
+    data = build_jsonschema({"properties": {"a[]": {"type": "keyword", "minLength[]": 5}}})
 
     assert data == {
         "type": "object",
@@ -53,7 +53,7 @@ def test_array_brackets():
             "a": {
                 "type": "array",
                 "minLength": 5,
-                "items": {"type": "string"},
+                "items": {"type": "keyword"},
             }
         },
     }

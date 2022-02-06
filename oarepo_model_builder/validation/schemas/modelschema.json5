@@ -28,7 +28,6 @@
       "type": {
         "type": "string",
         "enum": [
-          "string",
           "boolean",
           "number",
           "integer",

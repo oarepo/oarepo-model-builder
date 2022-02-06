@@ -64,7 +64,7 @@ def test_fulltext_keyword(fulltext_builder):
 
 
 def test_simple_array(fulltext_builder):
-    schema = get_test_schema(a={"type": "array", "items": {"type": "string"}})
+    schema = get_test_schema(a={"type": "array", "items": {"type": "keyword"}})
     fulltext_builder.filesystem = MockFilesystem()
     fulltext_builder.build(schema, output_dir="")
 
@@ -79,7 +79,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
             "oarepo:marshmallow": {"class": "B", "generate": True},
             "properties": {
                 "b": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
         }
@@ -122,7 +122,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
             },
             "properties": {
                 "b": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
         }
@@ -158,7 +158,7 @@ def test_use_nested_schema_same_file(fulltext_builder):
             "oarepo:marshmallow": {"class": "B", "generate": False},
             "properties": {
                 "b": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
         }
@@ -189,7 +189,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
             "oarepo:marshmallow": {"class": "c.B", "generate": False},
             "properties": {
                 "b": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
         }
@@ -213,7 +213,7 @@ def test_generate_nested_schema_array(fulltext_builder):
                 "oarepo:marshmallow": {"class": "B", "generate": True},
                 "properties": {
                     "b": {
-                        "type": "string",
+                        "type": "keyword",
                     }
                 },
             },
@@ -261,7 +261,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
             },
             "properties": {
                 "b": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
         }
@@ -300,7 +300,7 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
             },
             "properties": {
                 "b": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
         }
@@ -333,7 +333,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
             },
             "properties": {
                 "b": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
         }
@@ -372,7 +372,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
             },
             "properties": {
                 "b": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
         }

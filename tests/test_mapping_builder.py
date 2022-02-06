@@ -16,14 +16,14 @@ except ImportError:
 
 
 def test_simple_mapping_builder():
-    model = {"properties": {"a": {"type": "string", "oarepo:mapping": {"type": "text"}}}}
+    model = {"properties": {"a": {"type": "keyword", "oarepo:mapping": {"type": "text"}}}}
     data = build_model(model)
 
     assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
 
 
 def test_array_mapping_builder():
-    model = {"properties": {"a": {"type": "array", "items": {"type": "string", "oarepo:mapping": {"type": "text"}}}}}
+    model = {"properties": {"a": {"type": "array", "items": {"type": "keyword", "oarepo:mapping": {"type": "text"}}}}}
     data = build_model(model)
 
     assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
