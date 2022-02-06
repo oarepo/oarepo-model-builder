@@ -12,7 +12,7 @@ def test_include_invenio():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "string"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -54,7 +54,7 @@ class TestSchema(ma.Schema, ):
         "mappings": {
             "properties": {
                 "$schema": {"ignore_above": 50, "type": "keyword"},
-                "a": {"type": "string"},
+                "a": {'ignore_above': 50, 'type': 'keyword'},
                 "created": {"type": "date"},
                 "id": {"ignore_above": 50, "type": "keyword"},
                 "updated": {"type": "date"},
@@ -67,7 +67,7 @@ def test_generate_multiple_times():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "string"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -88,7 +88,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"model": {"properties": {"a": {"type": "string"}}}},
+        model_content={"model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -101,7 +101,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "string"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -116,7 +116,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "string"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )

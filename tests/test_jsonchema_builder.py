@@ -17,15 +17,15 @@ except ImportError:
 
 
 def test_simple_jsonschema_builder():
-    data = build({"properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}})
+    data = build({"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}})
 
-    assert data == {"properties": {"a": {"type": "string"}}}
+    assert data == {"properties": {"a": {"type": "keyword"}}}
 
 
 def test_required():
-    data = build({"properties": {"a": {"type": "string", "required": True, "oarepo:ui": {"class": "bolder"}}}})
+    data = build({"properties": {"a": {"type": "keyword", "required": True, "oarepo:ui": {"class": "bolder"}}}})
 
-    assert data == {"properties": {"a": {"type": "string"}}, "required": ["a"]}
+    assert data == {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
 
 
 def test_jsonschema_preprocessor():
@@ -53,7 +53,7 @@ class TestJSONSchemaOutputComponent(OutputBuilderComponent):
 
 def test_components():
     data = build(
-        {"properties": {"a": {"type": "string", "oarepo:ui": {"class": "bolder"}}}},
+        {"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}},
         output_builder_components={JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]},
     )
 
