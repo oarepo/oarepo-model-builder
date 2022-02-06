@@ -2,9 +2,6 @@
   "settings": {
     "type": "object",
     "properties": {
-      "plugins": {
-        "$ref": "#/$defs/settings-plugins"
-      },
       "python": {
         "$ref": "#/$defs/settings-python"
       },
@@ -62,12 +59,6 @@
       "package-base-upper": {
         "type": "string"
       }
-    },
-    "additionalProperties": false
-  },
-  "settings-plugins": {
-    "type": "object",
-    "properties": {
     },
     "additionalProperties": false
   },
@@ -189,6 +180,15 @@
         "type": "string"
       },
       "script-import-sample-data-cli": {
+        "type": "string"
+      },
+      "record-records-package": {
+        "type": "string"
+      },
+      "record-services-package": {
+        "type": "string"
+      },
+      "record-resources-package": {
         "type": "string"
       },
       "templates": {

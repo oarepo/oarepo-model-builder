@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.9.21"
+version = "0.9.22"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
@@ -140,6 +140,7 @@ elasticsearch = "oarepo_model_builder.validation.schemas:elasticsearch.json5"
 faker = "oarepo_model_builder.validation.schemas:faker.json5"
 mapping = "oarepo_model_builder.validation.schemas:mapping.json5"
 facets = "oarepo_model_builder.validation.schemas:facets.json5"
+plugins = "oarepo_model_builder.validation.schemas:plugins.json5"
 
 [tool.poetry.scripts]
 oarepo-compile-model = "oarepo_model_builder.cli:run"

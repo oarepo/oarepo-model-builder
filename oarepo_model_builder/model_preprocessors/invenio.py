@@ -30,6 +30,26 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: snake_case(settings.python.record_prefix),
         )
 
+        # level-1 packages
+
+        self.set(
+            settings.python,
+            "record-resources-package",
+            lambda: f"{settings.package}.resources",
+        )
+
+        self.set(
+            settings.python,
+            "record-services-package",
+            lambda: f"{settings.package}.services",
+        )
+
+        self.set(
+            settings.python,
+            "record-records-package",
+            lambda: f"{settings.package}.records",
+        )
+
         # config
         self.set(settings.python, "config-package", lambda: f"{settings.package}.config")
         self.set(
@@ -82,12 +102,12 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             settings.python,
             "record-class",
-            lambda: f"{settings.package}.records.api.{record_prefix}Record",
+            lambda: f"{settings.python.record_records_package}.api.{record_prefix}Record",
         )
         self.set(
             settings.python,
             "record-metadata-class",
-            lambda: f"{settings.package}.records.models.{record_prefix}Metadata",
+            lambda: f"{settings.python.record_records_package}.models.{record_prefix}Metadata",
         )
         self.set(
             settings.python,
@@ -106,56 +126,58 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             settings.python,
             "record-resource-config-class",
-            lambda: f"{settings.package}.resources.config.{record_prefix}ResourceConfig",
+            lambda: f"{settings.python.record_resources_package}.config.{record_prefix}ResourceConfig",
         )
         self.set(
             settings.python,
             "record-resource-class",
-            lambda: f"{settings.package}.resources.resource.{record_prefix}Resource",
+            lambda: f"{settings.python.record_resources_package}.resource.{record_prefix}Resource",
         )
         self.set(
             settings.python,
             "record-permissions-class",
-            lambda: f"{settings.package}.services.permissions.{record_prefix}PermissionPolicy",
+            lambda: f"{settings.python.record_services_package}.permissions.{record_prefix}PermissionPolicy",
         )
 
         # service
         self.set(
             settings.python,
             "record-service-class",
-            lambda: f"{settings.package}.services.service.{record_prefix}Service",
+            lambda: f"{settings.python.record_services_package}.service.{record_prefix}Service",
         )
         self.set(
             settings.python,
             "record-service-config-class",
-            lambda: f"{settings.package}.services.config.{record_prefix}ServiceConfig",
+            lambda: f"{settings.python.record_services_package}.config.{record_prefix}ServiceConfig",
         )
         #   - schema
         self.set(
             settings.python,
             "record-schema-class",
-            lambda: f"{settings.package}.services.schema.{record_prefix}Schema",
+            lambda: f"{settings.python.record_services_package}.schema.{record_prefix}Schema",
         )
         self.set(
             settings.python,
             "record-schema-metadata-class",
-            lambda: f"{settings.package}.services.schema.{record_prefix}MetadataSchema",
+            lambda: f"{settings.python.record_services_package}.schema.{record_prefix}MetadataSchema",
         )
         #   - dumper
         self.set(
             settings.python,
             "record-dumper-class",
-            lambda: f"{settings.package}.services.dumper.{record_prefix}Dumper",
+            lambda: f"{settings.python.record_records_package}.dumper.{record_prefix}Dumper",
         )
         #   - search
         self.set(
             settings.python,
             "record-search-options-class",
-            lambda: f"{settings.package}.services.search.{record_prefix}SearchOptions",
+            lambda: f"{settings.python.record_services_package}.search.{record_prefix}SearchOptions",
         )
 
         #   - facets
-        self.set(settings.python, "record-facets-class", lambda: f"{settings.package}.services.facets.Test")
+        self.set(
+            settings.python, "record-facets-class", lambda: f"{settings.python.record_services_package}.facets.Test"
+        )
 
         # alembic
         self.set(

@@ -52,7 +52,7 @@ class PropertyPreprocessor:
 
     def _call_method(self, data, stack: ModelBuilderStack, output_builder_type):
         for method, _output_builder_type in self.json_paths.match(
-                stack.path, stack.top.data, extra_data={"stack": stack}
+            stack.path, stack.top.data, extra_data={"stack": stack}
         ):
             if _output_builder_type == "*" or output_builder_type == _output_builder_type:
                 return method(data, stack=stack)
@@ -65,6 +65,7 @@ def process(model_builder, path, priority=0, condition=None):
     """
     :param model_builder either a single builder, its TYPE property or a list of builders or their TYPEs
     """
+
     def convert_type(model_builder_types):
         if not isinstance(model_builder_types, (list, tuple)):
             model_builder_types = [model_builder_types]
