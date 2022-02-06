@@ -44,7 +44,7 @@ class YAMLOutput(OutputBase):
             self.builder.filesystem.mkdir(self.path.parent)
             log(2, "Saving %s", self.path)
             with self.builder.filesystem.open(self.path, mode="w") as f:
-                yaml.safe_dump_all(self.documents, f)
+                yaml.safe_dump_all(self.documents, f, allow_unicode=True)
 
     @property
     def created(self):
