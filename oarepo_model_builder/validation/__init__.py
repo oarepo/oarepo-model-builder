@@ -36,10 +36,13 @@ def validate_model(model, extra_validation_schemas=None):
     else:
         schema = model_json_schema
 
-    validator = Draft202012Validator(schema)
-
     data = json.loads(json.dumps(model.schema, default=lambda s: repr(s)))
     replace_array_keys(data)
+
+    if "oarepo:model-validation" in data:
+        schema["$defs"] = deepmerge(data.pop("oarepo:model-validation"), schema["$defs"], listmerge="extend")
+
+    validator = Draft202012Validator(schema)
 
     errors = list(validator.iter_errors(data))
 

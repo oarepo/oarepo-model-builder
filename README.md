@@ -7,6 +7,7 @@ A library and command-line tool to generate invenio model project from a single 
 <!--TOC-->
 
 - [OARepo model builder](#oarepo-model-builder)
+  - [Work in progress](#work-in-progress)
   - [CLI Usage](#cli-usage)
     - [Installing model builder as dev dependency](#installing-model-builder-as-dev-dependency)
     - [Installing model builder in a separate virtualenv](#installing-model-builder-in-a-separate-virtualenv)

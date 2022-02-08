@@ -14,6 +14,7 @@
   - [Creating your own property preprocessor](#creating-your-own-property-preprocessor)
   - [Create your own Builders](#create-your-own-builders)
   - [Packaging your extension](#packaging-your-extension)
+  - [Extending model schema](#extending-model-schema)
 
 <!--TOC-->
 

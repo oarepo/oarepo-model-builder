@@ -3,6 +3,8 @@
 <!--TOC-->
 
 - [Model](#model)
+  - [Validation](#validation)
+  - [Required fields](#required-fields)
   - [Shortcuts](#shortcuts)
   - [Referencing another model](#referencing-another-model)
   - [Built-in extensions](#built-in-extensions)
@@ -34,6 +36,13 @@ mapping and marshmallow files with a custom ``PropertyPreprocessor`` - see later
 
 ``oarepo:documentation`` is a section that is currently ignored. In general, sections that are not recognized are
 ignored by default.
+
+## Validation
+
+The model file is validated before it is processed. It is possible
+to override the validation by providing `oarepo:model-validation`
+section with extended validation rules. See oarepo_model_builder/validation/schemas
+for hints on the rules.
 
 ## Required fields
 

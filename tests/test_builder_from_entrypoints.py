@@ -54,7 +54,7 @@ class TestSchema(ma.Schema, ):
         "mappings": {
             "properties": {
                 "$schema": {"ignore_above": 50, "type": "keyword"},
-                "a": {'ignore_above': 50, 'type': 'keyword'},
+                "a": {"ignore_above": 50, "type": "keyword"},
                 "created": {"type": "date"},
                 "id": {"ignore_above": 50, "type": "keyword"},
                 "updated": {"type": "date"},
