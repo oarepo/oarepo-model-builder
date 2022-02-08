@@ -40,16 +40,19 @@ def load_entry_points_list(name):
     return [x[1] for x in ret]
 
 
-def load_model_from_entrypoint(schema, ep: pkg_resources.EntryPoint):
-    filename = ".".join(ep.attrs)
-    data = pkg_resources.resource_string(ep.module_name, filename)
-    return schema._load(filename, content=data)
+def load_model_from_entrypoint(ep: pkg_resources.EntryPoint):
+    def load(schema):
+        filename = ".".join(ep.attrs)
+        data = pkg_resources.resource_string(ep.module_name, filename)
+        return schema._load(filename, content=data)
+
+    return load
 
 
 def load_included_models_from_entry_points():
     ret = {}
     for ep in pkg_resources.iter_entry_points(group="oarepo.models"):
-        ret[ep.name] = lambda schema: load_model_from_entrypoint(schema, ep)
+        ret[ep.name] = load_model_from_entrypoint(ep)
     return ret
 
 
