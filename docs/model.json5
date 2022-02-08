@@ -19,6 +19,6 @@
     }
   },
   'oarepo:sample': {
-    records: 50
+    count: 50
   }
 }
