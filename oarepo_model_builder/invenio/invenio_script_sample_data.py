@@ -37,7 +37,7 @@ class Provider:
     def sample_object(self):
         return {self.generator.word(): self.generator.word() for _ in range(self.generator.random.randrange(1, 5, 1))}
 
-    def constant(self, value):
+    def constant(self, value=None):
         return value
 
 
@@ -109,7 +109,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
         return schema.get("oarepo:sample", {}).get("count", default_count)
 
     def skip(self, stack):
-        return stack.top.data.get("oarepo:sample", {}).get("skip", False)
+        return get_oarepo_sample(stack).get("skip", False)
 
     def on_enter_model(self, output_name):
         self.output.next_document()
@@ -117,9 +117,8 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
     def generate_fake(self, stack):
         params = {}
         method = None
-        if "oarepo:sample" in stack.top.data:
-            config = stack.top.data["oarepo:sample"]
-            params = config.get("params", params)
+        config = get_oarepo_sample(stack)
+        params = config.get("params", params)
 
         for provider in self.sample_data_providers:
             ret = provider(self.faker, self.settings, stack, params)
@@ -127,8 +126,24 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
                 return ret
 
 
+def get_oarepo_sample(stack):
+    if isinstance(stack.top.data, dict) and "oarepo:sample" in stack.top.data:
+        sample = stack.top.data.get("oarepo:sample")
+        if isinstance(sample, dict):
+            return sample
+        if isinstance(sample, str):
+            return {"faker": "constant", "params": {"value": sample}}
+        if isinstance(sample, (list, dict)):
+            if stack.top.schema_element_type == "property" and "items" in stack.top.data:
+                return {"faker": "random_elements", "params": {"elements": sample, "unique": True}}
+            else:
+                return {"faker": "random_element", "params": {"elements": sample}}
+
+    return {}
+
+
 def faker_provider(faker, settings, stack, params):
-    config = stack.top.data.get("oarepo:sample", {})
+    config = get_oarepo_sample(stack)
     method = config.get("faker")
     if not method:
         if stack.top.key in faker.formatters:

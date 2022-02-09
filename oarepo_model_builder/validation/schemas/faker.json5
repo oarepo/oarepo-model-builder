@@ -2,23 +2,43 @@
   "jsonschema-property": {
     "properties": {
       "oarepo:sample": {
-        "type": "object",
-        "properties": {
-          "skip": {
-            "type": "boolean"
+        "oneOf": [
+          {
+            "type": "string"      // will output this single value
           },
-          "faker": {
-            "type": "string"
+          {
+            "type": "array",      // will output one of these values (on string prop) or half of these values (array prop)
+            "items": {
+              "type": "string"
+            }
           },
-          "params": {
+          {
+            "type": "array",      // will output one of these values (on string prop) or half of these values (array prop)
+            "items": {
+              "type": "number"
+            }
+          },
+          {
             "type": "object",
-            "additionalProperties": true
-          },
-          "count": {    // only for an array
-            "type": "integer"
+            "properties": {
+              "skip": {
+                "type": "boolean"
+              },
+              "faker": {
+                "type": "string"
+              },
+              "params": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "count": {
+                // only for an array
+                "type": "integer"
+              }
+            },
+            "additionalProperties": false
           }
-        },
-        "additionalProperties": false
+        ]
       }
     }
   },
