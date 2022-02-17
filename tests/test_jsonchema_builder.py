@@ -28,6 +28,26 @@ def test_required():
     assert data == {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
 
 
+def test_required_inside_metadata():
+    data = build({"properties": {
+        "metadata": {
+            "properties": {
+                "a": {"type": "keyword", "required": True, "oarepo:ui": {"class": "bolder"}}
+            }
+        }
+    }})
+
+    assert data == {
+        "properties": {
+            "metadata": {
+                "properties": {
+                    "a": {"type": "keyword"}
+                }, "required": ["a"]
+            }
+        }
+    }
+
+
 def test_min_length():
     data = build({"properties": {"a": {"type": "keyword", "minLength": 5}}})
     assert data == {"properties": {"a": {"type": "keyword", "minLength": 5}}}

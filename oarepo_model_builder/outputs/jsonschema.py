@@ -18,8 +18,9 @@ class JSONSchemaOutput(JSONOutput):
         for prop_key, prop in top['properties'].items():
             if not isinstance(prop, dict):
                 continue
-            if prop.pop('required', None):
-                required.append(prop_key)
+            if not isinstance(prop.get('required'), list):
+                if prop.pop('required', None):
+                    required.append(prop_key)
         if required:
             required.sort()
             top['required'] = required

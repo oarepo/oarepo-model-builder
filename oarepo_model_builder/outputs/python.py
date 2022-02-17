@@ -44,7 +44,7 @@ class PythonOutput(OutputBase):
             if self.builder.schema.settings.python.use_black:
                 import subprocess
 
-                subprocess.call(["black", "-q", "--experimental-string-processing", str(self.path)])
+                subprocess.call(["black", "-q", "--preview", str(self.path)])
 
     def merge(self, template_name, context, filters=None):
         # template is a loadable resource
