@@ -108,6 +108,7 @@ yaml = "oarepo_model_builder.outputs.yaml:YAMLOutput"
 
 [tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
 100-type_shortcuts = "oarepo_model_builder.property_preprocessors.type_shortcuts:TypeShortcutsPreprocessor"
+200-enum = "oarepo_model_builder.property_preprocessors.enum:EnumPreprocessor"
 500-text_keyword = "oarepo_model_builder.property_preprocessors.text_keyword:TextKeywordPreprocessor"
 600-date = "oarepo_model_builder.property_preprocessors.date:DatePreprocessor"
 700-number = "oarepo_model_builder.property_preprocessors.number:NumberPreprocessor"

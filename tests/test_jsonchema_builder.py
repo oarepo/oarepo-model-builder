@@ -28,6 +28,11 @@ def test_required():
     assert data == {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
 
 
+def test_min_length():
+    data = build({"properties": {"a": {"type": "keyword", "minLength": 5}}})
+    assert data == {"properties": {"a": {"type": "keyword", "minLength": 5}}}
+
+
 def test_jsonschema_preprocessor():
     data = build(
         {"properties": {"a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}}},
