@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "0.9.29"
+version = "0.9.30"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
@@ -22,8 +22,8 @@ PyYAML = { version = "^6.0" }
 Jinja2 = "^3.0.3"
 munch = "^2.5.0"
 isort = "^5.10.1"
-black = "^21.11b1"
-Faker = "^11.3.0"
+black = ">21.11b1"
+Faker = ">11.3.0"
 lazy-object-proxy = "^1.7.1"
 jsonschema = {extras = ["format"], version = "^4.4.0"}
 
