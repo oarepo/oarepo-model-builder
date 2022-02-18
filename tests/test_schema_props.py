@@ -14,14 +14,7 @@ def test_enum():
         "test",
         model_content={
             "oarepo:use": "invenio",
-            "model": {
-                "properties": {
-                    "a": {
-                        "type": "keyword",
-                        "enum": ["a", "b", "c"]
-                    }
-                }
-            }
+            "model": {"properties": {"a": {"type": "keyword", "enum": ["a", "b", "c"]}}},
         },
         isort=False,
         black=False,
@@ -60,15 +53,26 @@ class TestSchema(ma.Schema, ):
     data = builder.filesystem.read(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
     data = json.loads(data)
     assert data == {
-        'properties': {
-            '$schema': {'type': 'string'},
-            'a': {
-                'type': 'string',
-                'enum': ['a', 'b', 'c']
-            },
-            'created': {'format': 'date', 'type': 'string'},
-            'id': {'type': 'string'},
-            'updated': {'format': 'date', 'type': 'string'}
+        "properties": {
+            "$schema": {"type": "string"},
+            "a": {"type": "string", "enum": ["a", "b", "c"]},
+            "created": {"format": "date", "type": "string"},
+            "id": {"type": "string"},
+            "updated": {"format": "date", "type": "string"},
         },
-        'type': 'object'
+        "type": "object",
+    }
+
+    data = builder.filesystem.read(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+    data = json.loads(data)
+    assert data == {
+        "mappings": {
+            "properties": {
+                "$schema": {"ignore_above": 50, "type": "keyword"},
+                "a": {"ignore_above": 50, "type": "keyword"},
+                "created": {"type": "date"},
+                "id": {"ignore_above": 50, "type": "keyword"},
+                "updated": {"type": "date"},
+            }
+        }
     }

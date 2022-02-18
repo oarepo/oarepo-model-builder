@@ -55,6 +55,10 @@ class AnyKeyDictValidator(SchemaPathValidator):
         return self._next
 
 
+class ArrayValidator(AnyKeyDictValidator):
+    pass
+
+
 class Ref(SchemaPathValidator):
     refs = {}
     valid = True
@@ -87,12 +91,26 @@ Ref.refs["type"] = DictValidator(
         "prefixItems": Ref("prefixItems", "type"),
         "contains": Ref("contains", "type"),
         "type": Ref("type", "type_value"),
-    },
-    primitives="enum,const,"  # enums and consts
-    "required,minProperties,maxProperties,"  # object
-    "minItems,maxItems,uniqueItems,minContains,maxContains,"  # array
-    "minLength,maxLength,pattern,format,"  # string
-    "minimum,exclusiveMinimum,maximum,exclusiveMaximum,multipleOf",  # numbers
+        "enum": Ref("schemaConstraint", "arr_constraint"),  # enums and consts
+        "const": Ref("schemaConstraint", "constraint"),
+        "required": Ref("schemaConstraint", "constraint"),  # object
+        "minProperties": Ref("schemaConstraint", "constraint"),
+        "maxProperties": Ref("schemaConstraint", "constraint"),
+        "minItems": Ref("schemaConstraint", "constraint"),  # array
+        "maxItems": Ref("schemaConstraint", "constraint"),
+        "uniqueItems": Ref("schemaConstraint", "constraint"),
+        "minContains": Ref("schemaConstraint", "constraint"),
+        "maxContains": Ref("schemaConstraint", "constraint"),
+        "minLength": Ref("schemaConstraint", "constraint"),  # string
+        "maxLength": Ref("schemaConstraint", "constraint"),
+        "pattern": Ref("schemaConstraint", "constraint"),
+        "format": Ref("schemaConstraint", "constraint"),
+        "minimum": Ref("schemaConstraint", "constraint"),  # numbers
+        "exclusiveMinimum": Ref("schemaConstraint", "constraint"),
+        "maximum": Ref("schemaConstraint", "constraint"),
+        "exclusiveMaximum": Ref("schemaConstraint", "constraint"),
+        "multipleOf": Ref("schemaConstraint", "constraint"),
+    }
 )
 
 Ref.refs["additionalProperties"] = DictValidator(primitives="type")
@@ -102,6 +120,10 @@ Ref.refs["propertyNames"] = (DictValidator(primitives="pattern"),)
 Ref.refs["properties"] = AnyKeyDictValidator(Ref("property", "type"))
 
 Ref.refs["type_value"] = PrimitiveValidator()
+
+Ref.refs["constraint"] = PrimitiveValidator()
+
+Ref.refs["arr_constraint"] = ArrayValidator(Ref("arr_constraint_item", "constraint"))
 
 schema_paths = DictValidator(
     {
