@@ -125,6 +125,82 @@ _schema = TermsFacet(field = "$schema")
     )
 
 
+def test_sort():
+    schema = load_model(
+        "test.yaml",
+        "test",
+        model_content={
+            "oarepo:use": "invenio",
+            "model": {
+                "properties": {
+                    "a": {"type": "fulltext+keyword", "oarepo:sortable":{"key": "a_test"}},
+                    "b": {"type": "keyword", "oarepo:facets": {"field": 'TermsFacet(field="cosi")'}, "oarepo:sortable":{"key": "b_test", "order": "desc"}},
+                }
+            },
+        },
+        isort=False,
+        black=False,
+    )
+
+    filesystem = MockFilesystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "")
+
+    data = builder.filesystem.open(os.path.join("test", "services", "search.py")).read()
+    print(data)
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
+from . import facets
+
+
+
+class TestSearchOptions(InvenioSearchOptions):
+    \"""TestRecord search options.\"""
+
+    facets = {
+
+
+    'a_keyword': facets.a_keyword,
+
+
+
+    'b': facets.b,
+
+
+
+    '_id': facets._id,
+
+
+
+    'created': facets.created,
+
+
+
+    'updated': facets.updated,
+
+
+
+    '_schema': facets._schema,
+
+
+    }
+    sort_options = {
+
+
+    'a_test': {'fields': ['a']},
+    
+    
+    
+    'b_test': {'fields': ['-b']},
+
+
+    }
+
+    """,
+    )
 def test_nested():
     schema = load_model(
         "test.yaml",
@@ -291,5 +367,6 @@ class TestSearchOptions(InvenioSearchOptions):
 
 
     }
+    sort_options={}
     """,
     )

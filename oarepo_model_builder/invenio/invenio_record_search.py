@@ -2,11 +2,12 @@ from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
 
 from ..outputs.json_stack import JSONStack
+from ..utils.deepmerge import deepmerge
 from ..utils.hyphen_munch import HyphenMunch
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 OAREPO_FACETS_PROPERTY = "oarepo:facets"
-
+OAREPO_SORTABLE_PROPERTY = "oarepo:sortable"
 
 class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_search"
@@ -17,13 +18,18 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         super().begin(schema, settings)
         self.template = "record-search-options"
         self.search_options_data = []
+        self.sort_options_data = []
         self.search_facets_definiton = []
         self.search_options_stack = JSONStack()
         self.facets_definition = []
         self.facets_names = []
+        self.settings = settings
+        if 'oarepo:sortable' in schema:
+            self.process_top_sortable(schema['oarepo:sortable'])
 
     def finish(self, **extra_kwargs):
-        super().finish(search_options_data=self.search_options_data, facets_definition=self.facets_definition)
+        super().finish(search_options_data=self.search_options_data, facets_definition=self.facets_definition,
+                       sort_definition = self.sort_options_data)
         python_path = self.class_to_path(self.settings.python["record-facets-class"])
         self.process_template(
             python_path,
@@ -32,6 +38,15 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             search_options_data=self.search_options_data,
             **extra_kwargs,
         )
+
+    def process_top_sortable(self, data):
+        keys = dir(data)
+        for k in keys:
+            fields = dir(data[k])
+            fields_options = {}
+            for field in fields:
+                fields_options = deepmerge(fields_options, {field : data[k][field]})
+            self.sort_options_data.append({k: fields_options})
 
     @process("/model/**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
@@ -48,6 +63,12 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
         if not self.search_options_stack:
             return
+
+        if schema_element_type == "property":
+            sort_definition = data.get(OAREPO_SORTABLE_PROPERTY, None)
+
+            if sort_definition != None:
+                self.sort_options_data.append(self.process_sort_options(self.stack.path, sort_definition))
 
         if (
             schema_element_type == "property"
@@ -145,3 +166,15 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 name = name + "." + path
 
         return name
+
+    def process_sort_options(self, path, definition):
+        field = self.process_name(path =path, type="field")
+
+        key = definition.get('key', '')
+        if key == '':
+            key = self.process_name(path, 'name')
+        order = definition.get('order', 'asc')
+        if order == "desc":
+            field = "-" + field
+
+        return {key: dict(fields = [field])}
