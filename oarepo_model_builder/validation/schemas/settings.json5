@@ -192,34 +192,64 @@
         "type": "string"
       },
       "record-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-dumper-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-metadata-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-permissions-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-resource-class-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-resource-config-class-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-schema-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-search-options-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-service-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "record-service-config-bases": {
-        "type": "string"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "templates": {
         "type": "object",
