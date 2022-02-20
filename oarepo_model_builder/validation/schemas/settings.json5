@@ -191,6 +191,36 @@
       "record-resources-package": {
         "type": "string"
       },
+      "record-bases": {
+        "type": "string"
+      },
+      "record-dumper-bases": {
+        "type": "string"
+      },
+      "record-metadata-bases": {
+        "type": "string"
+      },
+      "record-permissions-bases": {
+        "type": "string"
+      },
+      "record-resource-class-bases": {
+        "type": "string"
+      },
+      "record-resource-config-class-bases": {
+        "type": "string"
+      },
+      "record-schema-bases": {
+        "type": "string"
+      },
+      "record-search-options-bases": {
+        "type": "string"
+      },
+      "record-service-bases": {
+        "type": "string"
+      },
+      "record-service-config-bases": {
+        "type": "string"
+      },
       "templates": {
         "type": "object",
         "patternProperties": {
