@@ -15,4 +15,12 @@ class {{ python.record_search_options_class|base_name }}({% for b in python.reco
 {% endfor %}
 {% endfor %}
     }
+    sort_options = {
+{% for dict in sort_definition %}
+{% for key, value in dict.items()%}
+    '{{ key }}': {{ value }},
+{% endfor %}
+{% endfor %}
+    }
+
 

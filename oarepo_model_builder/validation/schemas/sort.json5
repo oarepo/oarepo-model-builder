@@ -1,0 +1,18 @@
+{
+  "jsonschema-property": {
+    "properties": {
+      "oarepo:sortable": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "root": {
+    "properties": {
+      "oarepo:sortable": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}
