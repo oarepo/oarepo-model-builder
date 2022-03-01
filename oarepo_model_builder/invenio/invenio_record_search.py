@@ -73,7 +73,6 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         if schema_element_type == "property" and data.type == "array":
             try:
                 array_items_type = data['items']['type']
-                print(array_items_type)
             except:
                 array_items_type = None
 
