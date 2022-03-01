@@ -98,8 +98,11 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             if len(nested_paths) > 0:
                 nested = True
 
-            name = self.process_name(self.stack.path, type="name")
-            if data.type == "fulltext+keyword":
+            if 'key' in definition:
+                name = definition['key']
+            else:
+                name = self.process_name(self.stack.path, type="name")
+            if data.type == "fulltext+keyword" and 'key' not in definition:
                 name = name + "_keyword"
             if name == "$schema":
                 name = "_schema"
