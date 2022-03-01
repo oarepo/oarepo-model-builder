@@ -155,6 +155,10 @@ def test_sort():
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
 from . import facets
 
+def _(x):
+    \"""Identity function for string extraction.\"""
+    return x
+
 
 
 class TestSearchOptions(InvenioSearchOptions):
@@ -188,12 +192,24 @@ class TestSearchOptions(InvenioSearchOptions):
 
     }
     sort_options = {
+            "bestmatch": dict(
+                title=_('Best match'),
+                fields=['_score'],  # ES defaults to desc on `_score` field
+            ),
+            "newest": dict(
+                title=_('Newest'),
+                fields=['-created'],
+            ),
+            "oldest": dict(
+                title=_('Oldest'),
+                fields=['created'],
+            ),
 
 
     'a_test': {'fields': ['a']},
-    
-    
-    
+
+
+
     'b_test': {'fields': ['-b']},
 
 
@@ -335,6 +351,10 @@ def test_search_class():
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
 from . import facets
 
+def _(x):
+    \"""Identity function for string extraction.\"""
+    return x
+
 
 
 class TestSearchOptions(InvenioSearchOptions):
@@ -367,6 +387,20 @@ class TestSearchOptions(InvenioSearchOptions):
 
 
     }
-    sort_options={}
+    sort_options = {
+            "bestmatch": dict(
+                title=_('Best match'),
+                fields=['_score'],  # ES defaults to desc on `_score` field
+            ),
+            "newest": dict(
+                title=_('Newest'),
+                fields=['-created'],
+            ),
+            "oldest": dict(
+                title=_('Oldest'),
+                fields=['created'],
+            ),
+
+    }
     """,
     )
