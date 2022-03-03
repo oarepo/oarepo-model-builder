@@ -1,8 +1,8 @@
 from datetime import date
-from distutils.command.config import config
-import os
 from pathlib import Path
+
 from oarepo_model_builder.builders import OutputBuilder
+from oarepo_model_builder.builders.utils import ensure_directory
 from ..utils.verbose import log
 from cookiecutter.main import cookiecutter
 from invenio_cli.helpers.cookiecutter_wrapper import CookiecutterWrapper
@@ -31,7 +31,7 @@ class CookiecutterBuilder(OutputBuilder):
         builder.template_name = builder.extract_template_name(template)
         config_file = builder.create_and_dump_config_file()
 
-        log.enter(0, 'Running cookiecutter...')
+        log.enter(log.INFO, 'Running cookiecutter...')
         print(builder.template_name)
         project_dir = cookiecutter(
             template,
@@ -57,5 +57,5 @@ class CookiecutterBuilder(OutputBuilder):
         )
         saved_replay = builder.get_replay()
         CLIConfig.write(project_dir, flavour, saved_replay)
-        os.mkdir(Path(project_dir) / "logs")
-        log.leave(0, "Generated sample app in %s", project_dir)
+        ensure_directory(self.builder, f"{Path(project_dir)}/logs")
+        log.leave(log.INFO, "Generated sample app in %s", project_dir)
