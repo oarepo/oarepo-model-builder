@@ -34,7 +34,7 @@ class CookiecutterBuilder(OutputBuilder):
         log.enter(0, 'Running cookiecutter...')
         print(builder.template_name)
         project_dir = cookiecutter(
-            builder.template_name,
+            template,
             config_file=config_file,
             overwrite_if_exists=True,
             no_input=True,
