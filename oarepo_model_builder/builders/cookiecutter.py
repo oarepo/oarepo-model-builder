@@ -1,8 +1,12 @@
-from jinja2 import Environment, FunctionLoader
-from oarepo_model_builder.templates import templates
+from datetime import date
+from distutils.command.config import config
+import os
+from pathlib import Path
 from oarepo_model_builder.builders import OutputBuilder
-from ..outputs.json import JSONOutput
 from ..utils.verbose import log
+from cookiecutter.main import cookiecutter
+from invenio_cli.helpers.cookiecutter_wrapper import CookiecutterWrapper
+from invenio_cli.helpers.cli_config import CLIConfig
 
 
 class CookiecutterBuilder(OutputBuilder):
@@ -10,15 +14,48 @@ class CookiecutterBuilder(OutputBuilder):
 
     def finish(self):
         super().finish()
-        context = {"settings": self.schema.settings}
+        package = self.schema.settings.package
+        template = 'gh:oarepo/cookiecutter-oarepo-instance'
+        checkout = 'dev1'
+        flavour = 'oarepo'
 
-        output = self.builder.get_output(
-            "diff", "cookiecutter.yaml")
+        if (self.schema.settings.get('no-cookiecutter')):
+            return
 
-        env = Environment(
-            loader=FunctionLoader(
-                lambda tn: templates.get_template(tn, context["settings"])),
-            autoescape=False,
+        builder = CookiecutterWrapper(
+            flavour,
+            **{
+                'checkout': checkout,
+                'no_input': True
+            })
+        builder.template_name = builder.extract_template_name(template)
+        config_file = builder.create_and_dump_config_file()
+
+        log.enter(0, 'Running cookiecutter...')
+        print(builder.template_name)
+        project_dir = cookiecutter(
+            builder.template_name,
+            config_file=config_file,
+            overwrite_if_exists=True,
+            no_input=True,
+            extra_context=dict(
+                project_name=f"{package} Sample site",
+                project_shortname=f"{package}-sample-site",
+                project_site="oarepo.org",
+                github_repo=f"oarepo/{package}-sample-site",
+                description=f"Testing OARepo Site instance for {package} datamodel.",
+                author_name="CESNET",
+                author_email="info@oarepo.org",
+                year=f"{date.today().year}",
+                python_version="3.9",
+                database="postgresql",
+                elasticsearch="7",
+                file_storage="S3",
+                development_tools="yes",
+                app_package=f"{package}",
+            )
         )
-
-        output.write(env.get_template("cookiecutter-config").render(context))
+        saved_replay = builder.get_replay()
+        CLIConfig.write(project_dir, flavour, saved_replay)
+        os.mkdir(Path(project_dir) / "logs")
+        log.leave(0, "Generated sample app in %s", project_dir)

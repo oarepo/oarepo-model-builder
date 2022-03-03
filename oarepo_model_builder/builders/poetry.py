@@ -56,7 +56,7 @@ class PoetryBuilder(OutputBuilder):
         if output.created:
             log(
                 log.INFO,
-                f"""To install the sample app, run
-    poetry install -E sample-app            
+                f"""To install the data model, run
+    poetry install -E {self.settings.package}            
             """,
             )

@@ -58,6 +58,9 @@
       },
       "package-base-upper": {
         "type": "string"
+      },
+      "no-cookiecutter": {
+        "type": "boolean"
       }
     },
     "additionalProperties": false
