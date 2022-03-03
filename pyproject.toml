@@ -95,6 +95,7 @@ line-length = 120
 1030-invenio_script_sample_data = "oarepo_model_builder.invenio.invenio_script_sample_data:InvenioScriptSampleDataBuilder"
 1040-invenio_script_sample_data_shell = "oarepo_model_builder.invenio.invenio_script_sample_data:InvenioScriptSampleDataShellBuilder"
 
+1100-cookiecutter_config = "oarepo_model_builder.builders.cookiecutter:CookiecutterBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.outputs"]
 json = "oarepo_model_builder.outputs.json:JSONOutput"
