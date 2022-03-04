@@ -1,6 +1,7 @@
 from datetime import date
 from pathlib import Path
 
+from os.path import basename
 from oarepo_model_builder.builders import OutputBuilder
 from oarepo_model_builder.builders.utils import ensure_directory
 from ..utils.verbose import log
@@ -12,7 +13,7 @@ from invenio_cli.helpers.cli_config import CLIConfig
 class CookiecutterBuilder(OutputBuilder):
     TYPE = "cookiecutter"
 
-    def _generate_sample_site(self):
+    def _generate_sample_site(self, app_package_path):
         package = self.schema.settings.package
         template = 'gh:oarepo/cookiecutter-oarepo-instance'
         checkout = 'dev1'
@@ -48,8 +49,10 @@ class CookiecutterBuilder(OutputBuilder):
                 elasticsearch="7",
                 file_storage="S3",
                 development_tools="yes",
-                app_package=f"{package}",
-            )
+                app_package=f"{package}-sample-app",
+                app_package_path=f"../{app_package_path}",
+                datamodel_package=package,
+                datamodel_package_path="../")
         )
         saved_replay = builder.get_replay()
         CLIConfig.write(project_dir, flavour, saved_replay)
@@ -81,11 +84,12 @@ class CookiecutterBuilder(OutputBuilder):
                 elasticsearch="7",
                 file_storage="S3",
                 development_tools="yes",
-                app_package=f"{package}",
             )
         )
         log.leave(
             log.INFO, "Generated sample application in %s", project_dir)
+
+        return basename(project_dir)
 
     def finish(self):
         super().finish()
@@ -93,5 +97,5 @@ class CookiecutterBuilder(OutputBuilder):
         if (self.schema.settings.get('no-cookiecutter')):
             return
 
-        self._generate_sample_app()
-        self._generate_sample_site()
+        app_project_dir = self._generate_sample_app()
+        self._generate_sample_site(app_project_dir)
