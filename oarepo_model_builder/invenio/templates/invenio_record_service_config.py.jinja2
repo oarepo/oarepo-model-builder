@@ -20,10 +20,9 @@ class {{ python.record_service_config_class|base_name }}({% for b in python.reco
     search = {{ python.record_search_options_class|base_name }}
     record_cls = {{ python.record_class|base_name }}
 
-    components = [
-       DataComponent,
-       MetadataComponent
-    ]
+    components = {% for b in python.record_service_config_bases[:1] %}{{ b|base_name }}.components{% endfor %}
+
+    model = "{{ settings.model_name }}"
 
     @property
     def links_item(self):

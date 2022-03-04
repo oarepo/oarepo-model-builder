@@ -77,3 +77,4 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         )
 
         self.set(settings, "collection-url", lambda: f"/{settings.package_base}/")
+        self.set(settings, "model-name", lambda: settings.package_base)

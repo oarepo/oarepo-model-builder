@@ -20,6 +20,9 @@
       "collection-url": {
         "type": "string"
       },
+      "model-name": {
+        "type": "string"
+      },
       "schema-name": {
         "type": "string"
       },
