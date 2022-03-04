@@ -12,15 +12,11 @@ from invenio_cli.helpers.cli_config import CLIConfig
 class CookiecutterBuilder(OutputBuilder):
     TYPE = "cookiecutter"
 
-    def finish(self):
-        super().finish()
+    def _generate_sample_site(self):
         package = self.schema.settings.package
         template = 'gh:oarepo/cookiecutter-oarepo-instance'
         checkout = 'dev1'
         flavour = 'oarepo'
-
-        if (self.schema.settings.get('no-cookiecutter')):
-            return
 
         builder = CookiecutterWrapper(
             flavour,
@@ -32,9 +28,9 @@ class CookiecutterBuilder(OutputBuilder):
         config_file = builder.create_and_dump_config_file()
 
         log.enter(log.INFO, 'Running cookiecutter...')
-        print(builder.template_name)
         project_dir = cookiecutter(
             template,
+            checkout='dev1',
             config_file=config_file,
             overwrite_if_exists=True,
             no_input=True,
@@ -57,5 +53,45 @@ class CookiecutterBuilder(OutputBuilder):
         )
         saved_replay = builder.get_replay()
         CLIConfig.write(project_dir, flavour, saved_replay)
+        log.leave(
+            log.INFO, "Generated sample oarepo site in %s", project_dir)
         ensure_directory(self.builder, f"{Path(project_dir)}/logs")
-        log.leave(log.INFO, "Generated sample app in %s", project_dir)
+
+    def _generate_sample_app(self):
+        package = self.schema.settings.package
+        template = 'gh:oarepo/cookiecutter-oarepo-app'
+        checkout = 'dev1'
+        log.enter(log.INFO, 'Running cookiecutter...')
+        project_dir = cookiecutter(
+            template,
+            checkout=checkout,
+            overwrite_if_exists=True,
+            no_input=True,
+            extra_context=dict(
+                project_name=f"{package} Sample app",
+                project_shortname=f"{package}-sample-app",
+                project_site="oarepo.org",
+                github_repo=f"oarepo/{package}-sample-app",
+                description=f"Testing OARepo application module with {package} datamodel.",
+                author_name="CESNET",
+                author_email="info@oarepo.org",
+                year=f"{date.today().year}",
+                python_version="3.9",
+                database="postgresql",
+                elasticsearch="7",
+                file_storage="S3",
+                development_tools="yes",
+                app_package=f"{package}",
+            )
+        )
+        log.leave(
+            log.INFO, "Generated sample application in %s", project_dir)
+
+    def finish(self):
+        super().finish()
+
+        if (self.schema.settings.get('no-cookiecutter')):
+            return
+
+        self._generate_sample_app()
+        self._generate_sample_site()
