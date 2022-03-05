@@ -166,8 +166,11 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         if len(path_array) == 1:
             return name
         path_array.pop(0)
-
+        last_path = ''
         for path in path_array:
+            if last_path != 'properties' and path == 'items':
+                continue
+            last_path = path
             if path == "properties":
                 continue
             if type == "name":
