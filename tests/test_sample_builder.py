@@ -102,13 +102,15 @@ def test_sample_builder_simple_array():
         == "a:\n- test\n"
     )
 
+    # makes items unique, so expect one
     assert (
         build_sample_data({"a": {"type": "array", "oarepo:sample": {"count": 2}, "items": {"type": "string"}}})
-        == "a:\n- test\n- test\n"
+        == "a:\n- test\n"
     )
 
 
 def test_sample_builder_complex_array():
+    # sampler makes items in the array unique, so expect one
     assert (
         build_sample_data(
             {
@@ -131,8 +133,6 @@ def test_sample_builder_complex_array():
         ).strip()
         == """
 a:
-- b: test
-  c: test
 - b: test
   c: test
     """.strip()
