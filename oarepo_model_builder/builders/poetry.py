@@ -16,7 +16,7 @@ class PoetryBuilder(OutputBuilder):
             "name",
             self.settings.package_base.replace("_", "-"),
             "version",
-            "0.0.1",
+            "1.0.0.dev1",
             "description",
             f"A sample application for {self.settings.package}",
             "authors",
@@ -26,7 +26,7 @@ class PoetryBuilder(OutputBuilder):
         output.setdefault(
             "build-system",
             "requires",
-            ["poetry-core>=1.0.0"],
+            ["poetry-core>=1.0.8"],
             "build-backend",
             "poetry.core.masonry.api",
         )
@@ -56,7 +56,7 @@ class PoetryBuilder(OutputBuilder):
         if output.created:
             log(
                 log.INFO,
-                f"""To install the sample app, run
-    poetry install -E sample-app            
+                f"""To install the data model, run
+    poetry install -E {self.settings.package}            
             """,
             )

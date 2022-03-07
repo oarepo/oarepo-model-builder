@@ -78,3 +78,6 @@ example/data
 .DS_Store
 
 test-model
+
+# Testing
+sample/

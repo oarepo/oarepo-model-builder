@@ -9,37 +9,26 @@ python -c 'import sys; exit(1) if sys.version_info.major < 3 or sys.version_info
   exit 1
 }
 
-python3 -mvenv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 
-pip install -U pip wheel
-pip install setuptools==59.6.0      # needed by celery
+cd {{ settings.package_base.replace('_', '-') }}-sample-site
+invenio-cli install
+invenio-cli services setup -N
 
-mkdir -p .venv/var/instance/
-if [ -f scripts/invenio.cfg ] ; then
-    test -f .venv/var/instance/invenio.cfg || ln -s $PWD/scripts/invenio.cfg .venv/var/instance/invenio.cfg
-fi
-
-poetry install -E sample-app
-
-# uninstall the current app so that metadata will not be created in invenio db create
-pip uninstall -y {{ settings.package_base.replace('_', '-') }}
-
-# create base tables
-invenio db init
-invenio db create
+cd ..
 
 # install back current app
-poetry install -E sample-app
+pipenv run poetry install
 
 # create the branch
-invenio alembic revision "Create {{ settings.package_base }} branch."  -b {{ settings.package_base }} -p dbdbc1b19cf2 --empty
+pipenv run invenio alembic revision "Create {{ settings.package_base }} branch."  -b {{ settings.package_base }} -p dbdbc1b19cf2 --empty
 
 # apply the branch
-invenio alembic upgrade heads
+pipenv run invenio alembic upgrade heads
 
 # initial revision
-invenio alembic revision "Initial revision." -b {{ settings.package_base }}
+pipenv run invenio alembic revision "Initial revision." -b {{ settings.package_base }}
 
 find {{ settings.package_base }}/alembic -name "*py" | while read FN; do
     echo "Fixing sqlalchemy file $FN"
@@ -54,14 +43,7 @@ find {{ settings.package_base }}/alembic -name "*py" | while read FN; do
 done
 
 # create db tables
-invenio alembic upgrade heads
+pipenv run invenio alembic upgrade heads
 
-invenio index destroy --yes-i-know || true
-invenio index init --force
-
-openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
-  -keyout scripts/server.key -out scripts/server.crt -subj "/CN=localhost" \
-  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
-
-# invenio collect -v
-# invenio webpack buildall
+pipenv run invenio index destroy --yes-i-know || true
+pipenv run invenio index init --force

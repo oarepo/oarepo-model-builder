@@ -15,6 +15,7 @@ TEMPLATES = {
     "ext": "templates/invenio_ext.py.jinja2",
     "proxies": "templates/invenio_proxies.py.jinja2",
     "record-facets": "templates/invenio_record_facets.py.jinja2",
+    "cookiecutter-config": "templates/cookiecutter_config.jinja2",
     # utils and included
     "imports": "templates/imports.py.jinja2",
     # scripts
