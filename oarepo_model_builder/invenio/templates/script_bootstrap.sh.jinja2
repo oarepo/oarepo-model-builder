@@ -7,6 +7,8 @@ set -e
 python3.9 -m venv .venv
 source .venv/bin/activate
 
+pip install invenio-cli
+
 cd {{ settings.package_base.replace('_', '-') }}-sample-site
 invenio-cli check-requirements -d
 invenio-cli install
