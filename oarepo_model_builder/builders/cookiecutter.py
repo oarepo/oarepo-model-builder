@@ -14,7 +14,7 @@ class CookiecutterBuilder(OutputBuilder):
     TYPE = "cookiecutter"
 
     def _generate_sample_site(self, app_package_path):
-        package = self.schema.settings.package
+        package = self.schema.settings.package.replace('_', '-')
         template = 'gh:oarepo/cookiecutter-oarepo-instance'
         checkout = 'dev1'
         flavour = 'oarepo'
@@ -51,8 +51,9 @@ class CookiecutterBuilder(OutputBuilder):
                 development_tools="yes",
                 app_package=f"{package}-sample-app",
                 app_package_path=f"../{app_package_path}",
-                datamodel_package=package,
-                datamodel_package_path="../")
+                # datamodel_package=package,
+                # datamodel_package_path="../"
+            )
         )
         saved_replay = builder.get_replay()
         CLIConfig.write(project_dir, flavour, saved_replay)
@@ -61,7 +62,7 @@ class CookiecutterBuilder(OutputBuilder):
         ensure_directory(self.builder, f"{Path(project_dir)}/logs")
 
     def _generate_sample_app(self):
-        package = self.schema.settings.package
+        package = self.schema.settings.package.replace('_', '-')
         template = 'gh:oarepo/cookiecutter-oarepo-app'
         checkout = 'dev1'
         log.enter(log.INFO, 'Running cookiecutter...')
