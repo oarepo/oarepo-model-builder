@@ -8,5 +8,6 @@ set -e
 source .venv/bin/activate
 
 # export FLASK_DEBUG=1
+cd {{ settings.package_base.replace('_', '-') }}-sample-site
 
-invenio run --cert scripts/server.crt --key scripts/server.key --port 5000
+invenio-cli run
