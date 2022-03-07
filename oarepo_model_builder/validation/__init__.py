@@ -54,7 +54,6 @@ def validate_model(model, extra_validation_schemas=None):
     for err in errors:
         print(f'    on path "/{"/".join(str(x) for x in err.path)}" : {err.message}')
         print(f'         schema path "/{"/".join(str(x) for x in err.schema_path)}"')
-
     raise InvalidModelException("Invalid model")
 
 

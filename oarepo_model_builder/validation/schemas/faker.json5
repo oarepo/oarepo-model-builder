@@ -15,6 +15,12 @@
           {
             "type": "array",      // will output one of these values (on string prop) or half of these values (array prop)
             "items": {
+              "type": "boolean"
+            }
+          },
+          {
+            "type": "array",      // will output one of these values (on string prop) or half of these values (array prop)
+            "items": {
               "type": "number"
             }
           },

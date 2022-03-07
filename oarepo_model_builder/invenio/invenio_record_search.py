@@ -69,13 +69,20 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
             if sort_definition != None:
                 self.sort_options_data.append(self.process_sort_options(self.stack.path, sort_definition))
+        array_items_type = None
+        if schema_element_type == "property" and data.type == "array":
+            try:
+                array_items_type = data['items']['type']
+            except:
+                array_items_type = None
 
         if (
-            schema_element_type == "property"
-            and data.type != "text"
-            and data.type != "fulltext"
-            and data.type != "object"
-            and data.type != "nested"
+                schema_element_type == "property"
+                and data.type != "text"
+                and data.type != "fulltext"
+                and data.type != "object"
+                and data.type != "nested"
+                and not (data.type == "array" and array_items_type == "fulltext")
         ):
             definition = data.get(OAREPO_FACETS_PROPERTY, {})
             nested_paths = []
@@ -91,8 +98,11 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             if len(nested_paths) > 0:
                 nested = True
 
-            name = self.process_name(self.stack.path, type="name")
-            if data.type == "fulltext+keyword":
+            if 'key' in definition:
+                name = definition['key']
+            else:
+                name = self.process_name(self.stack.path, type="name")
+            if data.type == "fulltext+keyword" and 'key' not in definition:
                 name = name + "_keyword"
             if name == "$schema":
                 name = "_schema"
@@ -156,8 +166,11 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         if len(path_array) == 1:
             return name
         path_array.pop(0)
-
+        last_path = ''
         for path in path_array:
+            if last_path != 'properties' and path == 'items':
+                continue
+            last_path = path
             if path == "properties":
                 continue
             if type == "name":

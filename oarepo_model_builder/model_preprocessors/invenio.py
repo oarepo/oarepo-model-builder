@@ -150,6 +150,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "record-service-config-class",
             lambda: f"{settings.python.record_services_package}.config.{record_prefix}ServiceConfig",
         )
+        self.set(
+            settings.python,
+            "record-service-config-bases",
+            lambda: []
+        )
         #   - schema
         self.set(
             settings.python,

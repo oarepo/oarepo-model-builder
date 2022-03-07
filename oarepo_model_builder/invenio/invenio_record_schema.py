@@ -228,6 +228,11 @@ def marshmallow_number_generator(data, definition, schema, imports):
     return marshmallow_generic_number_generator("ma_fields.Float", data, definition, schema, imports)
 
 
+def marshmallow_boolean_generator(data, definition, schema, imports):
+    validators = []
+    return create_field("ma_fields.Boolean", [], validators, definition)
+
+
 def marshmallow_generic_number_generator(datatype, data, definition, schema, imports):
     validators = []
     minimum = data.get("minimum", None)
@@ -250,6 +255,7 @@ default_marshmallow_generators = {
     "string": marshmallow_string_generator,
     "integer": marshmallow_integer_generator,
     "number": marshmallow_number_generator,
+    "boolean": marshmallow_boolean_generator
 }
 
 

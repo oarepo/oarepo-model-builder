@@ -1,3 +1,4 @@
+import json
 from typing import Callable, List
 
 import faker
@@ -92,6 +93,15 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             elif "items" in self.stack.top.data:
                 self.output.enter(key, [])
                 self.build_children()
+                top = self.output.stack.real_top
+
+                # make items unique, just for sure
+                top_as_dict = {}
+                for t in top:
+                    top_as_dict[json.dumps(t, sort_keys=True)] = t
+                top.clear()
+                top.extend(top_as_dict.values())
+
                 self.output.leave()
             else:
                 self.output.primitive(key, self.generate_fake(self.stack))
