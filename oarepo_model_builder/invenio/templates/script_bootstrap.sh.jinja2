@@ -9,10 +9,11 @@ python -c 'import sys; exit(1) if sys.version_info.major < 3 or sys.version_info
   exit 1
 }
 
-python3 -m venv .venv
+python3.9 -m venv .venv
 source .venv/bin/activate
 
 cd {{ settings.package_base.replace('_', '-') }}-sample-site
+invenio-cli check-requirements -d
 invenio-cli install
 invenio-cli services setup -N
 
