@@ -38,6 +38,8 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.imports["marshmallow"].add("ma")
         self.imports["marshmallow.fields"].add("ma_fields")
         self.imports["marshmallow.validate"].add("ma_valid")
+        self.imports["marshmallow.validates"].add("ma_validates")
+        self.imports["marshmallow.ValidationError"].add("ma_ValidationError")
         self.imported_classes = {}
         self.generated_classes = set()
 
@@ -110,6 +112,10 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if class_name.startswith("."):
                 class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
             if class_name not in self.generated_classes:
+                if 'validates' not in definition:
+                    validates = None
+                else:
+                    validates = definition['validates']
                 self.generated_classes.add(class_name)
                 self.process_template(
                     self.class_to_path(class_name),
@@ -120,6 +126,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                     imports=self.imports,
                     imported_classes=self.imported_classes,
                     current_package_name=package_name(class_name),
+                    validates=validates
                 )
 
     def get_marshmallow_definition(self, data, stack, definition=None):
