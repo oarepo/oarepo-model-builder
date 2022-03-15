@@ -147,7 +147,6 @@ def test_sort():
     builder.build(schema, "")
 
     data = builder.filesystem.open(os.path.join("test", "services", "search.py")).read()
-    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
