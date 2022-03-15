@@ -4,6 +4,13 @@ from {{ b|package_name }} import {{ b|base_name }}
 {% endif %}
 {% endfor %}
 
+{% if validates is not none %}
+{% for name, def in validates.items() %}
+{% for import in def['imports'] %}
+{{ import }}
+{% endfor %}
+{% endfor %}
+{% endif %}
 {% include "imports" %}
 
 class {{ schema_class|base_name }}({% for b in schema_bases %}{{ b|base_name }}, {% endfor %}):
@@ -11,3 +18,9 @@ class {{ schema_class|base_name }}({% for b in schema_bases %}{{ b|base_name }},
     {% for fld_name, fld_def in fields.items() %}
     {{ fld_name }} = {{ fld_def }}
     {% endfor %}
+    {% if validates is not none %}
+    {% for name, def in validates.items() %}
+    @ma_validates("{{ name }}")
+    {{ def['definition'] }}
+    {% endfor %}
+    {% endif %}

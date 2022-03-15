@@ -33,6 +33,8 @@ def test_enum():
 import marshmallow as ma
 import marshmallow.fields as ma_fields
 import marshmallow.validate as ma_valid
+import marshmallow.validates as ma_validates
+import marshmallow.ValidationError as ma_ValidationError
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
 
 class TestSchema(ma.Schema, ):
