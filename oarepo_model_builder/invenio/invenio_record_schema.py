@@ -239,6 +239,9 @@ def marshmallow_boolean_generator(data, definition, schema, imports):
     validators = []
     return create_field("ma_fields.Boolean", [], validators, definition)
 
+def marshmallow_raw_generator(data, definition, schema, imports):
+    validators = []
+    return create_field("ma_fields.Raw", [], validators, definition)
 
 def marshmallow_generic_number_generator(datatype, data, definition, schema, imports):
     validators = []
@@ -262,7 +265,8 @@ default_marshmallow_generators = {
     "string": marshmallow_string_generator,
     "integer": marshmallow_integer_generator,
     "number": marshmallow_number_generator,
-    "boolean": marshmallow_boolean_generator
+    "boolean": marshmallow_boolean_generator,
+    "raw": marshmallow_raw_generator
 }
 
 
