@@ -32,7 +32,8 @@
           "number",
           "integer",
           "array",
-          "object"
+          "object",
+          "raw"
         ]
       },
       "items": {

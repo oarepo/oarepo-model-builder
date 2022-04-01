@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "1.0.0.dev5"
+version = "1.0.0.dev6"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
@@ -116,6 +116,7 @@ yaml = "oarepo_model_builder.outputs.yaml:YAMLOutput"
 600-date = "oarepo_model_builder.property_preprocessors.date:DatePreprocessor"
 700-number = "oarepo_model_builder.property_preprocessors.number:NumberPreprocessor"
 700-marshmallow-class = "oarepo_model_builder.property_preprocessors.marshmallow_class_generator:MarshmallowClassGeneratorPreprocessor"
+800-raw = "oarepo_model_builder.property_preprocessors.raw:RawPreprocessor"
 
 [tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
 01-default = "oarepo_model_builder.model_preprocessors.default_values:DefaultValuesModelPreprocessor"
