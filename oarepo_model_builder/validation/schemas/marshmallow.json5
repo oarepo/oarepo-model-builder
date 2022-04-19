@@ -20,6 +20,9 @@
           "generate": {
             "type": "boolean"
           },
+          "base-schema": {
+            "type": "string"
+          },
           "imports": {
             "type": "array",
             "items": {
@@ -72,6 +75,18 @@
             "items": {
               "type": "string"
             },
+          }
+        }
+      }
+    }
+  },
+  "root": {
+    "properties": {
+      "oarepo:marshmallow": {
+        "type": "object",
+        "properties": {
+          "base-schema": {
+            "type": "string"
           }
         }
       }

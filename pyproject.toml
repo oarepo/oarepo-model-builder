@@ -117,6 +117,7 @@ yaml = "oarepo_model_builder.outputs.yaml:YAMLOutput"
 700-number = "oarepo_model_builder.property_preprocessors.number:NumberPreprocessor"
 700-marshmallow-class = "oarepo_model_builder.property_preprocessors.marshmallow_class_generator:MarshmallowClassGeneratorPreprocessor"
 800-raw = "oarepo_model_builder.property_preprocessors.raw:RawPreprocessor"
+900-validators = "oarepo_model_builder.property_preprocessors.marshmallow_validators_generator:ValidatorsPreprocessor"
 
 [tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
 01-default = "oarepo_model_builder.model_preprocessors.default_values:DefaultValuesModelPreprocessor"
