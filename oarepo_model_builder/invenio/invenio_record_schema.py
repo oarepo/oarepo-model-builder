@@ -38,8 +38,6 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.imports["marshmallow"].add("ma")
         self.imports["marshmallow.fields"].add("ma_fields")
         self.imports["marshmallow.validate"].add("ma_valid")
-        self.imports["marshmallow.validates"].add("ma_validates")
-        self.imports["marshmallow.ValidationError"].add("ma_ValidationError")
         self.imported_classes = {}
         self.generated_classes = set()
 
