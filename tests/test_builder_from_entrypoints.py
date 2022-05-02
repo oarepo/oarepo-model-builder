@@ -23,7 +23,6 @@ def test_include_invenio():
     builder.build(schema, "")
 
     data = builder.filesystem.open(os.path.join("test", "services", "schema.py")).read()
-
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -31,9 +30,9 @@ def test_include_invenio():
 import marshmallow as ma
 import marshmallow.fields as ma_fields
 import marshmallow.validate as ma_valid
-import marshmallow.validates as ma_validates
-import marshmallow.ValidationError as ma_ValidationError
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
+from marshmallow import ValidationError
+from marshmallow import validates as ma_validates
 
 class TestSchema(ma.Schema, ):
     \"""TestSchema schema.\"""

@@ -38,8 +38,6 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.imports["marshmallow"].add("ma")
         self.imports["marshmallow.fields"].add("ma_fields")
         self.imports["marshmallow.validate"].add("ma_valid")
-        self.imports["marshmallow.validates"].add("ma_validates")
-        self.imports["marshmallow.ValidationError"].add("ma_ValidationError")
         self.imported_classes = {}
         self.generated_classes = set()
 
@@ -195,9 +193,13 @@ def create_field(field_type, options=(), validators=(), definition=None):
     opts = [*options, *definition.get("options", [])]
     validators = [*validators, *definition.get("validators", [])]
     nested = definition.get("nested", False)
+    required = definition.get('required', False)
+
     list_nested = definition.get("list_nested", False)
     if validators:
         opts.append(f'validate=[{",".join(validators)}]')
+    if required:
+        opts.append(f'required=' + str(required))
     kwargs = definition.get("field_args", "")
     if kwargs and opts:
         kwargs = ", " + kwargs
@@ -219,11 +221,10 @@ def create_field(field_type, options=(), validators=(), definition=None):
 
 
 def marshmallow_string_generator(data, definition, schema, imports):
-    validators = []
-    min_length = data.get("minLength", None)
-    max_length = data.get("maxLength", None)
-    if min_length is not None or max_length is not None:
-        validators.append(f"ma_valid.Length(min={min_length}, max={max_length})")
+    validators = definition.get('validators', [])
+    if validators != []:
+        definition.pop('validators')
+
     return create_field("ma_fields.String", [], validators, definition)
 
 
@@ -244,18 +245,9 @@ def marshmallow_raw_generator(data, definition, schema, imports):
     return create_field("ma_fields.Raw", [], validators, definition)
 
 def marshmallow_generic_number_generator(datatype, data, definition, schema, imports):
-    validators = []
-    minimum = data.get("minimum", None)
-    maximum = data.get("maximum", None)
-    exclusive_minimum = data.get("exclusiveMinimum", None)
-    exclusive_maximum = data.get("exclusiveMaximum", None)
-
-    if minimum is not None or maximum is not None or exclusive_minimum is not None or exclusive_maximum is not None:
-        validators.append(
-            f"ma_valid.Range("
-            f'min={minimum or exclusive_minimum or "None"}, max={maximum or exclusive_maximum or "None"}, '
-            f"min_inclusive={exclusive_minimum is None}, max_inclusive={exclusive_maximum is None})"
-        )
+    validators = definition.get('validators', [])
+    if validators != []:
+        definition.pop('validators')
     return create_field(datatype, [], validators, definition)
 
 
