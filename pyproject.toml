@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oarepo-model-builder"
-version = "1.0.0.dev6"
+version = "1.0.0.dev7"
 description = "An utility library that generates OARepo required data model files from a JSON specification file"
 authors = ["Miroslav Bauer <bauer@cesnet.cz>", "Miroslav Simek <simeki@vscht.cz>"]
 readme = "README.md"
