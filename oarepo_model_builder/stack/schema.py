@@ -115,7 +115,7 @@ Ref.refs["type"] = DictValidator(
 
 Ref.refs["additionalProperties"] = DictValidator(primitives="type")
 
-Ref.refs["propertyNames"] = (DictValidator(primitives="pattern"),)
+Ref.refs["propertyNames"] = (DictValidator(primitives="pattern"))
 
 Ref.refs["properties"] = AnyKeyDictValidator(Ref("property", "type"))
 

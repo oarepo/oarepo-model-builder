@@ -103,7 +103,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 deepmerge(data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {}), prepared_schema)
             definition = self.get_marshmallow_definition(data, self.stack)
             key = definition.get("field_name", self.stack.top.key)
-            marshmallow_stack_top.add(key, definition["field"])
+            generate_key = definition.get('read', True) or definition.get('write', True)
+            if generate_key:
+                marshmallow_stack_top.add(key, definition["field"])
         elif schema_element_type == "properties":
             node = self.marshmallow_stack.pop()
             class_name = node.schema_class_name
@@ -194,12 +196,18 @@ def create_field(field_type, options=(), validators=(), definition=None):
     validators = [*validators, *definition.get("validators", [])]
     nested = definition.get("nested", False)
     required = definition.get('required', False)
+    read = definition.get('read', True)
+    write = definition.get('write', True)
 
     list_nested = definition.get("list_nested", False)
     if validators:
         opts.append(f'validate=[{",".join(validators)}]')
     if required:
         opts.append(f'required=' + str(required))
+    if not read and write:
+        opts.append('dump_only=True')
+    if not write and read:
+        opts.append('read_only=True')
     kwargs = definition.get("field_args", "")
     if kwargs and opts:
         kwargs = ", " + kwargs

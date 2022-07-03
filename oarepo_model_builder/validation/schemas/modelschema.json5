@@ -16,7 +16,8 @@
       }
     },
     "unevaluatedProperties": false,
-    "minProperties": 1    // empty object is not allowed in the current schema
+    "minProperties": 1
+    // empty object is not allowed in the current schema
   },
   "jsonschema-property": {
     "type": "object",
@@ -74,6 +75,22 @@
       },
       "enum": {
         "type": "array"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "propertyNames": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string"
+          }
+        }
       }
     }
   }

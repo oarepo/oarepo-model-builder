@@ -4,7 +4,7 @@ from pathlib import Path
 import pkg_resources
 
 from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema import ModelSchema, remove_star_keys
 from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
@@ -44,7 +44,9 @@ def load_model_from_entrypoint(ep: pkg_resources.EntryPoint):
     def load(schema):
         filename = ".".join(ep.attrs)
         data = pkg_resources.resource_string(ep.module_name, filename)
-        return schema._load(filename, content=data)
+        loaded_schema = schema._load(filename, content=data)
+        remove_star_keys(loaded_schema)
+        return loaded_schema
 
     return load
 

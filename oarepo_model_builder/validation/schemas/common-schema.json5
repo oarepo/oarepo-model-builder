@@ -12,6 +12,9 @@
         "settings": {
           "$ref": "#/$defs/settings"
         },
+        "oarepo:mapping": {
+          "$ref": "#/$defs/oarepo-mapping-root"
+        },
         "model": {
           "$ref": "#/$defs/model"
         },
