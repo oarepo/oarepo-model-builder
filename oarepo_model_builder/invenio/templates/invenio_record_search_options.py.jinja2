@@ -20,18 +20,11 @@ class {{ python.record_search_options_class|base_name }}({% for b in python.reco
 {% endfor %}
     }
     sort_options = {
-            "bestmatch": dict(
-                title=_('Best match'),
-                fields=['_score'],  # ES defaults to desc on `_score` field
-            ),
-            "newest": dict(
-                title=_('Newest'),
-                fields=['-created'],
-            ),
-            "oldest": dict(
-                title=_('Oldest'),
-                fields=['created'],
-            ),
+        {% if python.record_search_options_bases %}
+        **{{ python.record_search_options_bases[0]|base_name }}.sort_options,
+        {% else %}
+        **InvenioSearchOptions.sort_options,
+        {% endif %}
 {% for dict in sort_definition %}
 {% for key, value in dict.items()%}
     '{{ key }}': {{ value }},

@@ -50,6 +50,16 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         definition = None
         recurse = True
+        if isinstance(self.stack.top.data, dict):
+            definition = self.stack.top.data.get(OAREPO_MARSHMALLOW_PROPERTY, {})
+            generate_key = definition.get('read', True) or definition.get('write', True)
+            generate = definition.get('generate', True)
+            if not generate_key:
+                return
+            if not generate and schema_element_type == "property":
+                # skip the property
+                return
+
         if schema_element_type == "properties":
             parent = self.stack[-2].data
             definition = parent.get(OAREPO_MARSHMALLOW_PROPERTY, {})
@@ -58,9 +68,10 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if "nested" not in definition:
                 definition["nested"] = True
 
-            generate_schema_class = definition.get("generate", True)
+            generate_schema_class = definition.get("generate-class", not definition.get("field", False))
             schema_class = None  # to make pycharm happy
             schema_class_base_classes = None
+
             if generate_schema_class:
                 if "class" not in definition:
                     definition["class"] = self.stack.top.key.title()
@@ -103,9 +114,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 deepmerge(data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {}), prepared_schema)
             definition = self.get_marshmallow_definition(data, self.stack)
             key = definition.get("field_name", self.stack.top.key)
-            generate_key = definition.get('read', True) or definition.get('write', True)
-            if generate_key:
-                marshmallow_stack_top.add(key, definition["field"])
+            marshmallow_stack_top.add(key, definition["field"])
         elif schema_element_type == "properties":
             node = self.marshmallow_stack.pop()
             class_name = node.schema_class_name
@@ -205,9 +214,9 @@ def create_field(field_type, options=(), validators=(), definition=None):
     if required:
         opts.append(f'required=' + str(required))
     if not read and write:
-        opts.append('dump_only=True')
+        opts.append('load_only=True')
     if not write and read:
-        opts.append('read_only=True')
+        opts.append('dump_only=True')
     kwargs = definition.get("field_args", "")
     if kwargs and opts:
         kwargs = ", " + kwargs
@@ -248,9 +257,11 @@ def marshmallow_boolean_generator(data, definition, schema, imports):
     validators = []
     return create_field("ma_fields.Boolean", [], validators, definition)
 
+
 def marshmallow_raw_generator(data, definition, schema, imports):
     validators = []
     return create_field("ma_fields.Raw", [], validators, definition)
+
 
 def marshmallow_generic_number_generator(datatype, data, definition, schema, imports):
     validators = definition.get('validators', [])

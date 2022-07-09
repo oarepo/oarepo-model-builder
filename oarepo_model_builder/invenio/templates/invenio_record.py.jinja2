@@ -15,11 +15,13 @@ class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b
     model_cls = {{ python.record_metadata_class|base_name }}
     schema = ConstantField("$schema", "{{ settings.schema_server }}{{ settings.schema_name }}")
     index = IndexField("{{ settings.index_name }}")
+{% if python.generate_record_pid_field %}
     pid = PIDField(
         create=True,
         provider=RecordIdProviderV2,
         context_cls = PIDFieldContext
     )
-    dumper_extensions = []
+{% endif %}
+    dumper_extensions = [{% for ext in python.record_dumper_extensions %}{{ ext }}{% if not loop.last %}, {% endif %}{% endfor %}]
     dumper = {{ python.record_dumper_class|base_name }}(extensions=dumper_extensions)
 

@@ -15,7 +15,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             settings,
             {
                 "python": {
-                    "record_prefix": camel_case(settings.package.rsplit(".", maxsplit=1)[-1]),
+                    "record-prefix": camel_case(settings.package.rsplit(".", maxsplit=1)[-1]),
                     # just make sure that the templates is always there
                     "templates": {},
                     "marshmallow": {"mapping": {}},
@@ -155,6 +155,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "record-service-config-bases",
             lambda: []
         )
+        settings.python.setdefault('record-service-config-generate-links', True)
         #   - schema
         self.set(
             settings.python,
@@ -232,6 +233,10 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                     "generate": True,
                 },
             )
+
+        settings.python.setdefault("generate-record-pid-field", True)
+        settings.python.setdefault("record-dumper-extensions", [])
+
         # default import prefixes
         settings.python.setdefault("always-defined-import-prefixes", []).extend(["ma", "ma_fields", "ma_valid"])
 

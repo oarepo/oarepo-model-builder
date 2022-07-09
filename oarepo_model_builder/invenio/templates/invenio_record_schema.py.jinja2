@@ -2,8 +2,8 @@ from invenio_records_resources.services.records.schema import BaseRecordSchema a
 from marshmallow import ValidationError
 from marshmallow import validates as ma_validates
 
-{% for b in python.record_schema_bases %}
-    from {{ b|package_name }} import {{ b|base_name }}
+{% for b in schema_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
 {% include "imports" %}

@@ -202,6 +202,9 @@ model:
       oarepo:use: ./common.yaml#person
 ```
 
+**Note:** If you reference multiple files via ``oarepo:use: ["a", "b"]`` and both
+include the same property, the value from ``a`` will be used.
+
 ## Built-in extensions
 
 ### `oarepo:mapping` - elasticsearch definition
