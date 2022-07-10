@@ -134,7 +134,7 @@ yml = "oarepo_model_builder.loaders:yaml_loader"
 99-base_templates = "oarepo_model_builder.invenio"
 
 [tool.poetry.plugins."oarepo.models"]
-invenio = "oarepo_model_builder.builtin_models:invenio.json"
+invenio = "oarepo_model_builder.builtin_models.registration:invenio"
 
 [tool.poetry.plugins."oarepo.model_schemas"]
 es-strings = "oarepo_model_builder.validation.schemas:es_strings.json5"
