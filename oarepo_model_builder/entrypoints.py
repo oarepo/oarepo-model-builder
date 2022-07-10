@@ -42,9 +42,7 @@ def load_entry_points_list(name):
 
 def load_model_from_entrypoint(ep: pkg_resources.EntryPoint):
     def load(schema):
-        filename = ".".join(ep.attrs)
-        data = pkg_resources.resource_string(ep.module_name, filename)
-        loaded_schema = schema._load(filename, content=data)
+        loaded_schema = ep.load()
         remove_star_keys(loaded_schema)
         return loaded_schema
 
