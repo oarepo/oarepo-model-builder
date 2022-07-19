@@ -74,7 +74,12 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
             if generate_schema_class:
                 if "class" not in definition:
-                    definition["class"] = self.stack.top.key.title()
+                    for se in reversed(self.stack.stack):
+                        if se.schema_element_type == 'property':
+                            definition["class"] = se.key.title()
+                            break
+                    else:
+                        definition["class"] = self.stack.top.key.title()
             if "class" in definition:
                 schema_class = definition["class"]
                 if "." not in schema_class:
@@ -225,10 +230,20 @@ def create_field(field_type, options=(), validators=(), definition=None):
     else:
         ret = f"{field_type}()"
     if nested:
-        if opts or kwargs:
-            ret = f'ma_fields.Nested(lambda: {ret}, {", ".join(opts)}{kwargs})'
+        if ret.endswith('()'):
+            ret = ret[:-2]
         else:
-            ret = f"ma_fields.Nested(lambda: {ret})"
+            ret = f'lamda: {ret}'
+        if isinstance(nested, str):
+            if opts or kwargs:
+                ret = f'{nested}({ret}, {", ".join(opts)}{kwargs})'
+            else:
+                ret = f"{nested}({ret})"
+        else:
+            if opts or kwargs:
+                ret = f'ma_fields.Nested({ret}, {", ".join(opts)}{kwargs})'
+            else:
+                ret = f"ma_fields.Nested({ret})"
     if list_nested:
         if opts or kwargs:
             ret = f'ma_fields.List(ma_fields.Nested(lambda: {ret}, {", ".join(opts)}{kwargs}))'

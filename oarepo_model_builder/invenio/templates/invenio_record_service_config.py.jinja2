@@ -1,9 +1,10 @@
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
 from invenio_records_resources.services import RecordLink, pagination_links
-from invenio_records_resources.services.records.components import DataComponent, MetadataComponent
-
 
 {% for b in python.record_service_config_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+{% for b in python.record_service_config_components %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 from {{ python.record_class|package_name }} import {{ python.record_class|base_name }}
@@ -21,9 +22,9 @@ class {{ python.record_service_config_class|base_name }}({% for b in python.reco
     record_cls = {{ python.record_class|base_name }}
 
     {% if python.record_service_config_bases %}
-    components = {% for b in python.record_service_config_bases[:1] %}{{ b|base_name }}.components{% endfor %}
+    components = [ *{% for b in python.record_service_config_bases[:1] %}{{ b|base_name }}.components{% endfor %}{% for c in python.record_service_config_components %}, {{ c|base_name }} {% endfor %}]
     {% else %}
-    components = [ *InvenioRecordServiceConfig.components ]
+    components = [ *InvenioRecordServiceConfig.components{% for c in python.record_service_config_components %}, {{ c|base_name }} {% endfor %}  ]
     {% endif %}
 
     model = "{{ settings.model_name }}"

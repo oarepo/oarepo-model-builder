@@ -257,6 +257,12 @@
           "type": "string"
         }
       },
+      "record-service-config-components": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
       "record-dumper-extensions": {
         "type": "array",
         "items": {
