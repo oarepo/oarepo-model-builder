@@ -26,6 +26,9 @@ def deepmerge(target, source, stack=None, listmerge="overwrite"):
                     target.append(source[idx])
             elif listmerge == "extend":
                 target.extend(source)
+            elif listmerge == "keep":
+                if len(source) > len(target):
+                    target.extend(source[len(target):])
             else:
-                raise AttributeError('listmerge must be one of "overwrite" or "extend"')
+                raise AttributeError('listmerge must be one of "overwrite", "extend" or "keep"')
     return target

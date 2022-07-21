@@ -15,11 +15,11 @@ class ModelSchema:
     OAREPO_USE = "oarepo:use"
 
     def __init__(
-        self,
-        file_path,
-        content=None,
-        included_models: Dict[str, Callable] = None,
-        loaders=None,
+            self,
+            file_path,
+            content=None,
+            included_models: Dict[str, Callable] = None,
+            loaders=None,
     ):
         """
         Creates and parses model schema
@@ -40,6 +40,9 @@ class ModelSchema:
             self.schema = copy.deepcopy(self._load(file_path))
 
         self._resolve_references(self.schema, [])
+
+        # any star keys should be kept
+        use_star_keys(self.schema)
 
         self.schema.setdefault("settings", {})
         self.schema = munch.munchify(self.schema, factory=HyphenMunch)
@@ -121,7 +124,7 @@ class ModelSchema:
                     if not name:
                         raise IncludedFileNotFoundException(f"No file for oarepo:include at path {'/'.join(stack)}")
                     included_data = self._load_included_file(name)
-                    deepmerge(element, included_data, [])
+                    deepmerge(element, included_data, [], listmerge="keep")
                 return self._resolve_references(element, stack)
             for k, v in element.items():
                 self._resolve_references(v, stack + [k])
@@ -147,3 +150,28 @@ def resolve_id(json, element_id):
         ret = resolve_id(k, element_id)
         if ret is not None:
             return ret
+
+
+def remove_star_keys(schema):
+    if isinstance(schema, dict):
+        for k, v in list(schema.items()):
+            if k.startswith('*'):
+                del schema[k]
+            else:
+                remove_star_keys(v)
+    elif isinstance(schema, (list, tuple)):
+        for k in schema:
+            remove_star_keys(k)
+
+
+def use_star_keys(schema):
+    if isinstance(schema, dict):
+        for k, v in list(schema.items()):
+            if k.startswith('*'):
+                del schema[k]
+                schema[k[1:]] = v
+        for v in schema.values():
+            use_star_keys(v)
+    elif isinstance(schema, (list, tuple)):
+        for k in schema:
+            use_star_keys(k)

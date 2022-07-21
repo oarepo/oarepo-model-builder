@@ -70,7 +70,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
                 "records",
                 "mappings",
                 "v7",
-                settings.package_base,
+                settings.package,
                 settings.schema_name,
             ),
         )
@@ -81,7 +81,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             settings,
             "index-name",
-            lambda: settings.package_base + "-" +
+            lambda: settings.package + "-" +
             os.path.basename(settings.mapping_file).replace(".json", ""),
         )
 

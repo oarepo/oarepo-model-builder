@@ -35,11 +35,17 @@ class DictMerger(MergerBase):
     def identity(self, context: PythonContext, node):
         return node
 
+    def get_key(self, context, el):
+        if hasattr(el, 'key') and el.key:
+            return el.key.value
+        # TODO: StarredDictElement might contain trailing comma, should remove it
+        return context.to_source_code(el)
+
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         ret = []
         mergers = expression_mergers
-        existing_elements = {el.key.value: el for el in existing_node.elements}
-        new_elements = {el.key.value: el for el in new_node.elements}
+        existing_elements = {self.get_key(context, el): el for el in existing_node.elements}
+        new_elements = {self.get_key(context, el): el for el in new_node.elements}
         for k, el in existing_elements.items():
             merger = mergers.get(type(el), IdentityMerger())
             if k not in new_elements:

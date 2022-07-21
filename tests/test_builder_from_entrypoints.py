@@ -23,10 +23,12 @@ def test_include_invenio():
     builder.build(schema, "")
 
     data = builder.filesystem.open(os.path.join("test", "services", "schema.py")).read()
+    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
         """
+from invenio_records_resources.services.records.schema import BaseRecordSchema
 import marshmallow as ma
 import marshmallow.fields as ma_fields
 import marshmallow.validate as ma_valid
@@ -34,18 +36,14 @@ from invenio_records_resources.services.records.schema import BaseRecordSchema a
 from marshmallow import ValidationError
 from marshmallow import validates as ma_validates
 
-class TestSchema(ma.Schema, ):
+class TestSchema(BaseRecordSchema, ):
     \"""TestSchema schema.\"""
     
     a = ma_fields.String()
     
-    id = ma_fields.String()
+    created = ma_fields.Date(dump_only=True)
     
-    created = ma_fields.Date()
-    
-    updated = ma_fields.Date()
-    
-    _schema = ma_fields.String(data_key='$schema')
+    updated = ma_fields.Date(dump_only=True)
     """,
     )
 
@@ -89,7 +87,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -136,4 +134,4 @@ def test_incremental_builder():
     for k, iteration_result in snapshot_1.items():
         expected_result = snapshot_2[k]
         # normally handled by black
-        assert_python_equals(iteration_result.replace(",'_id'", ",\n'_id'"), expected_result)
+        assert_python_equals(iteration_result.replace(",'_id'", ",\n'_id'"), expected_result, f'File {k}')

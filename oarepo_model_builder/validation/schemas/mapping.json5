@@ -6,5 +6,9 @@
         "additionalProperties": true
       }
     }
+  },
+  "oarepo-mapping-root": {
+    "type": "object",
+    "additionalProperties": true
   }
 }

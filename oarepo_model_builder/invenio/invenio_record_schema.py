@@ -50,6 +50,12 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         definition = None
         recurse = True
+        if isinstance(self.stack.top.data, dict):
+            definition = self.stack.top.data.get(OAREPO_MARSHMALLOW_PROPERTY, {})
+            generate_key = definition.get('read', True) or definition.get('write', True)
+            if not generate_key:
+                return
+
         if schema_element_type == "properties":
             parent = self.stack[-2].data
             definition = parent.get(OAREPO_MARSHMALLOW_PROPERTY, {})
@@ -58,12 +64,18 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if "nested" not in definition:
                 definition["nested"] = True
 
-            generate_schema_class = definition.get("generate", True)
+            generate_schema_class = definition.get('generate')
             schema_class = None  # to make pycharm happy
             schema_class_base_classes = None
+
             if generate_schema_class:
                 if "class" not in definition:
-                    definition["class"] = self.stack.top.key.title()
+                    for se in reversed(self.stack.stack):
+                        if se.schema_element_type == 'property':
+                            definition["class"] = se.key.title()
+                            break
+                    else:
+                        definition["class"] = self.stack.top.key.title()
             if "class" in definition:
                 schema_class = definition["class"]
                 if "." not in schema_class:
@@ -194,12 +206,18 @@ def create_field(field_type, options=(), validators=(), definition=None):
     validators = [*validators, *definition.get("validators", [])]
     nested = definition.get("nested", False)
     required = definition.get('required', False)
+    read = definition.get('read', True)
+    write = definition.get('write', True)
 
     list_nested = definition.get("list_nested", False)
     if validators:
         opts.append(f'validate=[{",".join(validators)}]')
     if required:
         opts.append(f'required=' + str(required))
+    if not read and write:
+        opts.append('load_only=True')
+    if not write and read:
+        opts.append('dump_only=True')
     kwargs = definition.get("field_args", "")
     if kwargs and opts:
         kwargs = ", " + kwargs
@@ -208,10 +226,20 @@ def create_field(field_type, options=(), validators=(), definition=None):
     else:
         ret = f"{field_type}()"
     if nested:
-        if opts or kwargs:
-            ret = f'ma_fields.Nested(lambda: {ret}, {", ".join(opts)}{kwargs})'
+        if ret.endswith('()'):
+            ret = ret[:-2]
         else:
-            ret = f"ma_fields.Nested(lambda: {ret})"
+            ret = f'lamda: {ret}'
+        if isinstance(nested, str):
+            if opts or kwargs:
+                ret = f'{nested}({ret}, {", ".join(opts)}{kwargs})'
+            else:
+                ret = f"{nested}({ret})"
+        else:
+            if opts or kwargs:
+                ret = f'ma_fields.Nested({ret}, {", ".join(opts)}{kwargs})'
+            else:
+                ret = f"ma_fields.Nested({ret})"
     if list_nested:
         if opts or kwargs:
             ret = f'ma_fields.List(ma_fields.Nested(lambda: {ret}, {", ".join(opts)}{kwargs}))'
@@ -240,9 +268,11 @@ def marshmallow_boolean_generator(data, definition, schema, imports):
     validators = []
     return create_field("ma_fields.Boolean", [], validators, definition)
 
+
 def marshmallow_raw_generator(data, definition, schema, imports):
     validators = []
     return create_field("ma_fields.Raw", [], validators, definition)
+
 
 def marshmallow_generic_number_generator(datatype, data, definition, schema, imports):
     validators = definition.get('validators', [])

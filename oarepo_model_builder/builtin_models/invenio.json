@@ -1,29 +1,46 @@
 {
   "model": {
+    "oarepo:marshmallow": {
+      "base-classes": [
+        "invenio_records_resources.services.records.schema.BaseRecordSchema"
+      ]
+    },
     "properties": {
       "id": {
         "type": "keyword",
         "oarepo:sample": {
           "skip": true
+        },
+        "oarepo:marshmallow": {
+          "read": false,
+          "write": false
         }
       },
       "created": {
         "type": "date",
         "oarepo:sample": {
           "skip": true
+        },
+        "oarepo:marshmallow": {
+          "write": false,
+          "read": true
         }
       },
       "updated": {
         "type": "date",
         "oarepo:sample": {
           "skip": true
+        },
+        "oarepo:marshmallow": {
+          "write": false,
+          "read": true
         }
       },
       "$schema": {
         "type": "keyword",
         "oarepo:marshmallow": {
-          "field_name": "_schema",
-          "field_args": "data_key='$schema'"
+          "read": false,
+          "write": false
         },
         "oarepo:sample": {
           "skip": true

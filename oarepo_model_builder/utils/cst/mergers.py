@@ -17,7 +17,7 @@ from libcst import (
     Pass,
     SimpleStatementLine,
     SimpleString,
-    Tuple,
+    Tuple, StarredElement,
 )
 
 
@@ -65,7 +65,7 @@ def expression_mergers():
     from oarepo_model_builder.utils.cst.collections import DictMerger, ElementMerger, ListMerger
 
     from .call import CallMerger
-    from .simple_nodes import ExprMerger, IntegerMerger, NameMerger, SimpleStringMerger
+    from .simple_nodes import ExprMerger, IntegerMerger, NameMerger, SimpleStringMerger, StarredElementMerger
 
     return {
         Call: CallMerger(),
@@ -77,4 +77,5 @@ def expression_mergers():
         Name: NameMerger(),
         Expr: ExprMerger(),
         Dict: DictMerger(),
+        StarredElement: StarredElementMerger()
     }

@@ -1,5 +1,6 @@
-from invenio_records.systemfields import ConstantField
-from invenio_records_resources.records.systemfields import IndexField
+from invenio_records.systemfields import ConstantField, RelationsField
+from invenio_records_resources.records.systemfields import IndexField,
+
 from invenio_records_resources.records.systemfields.pid import PIDField, PIDFieldContext
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_records_resources.records.api import Record as InvenioBaseRecord
@@ -10,16 +11,41 @@ from {{ b|package_name }} import {{ b|base_name }}
 from {{ python.record_metadata_class|package_name }} import {{ python.record_metadata_class|base_name }}
 from {{ python.record_dumper_class|package_name }} import {{ python.record_dumper_class|base_name }}
 
+{% for rel in invenio_relations %}
+{% for imp in rel.imports or [] %}
+import {{ imp }}
+{% endfor %}
+{% endfor %}
+{% if invenio_relations %}
+from invenio_records.dumpers.relations import RelationDumperExt
+{% endif %}
 
 class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecord):
     model_cls = {{ python.record_metadata_class|base_name }}
     schema = ConstantField("$schema", "{{ settings.schema_server }}{{ settings.schema_name }}")
     index = IndexField("{{ settings.index_name }}")
+{% if python.generate_record_pid_field %}
     pid = PIDField(
         create=True,
         provider=RecordIdProviderV2,
         context_cls = PIDFieldContext
     )
-    dumper_extensions = []
+{% endif %}
+    dumper_extensions = [
+        {%- for ext in python.record_dumper_extensions %}{{ ext }}{% if not loop.last %}, {% endif %}{% endfor -%}
+        {% if invenio_relations %}
+            RelationDumperExt("relations"),
+        {% endif %}
+    ]
     dumper = {{ python.record_dumper_class|base_name }}(extensions=dumper_extensions)
 
+    {% if invenio_relations %}
+    relations = RelationsField(
+        {% for rel in invenio_relations %}
+        {{ rel.name }}={{ rel.type }}(
+            {% for param in rel.params %}{{ param }},
+            {% endfor %}
+        ),
+        {% endfor %}
+    )
+    {% endif %}

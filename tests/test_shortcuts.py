@@ -26,10 +26,12 @@ def test_array_shortcuts():
     builder.build(schema, "")
 
     data = builder.filesystem.open(os.path.join("test", "services", "schema.py")).read()
+    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
         """
+from invenio_records_resources.services.records.schema import BaseRecordSchema
 import marshmallow as ma
 import marshmallow.fields as ma_fields
 import marshmallow.validate as ma_valid
@@ -37,16 +39,12 @@ from invenio_records_resources.services.records.schema import BaseRecordSchema a
 from marshmallow import ValidationError
 from marshmallow import validates as ma_validates
 
-class TestSchema(ma.Schema, ):
+class TestSchema(BaseRecordSchema, ):
     \"""TestSchema schema.\"""
     
-    id = ma_fields.String()
+    created = ma_fields.Date(dump_only=True)
     
-    created = ma_fields.Date()
-    
-    updated = ma_fields.Date()
-    
-    _schema = ma_fields.String(data_key='$schema')
+    updated = ma_fields.Date(dump_only=True)
     
     a = ma_fields.List(ma_fields.String())
         """,

@@ -158,62 +158,22 @@ def _(x):
     \"""Identity function for string extraction.\"""
     return x
 
-
-
 class TestSearchOptions(InvenioSearchOptions):
     \"""TestRecord search options.\"""
 
     facets = {
-
-
     'a_keyword': facets.a_keyword,
-
-
-
     'b': facets.b,
-
-
-
     '_id': facets._id,
-
-
-
     'created': facets.created,
-
-
-
     'updated': facets.updated,
-
-
-
     '_schema': facets._schema,
-
-
     }
     sort_options = {
-            "bestmatch": dict(
-                title=_('Best match'),
-                fields=['_score'],  # ES defaults to desc on `_score` field
-            ),
-            "newest": dict(
-                title=_('Newest'),
-                fields=['-created'],
-            ),
-            "oldest": dict(
-                title=_('Oldest'),
-                fields=['created'],
-            ),
-
-
+        **InvenioSearchOptions.sort_options,
     'a_test': {'fields': ['a']},
-
-
-
     'b_test': {'fields': ['-b']},
-
-
     }
-
     """,
     )
 def test_nested():
@@ -343,6 +303,7 @@ def test_search_class():
     builder.build(schema, "")
 
     data = builder.filesystem.open(os.path.join("test", "services", "search.py")).read()
+    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -354,52 +315,19 @@ def _(x):
     \"""Identity function for string extraction.\"""
     return x
 
-
-
 class TestSearchOptions(InvenioSearchOptions):
     \"""TestRecord search options.\"""
 
     facets = {
-
-
-    'a_keyword': facets.a_keyword,
-
-
-
-    'b': facets.b,
-
-
-
-    '_id': facets._id,
-
-
-
-    'created': facets.created,
-
-
-
-    'updated': facets.updated,
-
-
-
-    '_schema': facets._schema,
-
-
+      'a_keyword': facets.a_keyword,
+      'b': facets.b,
+      '_id': facets._id,
+      'created': facets.created,
+      'updated': facets.updated,
+      '_schema': facets._schema,
     }
     sort_options = {
-            "bestmatch": dict(
-                title=_('Best match'),
-                fields=['_score'],  # ES defaults to desc on `_score` field
-            ),
-            "newest": dict(
-                title=_('Newest'),
-                fields=['-created'],
-            ),
-            "oldest": dict(
-                title=_('Oldest'),
-                fields=['created'],
-            ),
-
+        **InvenioSearchOptions.sort_options,
     }
     """,
     )

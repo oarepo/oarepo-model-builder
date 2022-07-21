@@ -57,7 +57,10 @@ class ModelBuilderStack:
         if not self.stack:
             entry = ModelBuilderStackEntry(key, el, model_paths)
         else:
-            entry = ModelBuilderStackEntry(key, el, self.top.schema.get(key))
+            try:
+                entry = ModelBuilderStackEntry(key, el, self.top.schema.get(key))
+            except Exception as e:
+                print(self.top.schema.get(key))
         self.stack.append(entry)
 
     def pop(self):

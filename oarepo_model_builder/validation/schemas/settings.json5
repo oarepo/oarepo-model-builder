@@ -182,7 +182,7 @@
       "record-service-config-class": {
         "type": "string"
       },
-      "record_prefix": {
+      "record-prefix": {
         "type": "string"
       },
       "script-import-sample-data-cli": {
@@ -256,6 +256,24 @@
         "items": {
           "type": "string"
         }
+      },
+      "record-service-config-components": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "record-dumper-extensions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "generate-record-pid-field": {
+        type: "boolean"
+      },
+      "record-service-config-generate-links": {
+        type: "boolean"
       },
       "templates": {
         "type": "object",

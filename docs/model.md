@@ -202,6 +202,9 @@ model:
       oarepo:use: ./common.yaml#person
 ```
 
+**Note:** If you reference multiple files via ``oarepo:use: ["a", "b"]`` and both
+include the same property, the value from ``a`` will be used.
+
 ## Built-in extensions
 
 ### `oarepo:mapping` - elasticsearch definition
@@ -253,6 +256,16 @@ This customizes how the marshmallow field will be generated. The section might c
   generate `from <import> import <classname> as <alias?`
 * `generate` - if the current element is a jsontype object ("type": "object"), tell the builder to generate this class
   as well (if not set it is expected that the class already exists in sources)
+* `read`, `write` - defaults to True. If set to false, make the attribute load-only or dump-only. If both are
+  set to false, do not generate the field. 
+
+#### Rules for object nested properties:  
+
+ * `generate` is not set to False -> generate a nested schema class, otherwise do not generate the class
+ * `field` is set -> use this field directly as is
+ * `class` is set -> generate/use class with this name. If not set, infer the class name from the context
+ * `read=false, write=false` - do not generate the field at all
+
 
 Example:
 
