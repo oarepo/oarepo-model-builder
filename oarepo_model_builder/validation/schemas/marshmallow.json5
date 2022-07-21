@@ -20,6 +20,12 @@
           "generate": {
             "type": "boolean"
           },
+          "generate-class": {
+            "type": "boolean"
+          },
+          "generate-field": {
+            "type": "boolean"
+          },
           "base-schema": {
             "type": "string"
           },

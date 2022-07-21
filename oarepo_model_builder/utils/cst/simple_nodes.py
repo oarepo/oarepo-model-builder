@@ -1,6 +1,6 @@
 import logging
 
-from libcst import Assign, Integer
+from libcst import Assign, Integer, Name
 
 from .common import IdentityBaseMerger, IdentityMerger, MergerBase, PythonContext
 from .mergers import expression_mergers, simple_line_mergers
@@ -43,6 +43,10 @@ class SimpleStringMerger(IdentityBaseMerger):
 
 
 class NameMerger(IdentityBaseMerger):
+    pass
+
+
+class StarredElementMerger(IdentityBaseMerger):
     pass
 
 

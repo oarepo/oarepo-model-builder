@@ -1,14 +1,15 @@
+from importlib.metadata import entry_points
 from pathlib import Path
 
-import pkg_resources
 
 
 class TemplateRegistry:
     def __init__(self):
         self.mapping = {}
+        eps = entry_points()
         for ep in reversed(
             sorted(
-                pkg_resources.iter_entry_points("oarepo_model_builder.templates"),
+                eps.select(group="oarepo_model_builder.templates"),
                 key=lambda ep: ep.name,
             )
         ):

@@ -53,11 +53,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         if isinstance(self.stack.top.data, dict):
             definition = self.stack.top.data.get(OAREPO_MARSHMALLOW_PROPERTY, {})
             generate_key = definition.get('read', True) or definition.get('write', True)
-            generate = definition.get('generate', True)
             if not generate_key:
-                return
-            if not generate and schema_element_type == "property":
-                # skip the property
                 return
 
         if schema_element_type == "properties":
@@ -68,7 +64,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if "nested" not in definition:
                 definition["nested"] = True
 
-            generate_schema_class = definition.get("generate-class", not definition.get("field", False))
+            generate_schema_class = definition.get('generate')
             schema_class = None  # to make pycharm happy
             schema_class_base_classes = None
 

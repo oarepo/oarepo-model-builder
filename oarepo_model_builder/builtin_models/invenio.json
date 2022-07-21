@@ -12,7 +12,8 @@
           "skip": true
         },
         "oarepo:marshmallow": {
-          "generate": false
+          "read": false,
+          "write": false
         }
       },
       "created": {
@@ -38,7 +39,8 @@
       "$schema": {
         "type": "keyword",
         "oarepo:marshmallow": {
-          "generate": false
+          "read": false,
+          "write": false
         },
         "oarepo:sample": {
           "skip": true
