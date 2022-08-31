@@ -28,6 +28,7 @@ lazy-object-proxy = "^1.7.1"
 jsonschema = {extras = ["format"], version = "^4.4.0"}
 cookiecutter = "^1.7.3"
 invenio-cli = "^1.0.4"
+ConfigUpdater = "^3.1.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6"

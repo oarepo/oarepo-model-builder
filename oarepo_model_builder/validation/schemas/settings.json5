@@ -134,10 +134,10 @@
       "record-facets-class": {
         "type": "string"
       },
-      "record-jsonschemas-poetry": {
+      "record-jsonschemas-setup-cfg": {
         "type": "string"
       },
-      "record-mapping-poetry": {
+      "record-mapping-setup-cfg": {
         "type": "string"
       },
       "record-metadata-class": {
@@ -170,7 +170,7 @@
       "record-schema-metadata-class": {
         "type": "string"
       },
-      "record-schema-metadata-poetry": {
+      "record-schema-metadata-setup-cfg": {
         "type": "string"
       },
       "record-search-options-class": {

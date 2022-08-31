@@ -1,18 +1,18 @@
 from ..builders import OutputBuilder
 from ..builders.utils import ensure_parent_modules
-from ..outputs.toml import TOMLOutput
+from ..outputs.cfg import CFGOutput
 from ..utils.verbose import log
 
 
-class InvenioRecordMetadataAlembicPoetryBuilder(OutputBuilder):
-    TYPE = "invenio_record_metadata_alembic_poetry"
+class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):
+    TYPE = "invenio_record_metadata_alembic_setup_cfg"
 
     def finish(self):
         super().finish()
 
-        output: TOMLOutput = self.builder.get_output("toml", "pyproject.toml")
-        output.set(
-            "tool.poetry.plugins.'invenio_db.alembic'",
+        output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
+        output.add_entry_point(
+            'invenio_db.alembic',
             self.settings.python.record_schema_metadata_alembic,
             f"{self.settings.package}:alembic",
         )

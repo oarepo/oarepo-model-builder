@@ -130,11 +130,12 @@ from `multilingual` to `object`, and the preprocessor is called only once
 ## Plugin registration 
 
 A plugin is registered in entrypoints in group `oarepo_model_builder.property_preprocessors`. 
-In poetry's pyproject.toml, this is written as:
+In setup.cfg, this is written as:
 
-```toml
-[tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
-600-date = "oarepo_model_builder.property_preprocessors.date:DatePreprocessor"
+```cfg
+[entry_points]
+oarepo_model_builder.property_preprocessors = 
+    600-date = oarepo_model_builder.property_preprocessors.date:DatePreprocessor
 ```
 
 Note: plugins are loaded in the order given by the key and are evaluated in the same order.

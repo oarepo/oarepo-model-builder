@@ -68,5 +68,5 @@ def build(kwargs={}):
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.skip_schema_validation = True
     builder.build(schema, "")
-    data = builder.filesystem.open("pyproject.toml").read()
+    data = builder.filesystem.open("setup.cfg").read()
     return data

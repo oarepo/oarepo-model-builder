@@ -25,6 +25,8 @@ my-extension
         +-- __init__.py (empty)
         +-- my-extension-model-1.0.0.yaml/json
   +-- pyproject.toml
+  +-- setup.py
+  +-- setup.cfg
   +-- README.md
 ```
 
@@ -37,33 +39,31 @@ The content of the `my-extension-model.yaml` differs by usage:
 The content of the README.md file should contain a pypi-compatible markdown describing the model. Other files (license,
 contribution rules etc.) should be present as well
 
-The content of pyproject.toml goes as:
+The content of setup.cfg goes as:
 
-```toml
-[tool.poetry]
+```cfg
+[metadata]
 name = "my_extension"
 version = "0.1.0"
 description = ""
 authors = ["Mirek Simek <miroslav.simek@vscht.cz>"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
+[options]
+python_requires = >=3.9
 
-[tool.poetry.dev-dependencies]
-oarepo_model_builder = ">= 0.9.1"
+[options.extras_require]
+dev =
+    oarepo_model_builder = ">= 0.9.1"
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.plugins."oarepo.models"]
-my-extension-model = "my_extension:my-extension-model-1.0.0.yaml"
+[entry_points]
+oarepo.models = 
+    my-extension-model = my_extension:my-extension-model-1.0.0.yaml
 ```
 
 Then build the extension with
 
 ```bash
-poetry build
+python setup.py sdist bdist_wheel
 ```
 
 and upload the content of `dist` to your repository (or pypi).
@@ -90,40 +90,38 @@ my-extension
             +-- __init__.py
             +-- my_model_plugin.py
   +-- pyproject.toml
+  +-- setup.py
+  +-- setup.cfg
   +-- README.md
 ```
 
-pyproject.toml looks like:
+setup.cfg looks like:
 
-```toml
-[tool.poetry]
+```cfg
+[metadata]
 name = "my_extension"
 version = "0.1.0"
 description = ""
 authors = ["Mirek Simek <miroslav.simek@vscht.cz>"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
+[options]
+python_requires = >=3.9
 
-[tool.poetry.dev-dependencies]
-oarepo_model_builder = ">= 0.9.1"
+[options.extras_require]
+dev =
+    oarepo_model_builder = ">= 0.9.1"
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[entry_points]
+oarepo_model_builder.builders =
+    my-builder = my_extension.builder.my_builder_plugin:MyBuilder
+oarepo_model_builder.outputs =
+    my-output = my_extension.output.my_output_plugin:MyOutput
 
-# just examples
-[tool.poetry.plugins."oarepo_model_builder.builders"]
-my-builder = "my_extension.builder.my_builder_plugin:MyBuilder"
+oarepo_model_builder.property_preprocessors =
+    my-property = my_extension.property.my_property_plugin:MyPropertyPreprocessor
 
-[tool.poetry.plugins."oarepo_model_builder.outputs"]
-my-output = "my_extension.output.my_output_plugin:MyOutput"
-
-[tool.poetry.plugins."oarepo_model_builder.property_preprocessors"]
-my-property = "my_extension.property.my_property_plugin:MyPropertyPreprocessor"
-
-[tool.poetry.plugins."oarepo_model_builder.model_preprocessors"]
-my-model = "my_extension.model.my_model_plugin:MyModelPreprocessor"
+oarepo_model_builder.model_preprocessors =
+    my-model = my_extension.model.my_model_plugin:MyModelPreprocessor
 ```
 
 ## extension with runtime dependencies
@@ -157,7 +155,7 @@ class MultilingualModelPreprocessor(ModelPreprocessor):
 
 and register it in `oarepo_model_builder.model_preprocessors` entrypoint. This will automatically add
 the `runtime-dependencies` option that is picked up by one of the generators and adds dependencies to
-generated `pyproject.toml`.
+generated `setup.cfg`.
 
 You can add dev dependencies as well by using 'dev-dependencies' key.
 
@@ -227,7 +225,7 @@ User who installs the extension to oarepo-model-builder environment (either with
 `pip install my-extension[builder]`) will have the builder part installed.
 
 User who uses oarepo-model-builder to generate the model will be covered as well, as the generated
-pyproject.toml will include the extension with runtime extras.
+setup.cfg will include the extension with runtime extras.
 
 But if this extension is used by someone out of the oarepo-model-builder ecosystem, he should be
 always guided to install it as ``pip install my-extension[runtime]`` as otherwise no dependencies

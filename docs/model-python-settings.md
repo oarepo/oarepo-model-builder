@@ -15,7 +15,7 @@ python:
     record-schema-metadata-class: { settings.package }.schema.{record_prefix}MetadataSchema
       # full record schema metadata class name (contains model schema as marshmallow)
     record-schema-metadata-alembic: { settings.package_base }
-    # name of key in pyproject.toml invenio_db.alembic entry point 
+    # name of key in setup.cfg invenio_db.alembic entry point 
     record-metadata-class: { settings.package }.metadata.{record_prefix}Metadata
       # db class to store record's metadata 
     record-metadata-table-name: { record_prefix.lower() }_metadata
