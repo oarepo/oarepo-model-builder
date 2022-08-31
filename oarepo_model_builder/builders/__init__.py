@@ -172,4 +172,8 @@ class OutputBuilderComponent:
         return value
 
 
-__all__ = ["process", "OutputBuilder", "ModelBuilderStack", "ReplaceElement"]
+TEMPLATES = {
+    "setup_py": "templates/setup.py.jinja2",
+}
+
+__all__ = ["process", "OutputBuilder", "ModelBuilderStack", "ReplaceElement", "TEMPLATES"]

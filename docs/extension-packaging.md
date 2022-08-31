@@ -63,7 +63,7 @@ oarepo.models =
 Then build the extension with
 
 ```bash
-python setup.py sdist bdist_wheel
+python setup.py.jinja2 sdist bdist_wheel
 ```
 
 and upload the content of `dist` to your repository (or pypi).

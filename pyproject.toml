@@ -60,7 +60,9 @@ line-length = 120
 0020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
 0030-mapping = "oarepo_model_builder.builders.mapping:MappingBuilder"
 
-0050-setup-cfg = "oarepo_model_builder.builders.setupcfg:SetupCfgBuilder"
+0050-setup-cfg = "oarepo_model_builder.builders.setup_cfg:SetupCfgBuilder"
+0060-setup-py = "oarepo_model_builder.builders.setup_py:SetupPyBuilder"
+0070-pyproject-toml = "oarepo_model_builder.builders.pyproject_toml:PyprojectTOMLBuilder"
 
 0100-python_structure = "oarepo_model_builder.builders.python_structure:PythonStructureBuilder"
 0110-invenio_record = "oarepo_model_builder.invenio.invenio_record:InvenioRecordBuilder"
@@ -133,7 +135,8 @@ yaml = "oarepo_model_builder.loaders:yaml_loader"
 yml = "oarepo_model_builder.loaders:yaml_loader"
 
 [tool.poetry.plugins."oarepo_model_builder.templates"]
-99-base_templates = "oarepo_model_builder.invenio"
+99-base_invenio_templates = "oarepo_model_builder.invenio"
+99-base_generic_templates = "oarepo_model_builder.builders"
 
 [tool.poetry.plugins."oarepo.models"]
 invenio = "oarepo_model_builder.builtin_models:invenio.json"
