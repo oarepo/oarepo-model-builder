@@ -12,25 +12,27 @@ class CFGOutput(OutputBase):
         """
         Adds an entry point if it is not already present
         """
-        grp = self.create_multiline_value('entry_points', group)
+        line = f'{name} = {value}'
+        grp = self.create_multiline_value('entry_points', group, initial_value=line)
         for e in grp.as_list():
             e = [x.strip() for x in e.split('=', maxsplit=1)]
             if len(e) == 2 and e[0] == name and e[1] == value:
                 break
         else:
-            grp.append(f'{name} = {value}')
+            grp.append(line)
 
     def add_dependency(self, package, version, group='options', section='install_requires',
                        extras=None):
-        grp = self.create_multiline_value(group, section)
         if extras:
             line = f'{package}[{", ".join(extras)}]{version}'
         else:
             line = f'{package}{version}'
+        grp = self.create_multiline_value(group, section, line)
         for e in grp.as_list():
             if line == e.strip():
                 break
         else:
+            # TODO: this is a private api, but 'append' seems not to work on empty option
             grp.append(line)
 
     # low-level API
@@ -75,12 +77,12 @@ class CFGOutput(OutputBase):
         tbl = self.get_section(section, create=True)
         return tbl.setdefault(key, value)
 
-    def create_multiline_value(self, section, name) -> Option:
-        tbl = self.get_section(section)
+    def create_multiline_value(self, section, name, initial_value='') -> Option:
+        tbl = self.get_section(section, create=True)
         if name in tbl:
             grp = tbl[name]
         else:
-            grp = Option(name)
+            grp = Option(name, value=initial_value)
             tbl.add_option(grp)
         return grp
 
