@@ -13,7 +13,7 @@ class CFGOutput(OutputBase):
         Adds an entry point if it is not already present
         """
         line = f'{name} = {value}'
-        grp = self.create_multiline_value('entry_points', group, initial_value=line)
+        grp = self.create_multiline_value('options.entry_points', group, initial_value=line)
         for e in grp.as_list():
             e = [x.strip() for x in e.split('=', maxsplit=1)]
             if len(e) == 2 and e[0] == name and e[1] == value:

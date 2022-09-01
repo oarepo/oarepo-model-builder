@@ -87,7 +87,6 @@ line-length = 120
 
 0700-invenio_ext = "oarepo_model_builder.invenio.invenio_proxies:InvenioProxiesBuilder"
 
-0900-invenio_sample_app_setup_cfg = "oarepo_model_builder.invenio.invenio_sample_app_setup_cfg:InvenioSampleAppSetupCfgBuilder"
 0910-invenio_record_metadata_alembic_setup_cfg = "oarepo_model_builder.invenio.invenio_record_metadata_alembic_setup_cfg:InvenioRecordMetadataAlembicSetupCfgBuilder"
 0920-invenio_record_metadata_models_setup_cfg = "oarepo_model_builder.invenio.invenio_record_metadata_models_setup_cfg:InvenioRecordMetadataModelsSetupCfgBuilder"
 0930-invenio_resource_setup_cfg = "oarepo_model_builder.invenio.invenio_record_resource_setup_cfg:InvenioRecordResourceSetupCfgBuilder"
@@ -99,8 +98,6 @@ line-length = 120
 1020-invenio_script_import_sample_data = "oarepo_model_builder.invenio.invenio_script_import_sample_data:InvenioScriptImportSampleDataBuilder"
 1030-invenio_script_sample_data = "oarepo_model_builder.invenio.invenio_script_sample_data:InvenioScriptSampleDataBuilder"
 1040-invenio_script_sample_data_shell = "oarepo_model_builder.invenio.invenio_script_sample_data:InvenioScriptSampleDataShellBuilder"
-
-1100-cookiecutter_config = "oarepo_model_builder.builders.cookiecutter:CookiecutterBuilder"
 
 [tool.poetry.plugins."oarepo_model_builder.outputs"]
 json = "oarepo_model_builder.outputs.json:JSONOutput"

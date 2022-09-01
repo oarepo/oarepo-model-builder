@@ -23,8 +23,9 @@ model: # this is like the root of the json schema
     title:
       type: multilingual
       oarepo:ui:
-        label: Title
-        class: bold-text
+        default:
+          label: Title
+          class: bold-text
       oarepo:documentation: |
         Lorem ipsum ...
         Dolor sit ...

@@ -15,15 +15,15 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault('metadata', 'description', f"A sample application for {self.settings.package}")
         output.setdefault('metadata', 'authors', '')
 
-        # output.setdefault(
-        #     "build-system",
-        #     "requires",
-        #     ["poetry-core>=1.0.8"],
-        #     "build-backend",
-        #     "poetry.core.masonry.api",
-        # )
-
         output.setdefault('options', 'python', '>=3.9')
+
+        output.add_dependency("invenio_access", ">=1.4.4")
+        output.add_dependency("invenio_app", ">=1.3.4")
+        output.add_dependency("invenio_db", ">=1.0.14")
+        output.add_dependency("invenio_pidstore", ">=1.2.3")
+        output.add_dependency("invenio_records", ">=1.7.4")
+        output.add_dependency("invenio_records_permissions", ">=0.13.0")
+        output.add_dependency("invenio_records_resources", ">=0.20.1")
 
         if "runtime-dependencies" in self.schema:
             for dep, value in self.schema.runtime_dependencies.items():
