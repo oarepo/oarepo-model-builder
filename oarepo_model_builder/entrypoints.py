@@ -38,7 +38,15 @@ def load_entry_points_dict(name):
 
 
 def load_entry_points_list(name):
-    ret = [(ep.name, ep.load()) for ep in importlib.metadata.entry_points().select(group=name)]
+    ret = []
+    loaded = {}
+    for ep in importlib.metadata.entry_points().select(group=name):
+        if ep.name in loaded:
+            print(f'WARNING: Entry point {ep.name} has already been registered to group {name}. '
+                  f'Previous value {loaded[ep.name]}, new ignored value {ep.value}')
+            continue
+        ret.append((ep.name, ep.load()))
+        loaded[ep.name] = ep.value
     ret.sort()
     return [x[1] for x in ret]
 
