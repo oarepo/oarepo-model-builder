@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import sys
 from pathlib import Path
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
@@ -76,15 +77,23 @@ def test_generate_multiple_times():
 
     builder.build(schema, "")
     snapshot_1 = filesystem.snapshot()
-    for fn, file in snapshot_1.items():
-        print(fn, file)
 
     builder.build(schema, "")
     snapshot_2 = filesystem.snapshot()
-    for fn, file in snapshot_2.items():
-        print(fn, file)
 
-    assert snapshot_1 == snapshot_2
+    assert snapshot_1.keys() == snapshot_2.keys()
+
+    for k in snapshot_1:
+        first_val = snapshot_1[k]
+        second_val = snapshot_2[k]
+        if first_val != second_val:
+            print("ASSERT FAILED", k, file=sys.stderr)
+            print("====================", file=sys.stderr)
+            print(first_val, file=sys.stderr)
+            print("====================", file=sys.stderr)
+            print(second_val, file=sys.stderr)
+            print("====================", file=sys.stderr)
+            assert first_val == second_val
 
 
 def test_incremental_builder():
