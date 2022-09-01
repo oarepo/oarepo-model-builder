@@ -76,9 +76,13 @@ def test_generate_multiple_times():
 
     builder.build(schema, "")
     snapshot_1 = filesystem.snapshot()
+    for fn, file in snapshot_1.items():
+        print(fn, file)
 
     builder.build(schema, "")
     snapshot_2 = filesystem.snapshot()
+    for fn, file in snapshot_2.items():
+        print(fn, file)
 
     assert snapshot_1 == snapshot_2
 
