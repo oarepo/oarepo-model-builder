@@ -76,6 +76,9 @@
       "enum": {
         "type": "array"
       },
+      "format": {
+        "type": "string"
+      },
       "additionalProperties": {
         "type": "object",
         "properties": {
