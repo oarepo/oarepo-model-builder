@@ -180,7 +180,7 @@ def faker_provider(faker, settings, stack, params):
 
 
 class InvenioScriptSampleDataShellBuilder(OutputBuilder):
-    TYPE = "invenio_script_runserver"
+    TYPE = "invenio_script_sample_data_loader"
 
     def finish(self):
         context = {"settings": self.schema.settings}
