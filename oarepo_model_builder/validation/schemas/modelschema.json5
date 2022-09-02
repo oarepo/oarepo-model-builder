@@ -98,6 +98,12 @@
       // for array
       "uniqueItems": {
         "type": "boolean"
+      },
+      "minItems": {
+        "type": "integer"
+      },
+      "maxItems": {
+        "type": "integer"
       }
     }
   }
