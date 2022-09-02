@@ -61,8 +61,7 @@ class CFGOutput(OutputBase):
             return None
 
     def get_section(self, section, create=False):
-        if create:
-            if section not in self.cfg:
+        if create and section not in self.cfg:
                 self.cfg.add_section(section)
                 tbl = self.cfg[section]
                 tbl.add_before.space(2)

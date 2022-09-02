@@ -8,12 +8,14 @@ from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, lo
 from tests.mock_filesystem import MockFilesystem
 from tests.utils import assert_python_equals
 
+OAREPO_USE = "oarepo:use"
+
 
 def test_include_invenio():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"version": "1.0.0", "oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={"version": "1.0.0", OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -66,12 +68,11 @@ class TestSchema(BaseRecordSchema, ):
     assert f'version = 1.0.0' in data
 
 
-
 def test_generate_multiple_times():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -104,7 +105,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -117,7 +118,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -132,7 +133,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
