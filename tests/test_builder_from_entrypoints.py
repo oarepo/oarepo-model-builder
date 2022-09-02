@@ -13,7 +13,7 @@ def test_include_invenio():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={"version": "1.0.0", "oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -61,6 +61,10 @@ class TestSchema(BaseRecordSchema, ):
             },
         }
     }
+
+    data = builder.filesystem.read("setup.cfg")
+    assert f'version = 1.0.0' in data
+
 
 
 def test_generate_multiple_times():

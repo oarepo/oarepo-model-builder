@@ -1,6 +1,7 @@
 from ..builders import OutputBuilder
 from ..outputs.cfg import CFGOutput
 from ..utils.verbose import log
+from pkg_resources import parse_version
 
 
 class SetupCfgBuilder(OutputBuilder):
@@ -11,7 +12,10 @@ class SetupCfgBuilder(OutputBuilder):
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
         output.setdefault('metadata', 'name', self.settings.package_base.replace("_", "-"))
-        output.setdefault('metadata', 'version', self.settings.get('version', '1.0.0dev1'))
+        version = self.schema.get('version', '1.0.0dev1')
+        output.setdefault('metadata', 'version', version)
+        if parse_version(output.get('metadata', 'version').value) < parse_version(version):
+            output.set('metadata', 'version', version)
         output.setdefault('metadata', 'description', f"A sample application for {self.settings.package}")
         output.setdefault('metadata', 'authors', '')
 
