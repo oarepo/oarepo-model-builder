@@ -6,6 +6,7 @@ import traceback
 from pathlib import Path
 
 import click
+import yaml
 
 from oarepo_model_builder.conflict_resolvers import AutomaticResolver, InteractiveResolver
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
@@ -36,6 +37,11 @@ from oarepo_model_builder.utils.verbose import log
     count=True,
 )
 @click.option(
+    "--save-model",
+    "save_model",
+    help="Save resolved model into this file.",
+)
+@click.option(
     "--config",
     "configs",
     help="Load a config file and replace parts of the model with it. "
@@ -49,13 +55,15 @@ from oarepo_model_builder.utils.verbose import log
 @click.option("--black/--skip-black", default=True, help="Call black on generated sources")
 @click.option("--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"]))
 @click.argument("model_filename")
-def run(output_directory, package, sets, configs, model_filename, verbosity, isort, black, resolve_conflicts):
+def run(output_directory, package, sets, configs, model_filename,
+        verbosity, isort, black, resolve_conflicts, save_model):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
     try:
         run_internal(
-            output_directory, model_filename, package, configs, resolve_conflicts, sets, black, isort, verbosity
+            output_directory, model_filename, package, configs, resolve_conflicts,
+            sets, black, isort, verbosity, save_model
         )
     except Exception as e:
         if verbosity >= 2:
@@ -69,7 +77,8 @@ def run(output_directory, package, sets, configs, model_filename, verbosity, iso
         sys.exit(1)
 
 
-def run_internal(output_directory, model_filename, package, configs, resolve_conflicts, sets, black, isort, verbosity):
+def run_internal(output_directory, model_filename, package, configs,
+                 resolve_conflicts, sets, black, isort, verbosity, save_model):
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
     os.environ["PATH"] = str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get("PATH", "")
@@ -91,6 +100,9 @@ def run_internal(output_directory, model_filename, package, configs, resolve_con
         output_directory,
     )
     model = load_model(model_filename, package, configs, black, isort, sets)
+    if save_model:
+        with open(save_model, 'w') as f:
+            yaml.dump(model.schema, f)
     model.schema["output-directory"] = output_directory
     if not resolve_conflicts or resolve_conflicts == "debug":
         resolver = InteractiveResolver(resolve_conflicts == "debug")
