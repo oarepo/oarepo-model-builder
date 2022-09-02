@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import os
 import sys
@@ -102,7 +103,7 @@ def run_internal(output_directory, model_filename, package, configs,
     model = load_model(model_filename, package, configs, black, isort, sets)
     if save_model:
         with open(save_model, 'w') as f:
-            yaml.dump(model.schema, f)
+            yaml.dump(json.loads(json.dumps(model.schema)), f)
     model.schema["output-directory"] = output_directory
     if not resolve_conflicts or resolve_conflicts == "debug":
         resolver = InteractiveResolver(resolve_conflicts == "debug")
