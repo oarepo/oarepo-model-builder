@@ -17,7 +17,7 @@ invenio-cli services setup -N
 cd ..
 
 # install back current app
-pipenv run poetry install
+pipenv run pip install -e .
 
 # create the branch
 pipenv run invenio alembic revision "Create {{ settings.package_base }} branch."  -b {{ settings.package_base }} -p dbdbc1b19cf2 --empty

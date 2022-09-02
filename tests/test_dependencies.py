@@ -7,53 +7,29 @@ from tests.mock_filesystem import MockFilesystem
 def test_no_dependencies():
     data = build()
     print(data)
-    assert data.startswith("[tool.poetry]")
+    assert data.startswith("[metadata]")
 
 
 def test_runtime_dependencies():
     data = build({"runtime-dependencies": {"test": "1.0.0"}})
-    assert "[tool.poetry.dependencies]" in data
+    print(data)
+    assert "install_requires =" in data
     assert (
-        """[tool.poetry.dependencies.test]
-version = \"1.0.0\""""
-        in data
+            """test>=1.0.0"""
+            in data
     )
-    assert data.index("[tool.poetry.dependencies]") < data.index("[tool.poetry.dependencies.test]")
-
-
-def test_runtime_dependencies_with_extras():
-    data = build({"runtime-dependencies": {"test": {"version": "1.0.0", "optional": True}}})
-    assert "[tool.poetry.dependencies]" in data
-    assert (
-        """[tool.poetry.dependencies.test]
-version = \"1.0.0\"
-optional = true"""
-        in data
-    )
-    assert data.index("[tool.poetry.dependencies]") < data.index("[tool.poetry.dependencies.test]")
+    assert data.index("install_requires") < data.index("test>=1.0.0")
 
 
 def test_dev_dependencies():
     data = build({"dev-dependencies": {"test": "1.0.0"}})
-    assert "[tool.poetry.dev-dependencies]" in data
+    assert "[options.extras_require]" in data
+    assert "devs =" in data
     assert (
-        """[tool.poetry.dev-dependencies.test]
-version = \"1.0.0\""""
-        in data
+            """test>=1.0.0"""
+            in data
     )
-    assert data.index("[tool.poetry.dev-dependencies]") < data.index("[tool.poetry.dev-dependencies.test]")
-
-
-def test_dev_dependencies_with_extras():
-    data = build({"dev-dependencies": {"test": {"version": "1.0.0", "optional": True}}})
-    assert "[tool.poetry.dev-dependencies]" in data
-    assert (
-        """[tool.poetry.dev-dependencies.test]
-version = \"1.0.0\"
-optional = true"""
-        in data
-    )
-    assert data.index("[tool.poetry.dev-dependencies]") < data.index("[tool.poetry.dev-dependencies.test]")
+    assert data.index("devs =") < data.index("test>=1.0.0")
 
 
 def build(kwargs={}):
@@ -68,5 +44,5 @@ def build(kwargs={}):
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.skip_schema_validation = True
     builder.build(schema, "")
-    data = builder.filesystem.open("pyproject.toml").read()
+    data = builder.filesystem.open("setup.cfg").read().strip()
     return data

@@ -42,11 +42,12 @@ for complete sources.
 ## Plugin registration
 
 A plugin is registered in entrypoints in group `oarepo_model_builder.builders`. 
-In poetry's pyproject.toml, this is written as:
+In setup.cfg, this is written as:
 
-```toml
-[tool.poetry.plugins."oarepo_model_builder.builders"]
-020-jsonschema = "oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder"
+```cfg
+[entry_points]
+oarepo_model_builder.builders = 
+    020-jsonschema = oarepo_model_builder.builders.jsonschema:JSONSchemaBuilder
 ```
 
 Note: plugins are loaded in the order given by the key and are evaluated in the same order.

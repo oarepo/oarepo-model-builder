@@ -114,11 +114,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "record-metadata-table-name",
             lambda: f"{record_prefix.lower()}_metadata",
         )
-        #   - poetry
-        self.set(settings.python, "record-mapping-poetry", lambda: f"{settings.package_base}")
+        #   - setup.cfg
+        self.set(settings.python, "record-mapping-setup-cfg", lambda: f"{settings.package_base}")
         self.set(
             settings.python,
-            "record-jsonschemas-poetry",
+            "record-jsonschemas-setup-cfg",
             lambda: f"{settings.package_base}",
         )
 
@@ -193,7 +193,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         )
         self.set(
             settings.python,
-            "record-schema-metadata-poetry",
+            "record-schema-metadata-setup-cfg",
             lambda: f"{settings.package_base}",
         )
 

@@ -1,18 +1,21 @@
 import json
 import os
 import re
+import sys
 from pathlib import Path
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from tests.mock_filesystem import MockFilesystem
 from tests.utils import assert_python_equals
 
+OAREPO_USE = "oarepo:use"
+
 
 def test_include_invenio():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={"version": "1.0.0", OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -61,12 +64,15 @@ class TestSchema(BaseRecordSchema, ):
         }
     }
 
+    data = builder.filesystem.read("setup.cfg")
+    assert f'version = 1.0.0' in data
+
 
 def test_generate_multiple_times():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -80,14 +86,26 @@ def test_generate_multiple_times():
     builder.build(schema, "")
     snapshot_2 = filesystem.snapshot()
 
-    assert snapshot_1 == snapshot_2
+    assert snapshot_1.keys() == snapshot_2.keys()
+
+    for k in snapshot_1:
+        first_val = snapshot_1[k]
+        second_val = snapshot_2[k]
+        if first_val != second_val:
+            print("ASSERT FAILED", k, file=sys.stderr)
+            print("====================", file=sys.stderr)
+            print(first_val, file=sys.stderr)
+            print("====================", file=sys.stderr)
+            print(second_val, file=sys.stderr)
+            print("====================", file=sys.stderr)
+            assert first_val == second_val
 
 
 def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -100,7 +118,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
@@ -115,7 +133,7 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
         isort=False,
         black=False,
     )
