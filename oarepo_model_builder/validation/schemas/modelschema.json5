@@ -91,6 +91,10 @@
             "type": "string"
           }
         }
+      },
+      // for array
+      "uniqueItems": {
+        "type": "boolean"
       }
     }
   }
