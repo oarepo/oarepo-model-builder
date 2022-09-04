@@ -82,9 +82,12 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             settings,
             "index-name",
             lambda: settings.package + "-" +
-            os.path.basename(settings.mapping_file).replace(".json", ""),
+                    os.path.basename(settings.mapping_file).replace(".json", ""),
         )
 
         self.set(settings, "collection-url",
                  lambda: f"/{settings.package_base}/")
         self.set(settings, "model-name", lambda: settings.package_base)
+
+        # for outputting the model
+        self.set(settings, 'saved-model-file', lambda: os.path.join('models', 'model.json'))

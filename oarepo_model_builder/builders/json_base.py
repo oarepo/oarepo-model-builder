@@ -13,11 +13,14 @@ class JSONBaseBuilder(OutputBuilder):
         data = self.call_components("model_element_enter", data, stack=self.stack)
         match self.stack.top_type:
             case self.stack.PRIMITIVE:
-                self.output.primitive(top.key, data)
+                self.output_primitive(top, data)
             case self.stack.LIST:
                 self.output.enter(top.key, [])
             case self.stack.DICT:
                 self.output.enter(top.key, {})
+
+    def output_primitive(self, top, data):
+        self.output.primitive(top.key, data)
 
     def model_element_leave(self):
         self.call_components("model_element_leave", self.stack.top.data, stack=self.stack)

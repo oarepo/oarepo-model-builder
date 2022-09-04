@@ -61,6 +61,9 @@
       },
       "package-base-upper": {
         "type": "string"
+      },
+      "saved-model-file": {
+        "type": "string"
       }
     },
     "additionalProperties": false
