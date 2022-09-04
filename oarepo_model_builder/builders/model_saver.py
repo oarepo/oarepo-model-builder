@@ -38,6 +38,10 @@ class ModelSaverBuilder(JSONBaseBuilder):
         ensure_parent_modules(self.builder, Path(output_name),
                               ends_at=self.parent_module_root_name)
 
+    def finish(self):
+        # force clean output
+        self.output.force_clean_output()
+
 
 class ModelRegistrationBuilder(OutputBuilder):
     TYPE = "model_registration"

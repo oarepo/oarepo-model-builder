@@ -238,7 +238,10 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         settings.python.setdefault("record-dumper-extensions", [])
 
         # default import prefixes
-        settings.python.setdefault("always-defined-import-prefixes", []).extend(["ma", "ma_fields", "ma_valid"])
+        _prefixes = settings.python.setdefault("always-defined-import-prefixes", [])
+        for _prefix in ["ma", "ma_fields", "ma_valid"]:
+            if _prefix not in _prefixes:
+                _prefixes.append(_prefix)
 
         # script sample data importer
         settings.python.setdefault("script-import-sample-data-cli", "scripts.import_sample_data.cli")

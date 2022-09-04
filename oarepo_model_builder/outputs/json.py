@@ -32,6 +32,9 @@ class JSONOutput(OutputBase):
     def created(self):
         return self.original_data is None
 
+    def force_clean_output(self):
+        self.original_data = None
+
     def finish(self):
         data = self.stack.value
         if DeepDiff(data, self.original_data):
