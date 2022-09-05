@@ -15,9 +15,7 @@
         "$ref": "#/$defs/jsonschema-property"
       }
     },
-    "unevaluatedProperties": false,
-    "minProperties": 1
-    // empty object is not allowed in the current schema
+    "unevaluatedProperties": false
   },
   "jsonschema-property": {
     "type": "object",
