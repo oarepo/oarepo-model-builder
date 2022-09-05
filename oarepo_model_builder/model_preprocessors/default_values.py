@@ -90,4 +90,4 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(settings, "model-name", lambda: settings.package_base)
 
         # for outputting the model
-        self.set(settings, 'saved-model-file', lambda: os.path.join('models', 'model.json'))
+        self.set(settings, 'saved-model-file', lambda: settings.package_path / 'models' / 'model.json')

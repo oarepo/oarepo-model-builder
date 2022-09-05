@@ -33,7 +33,7 @@ def test_model_saver():
             'package-path': 'test',
             'processing-order': ['settings', '*', 'model'],
             'python': {'use_black': False, 'use_isort': False},
-            'saved-model-file': 'models/model.json',
+            'saved-model-file': 'test/models/model.json',
             'schema-file': 'test/records/jsonschemas/test-1.0.0.json',
             'schema-name': 'test-1.0.0.json',
             'schema-server': 'http://localhost/schemas/',
@@ -87,9 +87,8 @@ def build(model, output_builder_components=None, property_preprocessors=None):
         ),
         output_dir="",
     )
-    json5.load(builder.filesystem.open(os.path.join("models", "model.json")))
     return (
-        json5.load(builder.filesystem.open(os.path.join("models", "model.json"))),
-        builder.filesystem.read(os.path.join("models", "__init__.py")),
+        json5.load(builder.filesystem.open(os.path.join("test", "models", "model.json"))),
+        builder.filesystem.read(os.path.join("test", "models", "__init__.py")),
         builder.filesystem.read("setup.cfg")
     )
