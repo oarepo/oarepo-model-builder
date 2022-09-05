@@ -91,3 +91,4 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
 
         # for outputting the model
         self.set(settings, 'saved-model-file', lambda: settings.package_path / 'models' / 'model.json')
+        self.set(settings, 'saved-inherited-model-file', lambda: settings.package_path / 'models' / 'inherited_model.json')

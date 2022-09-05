@@ -1,11 +1,15 @@
 import os
 
 from oarepo_model_builder.builder import ModelBuilder
+from oarepo_model_builder.builders.inherited_model_saver import InheritedModelSaverBuilder
 from oarepo_model_builder.builders.model_saver import ModelSaverBuilder, ModelRegistrationBuilder
 from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.outputs.cfg import CFGOutput
 from oarepo_model_builder.outputs.json import JSONOutput
 from oarepo_model_builder.outputs.python import PythonOutput
+from oarepo_model_builder.property_preprocessors.marshmallow_class_generator import \
+    MarshmallowClassGeneratorPreprocessor
+from oarepo_model_builder.property_preprocessors.marshmallow_validators_generator import ValidatorsPreprocessor
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
@@ -16,7 +20,28 @@ except ImportError:
 
 
 def test_model_saver():
-    data = build({"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}})
+    data = build({
+        "properties": {
+            "a": {
+                "type": "keyword",
+                "oarepo:ui": {"class": "bolder"}
+            },
+            "b": {
+                "type": "object",
+                "properties": {
+                    "c": {
+                        "type": "keyword",
+                    }
+                },
+                "oarepo:marshmallow": {
+                    "generate": True
+                }
+            }
+        }
+    }, property_preprocessors=[
+        MarshmallowClassGeneratorPreprocessor,
+        ValidatorsPreprocessor
+    ])
 
     assert data[0] == {
         'settings': {
@@ -34,6 +59,7 @@ def test_model_saver():
             'processing-order': ['settings', '*', 'model'],
             'python': {'use_black': False, 'use_isort': False},
             'saved-model-file': 'test/models/model.json',
+            'saved-inherited-model-file': 'test/models/inherited_model.json',
             'schema-file': 'test/records/jsonschemas/test-1.0.0.json',
             'schema-name': 'test-1.0.0.json',
             'schema-server': 'http://localhost/schemas/',
@@ -41,23 +67,39 @@ def test_model_saver():
         },
         "model": {
             "properties": {
-                "a": {
-                    "type": "keyword",
-                    "oarepo:ui": {
-                        "class": "bolder"
-                    }
+                'a': {
+                    'oarepo:ui': {'class': 'bolder'},
+                    'type': 'keyword'},
+                'b': {
+                    'oarepo:marshmallow': {'generate': True},
+                    'properties': {
+                        'c': {'type': 'keyword'}
+                    },
+                    'type': 'object'
                 }
             }
         }
     }
-    assert data[1].strip() == ""
-    assert data[2].strip() == """[options.entry_points]
+    assert data[1]['model'] == {
+        'properties': {
+            'a': {'oarepo:ui': {'class': 'bolder'}, 'type': 'keyword'},
+            'b': {'oarepo:marshmallow': {'generate': False, 'class': 'test.services.schema.BSchema'},
+                  'properties': {'c': {'type': 'keyword'}},
+                  'type': 'object'}
+        },
+        'oarepo:marshmallow': {
+            'base-classes': ['test.services.schema.RecordSchema', ],
+            'generate': True
+        }
+    }
+    assert data[2].strip() == ""
+    assert data[3].strip() == """[options.entry_points]
 oarepo.models = test = test.models:model.json"""
 
 
 def build(model, output_builder_components=None, property_preprocessors=None):
     builder = ModelBuilder(
-        output_builders=[ModelSaverBuilder, ModelRegistrationBuilder],
+        output_builders=[ModelSaverBuilder, ModelRegistrationBuilder, InheritedModelSaverBuilder],
         outputs=[JSONOutput, PythonOutput, CFGOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         output_builder_components=output_builder_components,
@@ -89,6 +131,7 @@ def build(model, output_builder_components=None, property_preprocessors=None):
     )
     return (
         json5.load(builder.filesystem.open(os.path.join("test", "models", "model.json"))),
+        json5.load(builder.filesystem.open(os.path.join("test", "models", "inherited_model.json"))),
         builder.filesystem.read(os.path.join("test", "models", "__init__.py")),
         builder.filesystem.read("setup.cfg")
     )

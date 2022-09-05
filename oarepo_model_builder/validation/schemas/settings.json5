@@ -64,6 +64,9 @@
       },
       "saved-model-file": {
         "type": "string"
+      },
+      "saved-inherited-model-file": {
+        "type": "string"
       }
     },
     "additionalProperties": false

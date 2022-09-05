@@ -1,3 +1,4 @@
+from oarepo_model_builder.builders.inherited_model_saver import InheritedModelSaverBuilder
 from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
@@ -9,7 +10,7 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="**/properties/*",
+        path="**/properties",
         condition=lambda current, stack: stack.schema_valid,
     )
     def modify_object_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
@@ -22,13 +23,63 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
             self.add_class_name(stack, None, stack.top.data)
         return data
 
+    @process(
+        model_builder=InvenioRecordSchemaBuilder,
+        path="/model$",
+        condition=lambda current, stack: stack.schema_valid,
+    )
+    def modify_object_marshmallow_model(self, data, stack: ModelBuilderStack, **kwargs):
+        self.add_root_class_name(stack)
+        return data
+
+    @process(
+        model_builder=InheritedModelSaverBuilder,
+        path="**/properties",
+        condition=lambda current, stack: stack.schema_valid,
+    )
+    def modify_object_marshmallow_for_inherited(self, data, stack: ModelBuilderStack, **kwargs):
+        schema_element_type = stack.top.schema_element_type
+        # TODO: if top-level, add to base classes, else add 'generate: False'
+        if schema_element_type == "properties":
+            for k, v in stack.top.data.items():
+                definition = self.add_class_name(stack, k, v)
+                if definition:
+                    definition['generate'] = False
+        elif schema_element_type == "items":
+            definition = self.add_class_name(stack, None, stack.top.data)
+            if definition:
+                definition['generate'] = False
+        return data
+
+    @process(
+        model_builder=InheritedModelSaverBuilder,
+        path="/model$",
+        condition=lambda current, stack: stack.schema_valid,
+    )
+    def modify_object_marshmallow_model_for_inherited(self, data, stack: ModelBuilderStack, **kwargs):
+        definition = self.add_root_class_name(stack)
+        definition["base-classes"] = [definition.pop('class')]
+        return data
+
     def add_class_name(self, stack, key, data):
         if "items" not in data and "properties" not in data:
             return
         definition = data.setdefault("oarepo:marshmallow", {})
         if "class" in definition:
             return
-        definition["class"] = camel_case(key or self.get_property_name(stack)) + "Schema"
+        definition["generate"] = True
+        definition["class"] = f'{self.settings.package}.services.schema.' + \
+                              camel_case(key or self.get_property_name(stack)) + "Schema"
+        return definition
+
+    def add_root_class_name(self, stack):
+        data = stack.top.data
+        definition = data.setdefault("oarepo:marshmallow", {})
+        if "class" in definition:
+            return definition
+        definition["generate"] = True
+        definition["class"] = f'{self.settings.package}.services.schema.RecordSchema'
+        return definition
 
     def get_property_name(self, stack):
         for el in reversed(stack.stack):
