@@ -57,7 +57,7 @@ def test_model_saver():
             'package-base-upper': 'TEST',
             'package-path': 'test',
             'processing-order': ['settings', '*', 'model'],
-            'python': {'use_black': False, 'use_isort': False},
+            'python': {'use_black': False, 'use_isort': False, "record-prefix": 'Test'},
             'saved-model-file': 'test/models/model.json',
             'saved-inherited-model-file': 'test/models/inherited_model.json',
             'schema-file': 'test/records/jsonschemas/test-1.0.0.json',
@@ -83,12 +83,12 @@ def test_model_saver():
     assert data[1]['model'] == {
         'properties': {
             'a': {'oarepo:ui': {'class': 'bolder'}, 'type': 'keyword'},
-            'b': {'oarepo:marshmallow': {'generate': False, 'class': 'test.services.schema.BSchema'},
+            'b': {'oarepo:marshmallow': {'generate': False, 'class': 'test.services.schema.TestBSchema'},
                   'properties': {'c': {'type': 'keyword'}},
                   'type': 'object'}
         },
         'oarepo:marshmallow': {
-            'base-classes': ['test.services.schema.RecordSchema', ],
+            'base-classes': ['test.services.schema.TestRecordSchema', ],
             'generate': True
         }
     }
@@ -122,7 +122,7 @@ def build(model, output_builder_components=None, property_preprocessors=None):
             {
                 "settings": {
                     "package": "test",
-                    "python": {"use_isort": False, "use_black": False},
+                    "python": {"use_isort": False, "use_black": False, "record-prefix": 'Test'},
                 },
                 "model": model,
             },
