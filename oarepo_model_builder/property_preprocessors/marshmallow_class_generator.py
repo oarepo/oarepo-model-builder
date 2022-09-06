@@ -66,10 +66,14 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
             return
         definition = data.setdefault("oarepo:marshmallow", {})
         if "class" in definition:
-            return
+            return definition
         definition["generate"] = True
-        definition["class"] = f'{self.settings.package}.services.schema.' + \
-                              camel_case(key or self.get_property_name(stack)) + "Schema"
+        if key:
+            class_name = key
+        else:
+            class_name = self.get_property_name(stack)
+        class_name = self.settings.python.record_prefix + camel_case(class_name) + 'Schema'
+        definition["class"] = f'{self.settings.package}.services.schema.' + class_name
         return definition
 
     def add_root_class_name(self, stack):
@@ -78,7 +82,7 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
         if "class" in definition:
             return definition
         definition["generate"] = True
-        definition["class"] = f'{self.settings.package}.services.schema.RecordSchema'
+        definition["class"] = f'{self.settings.package}.services.schema.{self.settings.python.record_prefix}RecordSchema'
         return definition
 
     def get_property_name(self, stack):
