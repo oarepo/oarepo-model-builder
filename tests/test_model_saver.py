@@ -37,6 +37,10 @@ def test_model_saver():
                 "oarepo:marshmallow": {
                     "generate": True
                 }
+            },
+            "metadata": {
+                "properties": {
+                }
             }
         }
     }, property_preprocessors=[
@@ -78,6 +82,9 @@ def test_model_saver():
                         'c': {'type': 'keyword'}
                     },
                     'type': 'object'
+                },
+                'metadata': {
+                    'properties': {}
                 }
             }
         }
@@ -88,7 +95,15 @@ def test_model_saver():
                 'a': {'oarepo:ui': {'class': 'bolder'}, 'type': 'keyword'},
                 'b': {'oarepo:marshmallow': {'generate': False, 'class': 'test.services.schema.TestBSchema'},
                       'properties': {'c': {'type': 'keyword'}},
-                      'type': 'object'}
+                      'type': 'object'},
+                "metadata": {
+                    'oarepo:marshmallow': {
+                        'generate': True,
+                        'base-classes': ['test.services.schema.TestMetadataSchema']
+                    },
+                    "properties": {
+                    }
+                }
             },
             'oarepo:marshmallow': {
                 'base-classes': ['test.services.schema.TestRecordSchema', ],

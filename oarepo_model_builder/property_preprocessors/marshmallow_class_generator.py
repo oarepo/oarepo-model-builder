@@ -25,8 +25,7 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="/model$",
-        condition=lambda current, stack: stack.schema_valid,
+        path="/model$"
     )
     def modify_object_marshmallow_model(self, data, stack: ModelBuilderStack, **kwargs):
         self.add_root_class_name(stack)
@@ -53,12 +52,22 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InheritedModelBuilder,
-        path="/model$",
-        condition=lambda current, stack: stack.schema_valid,
+        path="/model$"
     )
     def modify_object_marshmallow_model_for_inherited(self, data, stack: ModelBuilderStack, **kwargs):
         definition = self.add_root_class_name(stack)
         definition["base-classes"] = [definition.pop('class')]
+        return data
+
+    @process(
+        model_builder=InheritedModelBuilder,
+        path="/model/properties/metadata$",
+        priority=5
+    )
+    def modify_object_marshmallow_metadata_for_inherited(self, data, stack: ModelBuilderStack, **kwargs):
+        definition = self.add_class_name(stack, 'metadata', stack.top.data)
+        definition["base-classes"] = [definition.pop('class')]
+        definition["generate"] = True
         return data
 
     def add_class_name(self, stack, key, data):
