@@ -29,6 +29,8 @@ class SetupCfgBuilder(OutputBuilder):
         output.add_dependency("invenio_records_permissions", ">=0.13.0")
         output.add_dependency("invenio_records_resources", ">=0.20.1")
 
+        output.setdefault('options.package_data', '*', '*.json, *.rst, *.md, *.json5, *.jinja2')
+
         if "runtime-dependencies" in self.schema:
             for dep, value in self.schema.runtime_dependencies.items():
                 output.add_dependency(dep, '>=' + value)
