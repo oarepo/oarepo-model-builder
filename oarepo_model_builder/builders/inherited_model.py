@@ -6,10 +6,10 @@ from .utils import ensure_parent_modules
 from ..outputs.cfg import CFGOutput
 
 
-class InheritedModelSaverBuilder(JSONBaseBuilder):
-    TYPE = "inherited_model_saver"
+class InheritedModelBuilder(JSONBaseBuilder):
+    TYPE = "inherited_model"
     output_file_type = "json"
-    output_file_name = "saved-inherited-model-file"
+    output_file_name = "inherited-model-file"
     parent_module_root_name = "models"
 
     @process("**")

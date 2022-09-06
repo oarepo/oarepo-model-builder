@@ -11,6 +11,11 @@ class ReplaceElement(Exception):
         self.data = data
 
 
+class RemoveElement(ReplaceElement):
+    def __init__(self):
+        super().__init__(None)
+
+
 class ModelBuilderStackEntry:
     key: str
     schema: SchemaPathValidator

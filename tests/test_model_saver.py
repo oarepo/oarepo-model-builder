@@ -1,12 +1,13 @@
 import os
 
 from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.builders.inherited_model_saver import InheritedModelSaverBuilder
+from oarepo_model_builder.builders.inherited_model import InheritedModelBuilder
 from oarepo_model_builder.builders.model_saver import ModelSaverBuilder, ModelRegistrationBuilder
 from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
 from oarepo_model_builder.outputs.cfg import CFGOutput
 from oarepo_model_builder.outputs.json import JSONOutput
 from oarepo_model_builder.outputs.python import PythonOutput
+from oarepo_model_builder.property_preprocessors.inherited_model import InheritedModelPreprocessor
 from oarepo_model_builder.property_preprocessors.marshmallow_class_generator import \
     MarshmallowClassGeneratorPreprocessor
 from oarepo_model_builder.property_preprocessors.marshmallow_validators_generator import ValidatorsPreprocessor
@@ -40,7 +41,8 @@ def test_model_saver():
         }
     }, property_preprocessors=[
         MarshmallowClassGeneratorPreprocessor,
-        ValidatorsPreprocessor
+        ValidatorsPreprocessor,
+        InheritedModelPreprocessor
     ])
 
     assert data[0] == {
@@ -59,7 +61,7 @@ def test_model_saver():
             'processing-order': ['settings', '*', 'model'],
             'python': {'use_black': False, 'use_isort': False, "record-prefix": 'Test'},
             'saved-model-file': 'test/models/model.json',
-            'saved-inherited-model-file': 'test/models/inherited_model.json',
+            'inherited-model-file': 'test/models/inherited_model.json',
             'schema-file': 'test/records/jsonschemas/test-1.0.0.json',
             'schema-name': 'test-1.0.0.json',
             'schema-server': 'http://localhost/schemas/',
@@ -80,16 +82,18 @@ def test_model_saver():
             }
         }
     }
-    assert data[1]['model'] == {
-        'properties': {
-            'a': {'oarepo:ui': {'class': 'bolder'}, 'type': 'keyword'},
-            'b': {'oarepo:marshmallow': {'generate': False, 'class': 'test.services.schema.TestBSchema'},
-                  'properties': {'c': {'type': 'keyword'}},
-                  'type': 'object'}
-        },
-        'oarepo:marshmallow': {
-            'base-classes': ['test.services.schema.TestRecordSchema', ],
-            'generate': True
+    assert data[1] == {
+        'model': {
+            'properties': {
+                'a': {'oarepo:ui': {'class': 'bolder'}, 'type': 'keyword'},
+                'b': {'oarepo:marshmallow': {'generate': False, 'class': 'test.services.schema.TestBSchema'},
+                      'properties': {'c': {'type': 'keyword'}},
+                      'type': 'object'}
+            },
+            'oarepo:marshmallow': {
+                'base-classes': ['test.services.schema.TestRecordSchema', ],
+                'generate': True
+            }
         }
     }
     assert data[2].strip() == ""
@@ -99,7 +103,7 @@ oarepo.models = test = test.models:model.json"""
 
 def build(model, output_builder_components=None, property_preprocessors=None):
     builder = ModelBuilder(
-        output_builders=[ModelSaverBuilder, ModelRegistrationBuilder, InheritedModelSaverBuilder],
+        output_builders=[ModelSaverBuilder, ModelRegistrationBuilder, InheritedModelBuilder],
         outputs=[JSONOutput, PythonOutput, CFGOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         output_builder_components=output_builder_components,

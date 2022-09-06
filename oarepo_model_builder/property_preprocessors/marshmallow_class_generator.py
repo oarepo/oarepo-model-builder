@@ -1,4 +1,4 @@
-from oarepo_model_builder.builders.inherited_model_saver import InheritedModelSaverBuilder
+from oarepo_model_builder.builders.inherited_model import InheritedModelBuilder
 from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
@@ -33,7 +33,7 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
         return data
 
     @process(
-        model_builder=InheritedModelSaverBuilder,
+        model_builder=InheritedModelBuilder,
         path="**/properties",
         condition=lambda current, stack: stack.schema_valid,
     )
@@ -52,7 +52,7 @@ class MarshmallowClassGeneratorPreprocessor(PropertyPreprocessor):
         return data
 
     @process(
-        model_builder=InheritedModelSaverBuilder,
+        model_builder=InheritedModelBuilder,
         path="/model$",
         condition=lambda current, stack: stack.schema_valid,
     )

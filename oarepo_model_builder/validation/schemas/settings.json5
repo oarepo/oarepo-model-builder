@@ -65,7 +65,7 @@
       "saved-model-file": {
         "type": "string"
       },
-      "saved-inherited-model-file": {
+      "inherited-model-file": {
         "type": "string"
       }
     },
