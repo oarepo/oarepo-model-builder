@@ -11,6 +11,7 @@ TEMPLATES = {
     "record-resource-config": "templates/invenio_record_resource_config.py.jinja2",
     "record-resource": "templates/invenio_record_resource.py.jinja2",
     "views": "templates/invenio_views.py.jinja2",
+    "invenio_version": "templates/invenio_version.py.jinja2",
     "config": "templates/invenio_config.py.jinja2",
     "ext": "templates/invenio_ext.py.jinja2",
     "proxies": "templates/invenio_proxies.py.jinja2",
