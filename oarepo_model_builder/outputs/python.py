@@ -56,7 +56,10 @@ class PythonOutput(OutputBase):
         for filter_name, filter_func in (filters or {}).items():
             env.filters[filter_name] = filter_func
 
-        rendered = env.get_template(template_name).render(context)
+        try:
+            rendered = env.get_template(template_name).render(context)
+        except Exception as exc:
+            raise Exception(f'Error rendering template {template_name}') from exc
         try:
             rendered_cst = cst.parse_module(rendered, config=self.cst.config_for_parsing)
         except:

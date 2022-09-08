@@ -27,6 +27,8 @@ class InheritedModelBuilder(JSONBaseBuilder):
         if data is not None:
             if not isinstance(data, (str, float, int, bool)):
                 data = str(data)
+        if top.key == 'for-inheritance':
+            return
         return super().output_primitive(top, data)
 
     def begin(self, schema, settings):

@@ -90,6 +90,7 @@ def test_model_saver():
         }
     }
     assert data[1] == {
+        'settings': {'python': {}},
         'model': {
             'properties': {
                 'a': {'oarepo:ui': {'class': 'bolder'}, 'type': 'keyword'},
