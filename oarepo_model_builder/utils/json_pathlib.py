@@ -38,7 +38,9 @@ class JSONPaths:
             self.paths.append([])
             self.path_regex_list.append(path_to_regex(path))
         path_locators = self.paths[self.path_to_index[path]]
-        path_locators.append(JSONPathRecord(path=path, condition=condition, value=value))
+        path_locators.append(
+            JSONPathRecord(path=path, condition=condition, value=value)
+        )
 
     @cached_property
     def path_regex(self):
@@ -60,7 +62,9 @@ class JSONPaths:
                 matched = False
                 for rec in self.paths[idx]:
                     if rec.condition:
-                        condition_result = rec.condition(PathCondition(subtree), **(extra_data or {}))
+                        condition_result = rec.condition(
+                            PathCondition(subtree), **(extra_data or {})
+                        )
                         if isinstance(condition_result, Iterable):
                             condition_result = any(condition_result)
                         if condition_result:
@@ -128,7 +132,12 @@ class PathCondition:
     def __eq__(self, other):
         if isinstance(other, PathCondition):
             # TODO: deep equals maybe
-            return [subtree for subtree in self._subtree_list for o in other._subtree_list if subtree == o]
+            return [
+                subtree
+                for subtree in self._subtree_list
+                for o in other._subtree_list
+                if subtree == o
+            ]
 
         # TODO: deep equals maybe
         return [subtree for subtree in self._subtree_list if subtree == other]

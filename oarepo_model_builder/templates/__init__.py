@@ -1,6 +1,5 @@
-from importlib.metadata import entry_points
+from importlib_metadata import entry_points
 from pathlib import Path
-
 
 
 class TemplateRegistry:
@@ -20,7 +19,9 @@ class TemplateRegistry:
 
     def get_template(self, template_key, settings):
         # try to get the template key from settings
-        path = settings.python.templates.get(template_key, self.mapping.get(template_key, None))
+        path = settings.python.templates.get(
+            template_key, self.mapping.get(template_key, None)
+        )
         if not path:
             raise AttributeError(f"Template with key {template_key} has not been found")
         if isinstance(path, str):
@@ -28,7 +29,9 @@ class TemplateRegistry:
         if path.exists():
             with path.open() as f:
                 return f.read()
-        raise AttributeError(f"Template with key {template_key} has not been found, file at path {path} does not exist")
+        raise AttributeError(
+            f"Template with key {template_key} has not been found, file at path {path} does not exist"
+        )
 
 
 templates = TemplateRegistry()

@@ -15,14 +15,19 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     def model_element(self):
         self.model_element_enter()
         self.build_children()
-        if self.stack.top.schema_element_type == "items" or self.stack.top.schema_element_type == "property":
+        if (
+            self.stack.top.schema_element_type == "items"
+            or self.stack.top.schema_element_type == "property"
+        ):
             self.check_and_output_required()
         self.merge_jsonschema(self.stack.top.data)
         self.model_element_leave()
 
     def merge_jsonschema(self, data):
         if isinstance(data, dict) and "oarepo:jsonschema" in data:
-            jsonschema = self.call_components("before_merge_jsonschema", data["oarepo:jsonschema"], stack=self.stack)
+            jsonschema = self.call_components(
+                "before_merge_jsonschema", data["oarepo:jsonschema"], stack=self.stack
+            )
             self.output.merge_jsonschema(jsonschema)
 
     def check_and_output_required(self):
@@ -31,7 +36,9 @@ class JSONSchemaBuilder(JSONBaseBuilder):
             self.output.collect_required()
 
     def on_enter_model(self, output_name):
-        ensure_parent_modules(self.builder, Path(output_name), ends_at=self.parent_module_root_name)
+        ensure_parent_modules(
+            self.builder, Path(output_name), ends_at=self.parent_module_root_name
+        )
 
     def on_leave_model(self):
         self.check_and_output_required()

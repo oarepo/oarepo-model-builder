@@ -50,7 +50,9 @@ class TestSchema(BaseRecordSchema, ):
         """,
     )
 
-    data = builder.filesystem.read(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+    )
     data = json.loads(data)
     assert data == {
         "mappings": {
@@ -66,7 +68,9 @@ class TestSchema(BaseRecordSchema, ):
         }
     }
 
-    data = builder.filesystem.read(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+    )
     data = json.loads(data)
     assert data == {
         "properties": {

@@ -6,7 +6,12 @@ from jinja2 import Environment, FunctionLoader, pass_context
 from oarepo_model_builder.outputs import OutputBase
 from oarepo_model_builder.templates import templates
 from oarepo_model_builder.utils.cst import PythonContext, merge
-from oarepo_model_builder.utils.jinja import base_name, in_different_package, package_name, with_defined_prefix
+from oarepo_model_builder.utils.jinja import (
+    base_name,
+    in_different_package,
+    package_name,
+    with_defined_prefix,
+)
 from oarepo_model_builder.utils.verbose import log
 
 
@@ -49,7 +54,9 @@ class PythonOutput(OutputBase):
     def merge(self, template_name, context, filters=None):
         # template is a loadable resource
         env = Environment(
-            loader=FunctionLoader(lambda tn: templates.get_template(tn, context["settings"])),
+            loader=FunctionLoader(
+                lambda tn: templates.get_template(tn, context["settings"])
+            ),
             autoescape=False,
         )
         self.register_default_filters(env)
@@ -59,14 +66,20 @@ class PythonOutput(OutputBase):
         try:
             rendered = env.get_template(template_name).render(context)
         except Exception as exc:
-            raise Exception(f'Error rendering template {template_name}') from exc
+            raise Exception(f"Error rendering template {template_name}") from exc
         try:
-            rendered_cst = cst.parse_module(rendered, config=self.cst.config_for_parsing)
+            rendered_cst = cst.parse_module(
+                rendered, config=self.cst.config_for_parsing
+            )
         except:
             print(rendered, file=sys.stderr)
             raise
         self.cst = merge(
-            PythonContext(rendered_cst, conflict_resolver=self.builder.conflict_resolver), self.cst, rendered_cst
+            PythonContext(
+                rendered_cst, conflict_resolver=self.builder.conflict_resolver
+            ),
+            self.cst,
+            rendered_cst,
         )
 
     @staticmethod
@@ -74,11 +87,15 @@ class PythonOutput(OutputBase):
         env.filters["package_name"] = package_name
         env.filters["base_name"] = pass_context(
             lambda context, value: base_name(value)
-            if not with_defined_prefix(context["settings"].python.always_defined_import_prefixes, value)
+            if not with_defined_prefix(
+                context["settings"].python.always_defined_import_prefixes, value
+            )
             else value
         )
         env.tests["in_different_package"] = pass_context(
-            lambda context, value: in_different_package(context["current_package_name"], value)
+            lambda context, value: in_different_package(
+                context["current_package_name"], value
+            )
         )
         env.tests["not_prefixed"] = pass_context(
             lambda context, value: not with_defined_prefix(

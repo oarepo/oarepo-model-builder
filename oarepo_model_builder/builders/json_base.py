@@ -23,7 +23,9 @@ class JSONBaseBuilder(OutputBuilder):
         self.output.primitive(top.key, data)
 
     def model_element_leave(self):
-        self.call_components("model_element_leave", self.stack.top.data, stack=self.stack)
+        self.call_components(
+            "model_element_leave", self.stack.top.data, stack=self.stack
+        )
         if self.stack.top_type != self.stack.PRIMITIVE:
             self.output.leave()
 

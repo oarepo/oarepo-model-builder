@@ -14,10 +14,7 @@ def test_runtime_dependencies():
     data = build({"runtime-dependencies": {"test": "1.0.0"}})
     print(data)
     assert "install_requires =" in data
-    assert (
-            """test>=1.0.0"""
-            in data
-    )
+    assert """test>=1.0.0""" in data
     assert data.index("install_requires") < data.index("test>=1.0.0")
 
 
@@ -25,10 +22,7 @@ def test_dev_dependencies():
     data = build({"dev-dependencies": {"test": "1.0.0"}})
     assert "[options.extras_require]" in data
     assert "devs =" in data
-    assert (
-            """test>=1.0.0"""
-            in data
-    )
+    assert """test>=1.0.0""" in data
     assert data.index("devs =") < data.index("test>=1.0.0")
 
 

@@ -49,10 +49,14 @@ class JSONStack:
                         assert key == len(top)
                         top.append(el)
                 else:
-                    raise NotImplemented(f"Set for datatype {type(top)} is not implemented")
+                    raise NotImplemented(
+                        f"Set for datatype {type(top)} is not implemented"
+                    )
                 self.stack.append(el)
         except Exception as e:
-            raise JSONStackException(f'Error pushing to json stack. Key "{key}", stack top {self.stack[-1]}') from e
+            raise JSONStackException(
+                f'Error pushing to json stack. Key "{key}", stack top {self.stack[-1]}'
+            ) from e
 
     def pop(self):
         if not self.empty:

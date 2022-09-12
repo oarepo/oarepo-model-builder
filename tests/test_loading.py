@@ -10,7 +10,9 @@ def test_loading_from_string():
 
 
 def test_loading_from_empty_file():
-    schema = ModelSchema(Path(__file__).parent.joinpath("data/empty.json"), loaders={"json": json_loader})
+    schema = ModelSchema(
+        Path(__file__).parent.joinpath("data/empty.json"), loaders={"json": json_loader}
+    )
     assert schema.schema == {"settings": {}}
 
 
@@ -51,7 +53,9 @@ def test_loading_jsonpath_resource():
 
 
 def test_loading_current():
-    schema = ModelSchema("/tmp/path.json", {"b": {"oarepo:use": "#/a"}, "a": {"a": True}})
+    schema = ModelSchema(
+        "/tmp/path.json", {"b": {"oarepo:use": "#/a"}, "a": {"a": True}}
+    )
     assert schema.schema == {
         "settings": {},
         "b": {"a": True},
@@ -60,7 +64,9 @@ def test_loading_current():
 
 
 def test_loading_current_by_id():
-    schema = ModelSchema("/tmp/path.json", {"b": {"oarepo:use": "#id"}, "a": {"$id": "id", "a": True}})
+    schema = ModelSchema(
+        "/tmp/path.json", {"b": {"oarepo:use": "#id"}, "a": {"$id": "id", "a": True}}
+    )
     assert schema.schema == {
         "settings": {},
         "b": {"a": True},

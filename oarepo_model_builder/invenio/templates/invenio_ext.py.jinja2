@@ -50,7 +50,7 @@ class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_
         app.config.setdefault("{{settings.python.config_service_class_key}}", config.{{ settings.python.config_service_class_key }})
 
     def is_inherited(self):
-        from importlib.metadata import entry_points
+        from importlib_metadata import entry_points
 
         ext_class = type(self)
         for ep in entry_points(group='invenio_base.apps'):

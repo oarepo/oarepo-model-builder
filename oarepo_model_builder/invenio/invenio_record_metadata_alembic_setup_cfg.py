@@ -12,15 +12,16 @@ class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
         output.add_entry_point(
-            'invenio_db.alembic',
+            "invenio_db.alembic",
             self.settings.python.record_schema_metadata_alembic,
             f"{self.settings.package}:alembic",
         )
 
         python_path = self.settings.package_path / "alembic" / "__init__.py"
         # create parent modules if they do not exist
-        ensure_parent_modules(self.builder, python_path,
-                              max_depth=len(python_path.parts))
+        ensure_parent_modules(
+            self.builder, python_path, max_depth=len(python_path.parts)
+        )
 
         # and create empty __init__.py
         init_builder = self.builder.get_output("python", python_path)

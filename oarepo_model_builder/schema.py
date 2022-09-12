@@ -23,12 +23,11 @@ class Key(str):
     def annotate_keys_with_source(data, source):
         if isinstance(data, dict):
             return {
-                Key(k, source=source): Key.annotate_keys_with_source(v, source) for k, v in data.items()
+                Key(k, source=source): Key.annotate_keys_with_source(v, source)
+                for k, v in data.items()
             }
         elif isinstance(data, (tuple, list)):
-            return [
-                Key.annotate_keys_with_source(k, source) for k in data
-            ]
+            return [Key.annotate_keys_with_source(k, source) for k in data]
         else:
             return data
 
@@ -53,11 +52,11 @@ class ModelSchema:
     OAREPO_USE = "oarepo:use"
 
     def __init__(
-            self,
-            file_path,
-            content=None,
-            included_models: Dict[str, Callable] = None,
-            loaders=None,
+        self,
+        file_path,
+        content=None,
+        included_models: Dict[str, Callable] = None,
+        loaders=None,
     ):
         """
         Creates and parses model schema
@@ -91,16 +90,16 @@ class ModelSchema:
             if isinstance(data, dict):
                 print()
                 for k, v in sorted(data.items()):
-                    print(f'{prefix}{k}{Key.get_sources(k)}:', end='')
-                    _print(v, prefix + '  ')
+                    print(f"{prefix}{k}{Key.get_sources(k)}:", end="")
+                    _print(v, prefix + "  ")
             elif isinstance(data, (list, tuple)):
                 print()
                 for v in sorted(data):
-                    _print(v, prefix + '-  ')
+                    _print(v, prefix + "-  ")
             else:
-                print(f'{prefix}{data}')
+                print(f"{prefix}{data}")
 
-        _print(self.schema, '')
+        _print(self.schema, "")
         print()
 
     def get(self, key):
@@ -114,7 +113,9 @@ class ModelSchema:
         return self.schema.settings
 
     def merge(self, another):
-        self.schema = munch.munchify(deepmerge(another, self.schema, []), factory=HyphenMunch)
+        self.schema = munch.munchify(
+            deepmerge(another, self.schema, []), factory=HyphenMunch
+        )
 
     def _load(self, file_path, content=None):
         """
@@ -157,7 +158,9 @@ class ModelSchema:
                 ret = self._load(file_path)
             else:
                 if file_id not in self.included_schemas:
-                    raise IncludedFileNotFoundException(f"Included file {file_id} not found in includes")
+                    raise IncludedFileNotFoundException(
+                        f"Included file {file_id} not found in includes"
+                    )
 
                 ret = self.included_schemas[file_id](self)
 
@@ -167,7 +170,9 @@ class ModelSchema:
             else:
                 ret = resolve_id(ret, json_pointer_or_id)
                 if not ret:
-                    raise IncludedFileNotFoundException(f"Element with id {json_pointer_or_id} not found in {file_id}")
+                    raise IncludedFileNotFoundException(
+                        f"Element with id {json_pointer_or_id} not found in {file_id}"
+                    )
 
         ret = copy.deepcopy(ret)
         ret.pop("$id", None)
@@ -196,8 +201,12 @@ class ModelSchema:
                     included_name = [included_name]
                 for name in included_name:
                     if not name:
-                        raise IncludedFileNotFoundException(f"No file for oarepo:include at path {'/'.join(stack)}")
-                    included_data = self._load_included_file(name, source_locations=Key.get_sources(key))
+                        raise IncludedFileNotFoundException(
+                            f"No file for oarepo:include at path {'/'.join(stack)}"
+                        )
+                    included_data = self._load_included_file(
+                        name, source_locations=Key.get_sources(key)
+                    )
                     deepmerge(element, included_data, [], listmerge="keep")
                 return self._resolve_references(element, stack)
             for k, v in element.items():
@@ -229,7 +238,7 @@ def resolve_id(json, element_id):
 def remove_star_keys(schema):
     if isinstance(schema, dict):
         for k, v in list(schema.items()):
-            if k.startswith('*'):
+            if k.startswith("*"):
                 del schema[k]
             else:
                 remove_star_keys(v)
@@ -241,7 +250,7 @@ def remove_star_keys(schema):
 def use_star_keys(schema):
     if isinstance(schema, dict):
         for k, v in list(schema.items()):
-            if k.startswith('*'):
+            if k.startswith("*"):
                 del schema[k]
                 schema[k[1:]] = v
         for v in schema.values():

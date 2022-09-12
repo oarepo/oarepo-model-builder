@@ -17,7 +17,11 @@ class InvalidModelException(Exception):
 
 @lazy_object_proxy.Proxy
 def model_json_schema():
-    main_schema_path = importlib.resources.files("oarepo_model_builder.validation") / "schemas" / "common-schema.json5"
+    main_schema_path = (
+        importlib.resources.files("oarepo_model_builder.validation")
+        / "schemas"
+        / "common-schema.json5"
+    )
     schema = json5.loads(main_schema_path.read_text())
     for ep in pkg_resources.iter_entry_points(group="oarepo.model_schemas"):
         filename = ".".join(ep.attrs)
@@ -40,7 +44,9 @@ def validate_model(model, extra_validation_schemas=None):
     replace_array_keys(data)
 
     if "oarepo:model-validation" in data:
-        schema["$defs"] = deepmerge(data.pop("oarepo:model-validation"), schema["$defs"], listmerge="extend")
+        schema["$defs"] = deepmerge(
+            data.pop("oarepo:model-validation"), schema["$defs"], listmerge="extend"
+        )
 
     validator = Draft202012Validator(schema)
 

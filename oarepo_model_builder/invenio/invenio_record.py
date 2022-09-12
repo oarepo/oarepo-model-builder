@@ -15,11 +15,12 @@ class InvenioRecordBuilder(InvenioBaseClassPythonBuilder):
     def enter_model_element(self):
         self.build_children()
         data = self.stack.top.data
-        if isinstance(data, dict) and 'invenio:relation' in data:
-            self.relations.append(data['invenio:relation'])
+        if isinstance(data, dict) and "invenio:relation" in data:
+            self.relations.append(data["invenio:relation"])
 
     def process_template(self, python_path, template, **extra_kwargs):
-        return super().process_template(python_path, template, **{
-            **extra_kwargs,
-            'invenio_relations': self.relations
-        })
+        return super().process_template(
+            python_path,
+            template,
+            **{**extra_kwargs, "invenio_relations": self.relations}
+        )

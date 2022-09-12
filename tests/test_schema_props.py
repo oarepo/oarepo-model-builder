@@ -14,7 +14,9 @@ def test_enum():
         "test",
         model_content={
             "oarepo:use": "invenio",
-            "model": {"properties": {"a": {"type": "keyword", "enum": ["a", "b", "c"]}}},
+            "model": {
+                "properties": {"a": {"type": "keyword", "enum": ["a", "b", "c"]}}
+            },
         },
         isort=False,
         black=False,
@@ -49,7 +51,9 @@ class TestSchema(BaseRecordSchema, ):
             """,
     )
 
-    data = builder.filesystem.read(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+    )
     data = json.loads(data)
     assert data == {
         "properties": {
@@ -62,7 +66,9 @@ class TestSchema(BaseRecordSchema, ):
         "type": "object",
     }
 
-    data = builder.filesystem.read(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+    )
     data = json.loads(data)
     assert data == {
         "mappings": {

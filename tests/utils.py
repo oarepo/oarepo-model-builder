@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 
-def assert_python_equals(actual, expected, msg=''):
+def assert_python_equals(actual, expected, msg=""):
     actual_lines = [x.strip() for x in actual.split("\n")]
     expected_lines = [x.strip() for x in expected.split("\n")]
 
@@ -26,7 +26,9 @@ def assert_python_equals(actual, expected, msg=''):
             print("Actual lines:\n")
             print_lines_around(actual_lines, actual_line_no)
 
-            raise AssertionError(f"Actual line {actual_line_no + 1} '{actual_line}' not in expected lines. {msg}")
+            raise AssertionError(
+                f"Actual line {actual_line_no + 1} '{actual_line}' not in expected lines. {msg}"
+            )
 
 
 def print_lines_around(lines, position):

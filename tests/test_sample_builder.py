@@ -3,7 +3,9 @@ from pathlib import Path
 import faker.config
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints
-from oarepo_model_builder.invenio.invenio_script_sample_data import InvenioScriptSampleDataBuilder
+from oarepo_model_builder.invenio.invenio_script_sample_data import (
+    InvenioScriptSampleDataBuilder,
+)
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
@@ -98,13 +100,29 @@ obj:
 
 def test_sample_builder_simple_array():
     assert (
-        build_sample_data({"a": {"type": "array", "oarepo:sample": {"count": 1}, "items": {"type": "string"}}})
+        build_sample_data(
+            {
+                "a": {
+                    "type": "array",
+                    "oarepo:sample": {"count": 1},
+                    "items": {"type": "string"},
+                }
+            }
+        )
         == "a:\n- test\n"
     )
 
     # makes items unique, so expect one
     assert (
-        build_sample_data({"a": {"type": "array", "oarepo:sample": {"count": 2}, "items": {"type": "string"}}})
+        build_sample_data(
+            {
+                "a": {
+                    "type": "array",
+                    "oarepo:sample": {"count": 2},
+                    "items": {"type": "string"},
+                }
+            }
+        )
         == "a:\n- test\n"
     )
 
@@ -145,7 +163,9 @@ def build_sample_data(model, count=1):
     builder = create_builder_from_entrypoints()
     builder.filesystem = MockFilesystem()
     builder.output_dir = Path.cwd()
-    sample_builder = InvenioScriptSampleDataBuilder(builder=builder, property_preprocessors=[])
+    sample_builder = InvenioScriptSampleDataBuilder(
+        builder=builder, property_preprocessors=[]
+    )
     schema = ModelSchema(
         "test.json",
         {

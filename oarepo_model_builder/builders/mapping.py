@@ -38,12 +38,18 @@ class MappingBuilder(JSONBaseBuilder):
 
     def merge_mapping(self, data):
         if isinstance(data, dict) and "oarepo:mapping" in data:
-            mapping = self.call_components("before_merge_mapping", data["oarepo:mapping"], stack=self.stack)
+            mapping = self.call_components(
+                "before_merge_mapping", data["oarepo:mapping"], stack=self.stack
+            )
             self.output.merge_mapping(mapping)
 
     def on_enter_model(self, output_name):
-        ensure_parent_modules(self.builder, Path(output_name), ends_at=self.parent_module_root_name)
-        self.output.merge(self.settings.elasticsearch.templates[self.settings.elasticsearch.version])
+        ensure_parent_modules(
+            self.builder, Path(output_name), ends_at=self.parent_module_root_name
+        )
+        self.output.merge(
+            self.settings.elasticsearch.templates[self.settings.elasticsearch.version]
+        )
         self.output.enter("mappings", {})
 
     def finish(self):

@@ -27,7 +27,7 @@ class InheritedModelBuilder(JSONBaseBuilder):
         if data is not None:
             if not isinstance(data, (str, float, int, bool)):
                 data = str(data)
-        if top.key == 'for-inheritance':
+        if top.key == "for-inheritance":
             return
         return super().output_primitive(top, data)
 
@@ -37,8 +37,9 @@ class InheritedModelBuilder(JSONBaseBuilder):
         output_name = self.settings[self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)
 
-        ensure_parent_modules(self.builder, Path(output_name),
-                              ends_at=self.parent_module_root_name)
+        ensure_parent_modules(
+            self.builder, Path(output_name), ends_at=self.parent_module_root_name
+        )
 
     def finish(self):
         # force clean output

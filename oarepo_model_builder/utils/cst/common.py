@@ -26,7 +26,9 @@ class ConflictResolution(Enum):
 
 
 class ConflictResolver:
-    def resolve_conflict(self, context, existing_node, new_node, merged_node) -> ConflictResolution:
+    def resolve_conflict(
+        self, context, existing_node, new_node, merged_node
+    ) -> ConflictResolution:
         return ConflictResolution.KEEP_PREVIOUS
 
 
@@ -52,7 +54,9 @@ class PythonContext:
         return self.cst.code_for_node(node)
 
     def push(self, existing_node: CSTNode, new_node: CSTNode):
-        self.stack.append(PythonContextItem(existing_node=existing_node, new_node=new_node))
+        self.stack.append(
+            PythonContextItem(existing_node=existing_node, new_node=new_node)
+        )
 
     def pop(self):
         self.stack.pop()
@@ -62,7 +66,10 @@ class PythonContext:
         return self.stack[-1]
 
     def decide(
-        self, existing_node: CSTNode | None, new_node: CSTNode | None, merged_node: CSTNode | None
+        self,
+        existing_node: CSTNode | None,
+        new_node: CSTNode | None,
+        merged_node: CSTNode | None,
     ) -> CSTNode | object:
 
         logger.debug(
@@ -93,10 +100,16 @@ class PythonContext:
                 decision = ConflictResolution.KEEP_NEW
 
             if self.conflict_resolver:
-                decision = self.conflict_resolver.resolve_conflict(self, existing_node, new_node, merged_node)
+                decision = self.conflict_resolver.resolve_conflict(
+                    self, existing_node, new_node, merged_node
+                )
             decider_called = True
 
-        logger.debug("---> %s %s", "<decider returned>" if decider_called else "<automatic>", decision)
+        logger.debug(
+            "---> %s %s",
+            "<decider returned>" if decider_called else "<automatic>",
+            decision,
+        )
         logger.debug("")
         match decision:
             case ConflictResolution.KEEP_PREVIOUS:
@@ -132,7 +145,10 @@ class MergerBase:
             context.pop()
 
     def identity(self, context, node):
-        print(f"Warning: using naive merger for {type(node)}" f">>>\n{context.to_source_code(node).strip()}\n<<<")
+        print(
+            f"Warning: using naive merger for {type(node)}"
+            f">>>\n{context.to_source_code(node).strip()}\n<<<"
+        )
         return node
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
@@ -170,7 +186,10 @@ class IdentityMerger(IdentityBaseMerger):
         return existing_node
 
     def identity(self, context, node):
-        print(f"Warning: using naive merger for {type(node)}" f">>>\n{context.to_source_code(node).strip()}\n<<<")
+        print(
+            f"Warning: using naive merger for {type(node)}"
+            f">>>\n{context.to_source_code(node).strip()}\n<<<"
+        )
         return node
 
 

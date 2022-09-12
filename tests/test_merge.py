@@ -10,7 +10,9 @@ def test_merge_dict():
     assert deepmerge(dict(a=1), dict(a=2), []) == dict(a=1)
 
     assert deepmerge(dict(a=dict(a=1)), dict(a=dict(a=2)), []) == dict(a=dict(a=1))
-    assert deepmerge(dict(a=dict(a=1)), dict(a=dict(b=2), c=3), []) == dict(a=dict(a=1, b=2), c=3)
+    assert deepmerge(dict(a=dict(a=1)), dict(a=dict(b=2), c=3), []) == dict(
+        a=dict(a=1, b=2), c=3
+    )
 
 
 def test_merge_list():
