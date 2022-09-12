@@ -3,6 +3,7 @@ from typing import Callable, List
 
 import faker
 import faker.providers
+from faker import Faker
 from jinja2 import Environment, FunctionLoader
 
 from oarepo_model_builder.builders import OutputBuilder
@@ -40,6 +41,11 @@ class Provider:
 
     def constant(self, value=None):
         return value
+
+    def language_dict(self):
+        return {
+            lang: Faker(locale=lang).sentence() for lang in ('cs', 'en')
+        }
 
 
 SKIP = "skip"

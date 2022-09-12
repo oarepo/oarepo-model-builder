@@ -61,8 +61,13 @@ def load_model_from_entrypoint(ep: importlib.metadata.EntryPoint):
             fn = f'{split_attr[-2]}.{split_attr[-1]}'
             if len(split_attr) > 2:
                 fn = reduce(lambda x, y: Path(x) / Path(y), split_attr[:-2]) / fn
+            module_path = getattr(module, '__path__', [])
+            if module_path:
+                full_fn = Path(module_path[0]) / fn
+            else:
+                full_fn = fn
             content = importlib.resources.open_text(module, fn, encoding='utf-8').read()
-            loaded_schema = schema._load(fn, content=content)
+            loaded_schema = schema._load(full_fn, content=content)
 
         remove_star_keys(loaded_schema)
         return loaded_schema

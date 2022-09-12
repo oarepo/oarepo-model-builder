@@ -55,10 +55,10 @@ class TestSchema(BaseRecordSchema, ):
         "mappings": {
             "properties": {
                 "a": {"type": "flatten"},
-                "id": {"type": "keyword", "ignore_above": 50},
+                "id": {"type": "keyword"},
                 "created": {"type": "date"},
                 "updated": {"type": "date"},
-                "$schema": {"ignore_above": 50, "type": "keyword"}
+                "$schema": {"type": "keyword"}
             },
         }
     }

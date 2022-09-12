@@ -55,13 +55,12 @@ class TestSchema(BaseRecordSchema, ):
     assert data == {
         "mappings": {
             "properties": {
-                "$schema": {"ignore_above": 50, "type": "keyword"},
+                "$schema": {"type": "keyword"},
                 "a": {
-                    "ignore_above": 50,
                     "type": "keyword",
                 },
                 "created": {"type": "date"},
-                "id": {"ignore_above": 50, "type": "keyword"},
+                "id": {"type": "keyword"},
                 "updated": {"type": "date"},
             }
         }
