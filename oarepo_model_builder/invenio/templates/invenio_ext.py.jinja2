@@ -24,9 +24,9 @@ class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_
         self.init_config(app)
         if not self.is_inherited():
             self.init_resource(app)
-            self.register_flask_extension()
+            self.register_flask_extension(app)
 
-    def register_flask_extension(self):
+    def register_flask_extension(self, app):
         {% if python.ext_bases %}
         super().register_extension()
         {% endif %}
@@ -56,9 +56,9 @@ class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_
         for ep in entry_points(group='invenio_base.apps'):
             loaded = ep.load()
             if loaded is not ext_class and issubclass(ext_class, loaded):
-                return False
+                return True
         for ep in entry_points(group='invenio_base.api_apps'):
             loaded = ep.load()
             if loaded is not ext_class and issubclass(ext_class, loaded):
-                return False
-        return True
+                return True
+        return False
