@@ -98,11 +98,11 @@ class AutomaticResolver(ConflictResolver):
     ) -> ConflictResolution:
         if existing_node:
             if new_node:
-                if self.resolution_type == 'replace':
+                if self.resolution_type == "replace":
                     return ConflictResolution.KEEP_NEW
-                elif self.resolution_type == 'keep':
+                elif self.resolution_type == "keep":
                     return ConflictResolution.KEEP_PREVIOUS
-                elif self.resolution_type == 'comment':
+                elif self.resolution_type == "comment":
                     return ConflictResolution.NEW_AS_TODO
             else:
                 return ConflictResolution.KEEP_PREVIOUS
