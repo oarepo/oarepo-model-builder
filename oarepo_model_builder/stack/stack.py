@@ -82,13 +82,12 @@ class ModelBuilderStack:
 
     @property
     def top_type(self):
-        match self.top.data:
-            case dict():
-                return self.DICT
-            case list():
-                return self.LIST
-            case _:
-                return self.PRIMITIVE
+        if isinstance(self.top.data, dict):
+            return self.DICT
+        elif isinstance(self.top.data, list):
+            return self.LIST
+        else:
+            return self.PRIMITIVE
 
     @cached_property
     def path(self):

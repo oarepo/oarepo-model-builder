@@ -2,7 +2,7 @@ from collections import namedtuple
 from dataclasses import dataclass, field
 from enum import Enum
 from logging import getLogger
-from typing import Callable, List, Set
+from typing import Callable, List, Set, Union
 
 from libcst import Arg, CSTNode, Element, Module
 
@@ -67,10 +67,10 @@ class PythonContext:
 
     def decide(
         self,
-        existing_node: CSTNode | None,
-        new_node: CSTNode | None,
-        merged_node: CSTNode | None,
-    ) -> CSTNode | object:
+        existing_node: Union[CSTNode, None],
+        new_node: Union[CSTNode, None],
+        merged_node: Union[CSTNode, None],
+    ) -> Union[CSTNode, object]:
 
         logger.debug(
             "\nDecide called with operations %s on node %s %s",
@@ -111,21 +111,20 @@ class PythonContext:
             decision,
         )
         logger.debug("")
-        match decision:
-            case ConflictResolution.KEEP_PREVIOUS:
-                return existing_node
-            case ConflictResolution.KEEP_NEW:
-                top.operations.add(OperationPerformed.ADD)
-                return new_node
-            case ConflictResolution.KEEP_MERGED:
-                top.operations.add(OperationPerformed.CHANGE)
-                return merged_node
-            case ConflictResolution.REMOVE:
-                top.operations.add(OperationPerformed.REMOVAL)
-                return self.REMOVED
-            case ConflictResolution.NEW_AS_TODO:
-                top.new_as_comment = True
-                return existing_node
+        if decision == ConflictResolution.KEEP_PREVIOUS:
+            return existing_node
+        elif decision == ConflictResolution.KEEP_NEW:
+            top.operations.add(OperationPerformed.ADD)
+            return new_node
+        elif decision == ConflictResolution.KEEP_MERGED:
+            top.operations.add(OperationPerformed.CHANGE)
+            return merged_node
+        elif decision == ConflictResolution.REMOVE:
+            top.operations.add(OperationPerformed.REMOVAL)
+            return self.REMOVED
+        elif decision == ConflictResolution.NEW_AS_TODO:
+            top.new_as_comment = True
+            return existing_node
         raise Exception("Unknown decision")
 
 

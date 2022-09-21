@@ -2,7 +2,7 @@ import copy
 import importlib
 import json
 from pathlib import Path
-from typing import Dict, List, Type
+from typing import Dict, List, Type, Union
 
 import yaml
 
@@ -109,7 +109,7 @@ class ModelBuilder:
         self.included_validation_schemas = included_validation_schemas or []
         self.skip_schema_validation = False  # set to True in some tests
 
-    def get_output(self, output_type: str, path: str | Path):
+    def get_output(self, output_type: str, path: Union[str, Path]):
         """
         Given a path, instantiate file builder on the path with the given output type
         and return it. If the builder on the path has already been requested, return
@@ -139,7 +139,7 @@ class ModelBuilder:
     def build(
         self,
         model: ModelSchema,
-        output_dir: str | Path,
+        output_dir: Union[str, Path],
         resolver: ConflictResolver = None,
     ):
         """
