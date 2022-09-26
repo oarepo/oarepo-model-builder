@@ -33,7 +33,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.add_dependency("invenio_app", ">=1.3.4")
         output.add_dependency("invenio_db", ">=1.0.14")
         output.add_dependency("invenio_pidstore", ">=1.2.3")
-        output.add_dependency("invenio_records", ">=1.7.4")
+        output.add_dependency("invenio_records", ">=1.7.4,<2.0.0")
         output.add_dependency("invenio_records_permissions", ">=0.13.0")
         output.add_dependency("invenio_records_resources", ">=0.20.1")
 
