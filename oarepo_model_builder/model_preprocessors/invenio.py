@@ -218,6 +218,23 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "create-blueprint-from-app",
             lambda: f"{settings.package}.views.create_blueprint_from_app",
         )
+        settings.python.setdefault("invenio_config_extra_code", "")
+        settings.python.setdefault("invenio_ext_extra_code", "")
+        settings.python.setdefault("invenio_proxies_extra_code", "")
+        settings.python.setdefault("invenio_record_extra_code", "")
+        settings.python.setdefault("invenio_record_dumper_extra_code", "")
+        settings.python.setdefault("invenio_record_facets_extra_code", "")
+        settings.python.setdefault("invenio_record_metadata_extra_code", "")
+        settings.python.setdefault("invenio_record_object_schema_extra_code", "")
+        settings.python.setdefault("invenio_record_permissions_extra_code", "")
+        settings.python.setdefault("invenio_record_resource_extra_code", "")
+        settings.python.setdefault("invenio_record_resource_config_extra_code", "")
+        settings.python.setdefault("invenio_record_schema_extra_code", "")
+        settings.python.setdefault("invenio_record_search_options_extra_code", "")
+        settings.python.setdefault("invenio_record_service_extra_code", "")
+        settings.python.setdefault("invenio_record_service_config_extra_code", "")
+        settings.python.setdefault("invenio_version_extra_code", "")
+        settings.python.setdefault("invenio_views_extra_code", "")
 
         if "model" in schema.schema:
             schema_class = settings.python.record_schema_class

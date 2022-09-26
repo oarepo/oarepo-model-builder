@@ -24,3 +24,5 @@ class {{ schema_class|base_name }}({% for b in schema_bases %}{{ b|base_name }},
     {{ def['definition'] }}
     {% endfor %}
     {% endif %}
+
+{{ settings.python.invenio_record_object_schema_extra_code }}

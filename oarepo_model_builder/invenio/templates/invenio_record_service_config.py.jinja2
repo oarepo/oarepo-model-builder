@@ -38,3 +38,5 @@ class {{ python.record_service_config_class|base_name }}({% for b in python.reco
 
     links_search = pagination_links("{{ settings.collection_url }}{?args*}")
     {% endif %}
+
+{{ settings.python.invenio_record_service_config_extra_code }}

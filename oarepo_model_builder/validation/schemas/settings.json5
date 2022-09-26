@@ -288,6 +288,58 @@
             "type": "string"
           }
         }
+      },
+      // extra code
+      "invenio_config_extra_code": {
+        "type": "string"
+      },
+      "invenio_ext_extra_code": {
+        "type": "string"
+      },
+      "invenio_proxies_extra_code":  {
+        "type":  "string"
+      },
+      "invenio_record_extra_code": {
+        "type":  "string"
+      },
+      "invenio_record_dumper_extra_code":  {
+        "type":  "string"
+      },
+      "invenio_record_facets_extra_code": {
+        "type":  "string"
+      },
+      "invenio_record_metadata_extra_code":  {
+        "type":  "string"
+      },
+      "invenio_record_object_schema_extra_code": {
+        "type":  "string"
+      },
+      "invenio_record_permissions_extra_code":  {
+        "type":  "string"
+      },
+      "invenio_record_resource_extra_code": {
+        "type":  "string"
+      },
+      "invenio_record_resource_config_extra_code":  {
+        "type":  "string"
+      },
+      "invenio_record_schema_extra_code": {
+        "type":  "string"
+      },
+      "invenio_record_search_options_extra_code":  {
+        "type":  "string"
+      },
+      "invenio_record_service_extra_code": {
+        "type":  "string"
+      },
+      "invenio_record_service_config_extra_code":  {
+        "type":  "string"
+      },
+      "invenio_version_extra_code": {
+        "type":  "string"
+      },
+      "invenio_views_extra_code":  {
+        "type":  "string"
       }
     },
     "additionalProperties": false

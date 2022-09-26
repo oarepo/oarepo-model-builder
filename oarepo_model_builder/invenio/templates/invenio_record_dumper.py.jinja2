@@ -7,3 +7,5 @@ from {{ b|package_name }} import {{ b|base_name }}
 
 class {{ python.record_dumper_class|base_name }}({% for b in python.record_dumper_bases %}{{ b|base_name }}, {% endfor %}InvenioElasticsearchDumper):
     """{{ python.record_class|base_name }} elasticsearch dumper."""
+
+{{ settings.python.invenio_record_dumper_extra_code }}

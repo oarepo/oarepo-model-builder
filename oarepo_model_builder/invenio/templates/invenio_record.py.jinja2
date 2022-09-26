@@ -49,3 +49,5 @@ class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b
         {% endfor %}
     )
     {% endif %}
+
+{{ settings.python.invenio_record_extra_code }}

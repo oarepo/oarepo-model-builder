@@ -10,3 +10,5 @@ class {{ python.record_resource_config_class|base_name }}({% for b in python.rec
 
     blueprint_name = '{{ python.record_resource_blueprint_name }}'
     url_prefix = '{{ settings.collection_url }}'
+
+{{ settings.python.invenio_record_resource_config_extra_code }}

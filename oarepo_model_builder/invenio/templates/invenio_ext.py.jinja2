@@ -62,3 +62,5 @@ class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_
             if loaded is not ext_class and issubclass(ext_class, loaded):
                 return True
         return False
+
+{{ settings.python.invenio_ext_extra_code }}

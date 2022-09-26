@@ -7,3 +7,5 @@ from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
 {% include "imports" %}
+
+{{ settings.python.invenio_record_schema_extra_code }}
