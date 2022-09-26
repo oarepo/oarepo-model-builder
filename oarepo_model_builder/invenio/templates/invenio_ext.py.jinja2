@@ -1,3 +1,4 @@
+import re
 from {{ python.config_package|package_name }} import {{ python.config_package|base_name }} as config
 {% for b in python.ext_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
@@ -44,10 +45,9 @@ class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_
 
     def init_config(self, app):
         """Initialize configuration."""
-        app.config.setdefault("{{settings.python.config_resource_config_key}}", config.{{ settings.python.config_resource_config_key }})
-        app.config.setdefault("{{settings.python.config_resource_class_key}}", config.{{ settings.python.config_resource_class_key }})
-        app.config.setdefault("{{settings.python.config_service_config_key}}", config.{{ settings.python.config_service_config_key }})
-        app.config.setdefault("{{settings.python.config_service_class_key}}", config.{{ settings.python.config_service_class_key }})
+        for identifier in dir(config):
+            if re.match('^[A-Z_]*$', identifier) and not identifier.startswith('_'):
+                app.config.setdefault(identifier, getattr(config, identifier))
 
     def is_inherited(self):
         from importlib_metadata import entry_points
