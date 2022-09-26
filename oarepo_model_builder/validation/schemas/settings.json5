@@ -290,55 +290,55 @@
         }
       },
       // extra code
-      "invenio_config_extra_code": {
+      "invenio-config-extra-code": {
         "type": "string"
       },
-      "invenio_ext_extra_code": {
+      "invenio-ext-extra-code": {
         "type": "string"
       },
-      "invenio_proxies_extra_code":  {
+      "invenio-proxies-extra-code":  {
         "type":  "string"
       },
-      "invenio_record_extra_code": {
+      "invenio-record-extra-code": {
         "type":  "string"
       },
-      "invenio_record_dumper_extra_code":  {
+      "invenio-record-dumper-extra-code":  {
         "type":  "string"
       },
-      "invenio_record_facets_extra_code": {
+      "invenio-record-facets-extra-code": {
         "type":  "string"
       },
-      "invenio_record_metadata_extra_code":  {
+      "invenio-record-metadata-extra-code":  {
         "type":  "string"
       },
-      "invenio_record_object_schema_extra_code": {
+      "invenio-record-object-schema-extra-code": {
         "type":  "string"
       },
-      "invenio_record_permissions_extra_code":  {
+      "invenio-record-permissions-extra-code":  {
         "type":  "string"
       },
-      "invenio_record_resource_extra_code": {
+      "invenio-record-resource-extra-code": {
         "type":  "string"
       },
-      "invenio_record_resource_config_extra_code":  {
+      "invenio-record-resource-config-extra-code":  {
         "type":  "string"
       },
-      "invenio_record_schema_extra_code": {
+      "invenio-record-schema-extra-code": {
         "type":  "string"
       },
-      "invenio_record_search_options_extra_code":  {
+      "invenio-record-search-options-extra-code":  {
         "type":  "string"
       },
-      "invenio_record_service_extra_code": {
+      "invenio-record-service-extra-code": {
         "type":  "string"
       },
-      "invenio_record_service_config_extra_code":  {
+      "invenio-record-service-config-extra-code":  {
         "type":  "string"
       },
-      "invenio_version_extra_code": {
+      "invenio-version-extra-code": {
         "type":  "string"
       },
-      "invenio_views_extra_code":  {
+      "invenio-views-extra-code":  {
         "type":  "string"
       }
     },
