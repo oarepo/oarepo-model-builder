@@ -81,6 +81,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "config-service-class-key",
             lambda: f"{settings.package_base_upper}_SERVICE_CLASS",
         )
+        self.set(
+            settings.python,
+            "config-resource-register-blueprint-key",
+            lambda: f"{settings.package_base_upper}_REGISTER_BLUEPRINT",
+        )
 
         # ext
         self.set(

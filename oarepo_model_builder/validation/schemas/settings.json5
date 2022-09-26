@@ -104,6 +104,9 @@
       "config-service-config-key": {
         "type": "string"
       },
+      "config-resource-register-blueprint-key": {
+        "type": "string"
+      },
       "create-blueprint-from-app": {
         "type": "string"
       },
