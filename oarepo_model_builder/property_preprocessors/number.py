@@ -1,6 +1,8 @@
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
+from oarepo_model_builder.invenio.invenio_record_schema import (
+    InvenioRecordSchemaBuilder,
+)
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
 from oarepo_model_builder.utils.deepmerge import deepmerge
@@ -24,5 +26,7 @@ class NumberPreprocessor(PropertyPreprocessor):
         condition=lambda current, stack: current.type == "number",
     )
     def modify_date_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
-        deepmerge(data.setdefault("oarepo:marshmallow", {}), {"class": "ma_fields.Float"})
+        deepmerge(
+            data.setdefault("oarepo:marshmallow", {}), {"class": "ma_fields.Float"}
+        )
         return data

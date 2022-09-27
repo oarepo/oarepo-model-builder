@@ -52,7 +52,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         recurse = True
         if isinstance(self.stack.top.data, dict):
             definition = self.stack.top.data.get(OAREPO_MARSHMALLOW_PROPERTY, {})
-            generate_key = definition.get('read', True) or definition.get('write', True)
+            generate_key = definition.get("read", True) or definition.get("write", True)
             if not generate_key:
                 return
 
@@ -64,14 +64,14 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if "nested" not in definition:
                 definition["nested"] = True
 
-            generate_schema_class = definition.get('generate')
+            generate_schema_class = definition.get("generate")
             schema_class = None  # to make pycharm happy
             schema_class_base_classes = None
 
             if generate_schema_class:
                 if "class" not in definition:
                     for se in reversed(self.stack.stack):
-                        if se.schema_element_type == 'property':
+                        if se.schema_element_type == "property":
                             definition["class"] = se.key.title()
                             break
                     else:
@@ -79,12 +79,20 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if "class" in definition:
                 schema_class = definition["class"]
                 if "." not in schema_class:
-                    schema_class = package_name(self.settings.python.record_schema_class) + "." + schema_class
-                schema_class_base_classes = definition.get("base-classes", ["ma.Schema"])
+                    schema_class = (
+                        package_name(self.settings.python.record_schema_class)
+                        + "."
+                        + schema_class
+                    )
+                schema_class_base_classes = definition.get(
+                    "base-classes", ["ma.Schema"]
+                )
 
             if generate_schema_class:
                 self.marshmallow_stack.append(
-                    MarshmallowNode(schema_class, schema_class_base_classes, self.stack.top.data)
+                    MarshmallowNode(
+                        schema_class, schema_class_base_classes, self.stack.top.data
+                    )
                 )
                 # add nested to the definition
             else:
@@ -103,7 +111,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         marshmallow_stack_top = self.marshmallow_stack[-1]
 
         if schema_element_type == "nodef":
-            definition = self.get_marshmallow_definition(data, self.stack, definition=definition)
+            definition = self.get_marshmallow_definition(
+                data, self.stack, definition=definition
+            )
             self.marshmallow_stack[-1].prepared_schema = definition
         elif schema_element_type == "items":
             definition = self.get_marshmallow_definition(data, self.stack)
@@ -112,7 +122,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         elif schema_element_type == "property":
             prepared_schema = marshmallow_stack_top.pop_prepared_schema()
             if prepared_schema:
-                deepmerge(data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {}), prepared_schema)
+                deepmerge(
+                    data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {}), prepared_schema
+                )
             definition = self.get_marshmallow_definition(data, self.stack)
             key = definition.get("field_name", self.stack.top.key)
             marshmallow_stack_top.add(key, definition["field"])
@@ -120,12 +132,14 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             node = self.marshmallow_stack.pop()
             class_name = node.schema_class_name
             if class_name.startswith("."):
-                class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
+                class_name = resolve_relative_classname(
+                    class_name, self.settings.python[self.class_config]
+                )
             if class_name not in self.generated_classes:
-                if 'validates' not in definition:
+                if "validates" not in definition:
                     validates = None
                 else:
-                    validates = definition['validates']
+                    validates = definition["validates"]
                 self.generated_classes.add(class_name)
                 self.process_template(
                     self.class_to_path(class_name),
@@ -136,14 +150,16 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                     imports=self.imports,
                     imported_classes=self.imported_classes,
                     current_package_name=package_name(class_name),
-                    validates=validates
+                    validates=validates,
                 )
 
     def get_marshmallow_definition(self, data, stack, definition=None):
         if not definition:
             definition = data.setdefault(OAREPO_MARSHMALLOW_PROPERTY, {})
 
-        definition = self.call_components("invenio_before_set_marshmallow_definition", definition, stack=stack)
+        definition = self.call_components(
+            "invenio_before_set_marshmallow_definition", definition, stack=stack
+        )
 
         data_type = data.get("type", "object")
         generator = self.schema.settings.python.marshmallow.mapping.get(data_type, None)
@@ -166,10 +182,16 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         if "class" in definition:
             class_name = definition["class"]
             if class_name.startswith("."):
-                class_name = resolve_relative_classname(class_name, self.settings.python[self.class_config])
+                class_name = resolve_relative_classname(
+                    class_name, self.settings.python[self.class_config]
+                )
             if "." in class_name:
-                if not with_defined_prefix(self.settings.python.always_defined_import_prefixes, class_name):
-                    class_base_name = self.imported_classes[class_name] = base_name(class_name)
+                if not with_defined_prefix(
+                    self.settings.python.always_defined_import_prefixes, class_name
+                ):
+                    class_base_name = self.imported_classes[class_name] = base_name(
+                        class_name
+                    )
                 else:
                     class_base_name = class_name
             else:
@@ -177,7 +199,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
             # generate instance of the class, filling the options and validators
 
-            definition["field"] = create_field(class_base_name, options=(), validators=(), definition=definition)
+            definition["field"] = create_field(
+                class_base_name, options=(), validators=(), definition=definition
+            )
             return definition
 
         # if no generator from settings, get the default one
@@ -197,7 +221,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         # and generate the field
         definition["field"] = generator(data, definition, self.schema, self.imports)
-        definition = self.call_components("invenio_after_set_marshmallow_definition", definition, stack=stack)
+        definition = self.call_components(
+            "invenio_after_set_marshmallow_definition", definition, stack=stack
+        )
         return definition
 
 
@@ -205,19 +231,19 @@ def create_field(field_type, options=(), validators=(), definition=None):
     opts = [*options, *definition.get("options", [])]
     validators = [*validators, *definition.get("validators", [])]
     nested = definition.get("nested", False)
-    required = definition.get('required', False)
-    read = definition.get('read', True)
-    write = definition.get('write', True)
+    required = definition.get("required", False)
+    read = definition.get("read", True)
+    write = definition.get("write", True)
 
     list_nested = definition.get("list_nested", False)
     if validators:
         opts.append(f'validate=[{",".join(validators)}]')
     if required:
-        opts.append(f'required=' + str(required))
+        opts.append(f"required=" + str(required))
     if not read and write:
-        opts.append('load_only=True')
+        opts.append("load_only=True")
     if not write and read:
-        opts.append('dump_only=True')
+        opts.append("dump_only=True")
     kwargs = definition.get("field_args", "")
     if kwargs and opts:
         kwargs = ", " + kwargs
@@ -226,10 +252,10 @@ def create_field(field_type, options=(), validators=(), definition=None):
     else:
         ret = f"{field_type}()"
     if nested:
-        if ret.endswith('()'):
+        if ret.endswith("()"):
             ret = ret[:-2]
         else:
-            ret = f'lamda: {ret}'
+            ret = f"lamda: {ret}"
         if isinstance(nested, str):
             if opts or kwargs:
                 ret = f'{nested}({ret}, {", ".join(opts)}{kwargs})'
@@ -249,19 +275,23 @@ def create_field(field_type, options=(), validators=(), definition=None):
 
 
 def marshmallow_string_generator(data, definition, schema, imports):
-    validators = definition.get('validators', [])
+    validators = definition.get("validators", [])
     if validators != []:
-        definition.pop('validators')
+        definition.pop("validators")
 
     return create_field("ma_fields.String", [], validators, definition)
 
 
 def marshmallow_integer_generator(data, definition, schema, imports):
-    return marshmallow_generic_number_generator("ma_fields.Integer", data, definition, schema, imports)
+    return marshmallow_generic_number_generator(
+        "ma_fields.Integer", data, definition, schema, imports
+    )
 
 
 def marshmallow_number_generator(data, definition, schema, imports):
-    return marshmallow_generic_number_generator("ma_fields.Float", data, definition, schema, imports)
+    return marshmallow_generic_number_generator(
+        "ma_fields.Float", data, definition, schema, imports
+    )
 
 
 def marshmallow_boolean_generator(data, definition, schema, imports):
@@ -275,9 +305,9 @@ def marshmallow_raw_generator(data, definition, schema, imports):
 
 
 def marshmallow_generic_number_generator(datatype, data, definition, schema, imports):
-    validators = definition.get('validators', [])
+    validators = definition.get("validators", [])
     if validators != []:
-        definition.pop('validators')
+        definition.pop("validators")
     return create_field(datatype, [], validators, definition)
 
 
@@ -288,7 +318,7 @@ default_marshmallow_generators = {
     "integer": marshmallow_integer_generator,
     "number": marshmallow_number_generator,
     "boolean": marshmallow_boolean_generator,
-    "raw": marshmallow_raw_generator
+    "raw": marshmallow_raw_generator,
 }
 
 

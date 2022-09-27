@@ -104,6 +104,9 @@
       "config-service-config-key": {
         "type": "string"
       },
+      "config-resource-register-blueprint-key": {
+        "type": "string"
+      },
       "create-blueprint-from-app": {
         "type": "string"
       },
@@ -285,6 +288,58 @@
             "type": "string"
           }
         }
+      },
+      // extra code
+      "invenio-config-extra-code": {
+        "type": "string"
+      },
+      "invenio-ext-extra-code": {
+        "type": "string"
+      },
+      "invenio-proxies-extra-code":  {
+        "type":  "string"
+      },
+      "invenio-record-extra-code": {
+        "type":  "string"
+      },
+      "invenio-record-dumper-extra-code":  {
+        "type":  "string"
+      },
+      "invenio-record-facets-extra-code": {
+        "type":  "string"
+      },
+      "invenio-record-metadata-extra-code":  {
+        "type":  "string"
+      },
+      "invenio-record-object-schema-extra-code": {
+        "type":  "string"
+      },
+      "invenio-record-permissions-extra-code":  {
+        "type":  "string"
+      },
+      "invenio-record-resource-extra-code": {
+        "type":  "string"
+      },
+      "invenio-record-resource-config-extra-code":  {
+        "type":  "string"
+      },
+      "invenio-record-schema-extra-code": {
+        "type":  "string"
+      },
+      "invenio-record-search-options-extra-code":  {
+        "type":  "string"
+      },
+      "invenio-record-service-extra-code": {
+        "type":  "string"
+      },
+      "invenio-record-service-config-extra-code":  {
+        "type":  "string"
+      },
+      "invenio-version-extra-code": {
+        "type":  "string"
+      },
+      "invenio-views-extra-code":  {
+        "type":  "string"
       }
     },
     "additionalProperties": false

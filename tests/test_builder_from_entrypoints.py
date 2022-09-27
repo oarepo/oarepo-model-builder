@@ -15,7 +15,11 @@ def test_include_invenio():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"version": "1.0.0", OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={
+            "version": "1.0.0",
+            OAREPO_USE: "invenio",
+            "model": {"properties": {"a": {"type": "keyword"}}},
+        },
         isort=False,
         black=False,
     )
@@ -50,29 +54,34 @@ class TestSchema(BaseRecordSchema, ):
     """,
     )
 
-    data = builder.filesystem.read(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+    )
     data = json.loads(data)
     assert data == {
         "mappings": {
             "properties": {
-                "$schema": {"ignore_above": 50, "type": "keyword"},
-                "a": {"ignore_above": 50, "type": "keyword"},
+                "$schema": {"type": "keyword"},
+                "a": {"type": "keyword"},
                 "created": {"type": "date"},
-                "id": {"ignore_above": 50, "type": "keyword"},
+                "id": {"type": "keyword"},
                 "updated": {"type": "date"},
             },
         }
     }
 
     data = builder.filesystem.read("setup.cfg")
-    assert f'version = 1.0.0' in data
+    assert f"version = 1.0.0" in data
 
 
 def test_generate_multiple_times():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={
+            OAREPO_USE: "invenio",
+            "model": {"properties": {"a": {"type": "keyword"}}},
+        },
         isort=False,
         black=False,
     )
@@ -105,7 +114,10 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={
+            OAREPO_USE: "invenio",
+            "model": {"properties": {"a": {"type": "keyword"}}},
+        },
         isort=False,
         black=False,
     )
@@ -118,7 +130,10 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={
+            OAREPO_USE: "invenio",
+            "model": {"properties": {"a": {"type": "keyword"}}},
+        },
         isort=False,
         black=False,
     )
@@ -133,7 +148,10 @@ def test_incremental_builder():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={OAREPO_USE: "invenio", "model": {"properties": {"a": {"type": "keyword"}}}},
+        model_content={
+            OAREPO_USE: "invenio",
+            "model": {"properties": {"a": {"type": "keyword"}}},
+        },
         isort=False,
         black=False,
     )
@@ -152,4 +170,6 @@ def test_incremental_builder():
     for k, iteration_result in snapshot_1.items():
         expected_result = snapshot_2[k]
         # normally handled by black
-        assert_python_equals(iteration_result.replace(",'_id'", ",\n'_id'"), expected_result, f'File {k}')
+        assert_python_equals(
+            iteration_result.replace(",'_id'", ",\n'_id'"), expected_result, f"File {k}"
+        )

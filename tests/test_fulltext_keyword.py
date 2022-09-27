@@ -6,12 +6,18 @@ import pytest
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
-from oarepo_model_builder.model_preprocessors.elasticsearch import ElasticsearchModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
+from oarepo_model_builder.model_preprocessors.elasticsearch import (
+    ElasticsearchModelPreprocessor,
+)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.text_keyword import TextKeywordPreprocessor
+from oarepo_model_builder.property_preprocessors.text_keyword import (
+    TextKeywordPreprocessor,
+)
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
@@ -48,13 +54,17 @@ def test_fulltext(fulltext_builder):
     fulltext_builder.build(schema, output_dir="")
 
     data = json5.load(
-        fulltext_builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
+        fulltext_builder.filesystem.open(
+            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+        )
     )
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
     data = json5.load(
-        fulltext_builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+        fulltext_builder.filesystem.open(
+            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+        )
     )
 
     assert data == {
@@ -72,19 +82,23 @@ def test_keyword(fulltext_builder):
     fulltext_builder.build(schema, output_dir="")
 
     data = json5.load(
-        fulltext_builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
+        fulltext_builder.filesystem.open(
+            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+        )
     )
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
     data = json5.load(
-        fulltext_builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+        fulltext_builder.filesystem.open(
+            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+        )
     )
 
     assert data == {
         "mappings": {
             "properties": {
-                "a": {"ignore_above": 50, "type": "keyword"},
+                "a": {"type": "keyword"},
             }
         }
     }
@@ -96,20 +110,24 @@ def test_fulltext_keyword(fulltext_builder):
     fulltext_builder.build(schema, output_dir="")
 
     data = json5.load(
-        fulltext_builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
+        fulltext_builder.filesystem.open(
+            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+        )
     )
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
     data = json5.load(
-        fulltext_builder.filesystem.open(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+        fulltext_builder.filesystem.open(
+            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+        )
     )
 
     assert data == {
         "mappings": {
             "properties": {
                 "a": {
-                    "fields": {"keyword": {"ignore_above": 50, "type": "keyword"}},
+                    "fields": {"keyword": {"type": "keyword"}},
                     "type": "text",
                 },
             }

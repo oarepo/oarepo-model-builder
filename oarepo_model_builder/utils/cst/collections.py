@@ -16,7 +16,9 @@ class ElementMerger(MergerBase):
         new_value = new_node.value
 
         merger = expression_mergers.get(type(existing_value), IdentityMerger())
-        return existing_node.with_changes(value=merger.merge(context, existing_value, new_value))
+        return existing_node.with_changes(
+            value=merger.merge(context, existing_value, new_value)
+        )
 
 
 class ListMerger(MergerBase):
@@ -36,7 +38,7 @@ class DictMerger(MergerBase):
         return node
 
     def get_key(self, context, el):
-        if hasattr(el, 'key') and el.key:
+        if hasattr(el, "key") and el.key:
             return el.key.value
         # TODO: StarredDictElement might contain trailing comma, should remove it
         return context.to_source_code(el)
@@ -44,7 +46,9 @@ class DictMerger(MergerBase):
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         ret = []
         mergers = expression_mergers
-        existing_elements = {self.get_key(context, el): el for el in existing_node.elements}
+        existing_elements = {
+            self.get_key(context, el): el for el in existing_node.elements
+        }
         new_elements = {self.get_key(context, el): el for el in new_node.elements}
         for k, el in existing_elements.items():
             merger = mergers.get(type(el), IdentityMerger())
@@ -58,10 +62,14 @@ class DictMerger(MergerBase):
             merger = mergers.get(type(el), IdentityMerger())
             merged = merger.merge(context, None, el)
             ret.append(merged)
-        return existing_node.with_changes(elements=[x for x in ret if x is not context.REMOVED])
+        return existing_node.with_changes(
+            elements=[x for x in ret if x is not context.REMOVED]
+        )
 
 
-def merge_lists_remove_duplicates(context: PythonContext, existing_list, new_list, mergers):
+def merge_lists_remove_duplicates(
+    context: PythonContext, existing_list, new_list, mergers
+):
     ret = []
     new_list = [*new_list]
 

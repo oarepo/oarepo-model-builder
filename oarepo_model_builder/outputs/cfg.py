@@ -12,21 +12,24 @@ class CFGOutput(OutputBase):
         """
         Adds an entry point if it is not already present
         """
-        line = f'{name} = {value}'
-        grp = self.create_multiline_value('options.entry_points', group, initial_value=line)
+        line = f"{name} = {value}"
+        grp = self.create_multiline_value(
+            "options.entry_points", group, initial_value=line
+        )
         for e in grp.as_list():
-            e = [x.strip() for x in e.split('=', maxsplit=1)]
+            e = [x.strip() for x in e.split("=", maxsplit=1)]
             if len(e) == 2 and e[0] == name and e[1] == value:
                 break
         else:
             grp.append(line)
 
-    def add_dependency(self, package, version, group='options', section='install_requires',
-                       extras=None):
+    def add_dependency(
+        self, package, version, group="options", section="install_requires", extras=None
+    ):
         if extras:
             line = f'{package}[{", ".join(extras)}]{version}'
         else:
-            line = f'{package}{version}'
+            line = f"{package}{version}"
         grp = self.create_multiline_value(group, section, line)
         for e in grp.as_list():
             if line == e.strip():
@@ -62,10 +65,10 @@ class CFGOutput(OutputBase):
 
     def get_section(self, section, create=False):
         if create and section not in self.cfg:
-                self.cfg.add_section(section)
-                tbl = self.cfg[section]
-                tbl.add_before.space(2)
-                return tbl
+            self.cfg.add_section(section)
+            tbl = self.cfg[section]
+            tbl.add_before.space(2)
+            return tbl
         return self.cfg[section]
 
     def set(self, section, key, value):
@@ -76,7 +79,7 @@ class CFGOutput(OutputBase):
         tbl = self.get_section(section, create=True)
         return tbl.setdefault(key, value)
 
-    def create_multiline_value(self, section, name, initial_value='') -> Option:
+    def create_multiline_value(self, section, name, initial_value="") -> Option:
         tbl = self.get_section(section, create=True)
         if name in tbl:
             grp = tbl[name]

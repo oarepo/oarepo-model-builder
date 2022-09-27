@@ -33,7 +33,9 @@ class OutputBuilder:
     TYPE = None
     stack: ModelBuilderStack
 
-    def __init__(self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]):
+    def __init__(
+        self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]
+    ):
         self.builder = builder
         self.property_preprocessors = property_preprocessors
         self.stack = None
@@ -94,7 +96,10 @@ class OutputBuilder:
 
             try:
                 for property_preprocessor in self.property_preprocessors:
-                    data = property_preprocessor.process(self.TYPE, data, self.stack) or data
+                    data = (
+                        property_preprocessor.process(self.TYPE, data, self.stack)
+                        or data
+                    )
             except ReplaceElement as e:
                 data = e
             if isinstance(data, ReplaceElement):
@@ -107,7 +112,9 @@ class OutputBuilder:
                         for k, v in enumerate(data.data):
                             self.build_node(k, v)
                     else:
-                        raise AttributeError(f"Do not know how to handle {type(data.data)} in ReplaceElement")
+                        raise AttributeError(
+                            f"Do not know how to handle {type(data.data)} in ReplaceElement"
+                        )
                 return
             self.stack.top.data = data
             self.process_stack_top()
@@ -144,14 +151,20 @@ class OutputBuilder:
 
     def process_stack_top(self):
         try:
-            self.call_components("before_process_element", value=self.stack.top.data, stack=self.stack)
-            for method in self.json_paths.match(self.stack.path, self.stack.top.data, extra_data={"stack": self.stack}):
+            self.call_components(
+                "before_process_element", value=self.stack.top.data, stack=self.stack
+            )
+            for method in self.json_paths.match(
+                self.stack.path, self.stack.top.data, extra_data={"stack": self.stack}
+            ):
                 return method()
             # do not skip stack top
             if self.stack.level <= 1:
                 self.build_children()
         finally:
-            self.call_components("after_process_element", value=self.stack.top.data, stack=self.stack)
+            self.call_components(
+                "after_process_element", value=self.stack.top.data, stack=self.stack
+            )
 
     @process("/model")
     def enter_model(self):
@@ -165,10 +178,14 @@ class OutputBuilder:
 
 
 class OutputBuilderComponent:
-    def before_process_element(self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs):
+    def before_process_element(
+        self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs
+    ):
         return value
 
-    def after_process_element(self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs):
+    def after_process_element(
+        self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs
+    ):
         return value
 
 
@@ -176,4 +193,10 @@ TEMPLATES = {
     "setup_py": "templates/setup.py.jinja2",
 }
 
-__all__ = ["process", "OutputBuilder", "ModelBuilderStack", "ReplaceElement", "TEMPLATES"]
+__all__ = [
+    "process",
+    "OutputBuilder",
+    "ModelBuilderStack",
+    "ReplaceElement",
+    "TEMPLATES",
+]

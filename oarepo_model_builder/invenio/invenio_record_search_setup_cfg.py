@@ -11,7 +11,7 @@ class InvenioRecordSearchSetupCfgBuilder(OutputBuilder):
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
         output.add_entry_point(
-            'invenio_search.mappings',
+            "invenio_search.mappings",
             self.settings.python.record_mapping_setup_cfg,
             self.settings.mapping_package,
         )

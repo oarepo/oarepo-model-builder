@@ -15,7 +15,9 @@ class InteractiveResolver(ConflictResolver):
     def __init__(self, debug: bool):
         self.debug = debug
 
-    def resolve_conflict(self, context: PythonContext, existing_node, new_node, merged_node) -> ConflictResolution:
+    def resolve_conflict(
+        self, context: PythonContext, existing_node, new_node, merged_node
+    ) -> ConflictResolution:
         if not self.debug:
             if existing_node and not new_node:
                 return ConflictResolution.KEEP_PREVIOUS
@@ -37,7 +39,9 @@ class InteractiveResolver(ConflictResolver):
                 print("   m or enter to keep the merged value")
                 print("   e  to keep the existing value")
                 print("   n  to keep the new value")
-                print("   t  to keep the previous value and add the new value as TODO comment")
+                print(
+                    "   t  to keep the previous value and add the new value as TODO comment"
+                )
                 while True:
                     inp = input().strip()
                     if inp in resolution_mapping:
@@ -72,7 +76,9 @@ class InteractiveResolver(ConflictResolver):
 
                 print("Your decision: ")
                 print("   n or enter to keep the new value")
-                print("   t  to keep the previous value and add the new value as TODO comment")
+                print(
+                    "   t  to keep the previous value and add the new value as TODO comment"
+                )
                 while True:
                     inp = input().strip()
                     if inp in resolution_mapping:
@@ -87,16 +93,17 @@ class AutomaticResolver(ConflictResolver):
     def __init__(self, resolution_type: Literal["replace", "keep", "comment"]):
         self.resolution_type = resolution_type
 
-    def resolve_conflict(self, context, existing_node, new_node, merged_node) -> ConflictResolution:
+    def resolve_conflict(
+        self, context, existing_node, new_node, merged_node
+    ) -> ConflictResolution:
         if existing_node:
             if new_node:
-                match self.resolution_type:
-                    case "replace":
-                        return ConflictResolution.KEEP_NEW
-                    case "keep":
-                        return ConflictResolution.KEEP_PREVIOUS
-                    case "comment":
-                        return ConflictResolution.NEW_AS_TODO
+                if self.resolution_type == "replace":
+                    return ConflictResolution.KEEP_NEW
+                elif self.resolution_type == "keep":
+                    return ConflictResolution.KEEP_PREVIOUS
+                elif self.resolution_type == "comment":
+                    return ConflictResolution.NEW_AS_TODO
             else:
                 return ConflictResolution.KEEP_PREVIOUS
         else:

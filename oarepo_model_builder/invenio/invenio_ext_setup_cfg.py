@@ -12,6 +12,8 @@ class InvenioExtSetupCfgBuilder(OutputBuilder):
 
         ext_class = self.settings.python.ext_class.rsplit(".", maxsplit=1)
 
-        output.add_entry_point('invenio_base.api_apps',
-                               self.settings.package,
-                               f"{ext_class[0]}:{ext_class[-1]}")
+        output.add_entry_point(
+            "invenio_base.api_apps",
+            self.settings.package,
+            f"{ext_class[0]}:{ext_class[-1]}",
+        )

@@ -3,7 +3,9 @@ import os
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders import OutputBuilderComponent
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
@@ -17,13 +19,25 @@ except ImportError:
 
 
 def test_simple_jsonschema_builder():
-    data = build({"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}})
+    data = build(
+        {"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}}
+    )
 
     assert data == {"properties": {"a": {"type": "keyword"}}}
 
 
 def test_required():
-    data = build({"properties": {"a": {"type": "keyword", "required": True, "oarepo:ui": {"class": "bolder"}}}})
+    data = build(
+        {
+            "properties": {
+                "a": {
+                    "type": "keyword",
+                    "required": True,
+                    "oarepo:ui": {"class": "bolder"},
+                }
+            }
+        }
+    )
 
     assert data == {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
 
@@ -33,13 +47,23 @@ def test_required_inside_metadata():
         {
             "properties": {
                 "metadata": {
-                    "properties": {"a": {"type": "keyword", "required": True, "oarepo:ui": {"class": "bolder"}}}
+                    "properties": {
+                        "a": {
+                            "type": "keyword",
+                            "required": True,
+                            "oarepo:ui": {"class": "bolder"},
+                        }
+                    }
                 }
             }
         }
     )
 
-    assert data == {"properties": {"metadata": {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}}}
+    assert data == {
+        "properties": {
+            "metadata": {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
+        }
+    }
 
 
 def test_min_length():
@@ -49,7 +73,11 @@ def test_min_length():
 
 def test_jsonschema_preprocessor():
     data = build(
-        {"properties": {"a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}}},
+        {
+            "properties": {
+                "a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}
+            }
+        },
         property_preprocessors=[MultilangPreprocessor],
     )
 
@@ -73,7 +101,9 @@ class TestJSONSchemaOutputComponent(OutputBuilderComponent):
 def test_components():
     data = build(
         {"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}},
-        output_builder_components={JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]},
+        output_builder_components={
+            JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]
+        },
     )
 
     assert data == {"properties": {"a": {"type": "integer"}}}
@@ -111,5 +141,9 @@ def build(model, output_builder_components=None, property_preprocessors=None):
         ),
         output_dir="",
     )
-    data = json5.load(builder.filesystem.open(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")))
+    data = json5.load(
+        builder.filesystem.open(
+            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+        )
+    )
     return data

@@ -12,7 +12,10 @@ def test_raw_type():
     schema = load_model(
         "test.yaml",
         "test",
-        model_content={"oarepo:use": "invenio", "model": {"properties": {"a": {"type": "raw"}}}},
+        model_content={
+            "oarepo:use": "invenio",
+            "model": {"properties": {"a": {"type": "raw"}}},
+        },
         isort=False,
         black=False,
     )
@@ -48,22 +51,26 @@ class TestSchema(BaseRecordSchema, ):
     """,
     )
 
-    data = builder.filesystem.read(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+    )
     data = json.loads(data)
 
     assert data == {
         "mappings": {
             "properties": {
                 "a": {"type": "flatten"},
-                "id": {"type": "keyword", "ignore_above": 50},
+                "id": {"type": "keyword"},
                 "created": {"type": "date"},
                 "updated": {"type": "date"},
-                "$schema": {"ignore_above": 50, "type": "keyword"}
+                "$schema": {"type": "keyword"},
             },
         }
     }
 
-    data = builder.filesystem.read(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+    )
     data = json.loads(data)
     print(data)
     assert data == {
@@ -72,7 +79,7 @@ class TestSchema(BaseRecordSchema, ):
             "id": {"type": "string"},
             "created": {"type": "string", "format": "date"},
             "updated": {"type": "string", "format": "date"},
-            "$schema": {"type": "string"}
-            },
-        "type": "object"
-        }
+            "$schema": {"type": "string"},
+        },
+        "type": "object",
+    }

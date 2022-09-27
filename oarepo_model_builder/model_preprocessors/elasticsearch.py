@@ -11,7 +11,6 @@ class ElasticsearchModelPreprocessor(ModelPreprocessor):
             {
                 "elasticsearch": {
                     "version": "v7",
-                    "keyword-ignore-above": 50,
                     "templates": {"v7": {"mappings": {"properties": {}}}},
                 }
             },

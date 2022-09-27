@@ -13,7 +13,9 @@ class MockFilesystem(AbstractFileSystem):
         path = Path(path).absolute()
         if mode == "r":
             if not path in self.files:
-                raise FileNotFoundError(f"File {path} not found. Known files {[f for f in self.files]}")
+                raise FileNotFoundError(
+                    f"File {path} not found. Known files {[f for f in self.files]}"
+                )
             return StringIO(self.files[path].getvalue())
         self.files[path] = StringIO()
         self.files[path].close = lambda: None

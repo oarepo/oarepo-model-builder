@@ -3,6 +3,7 @@ from typing import Callable, List
 
 import faker
 import faker.providers
+from faker import Faker
 from jinja2 import Environment, FunctionLoader
 
 from oarepo_model_builder.builders import OutputBuilder
@@ -36,10 +37,16 @@ class Provider:
         return rnd / 10
 
     def sample_object(self):
-        return {self.generator.word(): self.generator.word() for _ in range(self.generator.random.randrange(1, 5, 1))}
+        return {
+            self.generator.word(): self.generator.word()
+            for _ in range(self.generator.random.randrange(1, 5, 1))
+        }
 
     def constant(self, value=None):
         return value
+
+    def language_dict(self):
+        return {lang: Faker(locale=lang).sentence() for lang in ("cs", "en")}
 
 
 SKIP = "skip"
@@ -51,7 +58,9 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
     output_file_name = "script-import-sample-data"
     parent_module_root_name = "jsonschemas"
 
-    def __init__(self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]):
+    def __init__(
+        self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]
+    ):
         super().__init__(builder, property_preprocessors)
         self.generator = SampleDataGenerator()
         from faker.config import PROVIDERS
@@ -64,9 +73,9 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             ],
         )
 
-        self.sample_data_providers = load_entry_points_list("oarepo_model_builder.sample_data_providers") + [
-            faker_provider
-        ]
+        self.sample_data_providers = load_entry_points_list(
+            "oarepo_model_builder.sample_data_providers"
+        ) + [faker_provider]
 
     @process("/model/**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
@@ -144,8 +153,14 @@ def get_oarepo_sample(stack):
         if isinstance(sample, str):
             return {"faker": "constant", "params": {"value": sample}}
         if isinstance(sample, (list, dict)):
-            if stack.top.schema_element_type == "property" and "items" in stack.top.data:
-                return {"faker": "random_elements", "params": {"elements": sample, "unique": True}}
+            if (
+                stack.top.schema_element_type == "property"
+                and "items" in stack.top.data
+            ):
+                return {
+                    "faker": "random_elements",
+                    "params": {"elements": sample, "unique": True},
+                }
             else:
                 return {"faker": "random_element", "params": {"elements": sample}}
 
@@ -186,11 +201,15 @@ class InvenioScriptSampleDataShellBuilder(OutputBuilder):
         context = {"settings": self.schema.settings}
 
         env = Environment(
-            loader=FunctionLoader(lambda tn: templates.get_template(tn, context["settings"])),
+            loader=FunctionLoader(
+                lambda tn: templates.get_template(tn, context["settings"])
+            ),
             autoescape=False,
         )
 
         ensure_directory(self.builder, "scripts")
         output = self.builder.get_output("diff", "scripts/load_sample_data.sh")
-        output.write(env.get_template("script-import-sample-data-shell").render(context))
+        output.write(
+            env.get_template("script-import-sample-data-shell").render(context)
+        )
         output.make_executable()

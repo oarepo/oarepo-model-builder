@@ -50,24 +50,27 @@ class TestSchema(BaseRecordSchema, ):
         """,
     )
 
-    data = builder.filesystem.read(os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+    )
     data = json.loads(data)
     assert data == {
         "mappings": {
             "properties": {
-                "$schema": {"ignore_above": 50, "type": "keyword"},
+                "$schema": {"type": "keyword"},
                 "a": {
-                    "ignore_above": 50,
                     "type": "keyword",
                 },
                 "created": {"type": "date"},
-                "id": {"ignore_above": 50, "type": "keyword"},
+                "id": {"type": "keyword"},
                 "updated": {"type": "date"},
             }
         }
     }
 
-    data = builder.filesystem.read(os.path.join("test", "records", "jsonschemas", "test-1.0.0.json"))
+    data = builder.filesystem.read(
+        os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+    )
     data = json.loads(data)
     assert data == {
         "properties": {

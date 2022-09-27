@@ -15,6 +15,7 @@ from {{ python.record_search_options_class|package_name }} import {{ python.reco
 
 class {{ python.record_service_config_class|base_name }}({% for b in python.record_service_config_bases %}{{ b|base_name }}, {% endfor %}InvenioRecordServiceConfig):
     """{{ python.record_class|base_name }} service config."""
+    url_prefix = "{{ settings.collection_url }}"
 
     permission_policy_cls = {{ python.record_permissions_class|base_name }}
     schema = {{ python.record_schema_class|base_name }}
@@ -33,8 +34,12 @@ class {{ python.record_service_config_class|base_name }}({% for b in python.reco
     @property
     def links_item(self):
         return {
-            "self": RecordLink("{{ settings.collection_url }}{id}"),
+            "self": RecordLink("{self.url_prefix}{id}"),
         }
 
-    links_search = pagination_links("{{ settings.collection_url }}{?args*}")
+    @property
+    def links_search(self):
+        return pagination_links("{self.url_prefix}{?args*}")
     {% endif %}
+
+{{ settings.python.invenio_record_service_config_extra_code }}

@@ -19,7 +19,9 @@ class MockFilesystem(AbstractFileSystem):
         path = Path(path).absolute()
         if mode == "r":
             if not path in self.files:
-                raise FileNotFoundError(f"File {path} not found. Known files {[f for f in self.files]}")
+                raise FileNotFoundError(
+                    f"File {path} not found. Known files {[f for f in self.files]}"
+                )
             return StringIO(self.files[path].getvalue())
         self.files[path] = StringIO()
         self.files[path].close = lambda: None
@@ -48,7 +50,10 @@ def test_include_invenio():
             "model": {
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
-                    "b": {"type": "keyword", "oarepo:facets": {"field": 'TermsFacet(field="cosi")'}},
+                    "b": {
+                        "type": "keyword",
+                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
+                    },
                 }
             },
         },
@@ -133,8 +138,15 @@ def test_sort():
             "oarepo:use": "invenio",
             "model": {
                 "properties": {
-                    "a": {"type": "fulltext+keyword", "oarepo:sortable":{"key": "a_test"}},
-                    "b": {"type": "keyword", "oarepo:facets": {"field": 'TermsFacet(field="cosi")'}, "oarepo:sortable":{"key": "b_test", "order": "desc"}},
+                    "a": {
+                        "type": "fulltext+keyword",
+                        "oarepo:sortable": {"key": "a_test"},
+                    },
+                    "b": {
+                        "type": "keyword",
+                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
+                        "oarepo:sortable": {"key": "b_test", "order": "desc"},
+                    },
                 }
             },
         },
@@ -176,6 +188,8 @@ class TestSearchOptions(InvenioSearchOptions):
     }
     """,
     )
+
+
 def test_nested():
     schema = load_model(
         "test.yaml",
@@ -193,7 +207,10 @@ def test_nested():
                             "f": {
                                 "properties": {"g": {"type": "keyword"}},
                                 "oarepo:mapping": {"type": "nested"},
-                                "oarepo:marshmallow": {"class": "nest.f.F", "generate": True},
+                                "oarepo:marshmallow": {
+                                    "class": "nest.f.F",
+                                    "generate": True,
+                                },
                             },
                         },
                         "oarepo:mapping": {"type": "nested"},
@@ -289,7 +306,10 @@ def test_search_class():
             "model": {
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
-                    "b": {"type": "keyword", "oarepo:facets": {"field": 'TermsFacet(field="cosi")'}},
+                    "b": {
+                        "type": "keyword",
+                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
+                    },
                 }
             },
         },

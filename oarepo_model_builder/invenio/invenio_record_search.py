@@ -9,6 +9,7 @@ from .invenio_base import InvenioBaseClassPythonBuilder
 OAREPO_FACETS_PROPERTY = "oarepo:facets"
 OAREPO_SORTABLE_PROPERTY = "oarepo:sortable"
 
+
 class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_search"
     class_config = "record-search-options-class"
@@ -24,17 +25,22 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         self.facets_definition = []
         self.facets_names = []
         self.settings = settings
-        if 'oarepo:sortable' in schema:
-            self.process_top_sortable(schema['oarepo:sortable'])
+        if "oarepo:sortable" in schema:
+            self.process_top_sortable(schema["oarepo:sortable"])
 
     def finish(self, **extra_kwargs):
-        super().finish(search_options_data=self.search_options_data, facets_definition=self.facets_definition,
-                       sort_definition = self.sort_options_data)
+        super().finish(
+            search_options_data=self.search_options_data,
+            facets_definition=self.facets_definition,
+            sort_definition=self.sort_options_data,
+        )
         python_path = self.class_to_path(self.settings.python["record-facets-class"])
         self.process_template(
             python_path,
             "record-facets",
-            current_package_name=package_name(self.settings.python["record-facets-class"]),
+            current_package_name=package_name(
+                self.settings.python["record-facets-class"]
+            ),
             search_options_data=self.search_options_data,
             **extra_kwargs,
         )
@@ -45,7 +51,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             fields = dir(data[k])
             fields_options = {}
             for field in fields:
-                fields_options = deepmerge(fields_options, {field : data[k][field]})
+                fields_options = deepmerge(fields_options, {field: data[k][field]})
             self.sort_options_data.append({k: fields_options})
 
     @process("/model/**", condition=lambda current, stack: stack.schema_valid)
@@ -68,21 +74,23 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             sort_definition = data.get(OAREPO_SORTABLE_PROPERTY, None)
 
             if sort_definition != None:
-                self.sort_options_data.append(self.process_sort_options(self.stack.path, sort_definition))
+                self.sort_options_data.append(
+                    self.process_sort_options(self.stack.path, sort_definition)
+                )
         array_items_type = None
         if schema_element_type == "property" and data.type == "array":
             try:
-                array_items_type = data['items']['type']
+                array_items_type = data["items"]["type"]
             except:
                 array_items_type = None
 
         if (
-                schema_element_type == "property"
-                and data.type != "text"
-                and data.type != "fulltext"
-                and data.type != "object"
-                and data.type != "nested"
-                and not (data.type == "array" and array_items_type == "fulltext")
+            schema_element_type == "property"
+            and data.type != "text"
+            and data.type != "fulltext"
+            and data.type != "object"
+            and data.type != "nested"
+            and not (data.type == "array" and array_items_type == "fulltext")
         ):
             definition = data.get(OAREPO_FACETS_PROPERTY, {})
             nested_paths = []
@@ -93,16 +101,19 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 if upper.key == "properties":
                     continue
                 nested_path = nested_path + upper.key + "."
-                if upper.data.get("oarepo:mapping", HyphenMunch({"type": ""})).type == "nested":
+                if (
+                    upper.data.get("oarepo:mapping", HyphenMunch({"type": ""})).type
+                    == "nested"
+                ):
                     nested_paths.append(nested_path)
             if len(nested_paths) > 0:
                 nested = True
 
-            if 'key' in definition:
-                name = definition['key']
+            if "key" in definition:
+                name = definition["key"]
             else:
                 name = self.process_name(self.stack.path, type="name")
-            if data.type == "fulltext+keyword" and 'key' not in definition:
+            if data.type == "fulltext+keyword" and "key" not in definition:
                 name = name + "_keyword"
             if name == "$schema":
                 name = "_schema"
@@ -117,7 +128,12 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                         class_string = class_string + "path = " + '"' + path[:-1] + '"'
                     else:
                         class_string = (
-                            class_string + "path = " + '"' + path[:-1] + '"' + ", nested_facet = NestedLabeledFacet("
+                            class_string
+                            + "path = "
+                            + '"'
+                            + path[:-1]
+                            + '"'
+                            + ", nested_facet = NestedLabeledFacet("
                         )
 
             if "field" in definition:
@@ -140,13 +156,17 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                     if "class" != key and "field" != key:
                         search_data.append([key, value])
                 if nested:
-                    search_options = self.process_search_options(search_data, facets_class)
+                    search_options = self.process_search_options(
+                        search_data, facets_class
+                    )
                     search_options = class_string + " , nested_facet =" + search_options
                     for x in nested_paths:
                         search_options = search_options + ")"
 
                 else:
-                    search_options = self.process_search_options(search_data, facets_class)
+                    search_options = self.process_search_options(
+                        search_data, facets_class
+                    )
                 self.search_options_data.append({name: search_options})
             facets_name = "facets." + name
             self.facets_definition.append({name: facets_name})
@@ -166,9 +186,9 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         if len(path_array) == 1:
             return name
         path_array.pop(0)
-        last_path = ''
+        last_path = ""
         for path in path_array:
-            if last_path != 'properties' and path == 'items':
+            if last_path != "properties" and path == "items":
                 continue
             last_path = path
             if path == "properties":
@@ -181,13 +201,13 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         return name
 
     def process_sort_options(self, path, definition):
-        field = self.process_name(path =path, type="field")
+        field = self.process_name(path=path, type="field")
 
-        key = definition.get('key', '')
-        if key == '':
-            key = self.process_name(path, 'name')
-        order = definition.get('order', 'asc')
+        key = definition.get("key", "")
+        if key == "":
+            key = self.process_name(path, "name")
+        order = definition.get("order", "asc")
         if order == "desc":
             field = "-" + field
 
-        return {key: dict(fields = [field])}
+        return {key: dict(fields=[field])}

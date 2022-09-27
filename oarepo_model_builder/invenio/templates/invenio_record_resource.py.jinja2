@@ -10,3 +10,5 @@ class {{ python.record_resource_class|base_name }}({% for b in python.record_res
     """{{ python.record_class|base_name }} resource."""
     # here you can for example redefine
     # create_url_rules function to add your own rules
+
+{{ settings.python.invenio_record_resource_extra_code }}

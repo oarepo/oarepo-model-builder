@@ -1,19 +1,36 @@
+import re
 from {{ python.config_package|package_name }} import {{ python.config_package|base_name }} as config
+{% for b in python.ext_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
 
-class {{ python.ext_class|base_name }}(object):
+class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
     """{{ python.package }} extension."""
 
     def __init__(self, app=None):
         """Extension initialization."""
         self.resource = None
         self.service = None
+        {% if python.ext_bases %}
+        super().__init__(None)
+        {% endif %}
         if app:
             self.init_app(app)
 
     def init_app(self, app):
         """Flask application initialization."""
+        {% if python.ext_bases %}
+        super().init_app(app=app)
+        {% endif %}
         self.init_config(app)
-        self.init_resource(app)
+        if not self.is_inherited():
+            self.init_resource(app)
+            self.register_flask_extension(app)
+
+    def register_flask_extension(self, app):
+        {% if python.ext_bases %}
+        super().register_extension()
+        {% endif %}
         app.extensions["{{ python.flask_extension_name }}"] = self
 
     def init_resource(self, app):
@@ -28,8 +45,22 @@ class {{ python.ext_class|base_name }}(object):
 
     def init_config(self, app):
         """Initialize configuration."""
-        app.config.setdefault("{{settings.python.config_resource_config_key}}", config.{{ settings.python.config_resource_config_key }})
-        app.config.setdefault("{{settings.python.config_resource_class_key}}", config.{{ settings.python.config_resource_class_key }})
-        app.config.setdefault("{{settings.python.config_service_config_key}}", config.{{ settings.python.config_service_config_key }})
-        app.config.setdefault("{{settings.python.config_service_class_key}}", config.{{ settings.python.config_service_class_key }})
+        for identifier in dir(config):
+            if re.match('^[A-Z_]*$', identifier) and not identifier.startswith('_'):
+                app.config.setdefault(identifier, getattr(config, identifier))
 
+    def is_inherited(self):
+        from importlib_metadata import entry_points
+
+        ext_class = type(self)
+        for ep in entry_points(group='invenio_base.apps'):
+            loaded = ep.load()
+            if loaded is not ext_class and issubclass(ext_class, loaded):
+                return True
+        for ep in entry_points(group='invenio_base.api_apps'):
+            loaded = ep.load()
+            if loaded is not ext_class and issubclass(ext_class, loaded):
+                return True
+        return False
+
+{{ settings.python.invenio_ext_extra_code }}

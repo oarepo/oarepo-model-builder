@@ -2,11 +2,16 @@ import copy
 import importlib
 import json
 from pathlib import Path
-from typing import Dict, List, Type
+from typing import Dict, List, Type, Union
 
 import yaml
 
-from .builders import ModelBuilderStack, OutputBuilder, OutputBuilderComponent, ReplaceElement
+from .builders import (
+    ModelBuilderStack,
+    OutputBuilder,
+    OutputBuilderComponent,
+    ReplaceElement,
+)
 from .fs import AbstractFileSystem, FileSystem
 from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
@@ -104,7 +109,7 @@ class ModelBuilder:
         self.included_validation_schemas = included_validation_schemas or []
         self.skip_schema_validation = False  # set to True in some tests
 
-    def get_output(self, output_type: str, path: str | Path):
+    def get_output(self, output_type: str, path: Union[str, Path]):
         """
         Given a path, instantiate file builder on the path with the given output type
         and return it. If the builder on the path has already been requested, return
@@ -131,7 +136,12 @@ class ModelBuilder:
         return self.output_builder_components.get(output_builder_type, ())
 
     # main entry point
-    def build(self, model: ModelSchema, output_dir: str | Path, resolver: ConflictResolver = None):
+    def build(
+        self,
+        model: ModelSchema,
+        output_dir: Union[str, Path],
+        resolver: ConflictResolver = None,
+    ):
         """
         compile the schema to output directory
 
@@ -141,14 +151,18 @@ class ModelBuilder:
         """
         self.conflict_resolver = resolver
         self.set_schema(model)
-        self.filtered_output_classes = {o.TYPE: o for o in self._filter_classes(self.output_classes, "output")}
+        self.filtered_output_classes = {
+            o.TYPE: o for o in self._filter_classes(self.output_classes, "output")
+        }
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
 
         if not self.skip_schema_validation:
             validate_model(model, self.included_validation_schemas)
 
-        for model_preprocessor in self._filter_classes(self.model_preprocessor_classes, "model"):
+        for model_preprocessor in self._filter_classes(
+            self.model_preprocessor_classes, "model"
+        ):
             model_preprocessor(self).transform(model, model.settings)
 
         if not self.skip_schema_validation:
@@ -156,12 +170,19 @@ class ModelBuilder:
 
         # noinspection PyTypeChecker
         property_preprocessors: List[PropertyPreprocessor] = [
-            e(self) for e in self._filter_classes(self.property_preprocessor_classes, "property")
+            e(self)
+            for e in self._filter_classes(
+                self.property_preprocessor_classes, "property"
+            )
         ]
 
         output_builder_class: Type[OutputBuilder]
-        for output_builder_class in self._filter_classes(self.output_builder_classes, "builder"):
-            output_builder = output_builder_class(builder=self, property_preprocessors=property_preprocessors)
+        for output_builder_class in self._filter_classes(
+            self.output_builder_classes, "builder"
+        ):
+            output_builder = output_builder_class(
+                builder=self, property_preprocessors=property_preprocessors
+            )
             output_builder.build(model)
 
         self._save_outputs()
@@ -181,7 +202,10 @@ class ModelBuilder:
     # private methods
 
     def _filter_classes(self, classes: List[Type[object]], plugin_type):
-        if "plugins" not in self.schema.schema or plugin_type not in self.schema.schema.plugins:
+        if (
+            "plugins" not in self.schema.schema
+            or plugin_type not in self.schema.schema.plugins
+        ):
             return classes
         plugin_config = self.schema.schema.plugins[plugin_type]
 

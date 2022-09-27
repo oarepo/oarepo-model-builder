@@ -15,3 +15,5 @@ class {{ python.record_permissions_class|base_name }}({% for b in python.record_
     can_update = [SystemProcess()]
     can_delete = [SystemProcess()]
     can_manage = [SystemProcess()]
+
+{{ settings.python.invenio_record_permissions_extra_code }}

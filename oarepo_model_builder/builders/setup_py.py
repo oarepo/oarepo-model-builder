@@ -8,7 +8,5 @@ class SetupPyBuilder(PythonBuilder):
     def finish(self):
         super().finish()
 
-        python_output: PythonOutput = self.builder.get_output('python', 'setup.py')
-        python_output.merge('setup_py', {
-            'settings': self.settings
-        })
+        python_output: PythonOutput = self.builder.get_output("python", "setup.py")
+        python_output.merge("setup_py", {"settings": self.settings})

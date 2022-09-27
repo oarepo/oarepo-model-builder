@@ -15,7 +15,9 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             settings,
             {
                 "python": {
-                    "record-prefix": camel_case(settings.package.rsplit(".", maxsplit=1)[-1]),
+                    "record-prefix": camel_case(
+                        settings.package.rsplit(".", maxsplit=1)[-1]
+                    ),
                     # just make sure that the templates is always there
                     "templates": {},
                     "marshmallow": {"mapping": {}},
@@ -51,7 +53,9 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         )
 
         # config
-        self.set(settings.python, "config-package", lambda: f"{settings.package}.config")
+        self.set(
+            settings.python, "config-package", lambda: f"{settings.package}.config"
+        )
         self.set(
             settings.python,
             "config-dummy-class",
@@ -77,6 +81,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "config-service-class-key",
             lambda: f"{settings.package_base_upper}_SERVICE_CLASS",
         )
+        self.set(
+            settings.python,
+            "config-resource-register-blueprint-key",
+            lambda: f"{settings.package_base_upper}_REGISTER_BLUEPRINT",
+        )
 
         # ext
         self.set(
@@ -84,7 +93,9 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "ext-class",
             lambda: f"{settings.package}.ext.{record_prefix}Ext",
         )
-        self.set(settings.python, "flask-extension-name", lambda: f"{settings.package_base}")
+        self.set(
+            settings.python, "flask-extension-name", lambda: f"{settings.package_base}"
+        )
 
         # proxies
         self.set(
@@ -115,7 +126,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{record_prefix.lower()}_metadata",
         )
         #   - setup.cfg
-        self.set(settings.python, "record-mapping-setup-cfg", lambda: f"{settings.package_base}")
+        self.set(
+            settings.python,
+            "record-mapping-setup-cfg",
+            lambda: f"{settings.package_base}",
+        )
         self.set(
             settings.python,
             "record-jsonschemas-setup-cfg",
@@ -150,12 +165,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "record-service-config-class",
             lambda: f"{settings.python.record_services_package}.config.{record_prefix}ServiceConfig",
         )
-        self.set(
-            settings.python,
-            "record-service-config-bases",
-            lambda: []
-        )
-        settings.python.setdefault('record-service-config-generate-links', True)
+        self.set(settings.python, "record-service-config-bases", lambda: [])
+        settings.python.setdefault("record-service-config-generate-links", True)
         #   - schema
         self.set(
             settings.python,
@@ -182,7 +193,9 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
         #   - facets
         self.set(
-            settings.python, "record-facets-class", lambda: f"{settings.python.record_services_package}.facets.Test"
+            settings.python,
+            "record-facets-class",
+            lambda: f"{settings.python.record_services_package}.facets.Test",
         )
 
         # alembic
@@ -197,32 +210,65 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{settings.package_base}",
         )
 
-        self.set(settings.python, "record-resource-blueprint-name", lambda: record_prefix)
+        self.set(
+            settings.python, "record-resource-blueprint-name", lambda: record_prefix
+        )
         self.set(
             settings.python,
             "create-blueprint-from-app",
             lambda: f"{settings.package}.views.create_blueprint_from_app",
         )
+        settings.python.setdefault("invenio-config-extra-code", "")
+        settings.python.setdefault("invenio-ext-extra-code", "")
+        settings.python.setdefault("invenio-proxies-extra-code", "")
+        settings.python.setdefault("invenio-record-extra-code", "")
+        settings.python.setdefault("invenio-record-dumper-extra-code", "")
+        settings.python.setdefault("invenio-record-facets-extra-code", "")
+        settings.python.setdefault("invenio-record-metadata-extra-code", "")
+        settings.python.setdefault("invenio-record-object-schema-extra-code", "")
+        settings.python.setdefault("invenio-record-permissions-extra-code", "")
+        settings.python.setdefault("invenio-record-resource-extra-code", "")
+        settings.python.setdefault("invenio-record-resource-config-extra-code", "")
+        settings.python.setdefault("invenio-record-schema-extra-code", "")
+        settings.python.setdefault("invenio-record-search-options-extra-code", "")
+        settings.python.setdefault("invenio-record-service-extra-code", "")
+        settings.python.setdefault("invenio-record-service-config-extra-code", "")
+        settings.python.setdefault("invenio-version-extra-code", "")
+        settings.python.setdefault("invenio-views-extra-code", "")
 
         if "model" in schema.schema:
             schema_class = settings.python.record_schema_class
             schema_metadata_class = settings.python.record_schema_metadata_class
-            schema_class_base_classes = settings.python.get("record_schema_metadata_bases", []) + [
+            schema_class_base_classes = settings.python.get(
+                "record_schema_metadata_bases", []
+            ) + [
                 "ma.Schema"  # alias will be recognized automatically
             ]
 
-            if "properties" in schema.schema.model and "metadata" in schema.schema.model.properties:
+            if (
+                "properties" in schema.schema.model
+                and "metadata" in schema.schema.model.properties
+            ):
                 deepmerge(
-                    schema.schema.model.properties.metadata.setdefault("oarepo:marshmallow", {}),
+                    schema.schema.model.properties.metadata.setdefault(
+                        "oarepo:marshmallow", {}
+                    ),
                     {
                         "class": schema_metadata_class,
                         "base-classes": schema_class_base_classes,
                         "generate": True,
                     },
                 )
-            if "oarepo:marshmallow" in schema.schema and "base-schema" in schema.schema["oarepo:marshmallow"]:
-                schema_class_base_classes = settings.python.get("record_schema_metadata_bases", []) + [
-                    schema.schema["oarepo:marshmallow"]["base_schema"]  # alias will be recognized automatically
+            if (
+                "oarepo:marshmallow" in schema.schema
+                and "base-schema" in schema.schema["oarepo:marshmallow"]
+            ):
+                schema_class_base_classes = settings.python.get(
+                    "record_schema_metadata_bases", []
+                ) + [
+                    schema.schema["oarepo:marshmallow"][
+                        "base_schema"
+                    ]  # alias will be recognized automatically
                 ]
 
             deepmerge(
@@ -244,5 +290,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 _prefixes.append(_prefix)
 
         # script sample data importer
-        settings.python.setdefault("script-import-sample-data-cli", "scripts.import_sample_data.cli")
+        settings.python.setdefault(
+            "script-import-sample-data-cli", "scripts.import_sample_data.cli"
+        )
         settings.setdefault("script-import-sample-data", "scripts/sample_data.yaml")

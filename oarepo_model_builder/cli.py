@@ -9,7 +9,10 @@ from pathlib import Path
 import click
 import yaml
 
-from oarepo_model_builder.conflict_resolvers import AutomaticResolver, InteractiveResolver
+from oarepo_model_builder.conflict_resolvers import (
+    AutomaticResolver,
+    InteractiveResolver,
+)
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.utils.verbose import log
 
@@ -17,7 +20,8 @@ from oarepo_model_builder.utils.verbose import log
 @click.command()
 @click.option(
     "--output-directory",
-    help="Output directory where the generated files will be placed. " 'Defaults to "."',
+    help="Output directory where the generated files will be placed. "
+    'Defaults to "."',
 )
 @click.option(
     "--package",
@@ -52,19 +56,43 @@ from oarepo_model_builder.utils.verbose import log
     "after the evaluation all globals are set on the model.",
     multiple=True,
 )
-@click.option("--isort/--skip-isort", default=True, help="Call isort on generated sources")
-@click.option("--black/--skip-black", default=True, help="Call black on generated sources")
-@click.option("--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"]))
+@click.option(
+    "--isort/--skip-isort", default=True, help="Call isort on generated sources"
+)
+@click.option(
+    "--black/--skip-black", default=True, help="Call black on generated sources"
+)
+@click.option(
+    "--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"])
+)
 @click.argument("model_filename")
-def run(output_directory, package, sets, configs, model_filename,
-        verbosity, isort, black, resolve_conflicts, save_model):
+def run(
+    output_directory,
+    package,
+    sets,
+    configs,
+    model_filename,
+    verbosity,
+    isort,
+    black,
+    resolve_conflicts,
+    save_model,
+):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
     """
     try:
         run_internal(
-            output_directory, model_filename, package, configs, resolve_conflicts,
-            sets, black, isort, verbosity, save_model
+            output_directory,
+            model_filename,
+            package,
+            configs,
+            resolve_conflicts,
+            sets,
+            black,
+            isort,
+            verbosity,
+            save_model,
         )
     except Exception as e:
         if verbosity >= 2:
@@ -78,11 +106,25 @@ def run(output_directory, package, sets, configs, model_filename,
         sys.exit(1)
 
 
-def run_internal(output_directory, model_filename, package, configs,
-                 resolve_conflicts, sets, black, isort, verbosity, save_model):
+def run_internal(
+    output_directory,
+    model_filename,
+    package,
+    configs,
+    resolve_conflicts,
+    sets,
+    black,
+    isort,
+    verbosity,
+    save_model,
+):
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
-    os.environ["PATH"] = str(Path(sys.argv[0]).parent.absolute()) + os.pathsep + os.environ.get("PATH", "")
+    os.environ["PATH"] = (
+        str(Path(sys.argv[0]).parent.absolute())
+        + os.pathsep
+        + os.environ.get("PATH", "")
+    )
     if not output_directory:
         output_directory = os.getcwd()
     # set the logging level, it will be warning - 1 (that is, 29) if not verbose,
@@ -102,7 +144,7 @@ def run_internal(output_directory, model_filename, package, configs,
     )
     model = load_model(model_filename, package, configs, black, isort, sets)
     if save_model:
-        with open(save_model, 'w') as f:
+        with open(save_model, "w") as f:
             yaml.dump(json.loads(json.dumps(model.schema)), f)
     model.schema["output-directory"] = output_directory
     if not resolve_conflicts or resolve_conflicts == "debug":

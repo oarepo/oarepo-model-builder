@@ -1,7 +1,11 @@
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import InvenioRecordSchemaBuilder
-from oarepo_model_builder.invenio.invenio_script_sample_data import InvenioScriptSampleDataBuilder
+from oarepo_model_builder.invenio.invenio_record_schema import (
+    InvenioRecordSchemaBuilder,
+)
+from oarepo_model_builder.invenio.invenio_script_sample_data import (
+    InvenioScriptSampleDataBuilder,
+)
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
 from oarepo_model_builder.utils.deepmerge import deepmerge
@@ -23,7 +27,8 @@ class EnumPreprocessor(PropertyPreprocessor):
         alternatives = [f'"{x}"' for x in data["enum"]]
 
         deepmerge(
-            data.setdefault("oarepo:marshmallow", {}), {"validators": [f'ma_valid.OneOf([{", ".join(alternatives)}])']}
+            data.setdefault("oarepo:marshmallow", {}),
+            {"validators": [f'ma_valid.OneOf([{", ".join(alternatives)}])']},
         )
         return data
 

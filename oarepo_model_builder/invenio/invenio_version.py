@@ -9,7 +9,6 @@ class InvenioVersionBuilder(PythonBuilder):
         super().finish()
 
         python_output: PythonOutput = self.builder.get_output(
-            'python', self.settings.package_path / 'version.py')
-        python_output.merge('invenio_version', {
-            'settings': self.settings
-        })
+            "python", self.settings.package_path / "version.py"
+        )
+        python_output.merge("invenio_version", {"settings": self.settings})

@@ -10,7 +10,9 @@ log = logging.getLogger("oarepo_model_builder.cst")
 
 class AssignMerger(MergerBase):
     def merge_internal(self, context: PythonContext, existing_node, new_node):
-        merger = expression_mergers.get(type(existing_node.value or new_node.value), IdentityMerger())
+        merger = expression_mergers.get(
+            type(existing_node.value or new_node.value), IdentityMerger()
+        )
         merged_value = merger.merge(context, existing_node.value, new_node.value)
         return existing_node.with_changes(value=merged_value)
 
@@ -70,5 +72,9 @@ class SimpleStatementLineMerger(MergerBase):
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         existing_body = existing_node.body[0] if existing_node else None
         new_body = new_node.body[0] if new_node else None
-        merger = simple_line_mergers.get(type(existing_body or new_body), IdentityMerger())
-        return existing_node.with_changes(body=[merger.merge(context, existing_body, new_body)])
+        merger = simple_line_mergers.get(
+            type(existing_body or new_body), IdentityMerger()
+        )
+        return existing_node.with_changes(
+            body=[merger.merge(context, existing_body, new_body)]
+        )

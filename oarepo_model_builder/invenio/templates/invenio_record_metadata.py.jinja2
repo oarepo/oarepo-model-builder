@@ -12,3 +12,5 @@ class {{ python.record_metadata_class|base_name }}({% for b in python.record_met
 
     # Enables SQLAlchemy-Continuum versioning
     __versioned__ = {}
+
+{{ settings.python.invenio_record_metadata_extra_code }}

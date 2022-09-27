@@ -14,13 +14,21 @@ class PriorityMergerMixin:
         t = type(node)
         return node_type_category.get(t, "unknown")
 
-    def _merge_children_with_priorities(self, context, existing_node, updated_node, mergers, node_type_category):
+    def _merge_children_with_priorities(
+        self, context, existing_node, updated_node, mergers, node_type_category
+    ):
         existing_list = self.extract_body(existing_node)
         new_list = self.extract_body(updated_node)
 
         ret = []
-        existing_list = [node_with_type(e, self.get_node_type(node_type_category, e)) for e in existing_list]
-        new_list = [node_with_type(e, self.get_node_type(node_type_category, e)) for e in new_list]
+        existing_list = [
+            node_with_type(e, self.get_node_type(node_type_category, e))
+            for e in existing_list
+        ]
+        new_list = [
+            node_with_type(e, self.get_node_type(node_type_category, e))
+            for e in new_list
+        ]
 
         last_type = None
         for existing in existing_list:
@@ -36,7 +44,9 @@ class PriorityMergerMixin:
                 if new.type != existing.type:
                     break
                 if isinstance(existing.node, type(new.node)):
-                    if merger.identity(context, existing.node).deep_equals(merger.identity(context, new.node)):
+                    if merger.identity(context, existing.node).deep_equals(
+                        merger.identity(context, new.node)
+                    ):
                         ret.append(merger.merge(context, existing.node, new.node))
                         del new_list[idx]
                         found = True
