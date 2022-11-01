@@ -1,5 +1,8 @@
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
 from invenio_records_resources.services import RecordLink, pagination_links
+{% for expandable_field_class in expandable_fields_classes %}
+from {{ expandable_field_class|package_name }} import {{ expandable_field_class|base_name }}
+{% endfor %}
 
 {% for b in python.record_service_config_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
@@ -11,6 +14,11 @@ from {{ python.record_class|package_name }} import {{ python.record_class|base_n
 from {{ python.record_permissions_class|package_name }} import {{ python.record_permissions_class|base_name }}
 from {{ python.record_schema_class|package_name }} import {{ python.record_schema_class|base_name }}
 from {{ python.record_search_options_class|package_name }} import {{ python.record_search_options_class|base_name }}
+
+{% for expandable_field in expandable_fields_context %}
+from {{ expandable_field.service|package_name }} import {{ expandable_field.service|base_name }} as {{ expandable_field.service_alias }}
+{% endfor %}
+
 
 
 class {{ python.record_service_config_class|base_name }}({% for b in python.record_service_config_bases %}{{ b|base_name }}, {% endfor %}InvenioRecordServiceConfig):
@@ -40,6 +48,21 @@ class {{ python.record_service_config_class|base_name }}({% for b in python.reco
     @property
     def links_search(self):
         return pagination_links("{self.url_prefix}{?args*}")
+    {% endif %}
+    {% if expandable_fields_context %}
+    @property
+    def expandable_fields(self):
+        return [
+            {% for expandable_field in expandable_fields_context %}
+                    {{expandable_field.expandable_field_class|base_name}}(
+                                                field_name="{{ expandable_field.field_name }}",
+                                                keys={{ expandable_field.referenced_keys }},
+                                                service= {{ expandable_field.service_alias }}{% if expandable_field.pid_field %},
+                                                    pid_field = "{{ expandable_field.pid_field }}"
+                                                {% endif %}
+                                                ),
+            {% endfor %}
+        ]
     {% endif %}
 
 {{ settings.python.invenio_record_service_config_extra_code }}
