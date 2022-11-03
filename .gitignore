@@ -83,3 +83,6 @@ sample/
 
 tests/test-sample-app
 tests/test-sample-site
+
+dist
+.vscode
