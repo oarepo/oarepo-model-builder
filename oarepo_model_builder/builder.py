@@ -141,6 +141,7 @@ class ModelBuilder:
         model: ModelSchema,
         output_dir: Union[str, Path],
         resolver: ConflictResolver = None,
+        overwrite = False
     ):
         """
         compile the schema to output directory
@@ -149,6 +150,12 @@ class ModelBuilder:
         :param output_dir:  output directory where to put generated files
         :return:            the outputs (self.outputs)
         """
+        if overwrite:
+            if not hasattr(self.filesystem, 'overwrite'):
+                raise AttributeError(
+                    f'Filesystem of type {type(self.filesystem)} does not support overwrite')
+            self.filesystem.overwrite = True
+
         self.conflict_resolver = resolver
         self.set_schema(model)
         self.filtered_output_classes = {
@@ -156,6 +163,7 @@ class ModelBuilder:
         }
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
+        self.overwrite = overwrite
 
         if not self.skip_schema_validation:
             validate_model(model, self.included_validation_schemas)
