@@ -21,13 +21,13 @@ from oarepo_model_builder.utils.verbose import log
 @click.option(
     "--output-directory",
     help="Output directory where the generated files will be placed. "
-    'Defaults to "."',
+         'Defaults to "."',
 )
 @click.option(
     "--package",
     help="Package into which the model is generated. "
-    "If not passed, the name of the current directory, "
-    "converted into python package name, is used.",
+         "If not passed, the name of the current directory, "
+         "converted into python package name, is used.",
 )
 @click.option(
     "--set",
@@ -50,10 +50,10 @@ from oarepo_model_builder.utils.verbose import log
     "--config",
     "configs",
     help="Load a config file and replace parts of the model with it. "
-    "The config file can be a json, yaml or a python file. "
-    "If it is a python file, it is evaluated with the current "
-    'model stored in the "oarepo_model" global variable and '
-    "after the evaluation all globals are set on the model.",
+         "The config file can be a json, yaml or a python file. "
+         "If it is a python file, it is evaluated with the current "
+         'model stored in the "oarepo_model" global variable and '
+         "after the evaluation all globals are set on the model.",
     multiple=True,
 )
 @click.option(
@@ -65,18 +65,22 @@ from oarepo_model_builder.utils.verbose import log
 @click.option(
     "--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"])
 )
+@click.option(
+    "--overwrite", help="Do not merge with content in already existing files, overwrite them"
+)
 @click.argument("model_filename")
 def run(
-    output_directory,
-    package,
-    sets,
-    configs,
-    model_filename,
-    verbosity,
-    isort,
-    black,
-    resolve_conflicts,
-    save_model,
+        output_directory,
+        package,
+        sets,
+        configs,
+        model_filename,
+        verbosity,
+        isort,
+        black,
+        resolve_conflicts,
+        save_model,
+        overwrite
 ):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
@@ -93,6 +97,7 @@ def run(
             isort,
             verbosity,
             save_model,
+            overwrite
         )
     except Exception as e:
         if verbosity >= 2:
@@ -107,23 +112,24 @@ def run(
 
 
 def run_internal(
-    output_directory,
-    model_filename,
-    package,
-    configs,
-    resolve_conflicts,
-    sets,
-    black,
-    isort,
-    verbosity,
-    save_model,
+        output_directory,
+        model_filename,
+        package,
+        configs,
+        resolve_conflicts,
+        sets,
+        black,
+        isort,
+        verbosity,
+        save_model,
+        overwrite
 ):
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
     os.environ["PATH"] = (
-        str(Path(sys.argv[0]).parent.absolute())
-        + os.pathsep
-        + os.environ.get("PATH", "")
+            str(Path(sys.argv[0]).parent.absolute())
+            + os.pathsep
+            + os.environ.get("PATH", "")
     )
     if not output_directory:
         output_directory = os.getcwd()
@@ -152,7 +158,7 @@ def run_internal(
     else:
         resolver = AutomaticResolver(resolve_conflicts)
     builder = create_builder_from_entrypoints()
-    builder.build(model, output_directory, resolver)
+    builder.build(model, output_directory, resolver, overwrite)
     log.leave("Done")
     print(f"Log saved to {Path(output_directory) / 'installation.log'}")
 

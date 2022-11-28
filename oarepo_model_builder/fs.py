@@ -16,10 +16,22 @@ class AbstractFileSystem:
 
 
 class FileSystem(AbstractFileSystem):
-    def open(self, path, *args, **kwargs):
-        return open(path, *args, **kwargs)
+    def __init__(self):
+        self.opened_files = set()
+        self.overwrite = False
+
+    def open(self, path, *args, mode='r', **kwargs):
+        if self.overwrite:
+            if 'r' in mode and path not in self.opened_files:
+                raise FileNotFoundError(f"File {path} not found")
+            if 'w' or 'a' in mode:
+                self.opened_files.add(path)
+        return open(path, *args, mode=mode, **kwargs)
 
     def exists(self, path):
+        # if overwrite and the file has not been saved, return False
+        if self.overwrite:
+            return path in self.opened_files
         return Path(path).exists()
 
     def mkdir(self, path):
