@@ -54,7 +54,7 @@ def build_model(model):
                 "settings": {
                     "package": "test",
                     "python": {"use_isort": False, "use_black": False},
-                    "opensearch": {"version": "v2", "templates": {"v2": {}}},
+                    "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
                 },
                 "model": model,
             },
@@ -63,7 +63,7 @@ def build_model(model):
     )
     data = json5.load(
         builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
+            os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
         )
     )
     return data
@@ -92,7 +92,7 @@ def test_mapping_preprocessor():
                 "settings": {
                     "package": "test",
                     "python": {"use_isort": False, "use_black": False},
-                    "opensearch": {"version": "v2", "templates": {"v2": {}}},
+                    "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
                 },
                 "model": {"properties": {"a": {"type": "multilingual"}}},
             },
@@ -102,7 +102,7 @@ def test_mapping_preprocessor():
 
     data = json5.load(
         builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
+            os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
         )
     )
 

@@ -70,7 +70,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
                 settings.package_path,
                 "records",
                 "mappings",
-                "v2",
+                "os-v2",
                 settings.package,
                 settings.schema_name,
             ),

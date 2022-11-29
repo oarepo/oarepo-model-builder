@@ -60,7 +60,7 @@ def test_model_saver():
             "index-name": "test-test-1.0.0",
             "jsonschemas-package": "test.records.jsonschemas",
             "kebap-package": "test",
-            "mapping-file": "test/records/mappings/v2/test/test-1.0.0.json",
+            "mapping-file": "test/records/mappings/os-v2/test/test-1.0.0.json",
             "mapping-package": "test.records.mappings",
             "model-name": "test",
             "package": "test",

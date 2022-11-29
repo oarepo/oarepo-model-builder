@@ -67,7 +67,7 @@ class TestSchema(BaseRecordSchema, ):
     }
 
     data = builder.filesystem.read(
-        os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
+        os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
     )
     data = json.loads(data)
     assert data == {
