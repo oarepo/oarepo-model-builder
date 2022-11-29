@@ -5,7 +5,7 @@
       "version": {
         "type": "string",
         "enum": [
-          "v2"
+          "os-v2"
         ]
       },
       "keyword-ignore-above": {
@@ -14,7 +14,7 @@
       "templates": {
         "type": "object",
         "properties": {
-          "v2": {
+          "os-v2": {
             "type": "object",
             "additionalProperties": true
             // ES mapping section, no schema for it yet

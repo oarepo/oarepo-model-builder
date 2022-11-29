@@ -10,8 +10,8 @@ class OpensearchModelPreprocessor(ModelPreprocessor):
             settings,
             {
                 "opensearch": {
-                    "version": "v2",
-                    "templates": {"v2": {"mappings": {"properties": {}}}},
+                    "version": "os-v2",
+                    "templates": {"os-v2": {"mappings": {"properties": {}}}},
                 }
             },
         )
