@@ -1,11 +1,11 @@
-from invenio_records.dumpers import SearchDumper as InvenioElasticsearchDumper
+from invenio_records.dumpers import SearchDumperExt
 
 
 {% for b in python.record_dumper_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
-class {{ python.record_dumper_class|base_name }}({% for b in python.record_dumper_bases %}{{ b|base_name }}, {% endfor %}InvenioElasticsearchDumper):
-    """{{ python.record_class|base_name }} elasticsearch dumper."""
+class {{ python.record_dumper_class|base_name }}({% for b in python.record_dumper_bases %}{{ b|base_name }}, {% endfor %}SearchDumperExt):
+    """{{ python.record_class|base_name }} opensearch dumper."""
 
 {{ settings.python.invenio_record_dumper_extra_code }}

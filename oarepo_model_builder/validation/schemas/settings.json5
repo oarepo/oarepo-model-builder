@@ -35,8 +35,8 @@
       "kebap-package": {
         "type": "string"
       },
-      "elasticsearch": {
-        "$ref": "#/$defs/settings-elasticsearch"
+      "opensearch": {
+        "$ref": "#/$defs/settings-opensearch"
       },
       "schema-file": {
         "type": "string"

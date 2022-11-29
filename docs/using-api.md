@@ -85,23 +85,23 @@ builder = create_builder_from_entrypoints(
 
 ```python
   from oarepo_model_builder.builder import ModelBuilder
-  from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-  from oarepo_model_builder.builders.mapping import MappingBuilder
-  from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
-  from oarepo_model_builder.outputs.mapping import MappingOutput
-  from oarepo_model_builder.outputs.python import PythonOutput
-  from oarepo_model_builder.property_preprocessors.text_keyword import TextKeywordPreprocessor
-  from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
-  from oarepo_model_builder.model_preprocessors.elasticsearch import ElasticsearchModelPreprocessor
-  from oarepo_model_builder.fs import FileSystem
+from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
+from oarepo_model_builder.builders.mapping import MappingBuilder
+from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
+from oarepo_model_builder.outputs.mapping import MappingOutput
+from oarepo_model_builder.outputs.python import PythonOutput
+from oarepo_model_builder.property_preprocessors.text_keyword import TextKeywordPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.opensearch import ElasticsearchModelPreprocessor
+from oarepo_model_builder.fs import FileSystem
 
-  builder = ModelBuilder(
+builder = ModelBuilder(
     output_builders=[JSONSchemaBuilder, MappingBuilder],
     outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
     model_preprocessors=[DefaultValuesModelPreprocessor, ElasticsearchModelPreprocessor],
     property_preprocessors=[TextKeywordPreprocessor],
     filesystem=FileSystem()
-  )    
+)    
 ```   
 
 ## Run the builder
