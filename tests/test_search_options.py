@@ -73,10 +73,9 @@ def test_include_invenio():
 \"""Facet definitions.\"""
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from invenio_search.engine.dsl import Facet
-from invenio_search.engine.dsl.query import Nested
+from invenio_search.engine import dsl
 
-class NestedLabeledFacet(Facet):
+class NestedLabeledFacet(dsl.Facet):
     agg_type = "nested"
 
     def __init__(self, path, nested_facet, label = ''):
@@ -93,7 +92,7 @@ class NestedLabeledFacet(Facet):
     def add_filter(self, filter_values):
         inner_q = self._inner.add_filter(filter_values)
         if inner_q:
-            return Nested(path=self._path, query=inner_q)
+            return dsl.Nested(path=self._path, query=inner_q)
 
     def get_labelled_values(self, data, filter_values):
         \"""Get a labelled version of a bucket.\"""
@@ -236,10 +235,9 @@ def test_nested():
 \"""Facet definitions.\"""
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from invenio_search.engine.dsl import Facet
-from invenio_search.engine.dsl.query import Nested
+from invenio_search.engine import dsl
 
-class NestedLabeledFacet(Facet):
+class NestedLabeledFacet(dsl.Facet):
     agg_type = "nested"
 
     def __init__(self, path, nested_facet, label = ''):
@@ -256,7 +254,7 @@ class NestedLabeledFacet(Facet):
     def add_filter(self, filter_values):
         inner_q = self._inner.add_filter(filter_values)
         if inner_q:
-            return Nested(path=self._path, query=inner_q)
+            return dsl.Nested(path=self._path, query=inner_q)
 
     def get_labelled_values(self, data, filter_values):
         \"""Get a labelled version of a bucket.\"""
