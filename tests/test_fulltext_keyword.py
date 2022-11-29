@@ -53,19 +53,11 @@ def test_fulltext(fulltext_builder):
     fulltext_builder.filesystem = MockFilesystem()
     fulltext_builder.build(schema, output_dir="")
 
-    data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
-    )
+    data = load_generated_jsonschema(fulltext_builder)
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
-    data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
-        )
-    )
+    data = load_generated_mapping(fulltext_builder)
 
     assert data == {
         "mappings": {
@@ -81,19 +73,11 @@ def test_keyword(fulltext_builder):
     fulltext_builder.filesystem = MockFilesystem()
     fulltext_builder.build(schema, output_dir="")
 
-    data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
-    )
+    data = load_generated_jsonschema(fulltext_builder)
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
-    data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
-        )
-    )
+    data = load_generated_mapping(fulltext_builder)
 
     assert data == {
         "mappings": {
@@ -109,19 +93,11 @@ def test_fulltext_keyword(fulltext_builder):
     fulltext_builder.filesystem = MockFilesystem()
     fulltext_builder.build(schema, output_dir="")
 
-    data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
-        )
-    )
+    data = load_generated_jsonschema(fulltext_builder)
 
     assert data == {"properties": {"a": {"type": "string"}}}
 
-    data = json5.load(
-        fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
-        )
-    )
+    data = load_generated_mapping(fulltext_builder)
 
     assert data == {
         "mappings": {
@@ -133,3 +109,19 @@ def test_fulltext_keyword(fulltext_builder):
             }
         }
     }
+
+
+def load_generated_mapping(fulltext_builder):
+    return json5.load(
+        fulltext_builder.filesystem.open(
+            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
+        )
+    )
+
+
+def load_generated_jsonschema(fulltext_builder):
+    return json5.load(
+        fulltext_builder.filesystem.open(
+            os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
+        )
+    )
