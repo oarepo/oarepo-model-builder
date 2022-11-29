@@ -10,8 +10,8 @@ from oarepo_model_builder.invenio.invenio_record_schema import (
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
-from oarepo_model_builder.model_preprocessors.elasticsearch import (
-    ElasticsearchModelPreprocessor,
+from oarepo_model_builder.model_preprocessors.opensearch import (
+    OpensearchModelPreprocessor,
 )
 from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
 from oarepo_model_builder.outputs.python import PythonOutput
@@ -42,7 +42,7 @@ def fulltext_builder():
         outputs=[PythonOutput],
         model_preprocessors=[
             DefaultValuesModelPreprocessor,
-            ElasticsearchModelPreprocessor,
+            OpensearchModelPreprocessor,
             InvenioModelPreprocessor,
         ],
         property_preprocessors=[TextKeywordPreprocessor],

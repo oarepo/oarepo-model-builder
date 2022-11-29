@@ -48,7 +48,7 @@ class MappingBuilder(JSONBaseBuilder):
             self.builder, Path(output_name), ends_at=self.parent_module_root_name
         )
         self.output.merge(
-            self.settings.elasticsearch.templates[self.settings.elasticsearch.version]
+            self.settings.opensearch.templates[self.settings.opensearch.version]
         )
         self.output.enter("mappings", {})
 

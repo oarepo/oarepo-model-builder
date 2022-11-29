@@ -9,8 +9,8 @@ from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
-from oarepo_model_builder.model_preprocessors.elasticsearch import (
-    ElasticsearchModelPreprocessor,
+from oarepo_model_builder.model_preprocessors.opensearch import (
+    OpensearchModelPreprocessor,
 )
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
@@ -42,7 +42,7 @@ def fulltext_builder():
         outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
         model_preprocessors=[
             DefaultValuesModelPreprocessor,
-            ElasticsearchModelPreprocessor,
+            OpensearchModelPreprocessor,
         ],
         property_preprocessors=[TextKeywordPreprocessor],
     )
@@ -63,7 +63,7 @@ def test_fulltext(fulltext_builder):
 
     data = json5.load(
         fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
         )
     )
 
@@ -91,7 +91,7 @@ def test_keyword(fulltext_builder):
 
     data = json5.load(
         fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
         )
     )
 
@@ -119,7 +119,7 @@ def test_fulltext_keyword(fulltext_builder):
 
     data = json5.load(
         fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "v7", "test", "test-1.0.0.json")
+            os.path.join("test", "records", "mappings", "v2", "test", "test-1.0.0.json")
         )
     )
 

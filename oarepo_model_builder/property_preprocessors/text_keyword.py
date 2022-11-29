@@ -63,7 +63,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
     def modify_keyword_mapping(self, data, stack: ModelBuilderStack, **kwargs):
         data["type"] = "keyword"
         extra = {}
-        ignore_above = self.settings["elasticsearch"].get("keyword-ignore-above")
+        ignore_above = self.settings["opensearch"].get("keyword-ignore-above")
         if ignore_above:
             extra["ignore_above"] = ignore_above
         deepmerge(
@@ -101,7 +101,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
     )
     def modify_fulltext_keyword_mapping(self, data, stack: ModelBuilderStack, **kwargs):
         data["type"] = "text"
-        ignore_above = self.settings["elasticsearch"].get("keyword-ignore-above")
+        ignore_above = self.settings["opensearch"].get("keyword-ignore-above")
         fld = {
             "type": "keyword",
         }

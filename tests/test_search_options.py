@@ -73,8 +73,8 @@ def test_include_invenio():
 \"""Facet definitions.\"""
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from elasticsearch_dsl import Facet
-from elasticsearch_dsl.query import Nested
+from invenio_search.engine.dsl import Facet
+from invenio_search.engine.dsl.query import Nested
 
 class NestedLabeledFacet(Facet):
     agg_type = "nested"
@@ -236,8 +236,8 @@ def test_nested():
 \"""Facet definitions.\"""
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from elasticsearch_dsl import Facet
-from elasticsearch_dsl.query import Nested
+from invenio_search.engine.dsl import Facet
+from invenio_search.engine.dsl.query import Nested
 
 class NestedLabeledFacet(Facet):
     agg_type = "nested"
