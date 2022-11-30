@@ -86,7 +86,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             + os.path.basename(settings.mapping_file).replace(".json", ""),
         )
 
-        self.set(settings, "collection-url", lambda: f"/{settings.package_base}/")
+        self.set(settings, "collection-url", lambda: f"/{settings.kebap_package}/")
         self.set(settings, "model-name", lambda: settings.package_base)
 
         # for outputting the model

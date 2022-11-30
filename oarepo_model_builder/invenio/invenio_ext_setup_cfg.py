@@ -17,3 +17,10 @@ class InvenioExtSetupCfgBuilder(OutputBuilder):
             self.settings.package,
             f"{ext_class[0]}:{ext_class[-1]}",
         )
+
+        # need to add ext to apps because cli depends on it
+        output.add_entry_point(
+            "invenio_base.apps",
+            self.settings.package,
+            f"{ext_class[0]}:{ext_class[-1]}",
+        )

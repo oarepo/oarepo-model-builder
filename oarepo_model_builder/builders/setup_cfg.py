@@ -38,6 +38,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.add_dependency("invenio_records_permissions", ">=0.13.0")
         output.add_dependency("invenio_records_resources", ">=0.21.4")
         output.add_dependency("invenio-search", ">=2.1.0")
+        output.add_dependency("tqdm", ">=4.64.1")
 
         output.setdefault(
             "options.package_data", "*", "*.json, *.rst, *.md, *.json5, *.jinja2"
