@@ -53,3 +53,17 @@ def print_status(title, status):
     for status_val in status:
         for k, v in status_val[1].items():
             print(f"    {k}: {v}")
+
+
+
+@group.command()
+@click.argument(
+    "data-path",
+    type=click.Path(file_okay=True, dir_okay=False)
+)
+@with_appcontext
+@search_version_check
+def load(data_path, *args, **kwargs):
+    with open(data_path) as f:
+        for doc in tqdm.tqdm(yaml.load_all(f, yaml.SafeLoader), desc="Saving data"):
+            {{ python.proxies_current_service|base_name }}.create(system_identity, doc)
