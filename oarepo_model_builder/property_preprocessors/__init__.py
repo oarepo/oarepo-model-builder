@@ -67,6 +67,9 @@ class PropertyPreprocessor:
 def process(model_builder, path, priority=0, condition=None):
     """
     :param model_builder either a single builder, its TYPE property or a list of builders or their TYPEs
+    :param path A single path or a tuple of paths that must be matched. May contain '**' which means 1+ path segments,
+                * which means single path segment (for example model/properties/blah might is matched by model/**
+                or model/properties/*)
     """
 
     def convert_type(model_builder_types):
