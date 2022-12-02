@@ -17,7 +17,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=JSONSchemaBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "fulltext",
     )
     def modify_fulltext_schema(self, data, stack: ModelBuilderStack, **kwargs):
@@ -26,7 +26,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=MappingBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "fulltext",
     )
     def modify_fulltext_mapping(self, data, stack: ModelBuilderStack, **kwargs):
@@ -35,7 +35,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "fulltext",
     )
     def modify_fulltext_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
@@ -48,7 +48,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=JSONSchemaBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "keyword",
     )
     def modify_keyword_schema(self, data, stack: ModelBuilderStack, **kwargs):
@@ -57,7 +57,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=MappingBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "keyword",
     )
     def modify_keyword_mapping(self, data, stack: ModelBuilderStack, **kwargs):
@@ -74,7 +74,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "keyword",
     )
     def modify_keyword_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
@@ -87,7 +87,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=JSONSchemaBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "fulltext+keyword",
     )
     def modify_fulltext_keyword_schema(self, data, stack: ModelBuilderStack, **kwargs):
@@ -96,7 +96,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=MappingBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "fulltext+keyword",
     )
     def modify_fulltext_keyword_mapping(self, data, stack: ModelBuilderStack, **kwargs):
@@ -116,7 +116,7 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="**/properties/*",
+        path=("**/properties/*", "**/items"),
         condition=lambda current, stack: current.type == "fulltext+keyword",
     )
     def modify_fulltext_keyword_marshmallow(
@@ -124,3 +124,13 @@ class TextKeywordPreprocessor(PropertyPreprocessor):
     ):
         data["type"] = "string"
         return data
+
+    def _call_method(self, data, stack: ModelBuilderStack, output_builder_type):
+        for method, _output_builder_type in self.json_paths.match(
+            stack.path, stack.top.data, extra_data={"stack": stack}
+        ):
+            if (
+                _output_builder_type == "*"
+                or output_builder_type == _output_builder_type
+            ):
+                return method(data, stack=stack)

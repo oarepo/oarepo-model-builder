@@ -36,15 +36,11 @@ class JSONPaths:
         if path not in self.path_to_index:
             self.path_to_index[path] = len(self.path_to_index)
             self.paths.append([])
-            self.path_regex_list.append(path_to_regex(path))
+            self.path_regex_list.append(re.compile('^' + path_to_regex(path) + '$'))
         path_locators = self.paths[self.path_to_index[path]]
         path_locators.append(
             JSONPathRecord(path=path, condition=condition, value=value)
         )
-
-    @cached_property
-    def path_regex(self):
-        return re.compile("|".join(f"({x})" for x in self.path_regex_list))
 
     def match(self, path=None, subtree=None, extra_data=None):
         """
@@ -54,31 +50,28 @@ class JSONPaths:
         :param subtree:     teh subtree against which to match stored conditions
         :return:            iterator of matched values
         """
-        match = self.path_regex.match(path)
-        if not match:
-            return None
-        for idx, grp in enumerate(match.groups()):
-            if grp:
-                matched = False
-                for rec in self.paths[idx]:
-                    if rec.condition:
-                        condition_result = rec.condition(
-                            PathCondition(subtree), **(extra_data or {})
-                        )
-                        if isinstance(condition_result, Iterable):
-                            condition_result = any(condition_result)
-                        if condition_result:
-                            matched = True
-                            yield rec.value
-                    else:
-                        matched = True
-                        yield rec.value
+        for idx, regex in enumerate(self.path_regex_list):
+            match = regex.match(path)
+            if not match:
+                continue
 
-                if matched:
-                    break
+            for rec in self.paths[idx]:
+                if rec.condition:
+                    condition_result = rec.condition(
+                        PathCondition(subtree), **(extra_data or {})
+                    )
+                    if isinstance(condition_result, Iterable):
+                        condition_result = any(condition_result)
+                    if condition_result:
+                        yield rec.value
+                else:
+                    yield rec.value
 
 
 def path_to_regex(path):
+    if isinstance(path, tuple):
+        return '|'.join(path_to_regex(x) for x in path)
+
     split_path = [x for x in re.split("(/)", path) if x]
 
     def fragment_to_regex(f):
