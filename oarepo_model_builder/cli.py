@@ -75,13 +75,13 @@ from oarepo_model_builder.utils.verbose import log
     default="model",
     multiple=True,
 )
-@click.argument("model_filename")
+@click.argument("model_filenames", nargs=-1, type=click.Path(exists=True), required=True)
 def run(
     output_directory,
     package,
     sets,
     configs,
-    model_filename,
+    model_filenames,
     verbosity,
     isort,
     black,
@@ -96,7 +96,7 @@ def run(
     try:
         run_internal(
             output_directory,
-            model_filename,
+            model_filenames,
             package,
             configs,
             resolve_conflicts,
@@ -122,7 +122,7 @@ def run(
 
 def run_internal(
     output_directory,
-    model_filename,
+    model_filenames,
     package,
     configs,
     resolve_conflicts,
@@ -157,9 +157,9 @@ def run_internal(
     # log intro
     log.enter(
         0,
-        "\n\n%s\n\nProcessing model %s into output directory %s",
+        "\n\n%s\n\nProcessing model(s) %s into output directory %s",
         datetime.datetime.now(),
-        model_filename,
+        model_filenames,
         output_directory,
     )
 

@@ -99,7 +99,7 @@ def load_included_models_from_entry_points():
 
 
 def load_model(
-    model_filename,
+    model_filenames,
     package=None,
     configs=(),
     black=True,
@@ -113,7 +113,7 @@ def load_model(
     if extra_included:
         included_models.update(extra_included)
     schema = ModelSchema(
-        model_filename,
+        model_filenames,
         content=model_content,
         loaders=loaders,
         included_models=included_models,

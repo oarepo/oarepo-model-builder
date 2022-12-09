@@ -11,7 +11,7 @@ def test_loading_from_string():
 
 def test_loading_from_empty_file():
     schema = ModelSchema(
-        Path(__file__).parent.joinpath("data/empty.json"), loaders={"json": json_loader}
+        [Path(__file__).parent.joinpath("data/empty.json")], loaders={"json": json_loader}
     )
     assert schema.schema == {"settings": {}}
 

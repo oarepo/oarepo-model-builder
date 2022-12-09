@@ -53,7 +53,7 @@ class ModelSchema:
 
     def __init__(
         self,
-        file_path,
+        file_paths,
         content=None,
         included_models: Dict[str, Callable] = None,
         loaders=None,
@@ -61,20 +61,26 @@ class ModelSchema:
         """
         Creates and parses model schema
 
-        :param file_path: path on the filesystem to the model schema file
+        :param file_paths: list of paths on the filesystem to the model schema files. The content of these files will be merged before the processing.
         :param content:   if set, use this content, otherwise load the file_path
         :param included_models: a dictionary of file_id to callable that returns included json.
                 The callable expects a single parameter, an instance of this schema
         """
 
-        self.file_path = file_path
+        self.file_paths = file_paths
         self.included_schemas = included_models or {}
         self.loaders = loaders
 
         if content is not None:
             self.schema = content
         else:
-            self.schema = copy.deepcopy(self._load(file_path))
+            schema = {}
+            for fp in file_paths:
+                schema = deepmerge(
+                    schema,
+                    copy.deepcopy(self._load(fp))
+                )
+            self.schema = schema
 
         self._resolve_references(self.schema, [])
 
@@ -217,7 +223,7 @@ class ModelSchema:
 
     @property
     def abs_path(self):
-        return Path(self.file_path).absolute()
+        return Path(self.file_paths[0]).absolute()
 
 
 def resolve_id(json, element_id):
