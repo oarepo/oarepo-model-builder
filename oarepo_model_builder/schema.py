@@ -1,7 +1,7 @@
 import copy
 import pathlib
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable, Dict, List, Union
 
 import munch
 import yaml
@@ -53,9 +53,10 @@ class ModelSchema:
 
     def __init__(
         self,
-        file_paths,
+        file_path,
         content=None,
         included_models: Dict[str, Callable] = None,
+        merged_models: List[Union[str, Path]] = None,
         loaders=None,
     ):
         """
@@ -67,20 +68,19 @@ class ModelSchema:
                 The callable expects a single parameter, an instance of this schema
         """
 
-        self.file_paths = file_paths
+        self.file_path = file_path
         self.included_schemas = included_models or {}
         self.loaders = loaders
 
         if content is not None:
             self.schema = content
         else:
-            schema = {}
-            for fp in file_paths:
-                schema = deepmerge(
-                    schema,
+            self.schema = copy.deepcopy(self._load(file_path))
+            for fp in (merged_models or []):
+                self.schema = deepmerge(
+                    self.schema,
                     copy.deepcopy(self._load(fp))
                 )
-            self.schema = schema
 
         self._resolve_references(self.schema, [])
 
@@ -223,7 +223,7 @@ class ModelSchema:
 
     @property
     def abs_path(self):
-        return Path(self.file_paths[0]).absolute()
+        return Path(self.file_path).absolute()
 
 
 def resolve_id(json, element_id):

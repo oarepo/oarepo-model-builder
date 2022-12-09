@@ -75,13 +75,15 @@ from oarepo_model_builder.utils.verbose import log
     default="model",
     multiple=True,
 )
-@click.argument("model_filenames", nargs=-1, type=click.Path(exists=True), required=True)
+@click.argument("model_filename", type=click.Path(exists=True), required=True)
+@click.argument("included_models", nargs=-1, type=click.Path(exists=True), required=False)
 def run(
     output_directory,
     package,
     sets,
     configs,
-    model_filenames,
+    model_filename,
+    included_models,
     verbosity,
     isort,
     black,
@@ -96,7 +98,8 @@ def run(
     try:
         run_internal(
             output_directory,
-            model_filenames,
+            model_filename,
+            included_models,
             package,
             configs,
             resolve_conflicts,
@@ -122,7 +125,8 @@ def run(
 
 def run_internal(
     output_directory,
-    model_filenames,
+    model_filename,
+    included_models,
     package,
     configs,
     resolve_conflicts,
@@ -159,12 +163,13 @@ def run_internal(
         0,
         "\n\n%s\n\nProcessing model(s) %s into output directory %s",
         datetime.datetime.now(),
-        model_filenames,
+        [model_filename, *included_models],
         output_directory,
     )
 
     # load model (and resolve includes) and optionally save it before the processing (for debugging)
-    model = load_model(model_filename, package, configs, black, isort, sets)
+    model = load_model(model_filename, package, configs, black, isort, sets, 
+                       merged_models=included_models)
     if save_model:
         with open(save_model, "w") as f:
             yaml.dump(json.loads(json.dumps(model.schema)), f)

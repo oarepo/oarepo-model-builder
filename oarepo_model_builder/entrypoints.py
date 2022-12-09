@@ -99,7 +99,7 @@ def load_included_models_from_entry_points():
 
 
 def load_model(
-    model_filenames,
+    model_filename,
     package=None,
     configs=(),
     black=True,
@@ -107,16 +107,18 @@ def load_model(
     sets=(),
     model_content=None,
     extra_included=None,
+    merged_models=None
 ):
     loaders = load_entry_points_dict("oarepo_model_builder.loaders")
     included_models = load_included_models_from_entry_points()
     if extra_included:
         included_models.update(extra_included)
     schema = ModelSchema(
-        model_filenames,
+        model_filename,
         content=model_content,
         loaders=loaders,
         included_models=included_models,
+        merged_models=merged_models
     )
     for config in configs:
         load_config(schema, config, loaders)
