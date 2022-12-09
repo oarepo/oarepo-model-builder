@@ -6,12 +6,8 @@ from typing import Dict, List, Type, Union
 
 import yaml
 
-from .builders import (
-    ModelBuilderStack,
-    OutputBuilder,
-    OutputBuilderComponent,
-    ReplaceElement,
-)
+from .builders import (ModelBuilderStack, OutputBuilder,
+                       OutputBuilderComponent, ReplaceElement)
 from .fs import AbstractFileSystem, FileSystem
 from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
@@ -26,27 +22,27 @@ class ModelBuilder:
     Processes a model file and generates/updates sources for the model
     """
 
-    model_preprocessor_classes: List[type(ModelPreprocessor)]
+    model_preprocessor_classes: List[Type[ModelPreprocessor]]
     """
     Model preprocessor classes that are called after schema is loaded and before it is processed
     """
 
-    output_classes: List[type(OutputBase)]
+    output_classes: List[Type[OutputBase]]
     """
     Mapping between output type and its handler class
     """
 
-    filtered_output_classes: Dict[str, type(OutputBase)]
+    filtered_output_classes: Dict[str, Type[OutputBase]]
     """
     Filtered output classes by settings.plugins.disabled|enabled
     """
 
-    output_builder_classes: List[type(OutputBuilder)]
+    output_builder_classes: List[Type[OutputBuilder]]
     """
     A list of extension classes to be used in build. 
     """
 
-    property_preprocessor_classes: List[type(PropertyPreprocessor)]
+    property_preprocessor_classes: List[Type[PropertyPreprocessor]]
     """
     Processor classes (called before and after file builder is called)
     """
@@ -73,15 +69,27 @@ class ModelBuilder:
 
     filesystem: AbstractFileSystem
 
+    overwrite: bool
+    """
+    If true, overwrite already existing files. If false, perform merge
+    """
+
+    conflict_resolver: ConflictResolver
+    """
+    Resolver for conflicts
+    """
+
     def __init__(
         self,
-        outputs: List[type(OutputBase)] = (),
-        output_builders: List[type(OutputBuilder)] = (),
-        property_preprocessors: List[type(PropertyPreprocessor)] = (),
-        model_preprocessors: List[type(ModelPreprocessor)] = (),
-        output_builder_components: Dict[str, List[type(OutputBuilderComponent)]] = None,
+        outputs: List[Type[OutputBase]] = (),
+        output_builders: List[Type[OutputBuilder]] = (),
+        property_preprocessors: List[Type[PropertyPreprocessor]] = (),
+        model_preprocessors: List[Type[ModelPreprocessor]] = (),
+        output_builder_components: Dict[str, List[Type[OutputBuilderComponent]]] = None,
         included_validation_schemas=None,
         filesystem=FileSystem(),
+        conflict_resolver: ConflictResolver = None,
+        overwrite=False,
     ):
         """
         Initializes the builder
@@ -108,6 +116,8 @@ class ModelBuilder:
         self.filesystem = filesystem
         self.included_validation_schemas = included_validation_schemas or []
         self.skip_schema_validation = False  # set to True in some tests
+        self.conflict_resolver = conflict_resolver
+        self.overwrite = overwrite
 
     def get_output(self, output_type: str, path: Union[str, Path]):
         """
@@ -140,8 +150,6 @@ class ModelBuilder:
         self,
         model: ModelSchema,
         output_dir: Union[str, Path],
-        resolver: ConflictResolver = None,
-        overwrite = False
     ):
         """
         compile the schema to output directory
@@ -150,20 +158,19 @@ class ModelBuilder:
         :param output_dir:  output directory where to put generated files
         :return:            the outputs (self.outputs)
         """
-        if overwrite:
-            if not hasattr(self.filesystem, 'overwrite'):
+        if self.overwrite:
+            if not hasattr(self.filesystem, "overwrite"):
                 raise AttributeError(
-                    f'Filesystem of type {type(self.filesystem)} does not support overwrite')
+                    f"Filesystem of type {type(self.filesystem)} does not support overwrite"
+                )
             self.filesystem.overwrite = True
 
-        self.conflict_resolver = resolver
         self.set_schema(model)
         self.filtered_output_classes = {
             o.TYPE: o for o in self._filter_classes(self.output_classes, "output")
         }
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
-        self.overwrite = overwrite
 
         if not self.skip_schema_validation:
             validate_model(model, self.included_validation_schemas)

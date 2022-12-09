@@ -1,5 +1,5 @@
-from .python import PythonBuilder
 from ..outputs.python import PythonOutput
+from .python import PythonBuilder
 
 
 class SetupPyBuilder(PythonBuilder):

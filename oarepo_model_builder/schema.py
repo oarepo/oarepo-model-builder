@@ -4,13 +4,13 @@ from pathlib import Path
 from typing import Callable, Dict
 
 import munch
+import yaml
 from jsonpointer import resolve_pointer
 from yaml import SafeDumper
 
 from .exceptions import IncludedFileNotFoundException
 from .utils.deepmerge import deepmerge
 from .utils.hyphen_munch import HyphenMunch
-import yaml
 
 
 class Key(str):

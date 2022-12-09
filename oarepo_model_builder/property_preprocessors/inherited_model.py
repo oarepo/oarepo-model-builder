@@ -1,5 +1,6 @@
 from oarepo_model_builder.builders.inherited_model import InheritedModelBuilder
-from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
+from oarepo_model_builder.property_preprocessors import (PropertyPreprocessor,
+                                                         process)
 from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement
 from oarepo_model_builder.stack.stack import RemoveElement
 

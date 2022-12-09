@@ -36,7 +36,7 @@ class JSONPaths:
         if path not in self.path_to_index:
             self.path_to_index[path] = len(self.path_to_index)
             self.paths.append([])
-            self.path_regex_list.append(re.compile('^' + path_to_regex(path) + '$'))
+            self.path_regex_list.append(re.compile("^" + path_to_regex(path) + "$"))
         path_locators = self.paths[self.path_to_index[path]]
         path_locators.append(
             JSONPathRecord(path=path, condition=condition, value=value)
@@ -70,7 +70,7 @@ class JSONPaths:
 
 def path_to_regex(path):
     if isinstance(path, tuple):
-        return '|'.join(path_to_regex(x) for x in path)
+        return "|".join(path_to_regex(x) for x in path)
 
     split_path = [x for x in re.split("(/)", path) if x]
 

@@ -1,30 +1,30 @@
+import importlib.resources
 import sys
 from functools import reduce
 from importlib import import_module
 from pathlib import Path
 
 import importlib_metadata
-import importlib.resources
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.schema import ModelSchema, remove_star_keys
 from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
-def create_builder_from_entrypoints(**kwargs):
-    output_classes = load_entry_points_list("oarepo_model_builder.outputs")
-    builder_classes = load_entry_points_list("oarepo_model_builder.builders")
+def create_builder_from_entrypoints(profile="model", **kwargs):
+    output_classes = load_entry_points_list("oarepo_model_builder.outputs", profile)
+    builder_classes = load_entry_points_list("oarepo_model_builder.builders", profile)
     preprocess_classes = load_entry_points_list(
-        "oarepo_model_builder.property_preprocessors"
+        "oarepo_model_builder.property_preprocessors", profile
     )
     model_preprocessor_classes = load_entry_points_list(
-        "oarepo_model_builder.model_preprocessors"
+        "oarepo_model_builder.model_preprocessors", profile
     )
 
     builder_types = [x.TYPE for x in builder_classes]
     output_builder_components = {
         builder_type: load_entry_points_list(
-            f"oarepo_model_builder.builder_components.{builder_type}"
+            f"oarepo_model_builder.builder_components.{builder_type}", profile
         )
         for builder_type in builder_types
     }
@@ -46,7 +46,7 @@ def load_entry_points_dict(name):
     }
 
 
-def load_entry_points_list(name):
+def load_entry_points_list(name, profile):
     ret = []
     loaded = {}
     for ep in importlib_metadata.entry_points().select(group=name):
@@ -56,8 +56,13 @@ def load_entry_points_list(name):
                 f"Previous value {loaded[ep.name]}, new ignored value {ep.value}"
             )
             continue
-        ret.append((ep.name, ep.load()))
-        loaded[ep.name] = ep.value
+        loaded_entry_point = ep.load()
+        if (
+            not getattr(loaded_entry_point, "profiles", [])
+            or profile in loaded_entry_point.profiles
+        ):
+            ret.append((ep.name, loaded_entry_point))
+            loaded[ep.name] = ep.value
     ret.sort()
     return [x[1] for x in ret]
 
