@@ -12,7 +12,8 @@ from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
 def create_builder_from_entrypoints(profile="model", **kwargs):
-    output_classes = load_entry_points_list("oarepo_model_builder.outputs", profile)
+    # output classes do not depend on profile
+    output_classes = load_entry_points_list("oarepo_model_builder.outputs", None)
     builder_classes = load_entry_points_list("oarepo_model_builder.builders", profile)
     preprocess_classes = load_entry_points_list(
         "oarepo_model_builder.property_preprocessors", profile
@@ -49,7 +50,8 @@ def load_entry_points_dict(name):
 def load_entry_points_list(name, profile):
     ret = []
     loaded = {}
-    for ep in importlib_metadata.entry_points().select(group=name):
+    group_name = f'{name}.{profile}' if profile else name
+    for ep in importlib_metadata.entry_points().select(group=group_name):
         if ep.name in loaded:
             print(
                 f"WARNING: Entry point {ep.name} has already been registered to group {name}. "
@@ -57,12 +59,8 @@ def load_entry_points_list(name, profile):
             )
             continue
         loaded_entry_point = ep.load()
-        if (
-            not getattr(loaded_entry_point, "profiles", [])
-            or profile in loaded_entry_point.profiles
-        ):
-            ret.append((ep.name, loaded_entry_point))
-            loaded[ep.name] = ep.value
+        ret.append((ep.name, loaded_entry_point))
+        loaded[ep.name] = ep.value
     ret.sort()
     return [x[1] for x in ret]
 

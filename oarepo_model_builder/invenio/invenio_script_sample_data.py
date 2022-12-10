@@ -74,7 +74,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
         )
 
         self.sample_data_providers = load_entry_points_list(
-            "oarepo_model_builder.sample_data_providers", profile="model"
+            "oarepo_model_builder.sample_data_providers", profile=None
         ) + [faker_provider]
 
     @process("/model/**", condition=lambda current, stack: stack.schema_valid)

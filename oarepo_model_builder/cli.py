@@ -136,7 +136,7 @@ def run_internal(
     verbosity,
     save_model,
     overwrite,
-    profile,
+    profiles,
 ):
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
@@ -184,7 +184,7 @@ def run_internal(
         resolver = AutomaticResolver(resolve_conflicts)
 
     # for each profile on the command line, render it
-    profiles_to_render = [y.strip() for x in profile for y in x.split(",")]
+    profiles_to_render = [y.strip() for x in profiles for y in x.split(",")]
     for profile in profiles_to_render:
         # load the builder
         builder = create_builder_from_entrypoints(
@@ -192,11 +192,14 @@ def run_internal(
         )
 
         # load profile handler
-        profile_handler = load_entry_points_dict("oarepo_model_builder.profiles")[
-            profile
-        ]
+        try:
+            profile_handler = load_entry_points_dict("oarepo_model_builder.profiles")[
+                profile
+            ]
+        except KeyError:
+            raise AttributeError(f'No profile handler for {profile} registered')
 
-        # and call it
+         # and call it
         profile_handler.build(model, output_directory, builder)
     log.leave("Done")
     print(f"Log saved to {Path(output_directory) / 'installation.log'}")
