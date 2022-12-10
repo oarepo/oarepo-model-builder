@@ -6,12 +6,9 @@ from jinja2 import Environment, FunctionLoader, pass_context
 from oarepo_model_builder.outputs import OutputBase
 from oarepo_model_builder.templates import templates
 from oarepo_model_builder.utils.cst import PythonContext, merge
-from oarepo_model_builder.utils.jinja import (
-    base_name,
-    in_different_package,
-    package_name,
-    with_defined_prefix,
-)
+from oarepo_model_builder.utils.jinja import (base_name, in_different_package,
+                                              package_name,
+                                              with_defined_prefix)
 from oarepo_model_builder.utils.verbose import log
 
 

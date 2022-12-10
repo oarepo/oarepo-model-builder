@@ -20,11 +20,11 @@ class FileSystem(AbstractFileSystem):
         self.opened_files = set()
         self.overwrite = False
 
-    def open(self, path, mode='r', **kwargs):
+    def open(self, path, mode="r", **kwargs):
         if self.overwrite:
-            if 'r' in mode and path not in self.opened_files:
+            if "r" in mode and path not in self.opened_files:
                 raise FileNotFoundError(f"File {path} not found")
-            if 'w' or 'a' in mode:
+            if "w" or "a" in mode:
                 self.opened_files.add(path)
         return open(path, mode=mode, **kwargs)
 

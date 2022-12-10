@@ -2,9 +2,8 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
+from oarepo_model_builder.model_preprocessors.default_values import \
+    DefaultValuesModelPreprocessor
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
@@ -63,7 +62,9 @@ def build_model(model):
     )
     data = json5.load(
         builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+            os.path.join(
+                "test", "records", "mappings", "os-v2", "test", "test-1.0.0.json"
+            )
         )
     )
     return data
@@ -102,7 +103,9 @@ def test_mapping_preprocessor():
 
     data = json5.load(
         builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+            os.path.join(
+                "test", "records", "mappings", "os-v2", "test", "test-1.0.0.json"
+            )
         )
     )
 

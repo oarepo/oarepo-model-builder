@@ -9,11 +9,11 @@ from pathlib import Path
 import click
 import yaml
 
-from oarepo_model_builder.conflict_resolvers import (
-    AutomaticResolver,
-    InteractiveResolver,
-)
-from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
+from oarepo_model_builder.conflict_resolvers import (AutomaticResolver,
+                                                     InteractiveResolver)
+from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
+                                              load_entry_points_dict,
+                                              load_model)
 from oarepo_model_builder.utils.verbose import log
 
 
@@ -21,13 +21,13 @@ from oarepo_model_builder.utils.verbose import log
 @click.option(
     "--output-directory",
     help="Output directory where the generated files will be placed. "
-         'Defaults to "."',
+    'Defaults to "."',
 )
 @click.option(
     "--package",
     help="Package into which the model is generated. "
-         "If not passed, the name of the current directory, "
-         "converted into python package name, is used.",
+    "If not passed, the name of the current directory, "
+    "converted into python package name, is used.",
 )
 @click.option(
     "--set",
@@ -50,10 +50,10 @@ from oarepo_model_builder.utils.verbose import log
     "--config",
     "configs",
     help="Load a config file and replace parts of the model with it. "
-         "The config file can be a json, yaml or a python file. "
-         "If it is a python file, it is evaluated with the current "
-         'model stored in the "oarepo_model" global variable and '
-         "after the evaluation all globals are set on the model.",
+    "The config file can be a json, yaml or a python file. "
+    "If it is a python file, it is evaluated with the current "
+    'model stored in the "oarepo_model" global variable and '
+    "after the evaluation all globals are set on the model.",
     multiple=True,
 )
 @click.option(
@@ -66,21 +66,33 @@ from oarepo_model_builder.utils.verbose import log
     "--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"])
 )
 @click.option(
-    "--overwrite", help="Do not merge with content in already existing files, overwrite them"
+    "--overwrite",
+    help="Do not merge with content in already existing files, overwrite them",
 )
-@click.argument("model_filename")
+@click.option(
+    "--profile",
+    help="Run the builder with this profile",
+    default=["model"],
+    multiple=True,
+)
+@click.argument("model_filename", type=click.Path(exists=True), required=True)
+@click.argument(
+    "included_models", nargs=-1, type=click.Path(exists=True), required=False
+)
 def run(
-        output_directory,
-        package,
-        sets,
-        configs,
-        model_filename,
-        verbosity,
-        isort,
-        black,
-        resolve_conflicts,
-        save_model,
-        overwrite
+    output_directory,
+    package,
+    sets,
+    configs,
+    model_filename,
+    included_models,
+    verbosity,
+    isort,
+    black,
+    resolve_conflicts,
+    save_model,
+    overwrite,
+    profile,
 ):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
@@ -89,6 +101,7 @@ def run(
         run_internal(
             output_directory,
             model_filename,
+            included_models,
             package,
             configs,
             resolve_conflicts,
@@ -97,7 +110,8 @@ def run(
             isort,
             verbosity,
             save_model,
-            overwrite
+            overwrite,
+            profile,
         )
     except Exception as e:
         if verbosity >= 2:
@@ -112,24 +126,26 @@ def run(
 
 
 def run_internal(
-        output_directory,
-        model_filename,
-        package,
-        configs,
-        resolve_conflicts,
-        sets,
-        black,
-        isort,
-        verbosity,
-        save_model,
-        overwrite
+    output_directory,
+    model_filename,
+    included_models,
+    package,
+    configs,
+    resolve_conflicts,
+    sets,
+    black,
+    isort,
+    verbosity,
+    save_model,
+    overwrite,
+    profiles,
 ):
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
     os.environ["PATH"] = (
-            str(Path(sys.argv[0]).parent.absolute())
-            + os.pathsep
-            + os.environ.get("PATH", "")
+        str(Path(sys.argv[0]).parent.absolute())
+        + os.pathsep
+        + os.environ.get("PATH", "")
     )
     if not output_directory:
         output_directory = os.getcwd()
@@ -137,28 +153,63 @@ def run_internal(
     # so that warnings only will be emitted. With each verbosity level
     # it will decrease
     logging.basicConfig(level=logging.INFO - verbosity, format="")
+
+    # create the output directory and set the installation log file
     Path(output_directory).mkdir(parents=True, exist_ok=True)
     handler = logging.FileHandler(Path(output_directory) / "installation.log", "a")
     handler.setLevel(logging.INFO)
     logging.root.addHandler(handler)
+
+    # log intro
     log.enter(
         0,
-        "\n\n%s\n\nProcessing model %s into output directory %s",
+        "\n\n%s\n\nProcessing model(s) %s into output directory %s",
         datetime.datetime.now(),
-        model_filename,
+        [model_filename, *included_models],
         output_directory,
     )
-    model = load_model(model_filename, package, configs, black, isort, sets)
+
+    # load model (and resolve includes) and optionally save it before the processing (for debugging)
+    model = load_model(
+        model_filename,
+        package,
+        configs,
+        black,
+        isort,
+        sets,
+        merged_models=included_models,
+    )
     if save_model:
         with open(save_model, "w") as f:
             yaml.dump(json.loads(json.dumps(model.schema)), f)
+
+    # set the output directory on the schema
     model.schema["output-directory"] = output_directory
+
+    # create conflict resolver
     if not resolve_conflicts or resolve_conflicts == "debug":
         resolver = InteractiveResolver(resolve_conflicts == "debug")
     else:
         resolver = AutomaticResolver(resolve_conflicts)
-    builder = create_builder_from_entrypoints()
-    builder.build(model, output_directory, resolver, overwrite)
+
+    # for each profile on the command line, render it
+    profiles_to_render = [y.strip() for x in profiles for y in x.split(",")]
+    for profile in profiles_to_render:
+        # load the builder
+        builder = create_builder_from_entrypoints(
+            profile=profile, conflict_resolver=resolver, overwrite=overwrite
+        )
+
+        # load profile handler
+        try:
+            profile_handler = load_entry_points_dict("oarepo_model_builder.profiles")[
+                profile
+            ]()
+        except KeyError:
+            raise AttributeError(f"No profile handler for {profile} registered")
+
+        # and call it
+        profile_handler.build(model, output_directory, builder)
     log.leave("Done")
     print(f"Log saved to {Path(output_directory) / 'installation.log'}")
 

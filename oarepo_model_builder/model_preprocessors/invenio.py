@@ -249,12 +249,12 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             schema_class_base_classes = settings.python.get(
                 "record_schema_metadata_bases", []
             ) + [
-                                            "ma.Schema"  # alias will be recognized automatically
-                                        ]
+                "ma.Schema"  # alias will be recognized automatically
+            ]
 
             if (
-                    "properties" in schema.schema.model
-                    and "metadata" in schema.schema.model.properties
+                "properties" in schema.schema.model
+                and "metadata" in schema.schema.model.properties
             ):
                 deepmerge(
                     schema.schema.model.properties.metadata.setdefault(
@@ -267,16 +267,16 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                     },
                 )
             if (
-                    "oarepo:marshmallow" in schema.schema
-                    and "base-schema" in schema.schema["oarepo:marshmallow"]
+                "oarepo:marshmallow" in schema.schema
+                and "base-schema" in schema.schema["oarepo:marshmallow"]
             ):
                 schema_class_base_classes = settings.python.get(
                     "record_schema_metadata_bases", []
                 ) + [
-                                                schema.schema["oarepo:marshmallow"][
-                                                    "base_schema"
-                                                ]  # alias will be recognized automatically
-                                            ]
+                    schema.schema["oarepo:marshmallow"][
+                        "base_schema"
+                    ]  # alias will be recognized automatically
+                ]
 
             deepmerge(
                 schema.schema.model.setdefault("oarepo:marshmallow", {}),

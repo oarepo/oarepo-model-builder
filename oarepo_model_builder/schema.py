@@ -1,16 +1,16 @@
 import copy
 import pathlib
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable, Dict, List, Union
 
 import munch
+import yaml
 from jsonpointer import resolve_pointer
 from yaml import SafeDumper
 
 from .exceptions import IncludedFileNotFoundException
 from .utils.deepmerge import deepmerge
 from .utils.hyphen_munch import HyphenMunch
-import yaml
 
 
 class Key(str):
@@ -56,12 +56,13 @@ class ModelSchema:
         file_path,
         content=None,
         included_models: Dict[str, Callable] = None,
+        merged_models: List[Union[str, Path]] = None,
         loaders=None,
     ):
         """
         Creates and parses model schema
 
-        :param file_path: path on the filesystem to the model schema file
+        :param file_paths: list of paths on the filesystem to the model schema files. The content of these files will be merged before the processing.
         :param content:   if set, use this content, otherwise load the file_path
         :param included_models: a dictionary of file_id to callable that returns included json.
                 The callable expects a single parameter, an instance of this schema
@@ -75,6 +76,8 @@ class ModelSchema:
             self.schema = content
         else:
             self.schema = copy.deepcopy(self._load(file_path))
+            for fp in merged_models or []:
+                self.schema = deepmerge(self.schema, copy.deepcopy(self._load(fp)))
 
         self._resolve_references(self.schema, [])
 

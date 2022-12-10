@@ -1,5 +1,5 @@
-from .invenio_base import InvenioBaseClassPythonBuilder
 from ..builders import process
+from .invenio_base import InvenioBaseClassPythonBuilder
 
 
 class InvenioRecordBuilder(InvenioBaseClassPythonBuilder):
@@ -22,5 +22,5 @@ class InvenioRecordBuilder(InvenioBaseClassPythonBuilder):
         return super().process_template(
             python_path,
             template,
-            **{**extra_kwargs, "invenio_relations": self.relations}
+            **{**extra_kwargs, "invenio_relations": self.relations},
         )

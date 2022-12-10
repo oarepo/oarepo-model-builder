@@ -4,20 +4,17 @@ import re
 import pytest
 
 from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import (
-    InvenioRecordSchemaBuilder,
-)
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.opensearch import (
-    OpensearchModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
+from oarepo_model_builder.invenio.invenio_record_schema import \
+    InvenioRecordSchemaBuilder
+from oarepo_model_builder.model_preprocessors.default_values import \
+    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.invenio import \
+    InvenioModelPreprocessor
+from oarepo_model_builder.model_preprocessors.opensearch import \
+    OpensearchModelPreprocessor
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.text_keyword import (
-    TextKeywordPreprocessor,
-)
+from oarepo_model_builder.property_preprocessors.text_keyword import \
+    TextKeywordPreprocessor
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 

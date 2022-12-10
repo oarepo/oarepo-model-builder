@@ -1,30 +1,31 @@
+import importlib.resources
 import sys
 from functools import reduce
 from importlib import import_module
 from pathlib import Path
 
 import importlib_metadata
-import importlib.resources
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.schema import ModelSchema, remove_star_keys
 from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
-def create_builder_from_entrypoints(**kwargs):
-    output_classes = load_entry_points_list("oarepo_model_builder.outputs")
-    builder_classes = load_entry_points_list("oarepo_model_builder.builders")
+def create_builder_from_entrypoints(profile="model", **kwargs):
+    # output classes do not depend on profile
+    output_classes = load_entry_points_list("oarepo_model_builder.outputs", None)
+    builder_classes = load_entry_points_list("oarepo_model_builder.builders", profile)
     preprocess_classes = load_entry_points_list(
-        "oarepo_model_builder.property_preprocessors"
+        "oarepo_model_builder.property_preprocessors", profile
     )
     model_preprocessor_classes = load_entry_points_list(
-        "oarepo_model_builder.model_preprocessors"
+        "oarepo_model_builder.model_preprocessors", profile
     )
 
     builder_types = [x.TYPE for x in builder_classes]
     output_builder_components = {
         builder_type: load_entry_points_list(
-            f"oarepo_model_builder.builder_components.{builder_type}"
+            f"oarepo_model_builder.builder_components.{builder_type}", profile
         )
         for builder_type in builder_types
     }
@@ -46,17 +47,19 @@ def load_entry_points_dict(name):
     }
 
 
-def load_entry_points_list(name):
+def load_entry_points_list(name, profile):
     ret = []
     loaded = {}
-    for ep in importlib_metadata.entry_points().select(group=name):
+    group_name = f"{name}.{profile}" if profile else name
+    for ep in importlib_metadata.entry_points().select(group=group_name):
         if ep.name in loaded:
             print(
                 f"WARNING: Entry point {ep.name} has already been registered to group {name}. "
                 f"Previous value {loaded[ep.name]}, new ignored value {ep.value}"
             )
             continue
-        ret.append((ep.name, ep.load()))
+        loaded_entry_point = ep.load()
+        ret.append((ep.name, loaded_entry_point))
         loaded[ep.name] = ep.value
     ret.sort()
     return [x[1] for x in ret]
@@ -102,6 +105,7 @@ def load_model(
     sets=(),
     model_content=None,
     extra_included=None,
+    merged_models=None,
 ):
     loaders = load_entry_points_dict("oarepo_model_builder.loaders")
     included_models = load_included_models_from_entry_points()
@@ -112,6 +116,7 @@ def load_model(
         content=model_content,
         loaders=loaders,
         included_models=included_models,
+        merged_models=merged_models,
     )
     for config in configs:
         load_config(schema, config, loaders)

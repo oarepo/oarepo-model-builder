@@ -1,7 +1,7 @@
-from oarepo_model_builder.invenio.invenio_record_schema import (
-    InvenioRecordSchemaBuilder,
-)
-from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
+from oarepo_model_builder.invenio.invenio_record_schema import \
+    InvenioRecordSchemaBuilder
+from oarepo_model_builder.property_preprocessors import (PropertyPreprocessor,
+                                                         process)
 from oarepo_model_builder.stack import ModelBuilderStack
 from oarepo_model_builder.utils.deepmerge import deepmerge
 

@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from . import process, OutputBuilder
+from ..outputs.cfg import CFGOutput
+from . import OutputBuilder, process
 from .json_base import JSONBaseBuilder
 from .utils import ensure_parent_modules
-from ..outputs.cfg import CFGOutput
 
 
 class ModelSaverBuilder(JSONBaseBuilder):

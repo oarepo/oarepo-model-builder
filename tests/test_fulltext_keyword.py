@@ -6,18 +6,15 @@ import pytest
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.opensearch import (
-    OpensearchModelPreprocessor,
-)
+from oarepo_model_builder.model_preprocessors.default_values import \
+    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.opensearch import \
+    OpensearchModelPreprocessor
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.text_keyword import (
-    TextKeywordPreprocessor,
-)
+from oarepo_model_builder.property_preprocessors.text_keyword import \
+    TextKeywordPreprocessor
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
@@ -114,7 +111,9 @@ def test_fulltext_keyword(fulltext_builder):
 def load_generated_mapping(fulltext_builder):
     return json5.load(
         fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+            os.path.join(
+                "test", "records", "mappings", "os-v2", "test", "test-1.0.0.json"
+            )
         )
     )
 

@@ -1,4 +1,5 @@
-from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
+from oarepo_model_builder.property_preprocessors import (PropertyPreprocessor,
+                                                         process)
 from oarepo_model_builder.stack import ModelBuilderStack
 
 
