@@ -72,7 +72,7 @@ from oarepo_model_builder.utils.verbose import log
 @click.option(
     "--profile",
     help="Run the builder with this profile",
-    default="model",
+    default=["model"],
     multiple=True,
 )
 @click.argument("model_filename", type=click.Path(exists=True), required=True)
