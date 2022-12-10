@@ -76,7 +76,9 @@ from oarepo_model_builder.utils.verbose import log
     multiple=True,
 )
 @click.argument("model_filename", type=click.Path(exists=True), required=True)
-@click.argument("included_models", nargs=-1, type=click.Path(exists=True), required=False)
+@click.argument(
+    "included_models", nargs=-1, type=click.Path(exists=True), required=False
+)
 def run(
     output_directory,
     package,
@@ -168,8 +170,15 @@ def run_internal(
     )
 
     # load model (and resolve includes) and optionally save it before the processing (for debugging)
-    model = load_model(model_filename, package, configs, black, isort, sets, 
-                       merged_models=included_models)
+    model = load_model(
+        model_filename,
+        package,
+        configs,
+        black,
+        isort,
+        sets,
+        merged_models=included_models,
+    )
     if save_model:
         with open(save_model, "w") as f:
             yaml.dump(json.loads(json.dumps(model.schema)), f)
@@ -195,11 +204,11 @@ def run_internal(
         try:
             profile_handler = load_entry_points_dict("oarepo_model_builder.profiles")[
                 profile
-            ]
+            ]()
         except KeyError:
-            raise AttributeError(f'No profile handler for {profile} registered')
+            raise AttributeError(f"No profile handler for {profile} registered")
 
-         # and call it
+        # and call it
         profile_handler.build(model, output_directory, builder)
     log.leave("Done")
     print(f"Log saved to {Path(output_directory) / 'installation.log'}")

@@ -76,11 +76,8 @@ class ModelSchema:
             self.schema = content
         else:
             self.schema = copy.deepcopy(self._load(file_path))
-            for fp in (merged_models or []):
-                self.schema = deepmerge(
-                    self.schema,
-                    copy.deepcopy(self._load(fp))
-                )
+            for fp in merged_models or []:
+                self.schema = deepmerge(self.schema, copy.deepcopy(self._load(fp)))
 
         self._resolve_references(self.schema, [])
 

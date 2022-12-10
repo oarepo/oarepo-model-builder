@@ -50,7 +50,7 @@ def load_entry_points_dict(name):
 def load_entry_points_list(name, profile):
     ret = []
     loaded = {}
-    group_name = f'{name}.{profile}' if profile else name
+    group_name = f"{name}.{profile}" if profile else name
     for ep in importlib_metadata.entry_points().select(group=group_name):
         if ep.name in loaded:
             print(
@@ -105,7 +105,7 @@ def load_model(
     sets=(),
     model_content=None,
     extra_included=None,
-    merged_models=None
+    merged_models=None,
 ):
     loaders = load_entry_points_dict("oarepo_model_builder.loaders")
     included_models = load_included_models_from_entry_points()
@@ -116,7 +116,7 @@ def load_model(
         content=model_content,
         loaders=loaders,
         included_models=included_models,
-        merged_models=merged_models
+        merged_models=merged_models,
     )
     for config in configs:
         load_config(schema, config, loaders)
