@@ -3,7 +3,6 @@ from invenio_records_resources.records.systemfields import IndexField,
 
 from invenio_records_resources.records.systemfields.pid import PIDField, PIDFieldContext
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
-from invenio_records_resources.records.api import Record as InvenioBaseRecord
 
 {% for b in python.record_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
@@ -20,7 +19,7 @@ import {{ imp }}
 from invenio_records.dumpers.relations import RelationDumperExt
 {% endif %}
 
-class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b|base_name }}, {% endfor %}InvenioBaseRecord):
+class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
     model_cls = {{ python.record_metadata_class|base_name }}
     schema = ConstantField("$schema", "{{ settings.schema_server }}{{ settings.schema_name }}")
     index = IndexField("{{ settings.index_name }}")

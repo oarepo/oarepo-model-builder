@@ -6,7 +6,17 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
 def last_item(x):
     return x.rsplit(".", maxsplit=1)[-1]
 
+# todo nefunguje zakladni config-key, novy bases, url prefix, permission class, options komponenty, create-blueprint-from-app, flask-extension
+# stary todo - zmena starych permissions, smazani filesearchoptions importu (nebo co s nim u filu) a recordlinku v service configu, schema!
+# todo - debugovat indexer - problem - predek Fileservice nema indexer jako atribut, narozdil od RecordService, podobne search u filu
+# todo - addons ve views - upravit u requestu
+# todo - mapovani mezi url v testu a Resource a FileResource (asi potreba mapovat <pid_value> na {_id})
+# todo - dodelat to rozdeleni base class a zbytku model preprocessoru
 
+# todo schema - jak dat novy vlastnosti starym recordum??
+
+
+# todo now - files field nefunguje, indexer a search u filu nefunguje, schema nefunguje
 class InvenioModelPreprocessor(ModelPreprocessor):
     TYPE = "invenio"
 
@@ -25,7 +35,18 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             },
         )
 
+
+
         record_prefix = settings.python.record_prefix
+
+        extension_suffix = snake_case(record_prefix)
+        extension_suffix_upper = extension_suffix.upper()
+        self.set(settings.python, "extension-suffix", lambda: extension_suffix)
+        self.set(settings.python, "profile-package", lambda: "records")
+
+
+        #self.set(settings.python, "extension-suffix", lambda: f"_{record_prefix}")
+
         self.set(
             settings.python,
             "record-prefix-snake",
@@ -37,19 +58,19 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             settings.python,
             "record-resources-package",
-            lambda: f"{settings.package}.resources",
+            lambda: f"{settings.package}.resources.{settings.python.profile_package}",
         )
 
         self.set(
             settings.python,
             "record-services-package",
-            lambda: f"{settings.package}.services",
+            lambda: f"{settings.package}.services.{settings.python.profile_package}",
         )
 
         self.set(
             settings.python,
             "record-records-package",
-            lambda: f"{settings.package}.records",
+            lambda: f"{settings.package}.{settings.python.profile_package}",
         )
 
         # config
@@ -61,25 +82,26 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "config-dummy-class",
             lambda: f"{settings.package}.config.DummyClass",
         )
+        # todo "config prefix"
         self.set(
             settings.python,
             "config-resource-config-key",
-            lambda: f"{settings.package_base_upper}_RESOURCE_CONFIG",
+            lambda: f"{settings.package_base_upper}_RESOURCE_CONFIG_{extension_suffix_upper}",
         )
         self.set(
             settings.python,
             "config-resource-class-key",
-            lambda: f"{settings.package_base_upper}_RESOURCE_CLASS",
+            lambda: f"{settings.package_base_upper}_RESOURCE_CLASS_{extension_suffix_upper}",
         )
         self.set(
             settings.python,
             "config-service-config-key",
-            lambda: f"{settings.package_base_upper}_SERVICE_CONFIG",
+            lambda: f"{settings.package_base_upper}_SERVICE_CONFIG_{extension_suffix_upper}",
         )
         self.set(
             settings.python,
             "config-service-class-key",
-            lambda: f"{settings.package_base_upper}_SERVICE_CLASS",
+            lambda: f"{settings.package_base_upper}_SERVICE_CLASS_{extension_suffix_upper}",
         )
         self.set(
             settings.python,
@@ -94,7 +116,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{settings.package}.ext.{record_prefix}Ext",
         )
         self.set(
-            settings.python, "flask-extension-name", lambda: f"{settings.package_base}"
+            settings.python, "flask-extension-name", lambda: extension_suffix
         )
 
         # cli
@@ -172,7 +194,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "record-service-config-class",
             lambda: f"{settings.python.record_services_package}.config.{record_prefix}ServiceConfig",
         )
-        self.set(settings.python, "record-service-config-bases", lambda: [])
+
         settings.python.setdefault("record-service-config-generate-links", True)
         #   - schema
         self.set(
@@ -223,7 +245,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             settings.python,
             "create-blueprint-from-app",
-            lambda: f"{settings.package}.views.create_blueprint_from_app",
+            lambda: f"{settings.package}.views.create_blueprint_from_app_{extension_suffix}",
         )
         settings.python.setdefault("invenio-config-extra-code", "")
         settings.python.setdefault("invenio-ext-extra-code", "")
@@ -301,3 +323,19 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "script-import-sample-data-cli", "scripts.import_sample_data.cli"
         )
         settings.setdefault("script-import-sample-data", "scripts/sample_data.yaml")
+
+        # todo ask what to do specifically - ie. the default here doesn't make sense with the files, there should be the most basic, ie.
+        # set_bases("record-bases", "invenio_records_resources.records.api.Record",
+
+
+        """
+        self.set(settings.python, "record-resource-config-class-bases", lambda: ["invenio_records_resources.resources.RecordResourceConfig"])
+        self.set(settings.python, "record-service-bases", lambda: ["invenio_records_resources.services.RecordService"])
+        self.set(settings.python, "record-bases", lambda: ["invenio_records_resources.records.api.Record"])
+        self.set(settings.python, "record-resource-class-bases", lambda: ["invenio_records_resources.resources.RecordResource"])
+        self.set(settings.python, "record-service-config-bases", lambda: ["invenio_records_resources.services.RecordServiceConfig"])
+        """
+        self.set(settings.python, "service-id", lambda: settings.python.flask_extension_name)
+
+
+
