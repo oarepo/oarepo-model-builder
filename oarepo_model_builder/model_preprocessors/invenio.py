@@ -204,7 +204,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{settings.python.record_records_package}.dumper.{record_prefix}Dumper",
         )
         #   - search
-        if not ("record-search-options-class" in settings.python and settings.python.record_search_options_class is None):
+        if not ("record-search-options-class" in settings.python and settings.python.record_search_options_class == ""): # files plugin requires this to be empty
             self.set(
                 settings.python,
                 "record-search-options-class",
