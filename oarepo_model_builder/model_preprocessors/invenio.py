@@ -6,17 +6,7 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
 def last_item(x):
     return x.rsplit(".", maxsplit=1)[-1]
 
-# todo nefunguje zakladni config-key, novy bases, url prefix, permission class, options komponenty, create-blueprint-from-app, flask-extension
-# stary todo - zmena starych permissions, smazani filesearchoptions importu (nebo co s nim u filu) a recordlinku v service configu, schema!
-# todo - debugovat indexer - problem - predek Fileservice nema indexer jako atribut, narozdil od RecordService, podobne search u filu
-# todo - addons ve views - upravit u requestu
-# todo - mapovani mezi url v testu a Resource a FileResource (asi potreba mapovat <pid_value> na {_id})
-# todo - dodelat to rozdeleni base class a zbytku model preprocessoru
 
-# todo schema - jak dat novy vlastnosti starym recordum??
-
-
-# todo now - files field nefunguje, indexer a search u filu nefunguje, schema nefunguje
 class InvenioModelPreprocessor(ModelPreprocessor):
     TYPE = "invenio"
 
@@ -214,11 +204,12 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{settings.python.record_records_package}.dumper.{record_prefix}Dumper",
         )
         #   - search
-        self.set(
-            settings.python,
-            "record-search-options-class",
-            lambda: f"{settings.python.record_services_package}.search.{record_prefix}SearchOptions",
-        )
+        if not ("record-search-options-class" in settings.python and settings.python.record_search_options_class is None):
+            self.set(
+                settings.python,
+                "record-search-options-class",
+                lambda: f"{settings.python.record_services_package}.search.{record_prefix}SearchOptions",
+            )
 
         #   - facets
         self.set(
@@ -323,18 +314,6 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "script-import-sample-data-cli", "scripts.import_sample_data.cli"
         )
         settings.setdefault("script-import-sample-data", "scripts/sample_data.yaml")
-
-        # todo ask what to do specifically - ie. the default here doesn't make sense with the files, there should be the most basic, ie.
-        # set_bases("record-bases", "invenio_records_resources.records.api.Record",
-
-
-        """
-        self.set(settings.python, "record-resource-config-class-bases", lambda: ["invenio_records_resources.resources.RecordResourceConfig"])
-        self.set(settings.python, "record-service-bases", lambda: ["invenio_records_resources.services.RecordService"])
-        self.set(settings.python, "record-bases", lambda: ["invenio_records_resources.records.api.Record"])
-        self.set(settings.python, "record-resource-class-bases", lambda: ["invenio_records_resources.resources.RecordResource"])
-        self.set(settings.python, "record-service-config-bases", lambda: ["invenio_records_resources.services.RecordServiceConfig"])
-        """
         self.set(settings.python, "service-id", lambda: settings.python.flask_extension_name)
 
 

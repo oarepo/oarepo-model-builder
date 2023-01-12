@@ -66,7 +66,7 @@ def test_include_invenio():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "facets.py")).read()
+    data = builder.filesystem.open(os.path.join("test", "services", "records", "facets.py")).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -158,7 +158,7 @@ def test_sort():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "search.py")).read()
+    data = builder.filesystem.open(os.path.join("test", "services", "records", "search.py")).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -228,7 +228,7 @@ def test_nested():
 
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "facets.py")).read()
+    data = builder.filesystem.open(os.path.join("test", "services", "records", "facets.py")).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -321,7 +321,7 @@ def test_search_class():
 
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "search.py")).read()
+    data = builder.filesystem.open(os.path.join("test", "services", "records", "search.py")).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",

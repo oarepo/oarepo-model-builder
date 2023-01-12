@@ -1,18 +1,17 @@
 from oarepo_model_builder.model_preprocessors import ModelPreprocessor
-from oarepo_model_builder.utils.camelcase import camel_case, snake_case
-from oarepo_model_builder.utils.deepmerge import deepmerge
+
 
 class InvenioBaseClassesModelPreprocessor(ModelPreprocessor):
     TYPE = "invenio_base_classes"
 
     def transform(self, schema, settings):
-        settings.python.setdefault("record-resource-class-bases", []).append(
-            "invenio_records_resources.resources.RecordResource")
-        settings.python.setdefault("record-resource-config-class-bases", []).append(
-            "invenio_records_resources.resources.RecordResourceConfig")
-        settings.python.setdefault("record-service-bases", []).append(
-            "invenio_records_resources.services.RecordService")
-        settings.python.setdefault("record-bases", []).append(
-            "invenio_records_resources.records.api.Record")
-        settings.python.setdefault("record-service-config-bases", []).append(
-            "invenio_records_resources.services.RecordServiceConfig")
+        self.set_default_and_append_if_not_present(settings.python, "record-resource-class-bases", [],
+                                                   "invenio_records_resources.resources.RecordResource")
+        self.set_default_and_append_if_not_present(settings.python, "record-resource-config-class-bases", [],
+                                                   "invenio_records_resources.resources.RecordResourceConfig")
+        self.set_default_and_append_if_not_present(settings.python, "record-service-bases", [],
+                                                   "invenio_records_resources.services.RecordService")
+        self.set_default_and_append_if_not_present(settings.python, "record-bases", [],
+                                                   "invenio_records_resources.records.api.Record")
+        self.set_default_and_append_if_not_present(settings.python, "record-service-config-bases", [],
+                                                   "invenio_records_resources.services.RecordServiceConfig")
