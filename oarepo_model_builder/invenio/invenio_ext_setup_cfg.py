@@ -14,13 +14,13 @@ class InvenioExtSetupCfgBuilder(OutputBuilder):
 
         output.add_entry_point(
             "invenio_base.api_apps",
-            self.settings.package,
+            self.settings.python.extension_suffix, # todo - resolve
             f"{ext_class[0]}:{ext_class[-1]}",
         )
 
         # need to add ext to apps because cli depends on it
         output.add_entry_point(
             "invenio_base.apps",
-            self.settings.package,
+            self.settings.python.extension_suffix,
             f"{ext_class[0]}:{ext_class[-1]}",
         )

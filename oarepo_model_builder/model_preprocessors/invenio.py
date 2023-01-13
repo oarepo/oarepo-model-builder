@@ -25,7 +25,18 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             },
         )
 
+
+
         record_prefix = settings.python.record_prefix
+
+        extension_suffix = snake_case(record_prefix)
+        extension_suffix_upper = extension_suffix.upper()
+        self.set(settings.python, "extension-suffix", lambda: extension_suffix)
+        self.set(settings.python, "profile-package", lambda: "records")
+
+
+        #self.set(settings.python, "extension-suffix", lambda: f"_{record_prefix}")
+
         self.set(
             settings.python,
             "record-prefix-snake",
@@ -37,19 +48,19 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             settings.python,
             "record-resources-package",
-            lambda: f"{settings.package}.resources",
+            lambda: f"{settings.package}.resources.{settings.python.profile_package}",
         )
 
         self.set(
             settings.python,
             "record-services-package",
-            lambda: f"{settings.package}.services",
+            lambda: f"{settings.package}.services.{settings.python.profile_package}",
         )
 
         self.set(
             settings.python,
             "record-records-package",
-            lambda: f"{settings.package}.records",
+            lambda: f"{settings.package}.{settings.python.profile_package}",
         )
 
         # config
@@ -61,25 +72,26 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "config-dummy-class",
             lambda: f"{settings.package}.config.DummyClass",
         )
+        # todo "config prefix"
         self.set(
             settings.python,
             "config-resource-config-key",
-            lambda: f"{settings.package_base_upper}_RESOURCE_CONFIG",
+            lambda: f"{settings.package_base_upper}_RESOURCE_CONFIG_{extension_suffix_upper}",
         )
         self.set(
             settings.python,
             "config-resource-class-key",
-            lambda: f"{settings.package_base_upper}_RESOURCE_CLASS",
+            lambda: f"{settings.package_base_upper}_RESOURCE_CLASS_{extension_suffix_upper}",
         )
         self.set(
             settings.python,
             "config-service-config-key",
-            lambda: f"{settings.package_base_upper}_SERVICE_CONFIG",
+            lambda: f"{settings.package_base_upper}_SERVICE_CONFIG_{extension_suffix_upper}",
         )
         self.set(
             settings.python,
             "config-service-class-key",
-            lambda: f"{settings.package_base_upper}_SERVICE_CLASS",
+            lambda: f"{settings.package_base_upper}_SERVICE_CLASS_{extension_suffix_upper}",
         )
         self.set(
             settings.python,
@@ -94,7 +106,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{settings.package}.ext.{record_prefix}Ext",
         )
         self.set(
-            settings.python, "flask-extension-name", lambda: f"{settings.package_base}"
+            settings.python, "flask-extension-name", lambda: extension_suffix
         )
 
         # cli
@@ -172,7 +184,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "record-service-config-class",
             lambda: f"{settings.python.record_services_package}.config.{record_prefix}ServiceConfig",
         )
-        self.set(settings.python, "record-service-config-bases", lambda: [])
+
         settings.python.setdefault("record-service-config-generate-links", True)
         #   - schema
         self.set(
@@ -192,11 +204,12 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{settings.python.record_records_package}.dumper.{record_prefix}Dumper",
         )
         #   - search
-        self.set(
-            settings.python,
-            "record-search-options-class",
-            lambda: f"{settings.python.record_services_package}.search.{record_prefix}SearchOptions",
-        )
+        if not ("record-search-options-class" in settings.python and settings.python.record_search_options_class == ""): # files plugin requires this to be empty
+            self.set(
+                settings.python,
+                "record-search-options-class",
+                lambda: f"{settings.python.record_services_package}.search.{record_prefix}SearchOptions",
+            )
 
         #   - facets
         self.set(
@@ -223,7 +236,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             settings.python,
             "create-blueprint-from-app",
-            lambda: f"{settings.package}.views.create_blueprint_from_app",
+            lambda: f"{settings.package}.views.create_blueprint_from_app_{extension_suffix}",
         )
         settings.python.setdefault("invenio-config-extra-code", "")
         settings.python.setdefault("invenio-ext-extra-code", "")
@@ -301,3 +314,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "script-import-sample-data-cli", "scripts.import_sample_data.cli"
         )
         settings.setdefault("script-import-sample-data", "scripts/sample_data.yaml")
+        self.set(settings.python, "service-id", lambda: settings.python.flask_extension_name)
+
+
+

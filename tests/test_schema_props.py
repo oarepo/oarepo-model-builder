@@ -28,7 +28,7 @@ def test_enum():
 
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "schema.py")).read()
+    data = builder.filesystem.open(os.path.join("test", "services", "records", "schema.py")).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",

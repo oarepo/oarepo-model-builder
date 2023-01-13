@@ -343,7 +343,16 @@
       },
       "invenio-views-extra-code":  {
         "type":  "string"
-      }
+      },
+      "service-id": {
+        "type": "string"
+      },
+      "extension-suffix": {
+        "type": "string"
+      },
+      "profile-package": {
+        "type": "string"
+      },
     },
     "additionalProperties": false
   }

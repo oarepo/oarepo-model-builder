@@ -16,3 +16,9 @@ class ModelPreprocessor:
                 settings[name] = func()
 
         return w
+
+    def set_default_and_append_if_not_present(self, container, key, value, appended):
+        container.setdefault(key, value)
+        arr = getattr(container, key)
+        if appended not in arr:
+            arr.append(appended)

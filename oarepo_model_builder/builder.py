@@ -172,16 +172,11 @@ class ModelBuilder:
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
 
-        if not self.skip_schema_validation:
-            validate_model(model, self.included_validation_schemas)
+        self._validate_model(model)
 
-        for model_preprocessor in self._filter_classes(
-            self.model_preprocessor_classes, "model"
-        ):
-            model_preprocessor(self).transform(model, model.settings)
+        self._run_model_preprocessors(model)
 
-        if not self.skip_schema_validation:
-            validate_model(model, self.included_validation_schemas)
+        self._validate_model(model)
 
         # noinspection PyTypeChecker
         property_preprocessors: List[PropertyPreprocessor] = [
@@ -191,18 +186,31 @@ class ModelBuilder:
             )
         ]
 
+        self._run_output_builders(model, property_preprocessors)
+
+        self._save_outputs()
+
+        return self.outputs
+
+    def _run_output_builders(self, model, property_preprocessors):
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(
-            self.output_builder_classes, "builder"
+                self.output_builder_classes, "builder"
         ):
             output_builder = output_builder_class(
                 builder=self, property_preprocessors=property_preprocessors
             )
             output_builder.build(model)
 
-        self._save_outputs()
+    def _run_model_preprocessors(self, model):
+        for model_preprocessor in self._filter_classes(
+                self.model_preprocessor_classes, "model"
+        ):
+            model_preprocessor(self).transform(model, model.settings)
 
-        return self.outputs
+    def _validate_model(self, model):
+        if not self.skip_schema_validation:
+            validate_model(model, self.included_validation_schemas)
 
     def _save_outputs(self):
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
