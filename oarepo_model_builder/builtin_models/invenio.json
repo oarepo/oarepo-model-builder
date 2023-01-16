@@ -2,7 +2,7 @@
   "model": {
     "oarepo:marshmallow": {
       "base-classes": [
-        "invenio_records_resources.services.records.schema.BaseRecordSchema"
+        "InvenioBaseRecordSchema"
       ]
     },
     "properties": {

@@ -4,17 +4,20 @@ import re
 import pytest
 
 from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import \
-    InvenioRecordSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
-from oarepo_model_builder.model_preprocessors.invenio import \
-    InvenioModelPreprocessor
-from oarepo_model_builder.model_preprocessors.opensearch import \
-    OpensearchModelPreprocessor
+from oarepo_model_builder.invenio.invenio_record_schema import (
+    InvenioRecordSchemaBuilder,
+)
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
+from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
+from oarepo_model_builder.model_preprocessors.opensearch import (
+    OpensearchModelPreprocessor,
+)
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.text_keyword import \
-    TextKeywordPreprocessor
+from oarepo_model_builder.property_preprocessors.text_keyword import (
+    TextKeywordPreprocessor,
+)
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
@@ -85,7 +88,8 @@ def test_simple_array(fulltext_builder):
 def test_generate_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
-            "oarepo:marshmallow": {"class": "B", "generate": True},
+            "type": "object",
+            "oarepo:marshmallow": {"schema-class": "B", "generate": True},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -104,7 +108,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class B(ma.Schema, ):
+            """class B(ma.Schema):
         \"""B schema.\"""
         
         b = ma_fields.String()""",
@@ -115,10 +119,10 @@ def test_generate_nested_schema_same_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestSchema(ma.Schema, ):
+            """class TestSchema(ma.Schema):
         \"""TestSchema schema.\"""
         
-        a = ma_fields.Nested(B)""",
+        a = ma_fields.Nested(lambda: B())""",
         )
         in re.sub(r"\s", "", data)
     )
@@ -127,8 +131,9 @@ def test_generate_nested_schema_same_file(fulltext_builder):
 def test_generate_nested_schema_different_file(fulltext_builder):
     schema = get_test_schema(
         a={
+            "type": "object",
             "oarepo:marshmallow": {
-                "class": "test.services.schema2.B",
+                "schema-class": "test.services.schema2.B",
                 "generate": True,
             },
             "properties": {
@@ -150,10 +155,10 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestSchema(ma.Schema, ):
+            """class TestSchema(ma.Schema):
         \"""TestSchema schema.\"""
     
-        a = ma_fields.Nested(B)""",
+        a = ma_fields.Nested(lambda: B())""",
         )
         in re.sub(r"\s", "", data)
     )
@@ -164,7 +169,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         os.path.join("test", "services", "schema2.py")
     ) as f:
         data = f.read()
-    assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(
+    assert 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()' in re.sub(
         r"\s", "", data
     )
 
@@ -172,7 +177,8 @@ def test_generate_nested_schema_different_file(fulltext_builder):
 def test_use_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
-            "oarepo:marshmallow": {"class": "B", "generate": False},
+            "type": "object",
+            "oarepo:marshmallow": {"schema-class": "B", "generate": False},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -192,20 +198,21 @@ def test_use_nested_schema_same_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestSchema(ma.Schema, ):
+            """class TestSchema(ma.Schema):
         \"""TestSchema schema.\"""
         
-        a = ma_fields.Nested(B)""",
+        a = ma_fields.Nested(lambda: B())""",
         )
         in re.sub(r"\s", "", data)
     )
-    assert "classB(ma.Schema,)" not in re.sub(r"\s", "", data)
+    assert "classB(ma.Schema)" not in re.sub(r"\s", "", data)
 
 
 def test_use_nested_schema_different_file(fulltext_builder):
     schema = get_test_schema(
         a={
-            "oarepo:marshmallow": {"class": "c.B", "generate": False},
+            "type": "object",
+            "oarepo:marshmallow": {"schema-class": "c.B", "generate": False},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -222,7 +229,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
         data = f.read()
     assert re.sub(r"\s", "", "from c import B") in re.sub(r"\s", "", data)
     assert (
-        'classTestSchema(ma.Schema,):"""TestSchemaschema."""a=ma_fields.Nested(B)'
+        'classTestSchema(ma.Schema):"""TestSchemaschema."""a=ma_fields.Nested(lambda:B())'
         in re.sub(r"\s", "", data)
     )
 
@@ -232,7 +239,8 @@ def test_generate_nested_schema_array(fulltext_builder):
         a={
             "type": "array",
             "items": {
-                "oarepo:marshmallow": {"class": "B", "generate": True},
+                "type": "object",
+                "oarepo:marshmallow": {"schema-class": "B", "generate": True},
                 "properties": {
                     "b": {
                         "type": "keyword",
@@ -248,11 +256,11 @@ def test_generate_nested_schema_array(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
-    assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(
+    assert 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()' in re.sub(
         r"\s", "", data
     )
     assert (
-        'classTestSchema(ma.Schema,):"""TestSchemaschema."""a=ma_fields.List(ma_fields.Nested(B))'
+        'classTestSchema(ma.Schema):"""TestSchemaschema."""a=ma_fields.List(ma_fields.Nested(lambda:B()))'
         in re.sub(r"\s", "", data)
     )
 
@@ -270,7 +278,7 @@ from invenio_records_resources.services.records.schema import BaseRecordSchema a
 import marshmallow as ma
 import marshmallow.fields as ma_fields
 import marshmallow.validate as ma_valid
-class TestSchema(ma.Schema, ):
+class TestSchema(ma.Schema):
     """TestSchema schema."""
     a = ma_fields.String()'''
         )
@@ -285,8 +293,9 @@ class TestSchema(ma.Schema, ):
 def test_generate_nested_schema_relative_same_package(fulltext_builder):
     schema = get_test_schema(
         a={
+            "type": "object",
             "oarepo:marshmallow": {
-                "class": ".schema2.B",
+                "schema-class": ".schema2.B",
                 "generate": True,
             },
             "properties": {
@@ -300,7 +309,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "records",  "schema.py")
+        os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
 
@@ -308,10 +317,10 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestSchema(ma.Schema, ):
+            """class TestSchema(ma.Schema):
         \"""TestSchema schema.\"""
     
-        a = ma_fields.Nested(B)""",
+        a = ma_fields.Nested(lambda:B())""",
         )
         in re.sub(r"\s", "", data)
     )
@@ -322,7 +331,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         os.path.join("test", "services", "records", "schema2.py")
     ) as f:
         data = f.read()
-    assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(
+    assert 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()' in re.sub(
         r"\s", "", data
     )
 
@@ -330,8 +339,9 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
 def test_generate_nested_schema_relative_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
+            "type": "object",
             "oarepo:marshmallow": {
-                "class": ".B",
+                "schema-class": ".B",
                 "generate": True,
             },
             "properties": {
@@ -353,19 +363,21 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestSchema(ma.Schema, ):
+            """class TestSchema(ma.Schema):
         \"""TestSchema schema.\"""
 
-        a = ma_fields.Nested(B)""",
+        a = ma_fields.Nested(lambda:B())""",
         )
         in re.sub(r"\s", "", data)
     )
 
+
 def test_generate_nested_schema_relative_upper(fulltext_builder):
     schema = get_test_schema(
         a={
+            "type": "object",
             "oarepo:marshmallow": {
-                "class": "..schema2.B",
+                "schema-class": "..schema2.B",
                 "generate": True,
             },
             "properties": {
@@ -387,18 +399,20 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestSchema(ma.Schema, ):
+            """class TestSchema(ma.Schema):
         \"""TestSchema schema.\"""
 
-        a = ma_fields.Nested(B)""",
+        a = ma_fields.Nested(lambda: B())""",
         )
         in re.sub(r"\s", "", data)
     )
 
     assert "from test.services.schema2 import B" in data
 
-    with fulltext_builder.filesystem.open(os.path.join("test", "services", "schema2.py")) as f:
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "schema2.py")
+    ) as f:
         data = f.read()
-    assert 'classB(ma.Schema,):"""Bschema."""b=ma_fields.String()' in re.sub(
+    assert 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()' in re.sub(
         r"\s", "", data
     )

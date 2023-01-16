@@ -1,4 +1,5 @@
 from functools import cached_property
+import json
 
 from deepdiff import DeepDiff
 
@@ -43,6 +44,10 @@ class ModelBuilderStackEntry:
         if self.schema_valid and isinstance(self.schema, Ref):
             return self.schema.element_type
         return None
+
+    @property
+    def json_schema_type(self):
+        return self.data.get("type", None)
 
 
 class ModelBuilderStack:
@@ -102,3 +107,12 @@ class ModelBuilderStack:
         if not self.stack:
             return False
         return self.top.schema_valid
+
+    def clone(self):
+        ret = type(self)()
+        ret.stack.extend(self.stack)
+        return ret
+
+    @property
+    def fingerprint(self):
+        return json.dumps(self.stack[-1].data, sort_keys=True)
