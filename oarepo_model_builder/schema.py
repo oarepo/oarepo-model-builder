@@ -50,6 +50,7 @@ SafeDumper.add_multi_representer(Key, key_representer)
 
 class ModelSchema:
     OAREPO_USE = "oarepo:use"
+    OAREPO_USE_SHORTCUT = "^use"
 
     def __init__(
         self,
@@ -81,12 +82,13 @@ class ModelSchema:
 
         self._resolve_references(self.schema, [])
 
+        self._resolve_shortcuts(self.schema)
+
         # any star keys should be kept
         use_star_keys(self.schema)
 
         self.schema.setdefault("settings", {})
         self.schema = munch.munchify(self.schema, factory=HyphenMunch)
-        # self.debug_print()
 
     def debug_print(self):
         def _print(data, prefix):
@@ -191,15 +193,29 @@ class ModelSchema:
             return pth
         return None
 
+    def _resolve_shortcuts(self, element):
+        if isinstance(element, dict):
+            for k in list(element):
+                if k[0] == "^":
+                    element[f"oarepo:{k[1:]}"] = element.pop(k)
+            for v in element.values():
+                self._resolve_shortcuts(v)
+        elif isinstance(element, list):
+            for v in element:
+                self._resolve_shortcuts(v)
+
     def _resolve_references(self, element, stack):
         if isinstance(element, dict):
-            if self.OAREPO_USE in element:
+            if self.OAREPO_USE in element or self.OAREPO_USE_SHORTCUT in element:
                 for key in element:
-                    if key == self.OAREPO_USE:
+                    if key in (self.OAREPO_USE, self.OAREPO_USE_SHORTCUT):
                         break
                 else:
                     raise  # just for making pycharm happy
-                included_name = element.pop(self.OAREPO_USE)
+                included_name = element[key]
+                element.pop(self.OAREPO_USE, None)
+                element.pop(self.OAREPO_USE_SHORTCUT, None)
+
                 if not isinstance(included_name, list):
                     included_name = [included_name]
                 for name in included_name:
