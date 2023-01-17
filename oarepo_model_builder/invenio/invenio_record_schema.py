@@ -12,6 +12,7 @@ from oarepo_model_builder.utils.jinja import (
     split_package_name,
     split_base_name,
 )
+from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder
 
@@ -88,12 +89,12 @@ class MarshmallowNode:
     def _field_generator(self):
         data_type = self.stack.top.json_schema_type
         if not data_type:
-            raise Exception(f"No datatype defined on {self.stack.path}")
+            raise InvalidModelException(f"No datatype defined on {self.stack.path}")
         generator = self.schema.settings.python.marshmallow.mapping.get(
             data_type, None
         ) or default_marshmallow_generators.get(data_type, None)
         if not generator:
-            raise Exception(f"No generator defined for datatype {data_type}")
+            raise RuntimeError(f"No generator defined for datatype {data_type}")
         return generator
 
     @property
@@ -198,7 +199,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
                         schema_class = candidate
                         break
                 else:
-                    raise Exception(
+                    raise InvalidModelException(
                         f"Too many marshmallow classes with name {schema_class}. Please specify your own class names"
                     )
 
@@ -251,7 +252,7 @@ class ArrayMarshmallowNode(CompositeMarshmallowNode):
     @property
     def _first_child(self):
         if len(self.fields) != 1:
-            raise Exception(
+            raise InvalidModelException(
                 f"No array items or too many array items at {self.stack.path}"
             )
         return self.fields[0]
@@ -364,7 +365,7 @@ def marshmallow_datestring_generator(node: MarshmallowNode) -> GeneratedField:
 
 def marshmallow_object_generator(node: MarshmallowNode) -> GeneratedField:
     if not hasattr(node, "schema_class"):
-        raise Exception("Should not happen")
+        raise RuntimeError("Should not happen")
     return GeneratedField(
         "ma_fields.Nested",
         [f"lambda: {split_base_name(node.schema_class)}()"],

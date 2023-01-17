@@ -134,7 +134,7 @@ class ModelSchema:
             loaded = self.loaders[extension](file_path, self, content=content)
             return Key.annotate_keys_with_source(loaded, file_path)
 
-        raise Exception(
+        raise RuntimeError(
             f"Can not load {file_path} - no loader has been found for extension {extension} "
             f"in entry point group oarepo_model_builder.loaders"
         )
