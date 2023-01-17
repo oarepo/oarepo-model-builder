@@ -59,7 +59,7 @@ class MarshmallowNode:
         )
 
     @classmethod
-    def _kwargs(clz, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
+    def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
         return {
             "read": definition.get("read", True),
             "write": definition.get("write", True),
@@ -80,7 +80,7 @@ class MarshmallowNode:
     def _field_imports(self) -> List[Import]:
         return self._field_generator(self).field_imports
 
-    def prepare(self, package_name: str, context: Any):
+    def prepare(self, package_name: str, context: Dict[str, Any]):  # noqa
         if self.field_class:
             self.field_class = self._get_class_name(package_name, self.field_class)
 
@@ -136,7 +136,7 @@ class CompositeMarshmallowNode(MarshmallowNode):
     fields: List["MarshmallowNode"]
 
     @classmethod
-    def _kwargs(clz, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
+    def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
         return {"fields": [], **super()._kwargs(definition, schema, stack)}
 
     def add_field(self, field: "MarshmallowNode"):
@@ -159,7 +159,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
     base_classes: List[str]
 
     @classmethod
-    def _kwargs(clz, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
+    def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
         return {
             "generate": definition.get("generate", True),
             "schema_class": definition.get("schema-class", None),
