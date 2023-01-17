@@ -23,6 +23,7 @@ from tests.mock_filesystem import MockFilesystem
 
 
 OAREPO_MARSHMALLOW = "oarepo:marshmallow"
+B_SCHEMA = 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()'
 
 
 def get_test_schema(**props):
@@ -172,9 +173,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         os.path.join("test", "services", "schema2.py")
     ) as f:
         data = f.read()
-    assert 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()' in re.sub(
-        r"\s", "", data
-    )
+    assert B_SCHEMA in re.sub(r"\s", "", data)
 
 
 def test_use_nested_schema_same_file(fulltext_builder):
@@ -259,9 +258,7 @@ def test_generate_nested_schema_array(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
-    assert 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()' in re.sub(
-        r"\s", "", data
-    )
+    assert B_SCHEMA in re.sub(r"\s", "", data)
     assert (
         'classTestSchema(ma.Schema):"""TestSchemaschema."""a=ma_fields.List(ma_fields.Nested(lambda:B()))'
         in re.sub(r"\s", "", data)
@@ -334,9 +331,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         os.path.join("test", "services", "records", "schema2.py")
     ) as f:
         data = f.read()
-    assert 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()' in re.sub(
-        r"\s", "", data
-    )
+    assert B_SCHEMA in re.sub(r"\s", "", data)
 
 
 def test_generate_nested_schema_relative_same_file(fulltext_builder):
@@ -416,6 +411,4 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         os.path.join("test", "services", "schema2.py")
     ) as f:
         data = f.read()
-    assert 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()' in re.sub(
-        r"\s", "", data
-    )
+    assert B_SCHEMA in re.sub(r"\s", "", data)
