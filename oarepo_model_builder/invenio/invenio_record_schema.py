@@ -175,6 +175,11 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
         if self.exact_field or self.field_class:
             return
 
+        schema_class = self._get_schema_class(package_name, known_classes)
+        known_classes[schema_class] = self.stack.fingerprint
+        self.schema_class = schema_class
+
+    def _get_schema_class(self, package_name, known_classes):
         schema_class = self.schema_class
         if not schema_class:
             schema_class = camel_case(self.stack.top.key)
@@ -194,8 +199,8 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
                     raise Exception(
                         f"Too many marshmallow classes with name {schema_class}. Please specify your own class names"
                     )
-        known_classes[schema_class] = self.stack.fingerprint
-        self.schema_class = schema_class
+
+        return schema_class
 
     def generate_schema_class(self):
         if not self.generate:
