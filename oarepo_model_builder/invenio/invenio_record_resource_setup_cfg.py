@@ -1,3 +1,4 @@
+from oarepo_model_builder.utils.jinja import split_package_base_name
 from ..builders import OutputBuilder
 from ..outputs.cfg import CFGOutput
 
@@ -10,8 +11,8 @@ class InvenioRecordResourceSetupCfgBuilder(OutputBuilder):
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
-        register_function = self.settings.python.create_blueprint_from_app.rsplit(
-            ".", maxsplit=1
+        register_function = split_package_base_name(
+            self.settings.python.create_blueprint_from_app
         )
 
         output.add_entry_point(

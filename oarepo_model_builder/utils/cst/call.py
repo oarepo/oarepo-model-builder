@@ -39,7 +39,7 @@ class CallMerger(MergerBase):
                 else:
                     args.append(arg)
             else:
-                raise Exception(f"Unsupported clause in call args {type(arg)}")
+                raise RuntimeError(f"Unsupported clause in call args {type(arg)}")
         return args, kwargs
 
 

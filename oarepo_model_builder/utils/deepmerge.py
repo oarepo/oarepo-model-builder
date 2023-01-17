@@ -1,3 +1,6 @@
+import copy
+
+
 def deepmerge(target, source, stack=None, listmerge="overwrite"):
     if stack is None:
         stack = []
@@ -37,4 +40,6 @@ def deepmerge(target, source, stack=None, listmerge="overwrite"):
                 raise AttributeError(
                     'listmerge must be one of "overwrite", "extend" or "keep"'
                 )
+    elif target is None:
+        return copy.deepcopy(source)
     return target

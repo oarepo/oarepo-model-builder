@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from typing import Dict
 
+from oarepo_model_builder.utils.jinja import split_base_name
+
 from ..schema import ModelSchema
 from . import ModelPreprocessor
 
@@ -23,7 +25,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             settings,
             "package-base",
-            lambda: settings.package.rsplit(".", maxsplit=1)[-1],
+            lambda: split_base_name(settings.package),
         )
 
         self.set(settings, "package-base-upper", lambda: settings.package_base.upper())

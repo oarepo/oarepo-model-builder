@@ -5,6 +5,10 @@
       "properties": {
         "$ref": "#/$defs/jsonschema-object"
       },
+      "type": {
+        "type": "string",
+        "enum": ["object"]
+      }
     },
     "unevaluatedProperties": false
   },

@@ -125,7 +125,7 @@ class PythonContext:
         elif decision == ConflictResolution.NEW_AS_TODO:
             top.new_as_comment = True
             return existing_node
-        raise Exception("Unknown decision")
+        raise RuntimeError("Unknown decision")
 
 
 node_with_type = namedtuple("node_with_type", "node, type")
@@ -152,24 +152,6 @@ class MergerBase:
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):
         raise NotImplementedError()
-
-    # def get_node_merger(self, context: PythonContext, existing_node, new_node, mergers):
-    #     """
-    #     Returns a merger for the existing node only if it is capable of merging
-    #     the new_node (that is, if the should_merge on the merger returns True)
-    #
-    #     Otherwise, None is returned
-    #     """
-    #     merger = mergers.get(type(existing_node or new_node), IdentityMerger())
-    #     if merger.should_merge(context, existing_node, new_node):
-    #         return merger
-    #     return None
-    #
-    # def check_and_merge(self, context: PythonContext, existing_node, new_node, mergers):
-    #     merger = self.get_node_merger(context, existing_node, new_node, mergers)
-    #     if merger:
-    #         return merger.merge(context, existing_node, new_node)
-    #     raise Exception(f"Merger not found for {type(existing_node)} in {mergers}")
 
 
 class IdentityBaseMerger(MergerBase):

@@ -1,3 +1,4 @@
+from oarepo_model_builder.utils.jinja import split_package_base_name
 from ..builders import OutputBuilder
 from ..outputs.cfg import CFGOutput
 
@@ -10,17 +11,19 @@ class InvenioExtSetupCfgBuilder(OutputBuilder):
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
-        ext_class = self.settings.python.ext_class.rsplit(".", maxsplit=1)
+        package_name, base_name = split_package_base_name(
+            self.settings.python.ext_class
+        )
 
         output.add_entry_point(
             "invenio_base.api_apps",
-            self.settings.python.extension_suffix, # todo - resolve
-            f"{ext_class[0]}:{ext_class[-1]}",
+            self.settings.python.extension_suffix,  # todo - resolve
+            f"{package_name}:{base_name}",
         )
 
         # need to add ext to apps because cli depends on it
         output.add_entry_point(
             "invenio_base.apps",
             self.settings.python.extension_suffix,
-            f"{ext_class[0]}:{ext_class[-1]}",
+            f"{package_name}:{base_name}",
         )

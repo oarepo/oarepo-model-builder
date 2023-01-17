@@ -1,10 +1,7 @@
 from oarepo_model_builder.model_preprocessors import ModelPreprocessor
 from oarepo_model_builder.utils.camelcase import camel_case, snake_case
 from oarepo_model_builder.utils.deepmerge import deepmerge
-
-
-def last_item(x):
-    return x.rsplit(".", maxsplit=1)[-1]
+from oarepo_model_builder.utils.jinja import split_base_name
 
 
 class InvenioModelPreprocessor(ModelPreprocessor):
@@ -15,17 +12,13 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             settings,
             {
                 "python": {
-                    "record-prefix": camel_case(
-                        settings.package.rsplit(".", maxsplit=1)[-1]
-                    ),
+                    "record-prefix": camel_case(split_base_name(settings.package)),
                     # just make sure that the templates is always there
                     "templates": {},
                     "marshmallow": {"mapping": {}},
                 }
             },
         )
-
-
 
         record_prefix = settings.python.record_prefix
 
@@ -34,8 +27,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(settings.python, "extension-suffix", lambda: extension_suffix)
         self.set(settings.python, "profile-package", lambda: "records")
 
-
-        #self.set(settings.python, "extension-suffix", lambda: f"_{record_prefix}")
+        # self.set(settings.python, "extension-suffix", lambda: f"_{record_prefix}")
 
         self.set(
             settings.python,
@@ -105,9 +97,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "ext-class",
             lambda: f"{settings.package}.ext.{record_prefix}Ext",
         )
-        self.set(
-            settings.python, "flask-extension-name", lambda: extension_suffix
-        )
+        self.set(settings.python, "flask-extension-name", lambda: extension_suffix)
 
         # cli
         self.set(
@@ -204,7 +194,10 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{settings.python.record_records_package}.dumper.{record_prefix}Dumper",
         )
         #   - search
-        if not ("record-search-options-class" in settings.python and settings.python.record_search_options_class == ""): # files plugin requires this to be empty
+        if not (
+            "record-search-options-class" in settings.python
+            and settings.python.record_search_options_class == ""
+        ):  # files plugin requires this to be empty
             self.set(
                 settings.python,
                 "record-search-options-class",
@@ -274,7 +267,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                         "oarepo:marshmallow", {}
                     ),
                     {
-                        "class": schema_metadata_class,
+                        "schema-class": schema_metadata_class,
                         "base-classes": schema_class_base_classes,
                         "generate": True,
                     },
@@ -294,11 +287,12 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             deepmerge(
                 schema.schema.model.setdefault("oarepo:marshmallow", {}),
                 {
-                    "class": schema_class,
+                    "schema-class": schema_class,
                     "base-classes": schema_class_base_classes,
                     "generate": True,
                 },
             )
+            schema.schema.model.setdefault("type", "object")
 
         settings.python.setdefault("generate-record-pid-field", True)
         settings.python.setdefault("record-dumper-extensions", [])
@@ -314,7 +308,6 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "script-import-sample-data-cli", "scripts.import_sample_data.cli"
         )
         settings.setdefault("script-import-sample-data", "scripts/sample_data.yaml")
-        self.set(settings.python, "service-id", lambda: settings.python.flask_extension_name)
-
-
-
+        self.set(
+            settings.python, "service-id", lambda: settings.python.flask_extension_name
+        )

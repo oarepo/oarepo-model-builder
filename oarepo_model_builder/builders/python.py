@@ -2,6 +2,7 @@ from pathlib import Path
 
 from oarepo_model_builder.builders import OutputBuilder
 from oarepo_model_builder.builders.utils import ensure_parent_modules
+from oarepo_model_builder.utils.jinja import package_name
 
 
 class PythonBuilder(OutputBuilder):
@@ -16,4 +17,4 @@ class PythonBuilder(OutputBuilder):
         )
 
     def class_to_path(self, class_name):
-        return self.module_to_path(class_name.rsplit(".", maxsplit=1)[0])
+        return self.module_to_path(package_name(class_name))
