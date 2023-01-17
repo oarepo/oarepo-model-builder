@@ -175,15 +175,17 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
         if self.exact_field or self.field_class:
             return
 
-        schema_class = self._get_schema_class(package_name, known_classes)
-        known_classes[schema_class] = self.stack.fingerprint
-        self.schema_class = schema_class
-
-    def _get_schema_class(self, package_name, known_classes):
         schema_class = self.schema_class
         if not schema_class:
             schema_class = camel_case(self.stack.top.key)
         schema_class = self._get_class_name(package_name, schema_class)
+        fingerprint = self.stack.fingerprint
+        schema_class = self._find_unique_schema_class(known_classes, schema_class)
+
+        known_classes[schema_class] = fingerprint
+        self.schema_class = schema_class
+
+    def _find_unique_schema_class(self, known_classes, schema_class):
         if schema_class in known_classes:
             # reuse class with the same fingerprint
             if self.stack.fingerprint != known_classes[schema_class]:
