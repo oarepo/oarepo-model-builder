@@ -22,6 +22,9 @@ from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
 
+OAREPO_MARSHMALLOW = "oarepo:marshmallow"
+
+
 def get_test_schema(**props):
     return ModelSchema(
         "",
@@ -89,7 +92,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            "oarepo:marshmallow": {"schema-class": "B", "generate": True},
+            OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": True},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -132,7 +135,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            "oarepo:marshmallow": {
+            OAREPO_MARSHMALLOW: {
                 "schema-class": "test.services.schema2.B",
                 "generate": True,
             },
@@ -178,7 +181,7 @@ def test_use_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            "oarepo:marshmallow": {"schema-class": "B", "generate": False},
+            OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": False},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -212,7 +215,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            "oarepo:marshmallow": {"schema-class": "c.B", "generate": False},
+            OAREPO_MARSHMALLOW: {"schema-class": "c.B", "generate": False},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -240,7 +243,7 @@ def test_generate_nested_schema_array(fulltext_builder):
             "type": "array",
             "items": {
                 "type": "object",
-                "oarepo:marshmallow": {"schema-class": "B", "generate": True},
+                OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": True},
                 "properties": {
                     "b": {
                         "type": "keyword",
@@ -294,7 +297,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            "oarepo:marshmallow": {
+            OAREPO_MARSHMALLOW: {
                 "schema-class": ".schema2.B",
                 "generate": True,
             },
@@ -340,7 +343,7 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            "oarepo:marshmallow": {
+            OAREPO_MARSHMALLOW: {
                 "schema-class": ".B",
                 "generate": True,
             },
@@ -376,7 +379,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            "oarepo:marshmallow": {
+            OAREPO_MARSHMALLOW: {
                 "schema-class": "..schema2.B",
                 "generate": True,
             },
