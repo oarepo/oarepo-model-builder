@@ -80,7 +80,7 @@ class MarshmallowNode:
     def _field_imports(self) -> List[Import]:
         return self._field_generator(self).field_imports
 
-    def prepare(self, package_name: str, context: Dict[str, Any]):  # noqa
+    def prepare(self, package_name: str, _context: Dict[str, Any]):
         if self.field_class:
             self.field_class = self._get_class_name(package_name, self.field_class)
 
