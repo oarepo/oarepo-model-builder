@@ -67,7 +67,7 @@ class MarshmallowNode:
             "field_name": definition.get("field_name", stack.top.key),
             "exact_field": definition.get("field", None),
             "field_class": definition.get("field-class", None),
-            "imports": definition.get("imports", {}),
+            "imports": definition.get("imports", []),
         }
 
     def get_imports(self) -> List[Import]:
@@ -75,7 +75,9 @@ class MarshmallowNode:
             generated_field_imports: List[Import] = self._field_imports
         else:
             generated_field_imports = []
-        return [Import(k, v) for k, v in self.imports.items()] + generated_field_imports
+        return [
+            Import(k["import"], k.get("alias")) for k in self.imports
+        ] + generated_field_imports
 
     @property
     def _field_imports(self) -> List[Import]:
