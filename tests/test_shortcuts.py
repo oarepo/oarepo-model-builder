@@ -14,7 +14,7 @@ def test_array_shortcuts():
         "test",
         model_content={
             "oarepo:use": "invenio",
-            "model": {"properties": {"a[]": {"type": "keyword", "required[]": True}}},
+            "model": {"properties": {"a[]": {"type": "keyword", "required": True}}},
         },
         isort=False,
         black=False,

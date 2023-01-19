@@ -4,12 +4,14 @@ import json5
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.type_shortcuts import \
-    TypeShortcutsPreprocessor
+from oarepo_model_builder.property_preprocessors.type_shortcuts import (
+    TypeShortcutsPreprocessor,
+)
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
@@ -54,7 +56,7 @@ def test_object_inside_array():
 
 def test_array_brackets():
     data = build_jsonschema(
-        {"properties": {"a[]": {"type": "keyword", "minLength[]": 5}}}
+        {"properties": {"a[]": {"type": "keyword", "minLength": 5}}}
     )
 
     assert data == {

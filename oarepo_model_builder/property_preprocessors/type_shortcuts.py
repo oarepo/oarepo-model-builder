@@ -1,5 +1,4 @@
-from oarepo_model_builder.property_preprocessors import (PropertyPreprocessor,
-                                                         process)
+from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
 
 
@@ -48,16 +47,18 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
 
     @staticmethod
     def create_array(value):
-        ret = {}
         array = {}
+        array_item = {}
         for k, v in value.items():
             if k.endswith("[]"):
-                ret[k[:-2]] = v
+                array_item[k[:-2]] = v
+            elif k == "type":
+                array_item[k] = v
             else:
                 array[k] = v
-        ret["type"] = "array"
-        ret["items"] = array
-        return ret
+        array["type"] = "array"
+        array["items"] = array_item
+        return array
 
     @process(
         model_builder="*",
