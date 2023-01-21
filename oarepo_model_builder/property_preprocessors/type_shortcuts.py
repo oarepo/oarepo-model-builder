@@ -1,5 +1,6 @@
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
+import yaml
 
 
 class TypeShortcutsPreprocessor(PropertyPreprocessor):
@@ -16,49 +17,77 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
         if not top.schema_element_type:
             return data
 
-        self.set_type(top.schema_element_type, data)
-        self.set_child_arrays(top.schema_element_type, data)
+        if top.schema_element_type == "property":
+            data = self.expand_single_line_def(data)
+            self.set_property_type(data)
+        elif top.schema_element_type == "items":
+            data = self.expand_single_line_def(data)
+            self.set_property_type(data)
+
+        if top.schema_element_type == "properties":
+            self.expand_child_shortcuts(data)
 
         return data
 
-    def set_type(self, element_type, data):
-        if not isinstance(data, dict):
-            return
+    def expand_single_line_def(self, data):
+        if not isinstance(data, str):
+            return data
+        if "{" not in data:
+            return {"type": data}
+        datatype, constraints = data.split("{", maxsplit=1)
+        return {"type": datatype, **yaml.safe_load("{" + constraints)}
 
+    def set_property_type(self, data):
         if "type" in data:
             return
 
-        if element_type in ("property", "items"):
-            if (
-                "properties" in data
-                or "additionalProperties" in data
-                or "unprocessedProperties" in data
-            ):
-                data["type"] = "object"
-            elif "items" in data:
-                data["type"] = "array"
+        if (
+            "properties" in data
+            or "additionalProperties" in data
+            or "unprocessedProperties" in data
+        ):
+            data["type"] = "object"
+        elif "items" in data:
+            data["type"] = "array"
 
-    def set_child_arrays(self, element_type, data):
-        if element_type == "properties":
-            for k, v in list(data.items()):
-                if k.endswith("[]"):
-                    data.pop(k)
-                    data[k[:-2]] = self.create_array(v)
+    def expand_child_shortcuts(self, data):
+        for k, v in list(data.items()):
+            if k.endswith("[]"):
+                data.pop(k)
+                data[k[:-2]] = self.create_array(v)
+            if k.endswith("{}"):
+                data.pop(k)
+                data[k[:-2]] = self.create_object(v, datatype="object")
+            if k.endswith("{nested}"):
+                data.pop(k)
+                data[k[:-8]] = self.create_object(v, datatype="nested")
 
     @staticmethod
     def create_array(value):
-        array = {}
-        array_item = {}
-        for k, v in value.items():
-            if k.endswith("[]"):
-                array_item[k[:-2]] = v
-            elif k == "type":
-                array_item[k] = v
-            else:
-                array[k] = v
+        array, array_item = TypeShortcutsPreprocessor.separate_properties(value)
         array["type"] = "array"
         array["items"] = array_item
         return array
+
+    @staticmethod
+    def create_object(value, datatype):
+        obj, obj_items = TypeShortcutsPreprocessor.separate_properties(value)
+        obj["type"] = datatype
+        obj["properties"] = obj_items
+        return obj
+
+    @staticmethod
+    def separate_properties(value):
+        container = {}
+        container_item = {}
+        for k, v in value.items():
+            if not k:
+                continue
+            if k[0] == "^":
+                container[k] = v
+            else:
+                container_item[k] = v
+        return container, container_item
 
     @process(
         model_builder="*",

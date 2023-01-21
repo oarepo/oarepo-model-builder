@@ -15,9 +15,6 @@ from oarepo_model_builder.model_preprocessors.opensearch import (
     OpensearchModelPreprocessor,
 )
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.text_keyword import (
-    TextKeywordPreprocessor,
-)
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 

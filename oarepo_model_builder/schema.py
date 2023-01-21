@@ -195,9 +195,6 @@ class ModelSchema:
 
     def _resolve_shortcuts(self, element):
         if isinstance(element, dict):
-            for k in list(element):
-                if k[0] == "^":
-                    element[f"oarepo:{k[1:]}"] = element.pop(k)
             for v in element.values():
                 self._resolve_shortcuts(v)
         elif isinstance(element, list):

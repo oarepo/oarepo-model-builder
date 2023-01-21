@@ -1,0 +1,20 @@
+title:
+  type: fulltext+keyword
+  ^label.en: Dataset Title
+  required: true
+
+# dataset creators
+creators[]:
+  ^use[]: ./definitions/person.yaml
+  ^label.en: Dataset creators
+  required: true
+  minContains: 1
+  
+# TODO: blah blah
+contributors[]:
+  ^use: ./definitions/person.yaml
+  ^label.en: Dataset contributors
+  properties:
+    role:
+      type: keyword
+      enum: [...]
