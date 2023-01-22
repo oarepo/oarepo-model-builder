@@ -4,6 +4,7 @@ import dataclasses
 from typing import Any, Dict, List, Tuple
 
 from oarepo_model_builder.builders import process
+from oarepo_model_builder.builders.python import PythonBuilder
 from oarepo_model_builder.datatypes import datatypes, Import
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
@@ -263,6 +264,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         self.marshmallow_stack = [ObjectMarshmallowNode.from_stack(schema, stack)]
 
     def finish(self):
+        super(PythonBuilder, self).finish()
         model_node = self.marshmallow_stack[0]
 
         # generate schema classes wherever they are not filled
@@ -303,7 +305,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             )
         # super.finish not called as it is handled in the for loop above
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
         schema_element_type = self.stack.top.schema_element_type
 

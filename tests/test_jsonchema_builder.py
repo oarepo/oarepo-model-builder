@@ -21,7 +21,7 @@ except ImportError:
 def test_simple_jsonschema_builder():
     data = build({"properties": {"a": {"type": "keyword", "ui": {"class": "bolder"}}}})
 
-    assert data == {"properties": {"a": {"type": "keyword"}}}
+    assert data == {"type": "object", "properties": {"a": {"type": "keyword"}}}
 
 
 def test_required():
@@ -37,7 +37,11 @@ def test_required():
         }
     )
 
-    assert data == {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
+    assert data == {
+        "type": "object",
+        "properties": {"a": {"type": "keyword"}},
+        "required": ["a"],
+    }
 
 
 def test_required_inside_metadata():
@@ -58,15 +62,19 @@ def test_required_inside_metadata():
     )
 
     assert data == {
+        "type": "object",
         "properties": {
             "metadata": {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
-        }
+        },
     }
 
 
 def test_min_length():
     data = build({"properties": {"a": {"type": "keyword", "minLength": 5}}})
-    assert data == {"properties": {"a": {"type": "keyword", "minLength": 5}}}
+    assert data == {
+        "type": "object",
+        "properties": {"a": {"type": "keyword", "minLength": 5}},
+    }
 
 
 def test_jsonschema_preprocessor():
@@ -76,12 +84,13 @@ def test_jsonschema_preprocessor():
     )
 
     assert data == {
+        "type": "object",
         "properties": {
             "a": {
                 "type": "object",
                 "properties": {"lang": {"type": "string"}, "value": {"type": "string"}},
             }
-        }
+        },
     }
 
 
@@ -100,7 +109,7 @@ def test_components():
         },
     )
 
-    assert data == {"properties": {"a": {"type": "integer"}}}
+    assert data == {"type": "object", "properties": {"a": {"type": "integer"}}}
 
 
 def build(model, output_builder_components=None, property_preprocessors=None):

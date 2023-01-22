@@ -59,6 +59,7 @@ class ModelSchema:
         included_models: Dict[str, Callable] = None,
         merged_models: List[Union[str, Path]] = None,
         loaders=None,
+        model_field="model",
     ):
         """
         Creates and parses model schema
@@ -90,6 +91,8 @@ class ModelSchema:
         self.schema.setdefault("settings", {})
         self.schema = munch.munchify(self.schema, factory=HyphenMunch)
 
+        self.model_field = model_field
+
     def debug_print(self):
         def _print(data, prefix):
             if isinstance(data, dict):
@@ -116,6 +119,10 @@ class ModelSchema:
     @property
     def settings(self):
         return self.schema.settings
+
+    @property
+    def model(self):
+        return self.schema[self.model_field]
 
     def merge(self, another):
         self.schema = munch.munchify(

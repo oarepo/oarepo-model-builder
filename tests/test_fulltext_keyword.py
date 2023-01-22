@@ -55,7 +55,7 @@ def test_fulltext(fulltext_builder):
 
     data = load_generated_jsonschema(fulltext_builder)
 
-    assert data == {"properties": {"a": {"type": "string"}}}
+    assert data == {"type": "object", "properties": {"a": {"type": "string"}}}
 
     data = load_generated_mapping(fulltext_builder)
 
@@ -75,7 +75,7 @@ def test_keyword(fulltext_builder):
 
     data = load_generated_jsonschema(fulltext_builder)
 
-    assert data == {"properties": {"a": {"type": "string"}}}
+    assert data == {"type": "object", "properties": {"a": {"type": "string"}}}
 
     data = load_generated_mapping(fulltext_builder)
 
@@ -95,7 +95,7 @@ def test_fulltext_keyword(fulltext_builder):
 
     data = load_generated_jsonschema(fulltext_builder)
 
-    assert data == {"properties": {"a": {"type": "string"}}}
+    assert data == {"type": "object", "properties": {"a": {"type": "string"}}}
 
     data = load_generated_mapping(fulltext_builder)
 

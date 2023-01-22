@@ -12,7 +12,7 @@ class MappingBuilder(JSONBaseBuilder):
     output_file_name = "mapping-file"
     parent_module_root_name = "mappings"
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
         # ignore schema leaves different than "type" - for example, minLength, ...
         # that should not be present in mapping

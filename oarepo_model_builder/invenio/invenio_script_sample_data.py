@@ -77,7 +77,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             "oarepo_model_builder.sample_data_providers", profile=None
         ) + [faker_provider]
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
         schema_element_type = self.stack.top.schema_element_type
 
@@ -198,6 +198,7 @@ class InvenioScriptSampleDataShellBuilder(OutputBuilder):
     TYPE = "invenio_script_sample_data_loader"
 
     def finish(self):
+        super().finish()
         context = {"settings": self.schema.settings}
 
         env = Environment(

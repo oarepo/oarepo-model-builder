@@ -10,6 +10,7 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
     parent_modules = True
 
     def finish(self, **extra_kwargs):
+        super().finish()
         python_path = self.class_to_path(self.settings.python[self.class_config])
         self.process_template(
             python_path,

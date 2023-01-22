@@ -34,13 +34,14 @@ class ModelSaverBuilder(JSONBaseBuilder):
 
         output_name = self.settings[self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)
-
+        self.output.primitive("type", "object")
         ensure_parent_modules(
             self.builder, Path(output_name), ends_at=self.parent_module_root_name
         )
 
     def finish(self):
         # force clean output
+        super().finish()
         self.output.force_clean_output()
 
 

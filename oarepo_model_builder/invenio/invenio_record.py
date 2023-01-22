@@ -11,7 +11,7 @@ class InvenioRecordBuilder(InvenioBaseClassPythonBuilder):
         super().begin(schema, settings)
         self.relations = []
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
         self.build_children()
         data = self.stack.top.data

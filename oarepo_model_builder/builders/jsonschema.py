@@ -11,7 +11,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     output_file_name = "schema-file"
     parent_module_root_name = "jsonschemas"
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
         self.model_element_enter()
         self.build_children()
@@ -36,6 +36,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
             self.output.collect_required()
 
     def on_enter_model(self, output_name):
+        self.output.primitive("type", "object")
         ensure_parent_modules(
             self.builder, Path(output_name), ends_at=self.parent_module_root_name
         )

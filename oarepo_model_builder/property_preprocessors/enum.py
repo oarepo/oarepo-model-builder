@@ -16,7 +16,7 @@ class EnumPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: stack.top.schema_element_type == "property",
     )
     def modify_enum_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
@@ -34,7 +34,7 @@ class EnumPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=JSONSchemaBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: stack.top.schema_element_type == "property",
     )
     def modify_enum_jsonschema(self, data, stack: ModelBuilderStack, **kwargs):
@@ -46,7 +46,7 @@ class EnumPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioScriptSampleDataBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: stack.top.schema_element_type == "property",
     )
     def modify_enum_sampledata(self, data, stack: ModelBuilderStack, **kwargs):

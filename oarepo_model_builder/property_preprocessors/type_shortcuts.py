@@ -8,7 +8,7 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder="*",
-        path="/model/**",
+        path="**",
         condition=lambda current, stack: stack.schema_valid,
     )
     def modify_type_shortcuts(self, data, stack: ModelBuilderStack, **kwargs):

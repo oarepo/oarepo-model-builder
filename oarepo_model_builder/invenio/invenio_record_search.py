@@ -54,7 +54,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 fields_options = deepmerge(fields_options, {field: data[k][field]})
             self.sort_options_data.append({k: fields_options})
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
         schema_element_type = self.stack.top.schema_element_type
 
@@ -96,7 +96,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             nested_paths = []
             nested_path = ""
             nested = False
-            path_stack = self.stack.stack[3:]  # start inside model properties
+            path_stack = self.stack.stack[2:]  # start inside model properties
             for upper in path_stack:
                 if upper.key == "properties":
                     continue
@@ -181,7 +181,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         return field_class + "(" + text + ")"
 
     def process_name(self, path, type):
-        path_array = (path.split("/"))[3:]
+        path_array = (path.split("/"))[2:]
         name = path_array[0]
         if len(path_array) == 1:
             return name

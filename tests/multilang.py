@@ -11,7 +11,7 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
 class MultilangPreprocessor(PropertyPreprocessor):
     @process(
         model_builder=JSONSchemaBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: current.type == "multilingual",
     )
     def modify_multilang_schema(self, data, stack, **kwargs):
@@ -21,7 +21,7 @@ class MultilangPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=MappingBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: current.type == "multilingual",
     )
     def modify_multilang_mapping(self, data, stack, **kwargs):
@@ -40,7 +40,7 @@ class MultilangPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: current.type == "multilingual",
     )
     def modify_multilang_marshmallow(self, data, stack, **kwargs):

@@ -9,17 +9,15 @@ def path_valid(*path):
 
 
 def test_is_schema_element():
-    assert path_valid("model")
-    assert path_valid("model", "type")
-    assert path_valid("model", "$id")
-    assert path_valid("model", "$schema")
-    assert path_valid("model", "properties")
-    assert path_valid("model", "properties", "a")
-    assert path_valid("model", "properties", "a", "type")
-    assert path_valid("model", "properties", "a", "items")
-    assert path_valid("model", "properties", "a", "items", "type")
-    assert path_valid("model", "properties", "a", "properties")
+    assert path_valid("type")
+    assert path_valid("$id")
+    assert path_valid("$schema")
+    assert path_valid("properties")
+    assert path_valid("properties", "a")
+    assert path_valid("properties", "a", "type")
+    assert path_valid("properties", "a", "items")
+    assert path_valid("properties", "a", "items", "type")
+    assert path_valid("properties", "a", "properties")
 
     assert not path_valid("test")
-    assert not path_valid("model", "test")
-    assert not path_valid("model", "properties", "a", "test")
+    assert not path_valid("blah", "properties", "a", "test")
