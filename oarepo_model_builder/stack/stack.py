@@ -117,4 +117,4 @@ class ModelBuilderStack:
     def fingerprint(self):
         return json.dumps(
             self.stack[-1].data, sort_keys=True, default=lambda x: repr(x)
-        )
+        ).encode("utf-8")

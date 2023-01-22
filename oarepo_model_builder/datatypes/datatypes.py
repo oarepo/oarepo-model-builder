@@ -13,8 +13,10 @@ class DataType:
     mapping_type = None
     use_dumper = False
 
-    def __init__(self, definition):
+    def __init__(self, definition, key, model):
         self.definition = definition
+        self.key = key
+        self.model = model
 
     def _copy_definition(self, **extras):
         ret = copy.deepcopy(self.definition)
@@ -67,11 +69,11 @@ class DataTypes:
                 for dt in entry.load():
                     self.datatypes[dt.model_type] = dt
 
-    def get_datatype(self, data) -> DataType:
+    def get_datatype(self, data, key, model) -> DataType:
         self._prepare_datatypes()
-        ret = self.datatypes.get(data["type"])
+        ret = self.datatypes.get(data.get("type", None))
         if ret:
-            return ret(data)
+            return ret(data, key, model)
         return None
 
 

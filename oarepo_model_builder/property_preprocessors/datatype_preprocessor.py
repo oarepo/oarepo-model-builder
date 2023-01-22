@@ -19,7 +19,7 @@ class DataTypePreprocessor(PropertyPreprocessor):
         in ("property", "items"),
     )
     def modify_jsonschema(self, data, stack: ModelBuilderStack, **kwargs):
-        datatype = datatypes.get_datatype(data)
+        datatype = datatypes.get_datatype(data, stack.top.key, self.schema.model)
         if not datatype:
             return data
         return datatype.json_schema()
@@ -31,7 +31,7 @@ class DataTypePreprocessor(PropertyPreprocessor):
         in ("property", "items"),
     )
     def modify_mapping(self, data, stack: ModelBuilderStack, **kwargs):
-        datatype = datatypes.get_datatype(data)
+        datatype = datatypes.get_datatype(data, stack.top.key, self.schema.model)
         if not datatype:
             return data
         return datatype.mapping()
@@ -43,7 +43,7 @@ class DataTypePreprocessor(PropertyPreprocessor):
         in ("property", "items"),
     )
     def modify_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
-        datatype = datatypes.get_datatype(data)
+        datatype = datatypes.get_datatype(data, stack.top.key, self.schema.model)
         if not datatype:
             return data
         ret = datatype.marshmallow()

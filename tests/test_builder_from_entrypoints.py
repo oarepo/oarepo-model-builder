@@ -92,6 +92,17 @@ def test_generate_multiple_times():
     builder.build(schema, "")
     snapshot_1 = filesystem.snapshot()
 
+    # need to reload the schema because of caches ...
+    schema = load_model(
+        "test.yaml",
+        "test",
+        model_content={
+            OAREPO_USE: "invenio",
+            "model": {"properties": {"a": {"type": "keyword"}}},
+        },
+        isort=False,
+        black=False,
+    )
     builder.build(schema, "")
     snapshot_2 = filesystem.snapshot()
 

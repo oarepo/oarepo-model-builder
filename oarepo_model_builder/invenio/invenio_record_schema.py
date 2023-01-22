@@ -39,7 +39,7 @@ class MarshmallowNode:
 
     @classmethod
     def from_stack(cls, schema: ModelSchema, stack: ModelBuilderStack):
-        datatype = datatypes.get_datatype(stack.top.data)
+        datatype = datatypes.get_datatype(stack.top.data, stack.top.key, schema.model)
         definition = datatype.marshmallow()
         imports = datatype.imports()
         field_arguments = copy.copy(definition.get("arguments", []))
@@ -160,16 +160,6 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
         if self.exact_field:
             return
 
-        schema_class = self.schema_class
-        if not schema_class:
-            schema_class = camel_case(self.stack.top.key)
-        schema_class = self._get_class_name(package_name, schema_class)
-        fingerprint = self.stack.fingerprint
-        schema_class = self._find_unique_schema_class(known_classes, schema_class)
-
-        known_classes[schema_class] = fingerprint
-        self.schema_class = schema_class
-
         self.field_arguments = [
             f"lambda: {split_base_name(self.schema_class)}()"
         ] + self.field_arguments
@@ -177,25 +167,6 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
             *self.field_imports,
             Import(import_path=self.schema_class, alias=None),
         ]
-
-    def _find_unique_schema_class(self, known_classes, schema_class):
-        if schema_class in known_classes:
-            # reuse class with the same fingerprint
-            if self.stack.fingerprint != known_classes[schema_class]:
-                for i in range(100):
-                    candidate = f"{schema_class}_{i}"
-                    if candidate not in known_classes:
-                        schema_class = candidate
-                        break
-                    if self.stack.fingerprint == known_classes[candidate]:
-                        schema_class = candidate
-                        break
-                else:
-                    raise InvalidModelException(
-                        f"Too many marshmallow classes with name {schema_class}. Please specify your own class names"
-                    )
-
-        return schema_class
 
     def generate_schema_class(self):
         if not self.generate:

@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from oarepo_model_builder.datatypes import datatypes, DataType
+
 from ..outputs.cfg import CFGOutput
 from . import OutputBuilder, process
 from .json_base import JSONBaseBuilder
@@ -22,6 +24,30 @@ class ModelSaverBuilder(JSONBaseBuilder):
         # remove the special json base builder functionality
         # TODO: better handling for this
         pass
+
+    def model_element_enter(self):
+        super().model_element_enter()
+        if self.stack.top.schema_element_type in ("items", "property"):
+            datatype: DataType = datatypes.get_datatype(
+                self.stack.top.data, self.stack.top.key, self.model
+            )
+            if datatype:
+                marshmallow = datatype.marshmallow()
+                marshmallow.setdefault("imports", []).extend(
+                    [
+                        {"import": imp.import_path, "alias": imp.alias}
+                        if imp.alias
+                        else {
+                            "import": imp.import_path,
+                        }
+                        for imp in datatype.imports()
+                    ]
+                )
+                self.output.merge(
+                    {
+                        "marshmallow": marshmallow,
+                    }
+                )
 
     def output_primitive(self, top, data):
         if data is not None:
