@@ -43,10 +43,17 @@ def validate_model(model, extra_validation_schemas=None):
     data = json.loads(json.dumps(model.schema, default=lambda s: repr(s)))
     replace_array_keys(data)
 
-    if "oarepo:model-validation" in data:
+    if "model-validation" in data:
         schema["$defs"] = deepmerge(
-            data.pop("oarepo:model-validation"), schema["$defs"], listmerge="extend"
+            data.pop("model-validation"), schema["$defs"], listmerge="extend"
         )
+
+    # for each entry of jsonschema-property, add the ^ starting entry to be able to
+    # elevate it to array/object level in shorthand notation
+    jsonschema_property = schema["$defs"]["jsonschema-property"]["properties"]
+    for k, v in list(jsonschema_property.items()):
+        if k not in ("properties", "items"):
+            jsonschema_property[f"^{k}"] = v
 
     validator = Draft202012Validator(schema)
 
@@ -56,11 +63,16 @@ def validate_model(model, extra_validation_schemas=None):
         return True
 
     errors.sort(key=lambda e: (relevance(e), e.path))
-    print("\nErrors (most relevant first):")
+    msg = ["\nErrors (most relevant first):"]
     for err in errors:
-        print(f'    on path "/{"/".join(str(x) for x in err.path)}" : {err.message}')
-        print(f'         schema path "/{"/".join(str(x) for x in err.schema_path)}"')
-    raise InvalidModelException("Invalid model")
+        msg.append(
+            f'    on path "/{"/".join(str(x) for x in err.path)}" : {err.message}'
+        )
+        msg.append(
+            f'         schema path "/{"/".join(str(x) for x in err.schema_path)}"'
+        )
+    msg = "\n".join(msg)
+    raise InvalidModelException(f"Invalid model: {msg}")
 
 
 def replace_array_keys(schema):

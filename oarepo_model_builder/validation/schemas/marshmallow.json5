@@ -3,7 +3,7 @@
     "allOf": [
       {
          "properties": {
-            "oarepo:marshmallow": {
+            "marshmallow": {
               "$ref": "#/$defs/marshmallow"
             }
           }
@@ -12,7 +12,7 @@
   },
   "jsonschema-property": {
     "properties": {
-      "oarepo:marshmallow": {
+      "marshmallow": {
         "$ref": "#/$defs/marshmallow"
       }
     }

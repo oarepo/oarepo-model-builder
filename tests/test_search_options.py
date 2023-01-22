@@ -5,8 +5,7 @@ from io import StringIO
 from pathlib import Path
 from typing import Dict
 
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_model)
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import AbstractFileSystem
 
 # from tests.mock_filesystem import MockFilesystem
@@ -47,13 +46,13 @@ def test_include_invenio():
         "test.yaml",
         "test",
         model_content={
-            "oarepo:use": "invenio",
+            "^use": "invenio",
             "model": {
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
                     "b": {
                         "type": "keyword",
-                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
+                        "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
                 }
             },
@@ -66,7 +65,9 @@ def test_include_invenio():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "records", "facets.py")).read()
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -135,17 +136,17 @@ def test_sort():
         "test.yaml",
         "test",
         model_content={
-            "oarepo:use": "invenio",
+            "^use": "invenio",
             "model": {
                 "properties": {
                     "a": {
                         "type": "fulltext+keyword",
-                        "oarepo:sortable": {"key": "a_test"},
+                        "sortable": {"key": "a_test"},
                     },
                     "b": {
                         "type": "keyword",
-                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
-                        "oarepo:sortable": {"key": "b_test", "order": "desc"},
+                        "facets": {"field": 'TermsFacet(field="cosi")'},
+                        "sortable": {"key": "b_test", "order": "desc"},
                     },
                 }
             },
@@ -158,7 +159,9 @@ def test_sort():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "records", "search.py")).read()
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "search.py")
+    ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -195,7 +198,7 @@ def test_nested():
         "test.yaml",
         "test",
         model_content={
-            "oarepo:use": "invenio",
+            "^use": "invenio",
             "model": {
                 "properties": {
                     "b": {
@@ -206,15 +209,15 @@ def test_nested():
                             "d": {"type": "fulltext+keyword"},
                             "f": {
                                 "properties": {"g": {"type": "keyword"}},
-                                "oarepo:mapping": {"type": "nested"},
-                                "oarepo:marshmallow": {
+                                "mapping": {"type": "nested"},
+                                "marshmallow": {
                                     "class": "nest.f.F",
                                     "generate": True,
                                 },
                             },
                         },
-                        "oarepo:mapping": {"type": "nested"},
-                        "oarepo:marshmallow": {"class": "nest.b.B", "generate": True},
+                        "mapping": {"type": "nested"},
+                        "marshmallow": {"class": "nest.b.B", "generate": True},
                     }
                 }
             },
@@ -228,7 +231,9 @@ def test_nested():
 
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "records", "facets.py")).read()
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -301,13 +306,13 @@ def test_search_class():
         "test.yaml",
         "test",
         model_content={
-            "oarepo:use": "invenio",
+            "^use": "invenio",
             "model": {
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
                     "b": {
                         "type": "keyword",
-                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
+                        "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
                 }
             },
@@ -321,7 +326,9 @@ def test_search_class():
 
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "records", "search.py")).read()
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "search.py")
+    ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",

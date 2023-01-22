@@ -84,7 +84,7 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
             if not k:
                 continue
             if k[0] == "^":
-                container[k] = v
+                container[k[1:]] = v
             else:
                 container_item[k] = v
         return container, container_item

@@ -97,8 +97,3 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             "saved-model-file",
             lambda: settings.package_path / "models" / "model.json",
         )
-        self.set(
-            settings,
-            "inherited-model-file",
-            lambda: settings.package_path / "models" / "inherited_model.json",
-        )

@@ -20,3 +20,10 @@ class FlattenDataType(DataType):
     mapping_type = "flatten"
     marshmallow_field = "ma_fields.Raw"
     model_type = "flatten"
+
+
+class ArrayDataType(DataType):
+    schema_type = "array"
+    mapping_type = None
+    marshmallow_field = "ma_fields.List"
+    model_type = "array"

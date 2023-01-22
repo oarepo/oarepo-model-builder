@@ -4,6 +4,7 @@ import dataclasses
 from typing import Any, Dict, List, Tuple
 
 from oarepo_model_builder.builders import process
+from oarepo_model_builder.datatypes import datatypes, Import
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.camelcase import camel_case
@@ -16,19 +17,12 @@ from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder
 
-OAREPO_MARSHMALLOW_PROPERTY = "oarepo:marshmallow"
-
-Import = namedtuple("Import", "import_path,alias")
-GeneratedField = namedtuple(
-    "GeneratedField",
-    "field_class, field_arguments, field_imports"
-    # field_imports are List[Import]
-)
+OAREPO_MARSHMALLOW_PROPERTY = "marshmallow"
 
 
 @dataclasses.dataclass
 class MarshmallowNode:
-    schema: ModelSchema
+    schema: Dict
     parent: "MarshmallowNode"
     stack: ModelBuilderStack
 
@@ -39,25 +33,29 @@ class MarshmallowNode:
     exact_field: str
     field_class: str
     field_arguments: List[str]
-
-    imports: Dict[str, str]
+    field_imports: List[Import]
+    imports: List[Dict[str, str]]
 
     @classmethod
     def from_stack(cls, schema: ModelSchema, stack: ModelBuilderStack):
-        definition = stack.top.data.get(OAREPO_MARSHMALLOW_PROPERTY, {})
+        datatype = datatypes.get_datatype(stack.top.data)
+        definition = datatype.marshmallow()
+        imports = datatype.imports()
         field_arguments = copy.copy(definition.get("arguments", []))
         validators = definition.get("validators", [])
         if validators:
             field_arguments.append(f"validate=[{', '.join(validators)}]")
 
-        return cls(
+        constructor_arguments = dict(
             schema=schema,
             parent=None,
             # semi-shallow clone
             stack=stack.clone(),
             field_arguments=field_arguments,
+            field_imports=imports,
             **cls._kwargs(definition, schema, stack),
         )
+        return cls(**constructor_arguments)
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
@@ -72,32 +70,16 @@ class MarshmallowNode:
 
     def get_imports(self) -> List[Import]:
         if not self.exact_field:
-            generated_field_imports: List[Import] = self._field_imports
+            generated_field_imports: List[Import] = list(self.field_imports)
         else:
             generated_field_imports = []
         return [
             Import(k["import"], k.get("alias")) for k in self.imports
         ] + generated_field_imports
 
-    @property
-    def _field_imports(self) -> List[Import]:
-        return self._field_generator(self).field_imports
-
     def prepare(self, package_name: str, _context: Dict[str, Any]):
         if self.field_class:
             self.field_class = self._get_class_name(package_name, self.field_class)
-
-    @property
-    def _field_generator(self):
-        data_type = self.stack.top.json_schema_type
-        if not data_type:
-            raise InvalidModelException(f"No datatype defined on {self.stack.path}")
-        generator = self.schema.settings.python.marshmallow.mapping.get(
-            data_type, None
-        ) or default_marshmallow_generators.get(data_type, None)
-        if not generator:
-            raise RuntimeError(f"No generator defined for datatype {data_type}")
-        return generator
 
     @property
     def field(self):
@@ -108,15 +90,14 @@ class MarshmallowNode:
         if self.exact_field:
             return self.exact_field
         else:
-            generated_field: GeneratedField = self._field_generator(self)
             rw_arguments = []
             if self.read and not self.write:
                 rw_arguments.append("dump_only=True")
             elif self.write and not self.read:
                 rw_arguments.append("load_only=True")
             return (
-                f"{generated_field.field_class}"
-                + f"({', '.join(generated_field.field_arguments + self.field_arguments + rw_arguments)})"
+                f"{self.field_class}"
+                + f"({', '.join(self.field_arguments + rw_arguments)})"
             )
 
     def _get_class_name(self, package_name: str, class_name: str):
@@ -175,7 +156,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
 
         known_classes: Dict[str, str] = context.setdefault("known_classes", {})
 
-        if self.exact_field or self.field_class:
+        if self.exact_field:
             return
 
         schema_class = self.schema_class
@@ -187,6 +168,14 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
 
         known_classes[schema_class] = fingerprint
         self.schema_class = schema_class
+
+        self.field_arguments = [
+            f"lambda: {split_base_name(self.schema_class)}()"
+        ] + self.field_arguments
+        self.field_imports = [
+            *self.field_imports,
+            Import(import_path=self.schema_class, alias=None),
+        ]
 
     def _find_unique_schema_class(self, known_classes, schema_class):
         if schema_class in known_classes:
@@ -243,13 +232,12 @@ class ArrayMarshmallowNode(CompositeMarshmallowNode):
         return f"ma_fields.List({ret})"
 
     @property
-    def _field_generator(self):
-        # do not return generator for array but for the contained item
-        return self._first_child._field_generator
+    def field_imports(self) -> List[Import]:
+        return self._first_child.field_imports
 
-    @property
-    def _field_imports(self) -> List[Import]:
-        return self._first_child._field_imports
+    @field_imports.setter
+    def field_imports(self, imports):
+        """Do not set imports as we generate the first child, not this node"""
 
     @property
     def _first_child(self):
@@ -335,54 +323,3 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             self.marshmallow_stack.pop()
         else:
             self.build_children()
-
-
-def marshmallow_string_generator(node: MarshmallowNode) -> GeneratedField:
-    """
-    Takes information from the node and returns a tuple of (field_class, arguments)
-    """
-    return GeneratedField("ma_fields.String", [], [])
-
-
-def marshmallow_integer_generator(node: MarshmallowNode) -> GeneratedField:
-    return GeneratedField("ma_fields.Integer", [], [])
-
-
-def marshmallow_number_generator(node: MarshmallowNode) -> GeneratedField:
-    return GeneratedField("ma_fields.Float", [], [])
-
-
-def marshmallow_boolean_generator(node: MarshmallowNode) -> GeneratedField:
-    return GeneratedField("ma_fields.Boolean", [], [])
-
-
-def marshmallow_raw_generator(node: MarshmallowNode) -> GeneratedField:
-    return GeneratedField("ma_fields.Raw", [], [])
-
-
-def marshmallow_datestring_generator(node: MarshmallowNode) -> GeneratedField:
-    return GeneratedField("mu_fields.ISODateString", [], [])
-
-
-def marshmallow_object_generator(node: MarshmallowNode) -> GeneratedField:
-    if not hasattr(node, "schema_class"):
-        raise RuntimeError("Should not happen")
-    return GeneratedField(
-        "ma_fields.Nested",
-        [f"lambda: {split_base_name(node.schema_class)}()"],
-        [Import(node.schema_class, None)],
-    )
-
-
-# TODO: rest of supported schema types
-
-default_marshmallow_generators = {
-    "string": marshmallow_string_generator,
-    "integer": marshmallow_integer_generator,
-    "number": marshmallow_number_generator,
-    "boolean": marshmallow_boolean_generator,
-    "raw": marshmallow_raw_generator,
-    "object": marshmallow_object_generator,
-    "nested": marshmallow_object_generator,
-    "date": marshmallow_datestring_generator,
-}

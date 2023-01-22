@@ -84,7 +84,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
         if schema_element_type == "property":
             self.generate_property(self.stack.top.key)
         elif schema_element_type == "items":
-            # the count is in the oarepo:sample section above the "items" element, so need to look at [-2], not the top
+            # the count is in the sample section above the "items" element, so need to look at [-2], not the top
             count = self.get_count(self.stack[-2].data, None)
             if count is None:
                 count = self.faker.random_int(1, 5)
@@ -125,7 +125,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             super().build(schema)
 
     def get_count(self, schema, default_count=50):
-        return schema.get("oarepo:sample", {}).get("count", default_count)
+        return schema.get("sample", {}).get("count", default_count)
 
     def skip(self, stack):
         return get_oarepo_sample(stack).get("skip", False)
@@ -146,8 +146,8 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
 
 
 def get_oarepo_sample(stack):
-    if isinstance(stack.top.data, dict) and "oarepo:sample" in stack.top.data:
-        sample = stack.top.data.get("oarepo:sample")
+    if isinstance(stack.top.data, dict) and "sample" in stack.top.data:
+        sample = stack.top.data.get("sample")
         if isinstance(sample, dict):
             return sample
         if isinstance(sample, str):

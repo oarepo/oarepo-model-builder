@@ -19,7 +19,7 @@ class DataType:
     def _copy_definition(self, **extras):
         ret = copy.deepcopy(self.definition)
         for k, v in extras.items():
-            if k not in ret:
+            if v is not None:
                 ret[k] = v
         return ret
 
@@ -33,12 +33,12 @@ class DataType:
         return self._copy_definition(type=self.mapping_type, **extras)
 
     def marshmallow(self, **extras):
-        ret = copy.deepcopy(self.definition.get("oarepo:marshmallow", {}))
+        ret = copy.deepcopy(self.definition.get("marshmallow", {}))
         if self.marshmallow_field:
             ret.setdefault("field-class", self.marshmallow_field)
-        ret.setdefault("validators", []).extend(self.marshmallow_validators)
+        ret.setdefault("validators", []).extend(self.marshmallow_validators())
         for k, v in extras.items():
-            if k not in ret:
+            if v is not None:
                 ret[k] = v
         return ret
 
@@ -58,13 +58,17 @@ class DataType:
 class DataTypes:
     def __init__(self) -> None:
         self.datatypes = {}
-        for entry in importlib_metadata.entry_points(
-            group="oarepo_model_builder.datatypes"
-        ):
-            for dt in entry.load():
-                self.datatypes[dt().model_type] = dt
+
+    def _prepare_datatypes(self):
+        if not self.datatypes:
+            for entry in importlib_metadata.entry_points(
+                group="oarepo_model_builder.datatypes"
+            ):
+                for dt in entry.load():
+                    self.datatypes[dt.model_type] = dt
 
     def get_datatype(self, data) -> DataType:
+        self._prepare_datatypes()
         ret = self.datatypes.get(data["type"])
         if ret:
             return ret(data)

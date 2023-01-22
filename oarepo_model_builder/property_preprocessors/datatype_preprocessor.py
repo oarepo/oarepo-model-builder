@@ -15,10 +15,10 @@ class DataTypePreprocessor(PropertyPreprocessor):
     @process(
         model_builder=JSONSchemaBuilder,
         path="**/properties/**",
-        condition=lambda current, stack: current.schema_element_type
+        condition=lambda current, stack: stack.top.schema_element_type
         in ("property", "items"),
     )
-    def modify_date_jsonschema(self, data, stack: ModelBuilderStack, **kwargs):
+    def modify_jsonschema(self, data, stack: ModelBuilderStack, **kwargs):
         datatype = datatypes.get_datatype(data)
         if not datatype:
             return data
@@ -27,10 +27,10 @@ class DataTypePreprocessor(PropertyPreprocessor):
     @process(
         model_builder=MappingBuilder,
         path="**/properties/*",
-        condition=lambda current, stack: current.schema_element_type
+        condition=lambda current, stack: stack.top.schema_element_type
         in ("property", "items"),
     )
-    def modify_date_mapping(self, data, stack: ModelBuilderStack, **kwargs):
+    def modify_mapping(self, data, stack: ModelBuilderStack, **kwargs):
         datatype = datatypes.get_datatype(data)
         if not datatype:
             return data
@@ -39,9 +39,10 @@ class DataTypePreprocessor(PropertyPreprocessor):
     @process(
         model_builder=InvenioRecordSchemaBuilder,
         path="**/properties/*",
-        condition=lambda current, stack: current.type == "date",
+        condition=lambda current, stack: stack.top.schema_element_type
+        in ("property", "items"),
     )
-    def modify_date_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
+    def modify_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
         datatype = datatypes.get_datatype(data)
         if not datatype:
             return data

@@ -13,7 +13,7 @@ def test_enum():
         "test.yaml",
         "test",
         model_content={
-            "oarepo:use": "invenio",
+            "^use": "invenio",
             "model": {
                 "properties": {"a": {"type": "keyword", "enum": ["a", "b", "c"]}}
             },
@@ -42,21 +42,22 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
+from datetime.datetime import strptime
 
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
     
     a = ma_fields.String(validate=[ma_valid.OneOf(["a", "b", "c"])])
-    
-    created = mu_fields.ISODateString(dump_only=True)
-    updated = mu_fields.ISODateString(dump_only=True)
-            """,
+    created = ma_fields.String(validate=[lambda value: strptime(value, '%Y:%m:%d')], dump_only=True)
+    updated = ma_fields.String(validate=[lambda value: strptime(value, '%Y:%m:%d')], dump_only=True)
+""",
     )
 
     data = builder.filesystem.read(
         os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
     )
     data = json.loads(data)
+    print(data)
     assert data == {
         "properties": {
             "$schema": {"type": "string"},

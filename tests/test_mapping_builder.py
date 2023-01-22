@@ -2,8 +2,9 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
@@ -17,9 +18,7 @@ except ImportError:
 
 
 def test_simple_mapping_builder():
-    model = {
-        "properties": {"a": {"type": "keyword", "oarepo:mapping": {"type": "text"}}}
-    }
+    model = {"properties": {"a": {"type": "keyword", "mapping": {"type": "text"}}}}
     data = build_model(model)
 
     assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
@@ -30,7 +29,7 @@ def test_array_mapping_builder():
         "properties": {
             "a": {
                 "type": "array",
-                "items": {"type": "keyword", "oarepo:mapping": {"type": "text"}},
+                "items": {"type": "keyword", "mapping": {"type": "text"}},
             }
         }
     }

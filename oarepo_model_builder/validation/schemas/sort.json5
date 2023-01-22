@@ -1,7 +1,7 @@
 {
   "jsonschema-property": {
     "properties": {
-      "oarepo:sortable": {
+      "sortable": {
         "type": "object",
         "properties": {
           "key": {
@@ -17,7 +17,7 @@
   },
   "root": {
     "properties": {
-      "oarepo:sortable": {
+      "sortable": {
         "type": "object",
         "additionalProperties": true  // TODO: proper schema here
       }

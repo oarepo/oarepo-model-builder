@@ -6,8 +6,8 @@ from ..utils.deepmerge import deepmerge
 from ..utils.hyphen_munch import HyphenMunch
 from .invenio_base import InvenioBaseClassPythonBuilder
 
-OAREPO_FACETS_PROPERTY = "oarepo:facets"
-OAREPO_SORTABLE_PROPERTY = "oarepo:sortable"
+OAREPO_FACETS_PROPERTY = "facets"
+OAREPO_SORTABLE_PROPERTY = "sortable"
 
 
 class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
@@ -25,8 +25,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         self.facets_definition = []
         self.facets_names = []
         self.settings = settings
-        if "oarepo:sortable" in schema:
-            self.process_top_sortable(schema["oarepo:sortable"])
+        if "sortable" in schema:
+            self.process_top_sortable(schema["sortable"])
 
     def finish(self, **extra_kwargs):
         super().finish(
@@ -102,7 +102,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                     continue
                 nested_path = nested_path + upper.key + "."
                 if (
-                    upper.data.get("oarepo:mapping", HyphenMunch({"type": ""})).type
+                    upper.data.get("mapping", HyphenMunch({"type": ""})).type
                     == "nested"
                 ):
                     nested_paths.append(nested_path)

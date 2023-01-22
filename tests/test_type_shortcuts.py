@@ -56,7 +56,7 @@ def test_object_inside_array():
 
 def test_array_brackets():
     data = build_jsonschema(
-        {"properties": {"a[]": {"type": "keyword", "minLength": 5}}}
+        {"properties": {"a[]": {"type": "keyword", "^minLength": 5}}}
     )
 
     assert data == {

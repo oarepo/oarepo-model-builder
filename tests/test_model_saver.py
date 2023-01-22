@@ -12,6 +12,9 @@ from oarepo_model_builder.model_preprocessors.default_values import (
 from oarepo_model_builder.outputs.cfg import CFGOutput
 from oarepo_model_builder.outputs.json import JSONOutput
 from oarepo_model_builder.outputs.python import PythonOutput
+from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
+    DataTypePreprocessor,
+)
 from oarepo_model_builder.property_preprocessors.inherited_model import (
     InheritedModelPreprocessor,
 )
@@ -28,7 +31,7 @@ def test_model_saver():
     data = build(
         {
             "properties": {
-                "a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}},
+                "a": {"type": "keyword", "ui": {"class": "bolder"}},
                 "b": {
                     "type": "object",
                     "properties": {
@@ -36,13 +39,14 @@ def test_model_saver():
                             "type": "keyword",
                         }
                     },
-                    "oarepo:marshmallow": {"generate": True},
+                    "marshmallow": {"generate": True},
                 },
                 "metadata": {"properties": {}},
             }
         },
         property_preprocessors=[
             InheritedModelPreprocessor,
+            DataTypePreprocessor,
         ],
     )
 
@@ -70,9 +74,9 @@ def test_model_saver():
         },
         "model": {
             "properties": {
-                "a": {"oarepo:ui": {"class": "bolder"}, "type": "keyword"},
+                "a": {"ui": {"class": "bolder"}, "type": "keyword"},
                 "b": {
-                    "oarepo:marshmallow": {"generate": True},
+                    "marshmallow": {"generate": True},
                     "properties": {"c": {"type": "keyword"}},
                     "type": "object",
                 },
@@ -82,32 +86,32 @@ def test_model_saver():
     }
     assert data[1] == {
         "model": {
-            "oarepo:marshmallow": {
+            "marshmallow": {
                 "base-classes": ["test.services.schema.TestRecordSchema"],
                 "generate": True,
             },
             "properties": {
                 "a": {
-                    "oarepo:marshmallow": {"read": False, "write": False},
-                    "oarepo:ui": {"class": "bolder"},
+                    "marshmallow": {"read": False, "write": False},
+                    "ui": {"class": "bolder"},
                     "type": "keyword",
                 },
                 "b": {
-                    "oarepo:marshmallow": {
+                    "marshmallow": {
                         "generate": True,
                         "read": False,
                         "write": False,
                     },
                     "properties": {
                         "c": {
-                            "oarepo:marshmallow": {"read": False, "write": False},
+                            "marshmallow": {"read": False, "write": False},
                             "type": "keyword",
                         }
                     },
                     "type": "object",
                 },
                 "metadata": {
-                    "oarepo:marshmallow": {
+                    "marshmallow": {
                         "base-classes": ["test.services.schema.TestMetadataSchema"],
                         "generate": True,
                     },
@@ -142,7 +146,7 @@ def build(model, output_builder_components=None, property_preprocessors=None):
                 "jsonschema-property": {
                     "properties": {
                         "type": {"enum": ["multilingual"]},
-                        "oarepo:ui": {"type": "object", "additionalProperties": True},
+                        "ui": {"type": "object", "additionalProperties": True},
                     }
                 }
             }

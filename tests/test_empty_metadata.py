@@ -11,7 +11,7 @@ from oarepo_model_builder.fs import FileSystem
 from tests.mock_filesystem import MockFilesystem
 from tests.utils import assert_python_equals
 
-OAREPO_USE = "oarepo:use"
+OAREPO_USE = "^use"
 
 
 def test_empty_metadata():

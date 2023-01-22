@@ -19,7 +19,7 @@ def test_loading_from_empty_file():
 def test_loading_included_resource():
     schema = ModelSchema(
         "/tmp/path.json",
-        {"a": {"oarepo:use": "test1"}},
+        {"a": {"^use": "test1"}},
         {"test1": lambda schema: {"included": "test1"}},
     )
     assert schema.schema == {
@@ -31,7 +31,7 @@ def test_loading_included_resource():
 def test_loading_included_resource_root():
     schema = ModelSchema(
         "/tmp/path.json",
-        {"oarepo:use": "test1"},
+        {"^use": "test1"},
         {"test1": lambda schema: {"included": "test1"}},
     )
     assert schema.schema == {
@@ -43,7 +43,7 @@ def test_loading_included_resource_root():
 def test_loading_jsonpath_resource():
     schema = ModelSchema(
         "/tmp/path.json",
-        {"oarepo:use": "test1#/test/a"},
+        {"^use": "test1#/test/a"},
         {"test1": lambda schema: {"test": {"a": {"included": "test1"}}}},
     )
     assert schema.schema == {
@@ -53,9 +53,7 @@ def test_loading_jsonpath_resource():
 
 
 def test_loading_current():
-    schema = ModelSchema(
-        "/tmp/path.json", {"b": {"oarepo:use": "#/a"}, "a": {"a": True}}
-    )
+    schema = ModelSchema("/tmp/path.json", {"b": {"^use": "#/a"}, "a": {"a": True}})
     assert schema.schema == {
         "settings": {},
         "b": {"a": True},
@@ -65,7 +63,7 @@ def test_loading_current():
 
 def test_loading_current_by_id():
     schema = ModelSchema(
-        "/tmp/path.json", {"b": {"oarepo:use": "#id"}, "a": {"$id": "id", "a": True}}
+        "/tmp/path.json", {"b": {"^use": "#id"}, "a": {"$id": "id", "a": True}}
     )
     assert schema.schema == {
         "settings": {},
@@ -78,7 +76,7 @@ def test_loading_external_by_id():
     schema = ModelSchema(
         "/tmp/path.json",
         {
-            "b": {"oarepo:use": "aa#id"},
+            "b": {"^use": "aa#id"},
         },
         {"aa": lambda schema: {"a": {"$id": "id", "a": True}}},
     )

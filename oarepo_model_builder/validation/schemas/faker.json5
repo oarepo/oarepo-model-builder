@@ -1,7 +1,7 @@
 {
   "jsonschema-property": {
     "properties": {
-      "oarepo:sample": {
+      "sample": {
         "oneOf": [
           {
             "type": "string"      // will output this single value
@@ -50,7 +50,7 @@
   },
   "root": {
     "properties": {
-      "oarepo:sample": {
+      "sample": {
         "type": "object",
         "properties": {
           "count": {

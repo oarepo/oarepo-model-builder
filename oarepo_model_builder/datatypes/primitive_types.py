@@ -3,7 +3,6 @@ from .datatypes import DataType, Import
 
 
 class NumberDataType(DataType):
-    @property
     def marshmallow_validators(self):
         validators = []
         ranges = {}

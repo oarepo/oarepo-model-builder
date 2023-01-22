@@ -8,7 +8,7 @@ from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, lo
 from tests.mock_filesystem import MockFilesystem
 from tests.utils import assert_python_equals
 
-OAREPO_USE = "oarepo:use"
+OAREPO_USE = "^use"
 
 
 def test_include_invenio():
@@ -44,12 +44,13 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
+from datetime.datetime import strptime
 
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
     a = ma_fields.String()
-    created = mu_fields.ISODateString(dump_only=True)
-    updated = mu_fields.ISODateString(dump_only=True)
+    created = ma_fields.String(validate=[lambda value: strptime(value, '%Y:%m:%d')], dump_only=True)
+    updated = ma_fields.String(validate=[lambda value: strptime(value, '%Y:%m:%d')], dump_only=True)
     """,
     )
 

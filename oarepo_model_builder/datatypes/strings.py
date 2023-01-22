@@ -2,7 +2,9 @@ from .datatypes import DataType
 
 
 class StringDataType(DataType):
-    @property
+    schema_type = "string"
+    marshmallow_field = "ma_fields.String"
+
     def marshmallow_validators(self):
         validators = []
         ranges = {}
@@ -27,25 +29,21 @@ class StringDataType(DataType):
 
 
 class FulltextDataType(StringDataType):
-    schema_type = "string"
     mapping_type = "text"
-    marshmallow_field = "ma_fields.Str"
     model_type = "fulltext"
 
 
 class KeywordDataType(StringDataType):
-    schema_type = "string"
     mapping_type = "keyword"
-    marshmallow_field = "ma_fields.Str"
     model_type = "keyword"
 
 
 class FulltextKeywordDataType(StringDataType):
-    schema_type = "string"
     mapping_type = "text"
-    marshmallow_field = "ma_fields.Str"
     model_type = "fulltext+keyword"
 
     def mapping(self):
         ret = super().mapping()
-        ret.setdefault("fields", {}).setdefault("keyword", {"type": "keyword"})
+        mapping_el = ret.setdefault("mapping", {})
+        mapping_el.setdefault("fields", {}).setdefault("keyword", {"type": "keyword"})
+        return ret

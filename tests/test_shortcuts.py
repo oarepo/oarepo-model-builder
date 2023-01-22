@@ -13,8 +13,8 @@ def test_array_shortcuts():
         "test.yaml",
         "test",
         model_content={
-            "oarepo:use": "invenio",
-            "model": {"properties": {"a[]": {"type": "keyword", "required": True}}},
+            "^use": "invenio",
+            "model": {"properties": {"a[]": {"type": "keyword", "^required": True}}},
         },
         isort=False,
         black=False,
@@ -41,10 +41,12 @@ from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
 
+from datetime.datetime import strptime
+
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
-    created = mu_fields.ISODateString(dump_only=True)
-    updated = mu_fields.ISODateString(dump_only=True)
+    created = ma_fields.String(validate=[lambda value: strptime(value, '%Y:%m:%d')], dump_only=True)
+    updated = ma_fields.String(validate=[lambda value: strptime(value, '%Y:%m:%d')], dump_only=True)
     a = ma_fields.List(ma_fields.String())        """,
     )
 

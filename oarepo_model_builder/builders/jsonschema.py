@@ -24,9 +24,9 @@ class JSONSchemaBuilder(JSONBaseBuilder):
         self.model_element_leave()
 
     def merge_jsonschema(self, data):
-        if isinstance(data, dict) and "oarepo:jsonschema" in data:
+        if isinstance(data, dict) and "jsonschema" in data:
             jsonschema = self.call_components(
-                "before_merge_jsonschema", data["oarepo:jsonschema"], stack=self.stack
+                "before_merge_jsonschema", data["jsonschema"], stack=self.stack
             )
             self.output.merge_jsonschema(jsonschema)
 

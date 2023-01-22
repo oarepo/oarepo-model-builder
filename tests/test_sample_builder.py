@@ -3,8 +3,9 @@ from pathlib import Path
 import faker.config
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints
-from oarepo_model_builder.invenio.invenio_script_sample_data import \
-    InvenioScriptSampleDataBuilder
+from oarepo_model_builder.invenio.invenio_script_sample_data import (
+    InvenioScriptSampleDataBuilder,
+)
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 
@@ -103,7 +104,7 @@ def test_sample_builder_simple_array():
             {
                 "a": {
                     "type": "array",
-                    "oarepo:sample": {"count": 1},
+                    "sample": {"count": 1},
                     "items": {"type": "string"},
                 }
             }
@@ -117,7 +118,7 @@ def test_sample_builder_simple_array():
             {
                 "a": {
                     "type": "array",
-                    "oarepo:sample": {"count": 2},
+                    "sample": {"count": 2},
                     "items": {"type": "string"},
                 }
             }
@@ -133,7 +134,7 @@ def test_sample_builder_complex_array():
             {
                 "a": {
                     "type": "array",
-                    "oarepo:sample": {"count": 2},
+                    "sample": {"count": 2},
                     "items": {
                         "type": "object",
                         "properties": {
@@ -170,7 +171,7 @@ def build_sample_data(model, count=1):
         {
             "model": {"properties": model},
             "settings": {"script-import-sample-data": "test.py"},
-            "oarepo:sample": {"count": count},
+            "sample": {"count": count},
         },
     )
     sample_builder.build(schema)

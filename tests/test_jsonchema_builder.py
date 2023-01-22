@@ -3,8 +3,9 @@ import os
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders import OutputBuilderComponent
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
@@ -18,9 +19,7 @@ except ImportError:
 
 
 def test_simple_jsonschema_builder():
-    data = build(
-        {"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}}
-    )
+    data = build({"properties": {"a": {"type": "keyword", "ui": {"class": "bolder"}}}})
 
     assert data == {"properties": {"a": {"type": "keyword"}}}
 
@@ -32,7 +31,7 @@ def test_required():
                 "a": {
                     "type": "keyword",
                     "required": True,
-                    "oarepo:ui": {"class": "bolder"},
+                    "ui": {"class": "bolder"},
                 }
             }
         }
@@ -50,7 +49,7 @@ def test_required_inside_metadata():
                         "a": {
                             "type": "keyword",
                             "required": True,
-                            "oarepo:ui": {"class": "bolder"},
+                            "ui": {"class": "bolder"},
                         }
                     }
                 }
@@ -72,11 +71,7 @@ def test_min_length():
 
 def test_jsonschema_preprocessor():
     data = build(
-        {
-            "properties": {
-                "a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}
-            }
-        },
+        {"properties": {"a": {"type": "multilingual", "ui": {"class": "bolder"}}}},
         property_preprocessors=[MultilangPreprocessor],
     )
 
@@ -99,7 +94,7 @@ class TestJSONSchemaOutputComponent(OutputBuilderComponent):
 
 def test_components():
     data = build(
-        {"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}},
+        {"properties": {"a": {"type": "keyword", "ui": {"class": "bolder"}}}},
         output_builder_components={
             JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]
         },
@@ -121,7 +116,7 @@ def build(model, output_builder_components=None, property_preprocessors=None):
                 "jsonschema-property": {
                     "properties": {
                         "type": {"enum": ["multilingual"]},
-                        "oarepo:ui": {"type": "object", "additionalProperties": True},
+                        "ui": {"type": "object", "additionalProperties": True},
                     }
                 }
             }

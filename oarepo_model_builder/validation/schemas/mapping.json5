@@ -1,7 +1,7 @@
 {
   "jsonschema-property": {
     "properties": {
-      "oarepo:mapping": {
+      "mapping": {
         "type": "object",
         "additionalProperties": true
       }

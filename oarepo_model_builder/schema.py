@@ -49,8 +49,8 @@ SafeDumper.add_multi_representer(Key, key_representer)
 
 
 class ModelSchema:
-    OAREPO_USE = "oarepo:use"
-    OAREPO_USE_SHORTCUT = "^use"
+    USE_KEYWORD = "^use"
+    REF_KEYWORD = "$ref"
 
     def __init__(
         self,
@@ -203,22 +203,22 @@ class ModelSchema:
 
     def _resolve_references(self, element, stack):
         if isinstance(element, dict):
-            if self.OAREPO_USE in element or self.OAREPO_USE_SHORTCUT in element:
+            if self.USE_KEYWORD in element or self.REF_KEYWORD in element:
                 for key in element:
-                    if key in (self.OAREPO_USE, self.OAREPO_USE_SHORTCUT):
+                    if key in (self.USE_KEYWORD, self.REF_KEYWORD):
                         break
                 else:
                     raise  # just for making pycharm happy
                 included_name = element[key]
-                element.pop(self.OAREPO_USE, None)
-                element.pop(self.OAREPO_USE_SHORTCUT, None)
+                element.pop(self.USE_KEYWORD, None)
+                element.pop(self.REF_KEYWORD, None)
 
                 if not isinstance(included_name, list):
                     included_name = [included_name]
                 for name in included_name:
                     if not name:
                         raise IncludedFileNotFoundException(
-                            f"No file for oarepo:include at path {'/'.join(stack)}"
+                            f"No file for ^use at path {'/'.join(stack)}"
                         )
                     included_data = self._load_included_file(
                         name, source_locations=Key.get_sources(key)

@@ -21,9 +21,9 @@ flatten:
 """
 
 
-from .datatypes import DataType, datatypes
+from .datatypes import DataType, datatypes, Import
 from .primitive_types import (
-    NumberDataType,
+    NumberDataType,  # noqa
     IntegerDataType,
     FloatDataType,
     DoubleDataType,
@@ -31,13 +31,18 @@ from .primitive_types import (
 )
 
 from .strings import (
-    StringDataType,
+    StringDataType,  # noqa
     FulltextDataType,
     KeywordDataType,
     FulltextKeywordDataType,
 )
 
-from .containers import ObjectDataType, NestedDataType, FlattenDataType
+from .containers import (
+    ObjectDataType,
+    NestedDataType,
+    FlattenDataType,
+    ArrayDataType,
+)
 
 from .dates import (
     DateDataType,
@@ -63,27 +68,5 @@ DEFAULT_DATATYPES = [
     ObjectDataType,
     NestedDataType,
     FlattenDataType,
-]
-
-__all__ = [
-    "DataType",
-    "datatypes",
-    "DEFAULT_DATATYPES",
-    "NumberDataType",
-    "IntegerDataType",
-    "FloatDataType",
-    "DoubleDataType",
-    "BooleanDataType",
-    "DateDataType",
-    "TimeDataType",
-    "DateTimeDataType",
-    "EDTFDataType",
-    "EDTFIntervalType",
-    "StringDataType",
-    "FulltextDataType",
-    "KeywordDataType",
-    "FulltextKeywordDataType",
-    "ObjectDataType",
-    "NestedDataType",
-    "FlattenDataType",
+    ArrayDataType,
 ]

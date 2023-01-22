@@ -9,7 +9,10 @@ class DateDataType(DataType):
     model_type = "date"
 
     def mapping(self, **extras):
-        return super.mapping(format="strict_date")
+        return super().mapping(format="strict_date", **extras)
+
+    def json_schema(self, **extras):
+        return super().json_schema(format="date", **extras)
 
     def marshmallow_validators(self) -> List[str]:
         return super().marshmallow_validators() + [
@@ -18,7 +21,9 @@ class DateDataType(DataType):
         ]
 
     def imports(self, *extra) -> List[Import]:
-        return super().imports(Import(import_path="datetime.datetime.strptime"))
+        return super().imports(
+            Import(import_path="datetime.datetime.strptime", alias=None)
+        )
 
 
 class TimeDataType(DataType):
@@ -28,7 +33,10 @@ class TimeDataType(DataType):
     model_type = "time"
 
     def mapping(self, **extras):
-        return super.mapping(format="strict_time||strict_time_no_millis")
+        return super().mapping(format="strict_time||strict_time_no_millis")
+
+    def json_schema(self, **extras):
+        return super().json_schema(format="time", **extras)
 
     def marshmallow_validators(self) -> List[str]:
         return super().marshmallow_validators() + [
@@ -37,7 +45,9 @@ class TimeDataType(DataType):
         ]
 
     def imports(self, *extra) -> List[Import]:
-        return super().imports(Import(import_path="datetime.datetime.strptime"))
+        return super().imports(
+            Import(import_path="datetime.datetime.strptime", alias=None)
+        )
 
 
 class DateTimeDataType(DataType):
@@ -47,7 +57,10 @@ class DateTimeDataType(DataType):
     model_type = "datetime"
 
     def mapping(self, **extras):
-        return super.mapping(format="strict_date_time||strict_date_time_no_millis")
+        return super().mapping(format="strict_date_time||strict_date_time_no_millis")
+
+    def json_schema(self, **extras):
+        return super().json_schema(format="date-time", **extras)
 
 
 class EDTFDataType(DataType):
@@ -57,7 +70,7 @@ class EDTFDataType(DataType):
     model_type = "edtf"
 
     def mapping(self, **extras):
-        return super.mapping(
+        return super().mapping(
             format="strict_date_time||strict_date_time_no_millis||strict_date||yyyy-MM||yyyy"
         )
 
@@ -77,7 +90,7 @@ class EDTFIntervalType(DataType):
     model_type = "edtf-interval"
 
     def mapping(self, **extras):
-        return super.mapping(
+        return super().mapping(
             format="strict_date_time||strict_date_time_no_millis||strict_date||yyyy-MM||yyyy"
         )
 
