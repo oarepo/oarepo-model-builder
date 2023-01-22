@@ -8,251 +8,246 @@ class InvenioModelPreprocessor(ModelPreprocessor):
     TYPE = "invenio"
 
     def transform(self, schema, settings):
+        model = schema.model
+        deepmerge(settings, {"python": {"templates": {}}})
         deepmerge(
-            settings,
+            model,
             {
-                "python": {
-                    "record-prefix": camel_case(split_base_name(settings.package)),
-                    # just make sure that the templates is always there
-                    "templates": {},
-                    "marshmallow": {"mapping": {}},
-                }
+                "record-prefix": camel_case(split_base_name(model.package)),
+                # just make sure that the templates is always there
+                "marshmallow": {"mapping": {}},
             },
         )
 
-        record_prefix = settings.python.record_prefix
+        record_prefix = model.record_prefix
 
         extension_suffix = snake_case(record_prefix)
         extension_suffix_upper = extension_suffix.upper()
-        self.set(settings.python, "extension-suffix", lambda: extension_suffix)
-        self.set(settings.python, "profile-package", lambda: "records")
+        self.set(model, "extension-suffix", lambda: extension_suffix)
+        self.set(model, "profile-package", lambda: "records")
 
-        # self.set(settings.python, "extension-suffix", lambda: f"_{record_prefix}")
+        # self.set(model, "extension-suffix", lambda: f"_{record_prefix}")
 
         self.set(
-            settings.python,
+            model,
             "record-prefix-snake",
-            lambda: snake_case(settings.python.record_prefix),
+            lambda: snake_case(model.record_prefix),
         )
 
         # level-1 packages
 
         self.set(
-            settings.python,
+            model,
             "record-resources-package",
-            lambda: f"{settings.package}.resources.{settings.python.profile_package}",
+            lambda: f"{model.package}.resources.{model.profile_package}",
         )
 
         self.set(
-            settings.python,
+            model,
             "record-services-package",
-            lambda: f"{settings.package}.services.{settings.python.profile_package}",
+            lambda: f"{model.package}.services.{model.profile_package}",
         )
 
         self.set(
-            settings.python,
+            model,
             "record-records-package",
-            lambda: f"{settings.package}.{settings.python.profile_package}",
+            lambda: f"{model.package}.{model.profile_package}",
         )
 
         # config
+        self.set(model, "config-package", lambda: f"{model.package}.config")
         self.set(
-            settings.python, "config-package", lambda: f"{settings.package}.config"
-        )
-        self.set(
-            settings.python,
+            model,
             "config-dummy-class",
-            lambda: f"{settings.package}.config.DummyClass",
+            lambda: f"{model.package}.config.DummyClass",
         )
         # todo "config prefix"
         self.set(
-            settings.python,
+            model,
             "config-resource-config-key",
-            lambda: f"{settings.package_base_upper}_RESOURCE_CONFIG_{extension_suffix_upper}",
+            lambda: f"{model.package_base_upper}_RESOURCE_CONFIG_{extension_suffix_upper}",
         )
         self.set(
-            settings.python,
+            model,
             "config-resource-class-key",
-            lambda: f"{settings.package_base_upper}_RESOURCE_CLASS_{extension_suffix_upper}",
+            lambda: f"{model.package_base_upper}_RESOURCE_CLASS_{extension_suffix_upper}",
         )
         self.set(
-            settings.python,
+            model,
             "config-service-config-key",
-            lambda: f"{settings.package_base_upper}_SERVICE_CONFIG_{extension_suffix_upper}",
+            lambda: f"{model.package_base_upper}_SERVICE_CONFIG_{extension_suffix_upper}",
         )
         self.set(
-            settings.python,
+            model,
             "config-service-class-key",
-            lambda: f"{settings.package_base_upper}_SERVICE_CLASS_{extension_suffix_upper}",
+            lambda: f"{model.package_base_upper}_SERVICE_CLASS_{extension_suffix_upper}",
         )
         self.set(
-            settings.python,
+            model,
             "config-resource-register-blueprint-key",
-            lambda: f"{settings.package_base_upper}_REGISTER_BLUEPRINT",
+            lambda: f"{model.package_base_upper}_REGISTER_BLUEPRINT",
         )
 
         # ext
         self.set(
-            settings.python,
+            model,
             "ext-class",
-            lambda: f"{settings.package}.ext.{record_prefix}Ext",
+            lambda: f"{model.package}.ext.{record_prefix}Ext",
         )
-        self.set(settings.python, "flask-extension-name", lambda: extension_suffix)
+        self.set(model, "flask-extension-name", lambda: extension_suffix)
 
         # cli
         self.set(
-            settings.python,
+            model,
             "cli-function",
-            lambda: f"{settings.package}.cli.group",
+            lambda: f"{model.package}.cli.group",
         )
 
         # proxies
         self.set(
-            settings.python,
+            model,
             "proxies-current-resource",
-            lambda: f"{settings.package}.proxies.current_resource",
+            lambda: f"{model.package}.proxies.current_resource",
         )
         self.set(
-            settings.python,
+            model,
             "proxies-current-service",
-            lambda: f"{settings.package}.proxies.current_service",
+            lambda: f"{model.package}.proxies.current_service",
         )
 
         # record
         self.set(
-            settings.python,
+            model,
             "record-class",
-            lambda: f"{settings.python.record_records_package}.api.{record_prefix}Record",
+            lambda: f"{model.record_records_package}.api.{record_prefix}Record",
         )
         self.set(
-            settings.python,
+            model,
             "record-metadata-class",
-            lambda: f"{settings.python.record_records_package}.models.{record_prefix}Metadata",
+            lambda: f"{model.record_records_package}.models.{record_prefix}Metadata",
         )
         self.set(
-            settings.python,
+            model,
             "record-metadata-table-name",
             lambda: f"{record_prefix.lower()}_metadata",
         )
         #   - setup.cfg
         self.set(
-            settings.python,
+            model,
             "record-mapping-setup-cfg",
-            lambda: f"{settings.package_base}",
+            lambda: f"{model.package_base}",
         )
         self.set(
-            settings.python,
+            model,
             "record-jsonschemas-setup-cfg",
-            lambda: f"{settings.package_base}",
+            lambda: f"{model.package_base}",
         )
 
         # resource
         self.set(
-            settings.python,
+            model,
             "record-resource-config-class",
-            lambda: f"{settings.python.record_resources_package}.config.{record_prefix}ResourceConfig",
+            lambda: f"{model.record_resources_package}.config.{record_prefix}ResourceConfig",
         )
         self.set(
-            settings.python,
+            model,
             "record-resource-class",
-            lambda: f"{settings.python.record_resources_package}.resource.{record_prefix}Resource",
+            lambda: f"{model.record_resources_package}.resource.{record_prefix}Resource",
         )
         self.set(
-            settings.python,
+            model,
             "record-permissions-class",
-            lambda: f"{settings.python.record_services_package}.permissions.{record_prefix}PermissionPolicy",
+            lambda: f"{model.record_services_package}.permissions.{record_prefix}PermissionPolicy",
         )
 
         # service
         self.set(
-            settings.python,
+            model,
             "record-service-class",
-            lambda: f"{settings.python.record_services_package}.service.{record_prefix}Service",
+            lambda: f"{model.record_services_package}.service.{record_prefix}Service",
         )
         self.set(
-            settings.python,
+            model,
             "record-service-config-class",
-            lambda: f"{settings.python.record_services_package}.config.{record_prefix}ServiceConfig",
+            lambda: f"{model.record_services_package}.config.{record_prefix}ServiceConfig",
         )
 
-        settings.python.setdefault("record-service-config-generate-links", True)
+        model.setdefault("record-service-config-generate-links", True)
         #   - schema
         self.set(
-            settings.python,
+            model,
             "record-schema-class",
-            lambda: f"{settings.python.record_services_package}.schema.{record_prefix}Schema",
+            lambda: f"{model.record_services_package}.schema.{record_prefix}Schema",
         )
         self.set(
-            settings.python,
+            model,
             "record-schema-metadata-class",
-            lambda: f"{settings.python.record_services_package}.schema.{record_prefix}MetadataSchema",
+            lambda: f"{model.record_services_package}.schema.{record_prefix}MetadataSchema",
         )
         #   - dumper
         self.set(
-            settings.python,
+            model,
             "record-dumper-class",
-            lambda: f"{settings.python.record_records_package}.dumper.{record_prefix}Dumper",
+            lambda: f"{model.record_records_package}.dumper.{record_prefix}Dumper",
         )
         #   - search
         if not (
-            "record-search-options-class" in settings.python
-            and settings.python.record_search_options_class == ""
+            "record-search-options-class" in model
+            and model.record_search_options_class == ""
         ):  # files plugin requires this to be empty
             self.set(
-                settings.python,
+                model,
                 "record-search-options-class",
-                lambda: f"{settings.python.record_services_package}.search.{record_prefix}SearchOptions",
+                lambda: f"{model.record_services_package}.search.{record_prefix}SearchOptions",
             )
 
         #   - facets
         self.set(
-            settings.python,
+            model,
             "record-facets-class",
-            lambda: f"{settings.python.record_services_package}.facets.Test",
+            lambda: f"{model.record_services_package}.facets.Test",
         )
 
         # alembic
         self.set(
-            settings.python,
+            model,
             "record-schema-metadata-alembic",
-            lambda: f"{settings.package_base}",
+            lambda: f"{model.package_base}",
         )
         self.set(
-            settings.python,
+            model,
             "record-schema-metadata-setup-cfg",
-            lambda: f"{settings.package_base}",
+            lambda: f"{model.package_base}",
         )
 
+        self.set(model, "record-resource-blueprint-name", lambda: record_prefix)
         self.set(
-            settings.python, "record-resource-blueprint-name", lambda: record_prefix
-        )
-        self.set(
-            settings.python,
+            model,
             "create-blueprint-from-app",
-            lambda: f"{settings.package}.views.create_blueprint_from_app_{extension_suffix}",
+            lambda: f"{model.package}.views.create_blueprint_from_app_{extension_suffix}",
         )
-        settings.python.setdefault("invenio-config-extra-code", "")
-        settings.python.setdefault("invenio-ext-extra-code", "")
-        settings.python.setdefault("invenio-proxies-extra-code", "")
-        settings.python.setdefault("invenio-record-extra-code", "")
-        settings.python.setdefault("invenio-record-dumper-extra-code", "")
-        settings.python.setdefault("invenio-record-facets-extra-code", "")
-        settings.python.setdefault("invenio-record-metadata-extra-code", "")
-        settings.python.setdefault("invenio-record-object-schema-extra-code", "")
-        settings.python.setdefault("invenio-record-permissions-extra-code", "")
-        settings.python.setdefault("invenio-record-resource-extra-code", "")
-        settings.python.setdefault("invenio-record-resource-config-extra-code", "")
-        settings.python.setdefault("invenio-record-schema-extra-code", "")
-        settings.python.setdefault("invenio-record-search-options-extra-code", "")
-        settings.python.setdefault("invenio-record-service-extra-code", "")
-        settings.python.setdefault("invenio-record-service-config-extra-code", "")
-        settings.python.setdefault("invenio-version-extra-code", "")
-        settings.python.setdefault("invenio-views-extra-code", "")
+        model.setdefault("invenio-config-extra-code", "")
+        model.setdefault("invenio-ext-extra-code", "")
+        model.setdefault("invenio-proxies-extra-code", "")
+        model.setdefault("invenio-record-extra-code", "")
+        model.setdefault("invenio-record-dumper-extra-code", "")
+        model.setdefault("invenio-record-facets-extra-code", "")
+        model.setdefault("invenio-record-metadata-extra-code", "")
+        model.setdefault("invenio-record-object-schema-extra-code", "")
+        model.setdefault("invenio-record-permissions-extra-code", "")
+        model.setdefault("invenio-record-resource-extra-code", "")
+        model.setdefault("invenio-record-resource-config-extra-code", "")
+        model.setdefault("invenio-record-schema-extra-code", "")
+        model.setdefault("invenio-record-search-options-extra-code", "")
+        model.setdefault("invenio-record-service-extra-code", "")
+        model.setdefault("invenio-record-service-config-extra-code", "")
+        model.setdefault("invenio-version-extra-code", "")
+        model.setdefault("invenio-views-extra-code", "")
 
         if "model" in schema.schema:
-            schema_class = settings.python.record_schema_class
-            schema_metadata_class = settings.python.record_schema_metadata_class
-            schema_class_base_classes = settings.python.get(
+            schema_class = model.record_schema_class
+            schema_metadata_class = model.record_schema_metadata_class
+            schema_class_base_classes = model.get(
                 "record_schema_metadata_bases", []
             ) + [
                 "ma.Schema"  # alias will be recognized automatically
@@ -276,7 +271,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 "marshmallow" in schema.schema
                 and "base-schema" in schema.schema["marshmallow"]
             ):
-                schema_class_base_classes = settings.python.get(
+                schema_class_base_classes = model.get(
                     "record_schema_metadata_bases", []
                 ) + [
                     schema.schema["marshmallow"][
@@ -294,8 +289,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             )
             schema.schema.model.setdefault("type", "object")
 
-        settings.python.setdefault("generate-record-pid-field", True)
-        settings.python.setdefault("record-dumper-extensions", [])
+        model.setdefault("generate-record-pid-field", True)
+        model.setdefault("record-dumper-extensions", [])
 
         # default import prefixes
         _prefixes = settings.python.setdefault("always-defined-import-prefixes", [])
@@ -303,11 +298,5 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             if _prefix not in _prefixes:
                 _prefixes.append(_prefix)
 
-        # script sample data importer
-        settings.python.setdefault(
-            "script-import-sample-data-cli", "scripts.import_sample_data.cli"
-        )
-        settings.setdefault("script-import-sample-data", "scripts/sample_data.yaml")
-        self.set(
-            settings.python, "service-id", lambda: settings.python.flask_extension_name
-        )
+        model.setdefault("script-import-sample-data", "data/sample_data.yaml")
+        self.set(model, "service-id", lambda: model.flask_extension_name)

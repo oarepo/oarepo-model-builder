@@ -1,12 +1,12 @@
-from {{ python.record_service_config_class|package_name }} import {{ python.record_service_config_class|base_name }}
-from {{ python.record_service_class|package_name }} import {{ python.record_service_class|base_name }}
-from {{ python.record_resource_config_class|package_name }} import {{ python.record_resource_config_class|base_name }}
-from {{ python.record_resource_class|package_name }} import {{ python.record_resource_class|base_name }}
+from {{ model.record_service_config_class|package_name }} import {{ model.record_service_config_class|base_name }}
+from {{ model.record_service_class|package_name }} import {{ model.record_service_class|base_name }}
+from {{ model.record_resource_config_class|package_name }} import {{ model.record_resource_config_class|base_name }}
+from {{ model.record_resource_class|package_name }} import {{ model.record_resource_class|base_name }}
 
 
-{{ settings.python.config_resource_config_key }} = {{ settings.python.record_resource_config_class|base_name }}
-{{ settings.python.config_resource_class_key }} = {{ settings.python.record_resource_class|base_name }}
-{{ settings.python.config_service_config_key }} = {{ settings.python.record_service_config_class|base_name }}
-{{ settings.python.config_service_class_key }} = {{ settings.python.record_service_class|base_name }}
+{{ model.config_resource_config_key }} = {{ model.record_resource_config_class|base_name }}
+{{ model.config_resource_class_key }} = {{ model.record_resource_class|base_name }}
+{{ model.config_service_config_key }} = {{ model.record_service_config_class|base_name }}
+{{ model.config_service_class_key }} = {{ model.record_service_class|base_name }}
 
-{{ settings.python.invenio_config_extra_code }}
+{{ model.invenio_config_extra_code }}

@@ -50,11 +50,10 @@ def build_model(model):
             "",
             {
                 "settings": {
-                    "package": "test",
                     "python": {"use_isort": False, "use_black": False},
                     "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
                 },
-                "model": model,
+                "model": {"package": "test", **model},
             },
         ),
         output_dir="",
@@ -90,11 +89,13 @@ def test_mapping_preprocessor():
             "",
             {
                 "settings": {
-                    "package": "test",
                     "python": {"use_isort": False, "use_black": False},
                     "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
                 },
-                "model": {"properties": {"a": {"type": "multilingual"}}},
+                "model": {
+                    "package": "test",
+                    "properties": {"a": {"type": "multilingual"}},
+                },
             },
         ),
         output_dir="",

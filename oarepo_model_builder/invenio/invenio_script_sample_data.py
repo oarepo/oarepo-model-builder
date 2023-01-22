@@ -116,7 +116,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
                 self.output.primitive(key, self.generate_fake(self.stack))
 
     def build(self, schema):
-        output_name = schema.settings[self.output_file_name]
+        output_name = schema.model[self.output_file_name]
         output = self.builder.get_output(self.output_file_type, output_name)
         if not output.created:
             return
@@ -192,25 +192,3 @@ def faker_provider(faker, settings, stack, params):
                 )
                 method = "sentence"
     return getattr(faker, method)(**params)
-
-
-class InvenioScriptSampleDataShellBuilder(OutputBuilder):
-    TYPE = "invenio_script_sample_data_loader"
-
-    def finish(self):
-        super().finish()
-        context = {"settings": self.schema.settings}
-
-        env = Environment(
-            loader=FunctionLoader(
-                lambda tn: templates.get_template(tn, context["settings"])
-            ),
-            autoescape=False,
-        )
-
-        ensure_directory(self.builder, "scripts")
-        output = self.builder.get_output("diff", "scripts/load_sample_data.sh")
-        output.write(
-            env.get_template("script-import-sample-data-shell").render(context)
-        )
-        output.make_executable()

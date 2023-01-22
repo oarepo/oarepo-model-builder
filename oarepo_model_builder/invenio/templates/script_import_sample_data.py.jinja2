@@ -6,7 +6,7 @@ import yaml
 from invenio_app.factory import create_api
 from invenio_access.permissions import system_identity
 
-from {{ python.proxies_current_service|package_name }} import {{ python.proxies_current_service|base_name }}
+from {{ model.proxies_current_service|package_name }} import {{ model.proxies_current_service|base_name }}
 
 
 
@@ -26,7 +26,7 @@ def cli():
     with api.app_context():
         with open(filename) as f:
             for doc in yaml.load_all(f, yaml.SafeLoader):
-                {{ python.proxies_current_service|base_name }}.create(system_identity, doc)
+                {{ model.proxies_current_service|base_name }}.create(system_identity, doc)
 
 
 if __name__ == "__main__":

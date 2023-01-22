@@ -10,7 +10,7 @@ class PythonStructureBuilder(PythonBuilder):
     @process("/model")
     def model(self):
         self.build_children()
-        package_path = self.settings.package_path
+        package_path = self.model.package_path
 
         ensure_parent_modules(
             self.builder,

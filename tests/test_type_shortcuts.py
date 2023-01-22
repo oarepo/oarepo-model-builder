@@ -84,10 +84,9 @@ def build_jsonschema(model):
             "",
             {
                 "settings": {
-                    "package": "test",
                     "python": {"use_isort": False, "use_black": False},
                 },
-                "model": model,
+                "model": {"package": "test", **model},
             },
         ),
         output_dir="",

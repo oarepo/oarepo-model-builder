@@ -12,11 +12,11 @@ class InvenioRecordResourceSetupCfgBuilder(OutputBuilder):
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
         register_function = split_package_base_name(
-            self.settings.python.create_blueprint_from_app
+            self.model.create_blueprint_from_app
         )
 
         output.add_entry_point(
             "invenio_base.api_blueprints",
-            self.settings.python.record_resource_blueprint_name,
+            self.model.record_resource_blueprint_name,
             f"{register_function[0]}:{register_function[-1]}",
         )

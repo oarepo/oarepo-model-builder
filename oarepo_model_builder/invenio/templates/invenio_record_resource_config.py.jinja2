@@ -1,20 +1,20 @@
 import importlib_metadata
 
 
-{% for b in python.record_resource_config_class_bases %}
+{% for b in model.record_resource_config_class_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
-class {{ python.record_resource_config_class|base_name }}({% for b in python.record_resource_config_class_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
-    """{{ python.record_class|base_name }} resource config."""
+class {{ model.record_resource_config_class|base_name }}({% for b in model.record_resource_config_class_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
+    """{{ model.record_class|base_name }} resource config."""
 
-    blueprint_name = '{{ python.record_resource_blueprint_name }}'
-    url_prefix = '{{ settings.collection_url }}'
+    blueprint_name = '{{ model.record_resource_blueprint_name }}'
+    url_prefix = '{{ model.collection_url }}'
 
     @property
     def response_handlers(self):
         entrypoint_response_handlers = {}
-        for x in importlib_metadata.entry_points(group='invenio.{{ settings.package }}.response_handlers'):
+        for x in importlib_metadata.entry_points(group='invenio.{{ model.package }}.response_handlers'):
             entrypoint_response_handlers.update(x.load())
         return {
             **super().response_handlers,
@@ -22,4 +22,4 @@ class {{ python.record_resource_config_class|base_name }}({% for b in python.rec
         }
 
 
-{{ settings.python.invenio_record_resource_config_extra_code }}
+{{ model.invenio_record_resource_config_extra_code }}

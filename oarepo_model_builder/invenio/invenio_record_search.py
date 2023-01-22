@@ -34,13 +34,11 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             facets_definition=self.facets_definition,
             sort_definition=self.sort_options_data,
         )
-        python_path = self.class_to_path(self.settings.python["record-facets-class"])
+        python_path = self.class_to_path(self.model.record_facets_class)
         self.process_template(
             python_path,
             "record-facets",
-            current_package_name=package_name(
-                self.settings.python["record-facets-class"]
-            ),
+            current_package_name=package_name(self.model.record_facets_class),
             search_options_data=self.search_options_data,
             **extra_kwargs,
         )

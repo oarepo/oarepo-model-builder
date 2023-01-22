@@ -1,16 +1,19 @@
 {
   "model": {
     "type": "object",
+    "$ref": "#/$defs/model-properties",
+    "unevaluatedProperties": false
+  },
+  "model-properties": {
     "properties": {
       "properties": {
-        "$ref": "#/$defs/jsonschema-object"
+          "$ref": "#/$defs/jsonschema-object"
       },
       "type": {
         "type": "string",
         "enum": ["object"]
       }
-    },
-    "unevaluatedProperties": false
+    }
   },
   "jsonschema-object": {
     "type": "object",

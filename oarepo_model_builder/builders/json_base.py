@@ -30,7 +30,7 @@ class JSONBaseBuilder(OutputBuilder):
 
     def begin(self, schema, settings):
         super().begin(schema, settings)
-        output_name = self.settings[self.output_file_name]
+        output_name = self.model[self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)
         self.on_enter_model(output_name)
 

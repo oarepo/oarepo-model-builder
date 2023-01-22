@@ -136,10 +136,12 @@ def build(model, output_builder_components=None, property_preprocessors=None):
             "",
             {
                 "settings": {
-                    "package": "test",
                     "python": {"use_isort": False, "use_black": False},
                 },
-                "model": model,
+                "model": {
+                    "package": "test",
+                    **model,
+                },
             },
         ),
         output_dir="",

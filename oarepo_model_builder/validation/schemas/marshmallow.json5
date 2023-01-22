@@ -1,14 +1,8 @@
 {
-  "model": {
-    "allOf": [
-      {
-         "properties": {
-            "marshmallow": {
-              "$ref": "#/$defs/marshmallow"
-            }
-          }
-      }
-    ]
+  "model-properties": {
+    "marshmallow": {
+      "$ref": "#/$defs/marshmallow"
+    }
   },
   "jsonschema-property": {
     "properties": {

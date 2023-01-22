@@ -268,9 +268,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         model_node = self.marshmallow_stack[0]
 
         # generate schema classes wherever they are not filled
-        package_name = split_package_name(
-            self.schema.settings.python.record_schema_class
-        )
+        package_name = split_package_name(self.model.record_schema_class)
 
         generated_classes = defaultdict(list)
         generated_imports = defaultdict(set)

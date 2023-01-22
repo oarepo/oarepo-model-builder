@@ -78,12 +78,7 @@ class OutputBuilder:
         for proc in self.property_preprocessors:
             proc.begin(schema, schema.settings)
 
-        try:
-            processing_order = self.schema.schema.processing_order
-        except AttributeError:
-            processing_order = None
-
-        self.build_children(ordering=processing_order)
+        self.build_children()
 
         for proc in self.property_preprocessors:
             proc.finish()
@@ -126,27 +121,13 @@ class OutputBuilder:
                 print(f"Error on handling path {self.stack.path}: {e}", file=sys.stderr)
             raise
 
-    def build_children(self, ordering=None):
+    def build_children(self):
         data = self.stack.top.data
         if isinstance(data, (list, tuple)):
             for k, v in enumerate(data):
                 self.build_node(k, v)
         elif isinstance(data, dict):
             children = list(data.items())
-            if ordering:
-
-                def key_function(x):
-                    try:
-                        return ordering.index(x)
-                    except ValueError:
-                        pass
-                    try:
-                        return ordering.index("*")
-                    except ValueError:
-                        pass
-                    return len(ordering)
-
-                children = children.sort(key=key_function)
             for k, v in children:
                 self.build_node(k, v)
 

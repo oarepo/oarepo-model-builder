@@ -32,7 +32,7 @@ class ModelSaverBuilder(JSONBaseBuilder):
     def begin(self, schema, settings):
         super().begin(schema, settings)
 
-        output_name = self.settings[self.output_file_name]
+        output_name = self.model[self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)
         self.output.primitive("type", "object")
         ensure_parent_modules(
@@ -53,6 +53,6 @@ class ModelRegistrationBuilder(OutputBuilder):
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
         output.add_entry_point(
             "oarepo.models",
-            self.settings.kebap_package,
-            f"{self.settings.package}.models:{Path(self.settings.saved_model_file).name}",
+            self.model.kebap_package,
+            f"{self.model.package}.models:{Path(self.model.saved_model_file).name}",
         )

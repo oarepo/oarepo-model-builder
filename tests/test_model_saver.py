@@ -1,3 +1,4 @@
+import json
 import os
 
 from oarepo_model_builder.builder import ModelBuilder
@@ -44,18 +45,35 @@ def test_model_saver():
             DataTypePreprocessor,
         ],
     )
-
+    print(json.dumps(data[0]))
     assert data[0] == {
         "type": "object",
         "properties": {
-            "a": {"ui": {"class": "bolder"}, "type": "keyword"},
+            "a": {"type": "keyword", "ui": {"class": "bolder"}},
             "b": {
-                "marshmallow": {"generate": True},
-                "properties": {"c": {"type": "keyword"}},
                 "type": "object",
+                "properties": {"c": {"type": "keyword"}},
+                "marshmallow": {"generate": True},
             },
             "metadata": {"properties": {}},
         },
+        "package": "test",
+        "record-prefix": "Test",
+        "package-base": "test",
+        "package-base-upper": "TEST",
+        "kebap-package": "test",
+        "package-path": "test",
+        "schema-version": "1.0.0",
+        "schema-name": "test-1.0.0.json",
+        "schema-file": "test/records/jsonschemas/test-1.0.0.json",
+        "mapping-package": "test.records.mappings",
+        "jsonschemas-package": "test.records.jsonschemas",
+        "mapping-file": "test/records/mappings/os-v2/test/test-1.0.0.json",
+        "schema-server": "http://localhost/schemas/",
+        "index-name": "test-test-1.0.0",
+        "collection-url": "/test/",
+        "model-name": "test",
+        "saved-model-file": "test/models/model.json",
     }
 
     assert data[1].strip() == ""
@@ -93,14 +111,16 @@ def build(model, output_builder_components=None, property_preprocessors=None):
             "",
             {
                 "settings": {
-                    "package": "test",
                     "python": {
                         "use_isort": False,
                         "use_black": False,
-                        "record-prefix": "Test",
                     },
                 },
-                "model": model,
+                "model": {
+                    **model,
+                    "package": "test",
+                    "record-prefix": "Test",
+                },
             },
         ),
         output_dir="",

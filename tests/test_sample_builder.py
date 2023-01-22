@@ -169,12 +169,12 @@ def build_sample_data(model, count=1):
     schema = ModelSchema(
         "test.json",
         {
-            "model": {"properties": model},
-            "settings": {"script-import-sample-data": "test.py"},
+            "model": {"script-import-sample-data": "test.yaml", "properties": model},
+            "settings": {},
             "sample": {"count": count},
         },
     )
     sample_builder.build(schema)
     builder._save_outputs()
-    sample_data = builder.filesystem.read("test.py")
+    sample_data = builder.filesystem.read("test.yaml")
     return sample_data

@@ -115,4 +115,6 @@ class ModelBuilderStack:
 
     @property
     def fingerprint(self):
-        return json.dumps(self.stack[-1].data, sort_keys=True)
+        return json.dumps(
+            self.stack[-1].data, sort_keys=True, default=lambda x: repr(x)
+        )

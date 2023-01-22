@@ -142,7 +142,7 @@ def test_incremental_builder():
     snapshot_1 = filesystem.snapshot()
 
     snapshot_1.pop(
-        Path.cwd() / "scripts/sample_data.yaml"
+        Path.cwd() / "data/sample_data.yaml"
     )  # these are always regenerated and random, so do not check them
 
     schema = load_model(
@@ -162,7 +162,7 @@ def test_incremental_builder():
     snapshot_2 = filesystem.snapshot()
 
     ret = snapshot_2.pop(
-        Path.cwd() / "scripts/sample_data.yaml"
+        Path.cwd() / "data/sample_data.yaml"
     )  # these are always regenerated and random, so do not check them
 
     assert set(snapshot_1.keys()) == set(snapshot_2.keys())
