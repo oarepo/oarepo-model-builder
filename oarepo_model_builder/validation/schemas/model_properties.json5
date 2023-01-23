@@ -88,14 +88,9 @@
       "cli-function": {
         "type": "string"
       },
-      "marshmallow": {
+      "mapping": {
         "type": "object",
-        "properties": {
-          "mapping": {
-            "type": "object",
-            "additionalProperties": false
-          }
-        }
+        "additionalProperties": false
       },
       "proxies-current-resource": {
         "type": "string"

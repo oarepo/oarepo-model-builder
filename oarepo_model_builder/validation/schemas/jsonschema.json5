@@ -1,0 +1,23 @@
+{
+  "model-properties": {
+    "jsonschema": {
+      "$ref": "#/$defs/jsonschema"
+    }
+  },
+  "jsonschema-property": {
+    "properties": {
+      "jsonschema": {
+        "$ref": "#/$defs/jsonschema"
+      }
+    }
+  },
+  "jsonschema": {
+    "type": "object",
+    "properties": {
+      "generate": {
+        "type": "boolean"
+      },
+      "additionalProperties": true
+    }
+  }
+}

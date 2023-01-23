@@ -1,7 +1,9 @@
 {
   "model-properties": {
-    "marshmallow": {
-      "$ref": "#/$defs/marshmallow"
+    "properties": {
+      "marshmallow": {
+        "$ref": "#/$defs/marshmallow"
+      }
     }
   },
   "jsonschema-property": {

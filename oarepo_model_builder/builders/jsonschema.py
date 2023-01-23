@@ -13,6 +13,11 @@ class JSONSchemaBuilder(JSONBaseBuilder):
 
     @process("**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
+        if isinstance(self.stack.top.data, dict) and not self.stack.top.data.get(
+            "jsonschema", {}
+        ).get("generate", True):
+            # do not build the element if it should not be generated
+            return
         self.model_element_enter()
         self.build_children()
         if (

@@ -6,8 +6,12 @@ from typing import Dict, List, Type, Union
 
 import yaml
 
-from .builders import (ModelBuilderStack, OutputBuilder,
-                       OutputBuilderComponent, ReplaceElement)
+from .builders import (
+    ModelBuilderStack,
+    OutputBuilder,
+    OutputBuilderComponent,
+    ReplaceElement,
+)
 from .fs import AbstractFileSystem, FileSystem
 from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
@@ -226,11 +230,11 @@ class ModelBuilder:
 
     def _filter_classes(self, classes: List[Type[object]], plugin_type):
         if (
-            "plugins" not in self.schema.schema
-            or plugin_type not in self.schema.schema.plugins
+            "plugins" not in self.schema.model
+            or plugin_type not in self.schema.model.plugins
         ):
             return classes
-        plugin_config = self.schema.schema.plugins[plugin_type]
+        plugin_config = self.schema.model.plugins[plugin_type]
 
         disabled = plugin_config.get("disable", [])
         enabled = plugin_config.get("enable", [])

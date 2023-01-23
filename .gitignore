@@ -86,3 +86,4 @@ tests/test-sample-site
 
 dist
 .vscode
+schema-dump.json5
