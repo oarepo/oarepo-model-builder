@@ -51,11 +51,8 @@ class DataType:
     def imports(self, *extra) -> List[Import]:
         return extra
 
-    def dump_to_search(self, data):
-        return data
-
-    def load_from_search(self, data):
-        return data
+    def dumper_class(self, data):
+        return None
 
 
 class DataTypes:
