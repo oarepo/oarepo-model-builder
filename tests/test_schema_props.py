@@ -14,7 +14,7 @@ def test_enum():
         "test.yaml",
         "test",
         model_content={
-            "^use": "invenio",
+            "use": "invenio",
             "model": {
                 "properties": {"a": {"type": "keyword", "enum": ["a", "b", "c"]}}
             },

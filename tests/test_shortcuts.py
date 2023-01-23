@@ -15,7 +15,7 @@ def test_array_shortcuts():
         "test.yaml",
         "test",
         model_content={
-            "^use": "invenio",
+            "use": "invenio",
             "model": {"properties": {"a[]": {"type": "keyword", "^required": True}}},
         },
         isort=False,

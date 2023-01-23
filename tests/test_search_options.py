@@ -47,7 +47,7 @@ def test_include_invenio():
         "test.yaml",
         "test",
         model_content={
-            "^use": "invenio",
+            "use": "invenio",
             "model": {
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
@@ -137,7 +137,7 @@ def test_sort():
         "test.yaml",
         "test",
         model_content={
-            "^use": "invenio",
+            "use": "invenio",
             "model": {
                 "properties": {
                     "a": {
@@ -199,7 +199,7 @@ def test_nested():
         "test.yaml",
         "test",
         model_content={
-            "^use": "invenio",
+            "use": "invenio",
             "model": {
                 "properties": {
                     "b": {
@@ -307,7 +307,7 @@ def test_search_class():
         "test.yaml",
         "test",
         model_content={
-            "^use": "invenio",
+            "use": "invenio",
             "model": {
                 "properties": {
                     "a": {"type": "fulltext+keyword"},

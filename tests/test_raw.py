@@ -14,7 +14,7 @@ def test_raw_type():
         "test.yaml",
         "test",
         model_content={
-            "^use": "invenio",
+            "use": "invenio",
             "model": {"properties": {"a": {"type": "flatten"}}},
         },
         isort=False,

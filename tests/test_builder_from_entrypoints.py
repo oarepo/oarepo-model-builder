@@ -9,7 +9,7 @@ from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
 from tests.mock_filesystem import MockFilesystem
 from tests.utils import assert_python_equals
 
-OAREPO_USE = "^use"
+OAREPO_USE = "use"
 
 
 def test_include_invenio():

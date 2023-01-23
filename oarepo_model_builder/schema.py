@@ -49,7 +49,7 @@ SafeDumper.add_multi_representer(Key, key_representer)
 
 
 class ModelSchema:
-    USE_KEYWORD = "^use"
+    USE_KEYWORD = "use"
     REF_KEYWORD = "$ref"
 
     def __init__(
@@ -217,6 +217,12 @@ class ModelSchema:
                 else:
                     raise  # just for making pycharm happy
                 included_name = element[key]
+
+                # if it is a dictionary, then probably it is a name of a property,
+                # so keep it
+                if isinstance(included_name, dict):
+                    return self._resolve_references(element, stack)
+
                 element.pop(self.USE_KEYWORD, None)
                 element.pop(self.REF_KEYWORD, None)
 
@@ -225,7 +231,7 @@ class ModelSchema:
                 for name in included_name:
                     if not name:
                         raise IncludedFileNotFoundException(
-                            f"No file for ^use at path {'/'.join(stack)}"
+                            f"No file for use at path {'/'.join(stack)}"
                         )
                     included_data = self._load_included_file(
                         name, source_locations=Key.get_sources(key)
