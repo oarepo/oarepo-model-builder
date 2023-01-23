@@ -77,6 +77,9 @@ class NestedDataType(DataType):
     marshmallow_field = "ma_fields.Nested"
     model_type = "nested"
 
+    def facet(self, nested_facet):
+        return f"NestedLabeledFacet(path={self.path}, {nested_facet})"
+
 
 class FlattenDataType(DataType):
     schema_type = "object"

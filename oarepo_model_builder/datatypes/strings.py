@@ -37,6 +37,9 @@ class KeywordDataType(StringDataType):
     mapping_type = "keyword"
     model_type = "keyword"
 
+    def facet(self, nested_facet):
+        return f"TermsFacet({self.path})"
+
 
 class FulltextKeywordDataType(StringDataType):
     mapping_type = "text"
