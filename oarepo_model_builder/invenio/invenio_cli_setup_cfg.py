@@ -1,4 +1,5 @@
 from oarepo_model_builder.utils.jinja import split_package_base_name
+
 from ..builders import OutputBuilder
 from ..outputs.cfg import CFGOutput
 

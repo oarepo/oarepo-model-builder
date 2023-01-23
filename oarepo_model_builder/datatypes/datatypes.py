@@ -1,7 +1,8 @@
+import copy
 from collections import namedtuple
 from typing import List
+
 import importlib_metadata
-import copy
 
 Import = namedtuple("Import", "import_path,alias")
 

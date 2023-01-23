@@ -3,19 +3,16 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.model_saver import (
-    ModelRegistrationBuilder,
-    ModelSaverBuilder,
-)
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
+    ModelRegistrationBuilder, ModelSaverBuilder)
+from oarepo_model_builder.model_preprocessors.default_values import \
+    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.invenio import \
+    InvenioModelPreprocessor
 from oarepo_model_builder.outputs.cfg import CFGOutput
 from oarepo_model_builder.outputs.json import JSONOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
-    DataTypePreprocessor,
-)
+from oarepo_model_builder.property_preprocessors.datatype_preprocessor import \
+    DataTypePreprocessor
 from oarepo_model_builder.schema import ModelSchema
 from tests.mock_filesystem import MockFilesystem
 

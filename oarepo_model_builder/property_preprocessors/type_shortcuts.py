@@ -1,6 +1,9 @@
+import yaml
+
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
-import yaml
+from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
+import munch
 
 
 class TypeShortcutsPreprocessor(PropertyPreprocessor):
@@ -19,9 +22,11 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
 
         if top.schema_element_type == "property":
             data = self.expand_single_line_def(data)
+            data = munch.munchify(data, factory=HyphenMunch)
             self.set_property_type(data)
         elif top.schema_element_type == "items":
             data = self.expand_single_line_def(data)
+            data = munch.munchify(data, factory=HyphenMunch)
             self.set_property_type(data)
 
         if top.schema_element_type == "properties":
@@ -29,7 +34,8 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
 
         return data
 
-    def expand_single_line_def(self, data):
+    @staticmethod
+    def expand_single_line_def(data):
         if not isinstance(data, str):
             return data
         if "{" not in data:
@@ -78,6 +84,7 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
 
     @staticmethod
     def separate_properties(value):
+        value = TypeShortcutsPreprocessor.expand_single_line_def(value)
         container = {}
         container_item = {}
         for k, v in value.items():
@@ -87,7 +94,9 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
                 container[k[1:]] = v
             else:
                 container_item[k] = v
-        return container, container_item
+        return munch.munchify(container, factory=HyphenMunch), munch.munchify(
+            container_item, factory=HyphenMunch
+        )
 
     @process(
         model_builder="*",

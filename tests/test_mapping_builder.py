@@ -2,9 +2,8 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
+from oarepo_model_builder.model_preprocessors.default_values import \
+    DefaultValuesModelPreprocessor
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema

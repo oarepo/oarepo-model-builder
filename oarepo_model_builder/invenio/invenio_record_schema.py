@@ -1,19 +1,17 @@
-from collections import defaultdict, namedtuple
 import copy
 import dataclasses
+from collections import defaultdict, namedtuple
 from typing import Any, Dict, List, Tuple
 
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.builders.python import PythonBuilder
-from oarepo_model_builder.datatypes import datatypes, Import
+from oarepo_model_builder.datatypes import Import, datatypes
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.camelcase import camel_case
-from oarepo_model_builder.utils.jinja import (
-    split_package_base_name,
-    split_package_name,
-    split_base_name,
-)
+from oarepo_model_builder.utils.jinja import (split_base_name,
+                                              split_package_base_name,
+                                              split_package_name)
 from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder

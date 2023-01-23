@@ -1,4 +1,5 @@
 from oarepo_model_builder.utils.jinja import package_name
+
 from ..builders import OutputBuilder
 from ..outputs.cfg import CFGOutput
 

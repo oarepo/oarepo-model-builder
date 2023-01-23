@@ -1,5 +1,5 @@
-from functools import cached_property
 import json
+from functools import cached_property
 
 from deepdiff import DeepDiff
 

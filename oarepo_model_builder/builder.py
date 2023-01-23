@@ -195,7 +195,7 @@ class ModelBuilder:
     def _run_output_builders(self, model, property_preprocessors):
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(
-                self.output_builder_classes, "builder"
+            self.output_builder_classes, "builder"
         ):
             output_builder = output_builder_class(
                 builder=self, property_preprocessors=property_preprocessors
@@ -204,7 +204,7 @@ class ModelBuilder:
 
     def _run_model_preprocessors(self, model):
         for model_preprocessor in self._filter_classes(
-                self.model_preprocessor_classes, "model"
+            self.model_preprocessor_classes, "model"
         ):
             model_preprocessor(self).transform(model, model.settings)
 

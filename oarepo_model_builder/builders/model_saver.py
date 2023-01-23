@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from oarepo_model_builder.datatypes import datatypes, DataType
+from oarepo_model_builder.datatypes import DataType, datatypes
 
 from ..outputs.cfg import CFGOutput
 from . import OutputBuilder, process

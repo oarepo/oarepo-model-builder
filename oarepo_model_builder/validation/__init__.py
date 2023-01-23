@@ -36,6 +36,7 @@ def validate_model(model, extra_validation_schemas=None):
     schema = copy.deepcopy(model_json_schema)
     if extra_validation_schemas:
         for e in extra_validation_schemas:
+            e = copy.deepcopy(e)
             schema["$defs"] = deepmerge(e, schema["$defs"], listmerge="extend")
     else:
         schema = model_json_schema
@@ -55,7 +56,7 @@ def validate_model(model, extra_validation_schemas=None):
         if k not in ("properties", "items"):
             jsonschema_property[f"^{k}"] = v
 
-    with open("test.json5", "w") as f:
+    with open("schema-dump.json5", "w") as f:
         json.dump(schema, f, indent=4)
 
     validator = Draft202012Validator(schema)

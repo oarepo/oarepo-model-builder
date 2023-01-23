@@ -1,7 +1,9 @@
 import json
+
 from oarepo_model_builder.utils.camelcase import camel_case
 from oarepo_model_builder.utils.jinja import split_package_name
 from oarepo_model_builder.validation import InvalidModelException
+
 from .datatypes import DataType
 
 

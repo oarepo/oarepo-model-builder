@@ -21,36 +21,16 @@ flatten:
 """
 
 
-from .datatypes import DataType, datatypes, Import
-from .primitive_types import (
-    NumberDataType,  # noqa
-    IntegerDataType,
-    FloatDataType,
-    DoubleDataType,
-    BooleanDataType,
-)
-
-from .strings import (
-    StringDataType,  # noqa
-    FulltextDataType,
-    KeywordDataType,
-    FulltextKeywordDataType,
-)
-
-from .containers import (
-    ObjectDataType,
-    NestedDataType,
-    FlattenDataType,
-    ArrayDataType,
-)
-
-from .dates import (
-    DateDataType,
-    TimeDataType,
-    DateTimeDataType,
-    EDTFDataType,
-    EDTFIntervalType,
-)
+from .containers import (ArrayDataType, FlattenDataType, NestedDataType,
+                         ObjectDataType)
+from .datatypes import DataType, Import, datatypes
+from .dates import (DateDataType, DateTimeDataType, EDTFDataType,
+                    EDTFIntervalType, TimeDataType)
+from .primitive_types import NumberDataType  # noqa
+from .primitive_types import (BooleanDataType, DoubleDataType, FloatDataType,
+                              IntegerDataType)
+from .strings import StringDataType  # noqa
+from .strings import FulltextDataType, FulltextKeywordDataType, KeywordDataType
 
 DEFAULT_DATATYPES = [
     IntegerDataType,
