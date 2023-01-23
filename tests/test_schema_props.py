@@ -3,8 +3,7 @@ import os
 import re
 from pathlib import Path
 
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_model)
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from tests.mock_filesystem import MockFilesystem
 from tests.utils import assert_python_equals
 
@@ -14,9 +13,9 @@ def test_enum():
         "test.yaml",
         "test",
         model_content={
-            "use": "invenio",
             "model": {
-                "properties": {"a": {"type": "keyword", "enum": ["a", "b", "c"]}}
+                "use": "invenio",
+                "properties": {"a": {"type": "keyword", "enum": ["a", "b", "c"]}},
             },
         },
         isort=False,

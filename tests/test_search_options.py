@@ -5,8 +5,7 @@ from io import StringIO
 from pathlib import Path
 from typing import Dict
 
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_model)
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import AbstractFileSystem
 
 # from tests.mock_filesystem import MockFilesystem
@@ -47,15 +46,15 @@ def test_include_invenio():
         "test.yaml",
         "test",
         model_content={
-            "use": "invenio",
             "model": {
+                "use": "invenio",
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
                     "b": {
                         "type": "keyword",
                         "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
-                }
+                },
             },
         },
         isort=False,
@@ -137,8 +136,8 @@ def test_sort():
         "test.yaml",
         "test",
         model_content={
-            "use": "invenio",
             "model": {
+                "use": "invenio",
                 "properties": {
                     "a": {
                         "type": "fulltext+keyword",
@@ -149,7 +148,7 @@ def test_sort():
                         "facets": {"field": 'TermsFacet(field="cosi")'},
                         "sortable": {"key": "b_test", "order": "desc"},
                     },
-                }
+                },
             },
         },
         isort=False,
@@ -199,8 +198,8 @@ def test_nested():
         "test.yaml",
         "test",
         model_content={
-            "use": "invenio",
             "model": {
+                "use": "invenio",
                 "properties": {
                     "b": {
                         "properties": {
@@ -220,7 +219,7 @@ def test_nested():
                         "mapping": {"type": "nested"},
                         "marshmallow": {"class": "nest.b.B", "generate": True},
                     }
-                }
+                },
             },
         },
         isort=False,
@@ -307,15 +306,15 @@ def test_search_class():
         "test.yaml",
         "test",
         model_content={
-            "use": "invenio",
             "model": {
+                "use": "invenio",
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
                     "b": {
                         "type": "keyword",
                         "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
-                }
+                },
             },
         },
         isort=False,

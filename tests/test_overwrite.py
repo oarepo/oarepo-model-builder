@@ -6,8 +6,7 @@ import sys
 from pathlib import Path
 from tempfile import mkdtemp, tempdir
 
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_model)
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import FileSystem
 from tests.mock_filesystem import MockFilesystem
 from tests.utils import assert_python_equals
@@ -21,8 +20,7 @@ def test_overwrite():
         "test",
         model_content={
             "version": "1.0.0",
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,

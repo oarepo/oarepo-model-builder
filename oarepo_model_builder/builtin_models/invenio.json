@@ -1,50 +1,48 @@
 {
-  "model": {
-    "marshmallow": {
-      "base-classes": [
-        "InvenioBaseRecordSchema"
-      ]
+  "marshmallow": {
+    "base-classes": [
+      "InvenioBaseRecordSchema"
+    ]
+  },
+  "properties": {
+    "id": {
+      "type": "keyword",
+      "sample": {
+        "skip": true
+      },
+      "marshmallow": {
+        "read": false,
+        "write": false
+      }
     },
-    "properties": {
-      "id": {
-        "type": "keyword",
-        "sample": {
-          "skip": true
-        },
-        "marshmallow": {
-          "read": false,
-          "write": false
-        }
+    "created": {
+      "type": "date",
+      "sample": {
+        "skip": true
       },
-      "created": {
-        "type": "date",
-        "sample": {
-          "skip": true
-        },
-        "marshmallow": {
-          "write": false,
-          "read": true
-        }
+      "marshmallow": {
+        "write": false,
+        "read": true
+      }
+    },
+    "updated": {
+      "type": "date",
+      "sample": {
+        "skip": true
       },
-      "updated": {
-        "type": "date",
-        "sample": {
-          "skip": true
-        },
-        "marshmallow": {
-          "write": false,
-          "read": true
-        }
+      "marshmallow": {
+        "write": false,
+        "read": true
+      }
+    },
+    "$schema": {
+      "type": "keyword",
+      "marshmallow": {
+        "read": false,
+        "write": false
       },
-      "$schema": {
-        "type": "keyword",
-        "marshmallow": {
-          "read": false,
-          "write": false
-        },
-        "sample": {
-          "skip": true
-        }
+      "sample": {
+        "skip": true
       }
     }
   }

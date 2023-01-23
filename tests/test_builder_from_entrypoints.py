@@ -4,8 +4,7 @@ import re
 import sys
 from pathlib import Path
 
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_model)
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from tests.mock_filesystem import MockFilesystem
 from tests.utils import assert_python_equals
 
@@ -18,8 +17,7 @@ def test_include_invenio():
         "test",
         model_content={
             "version": "1.0.0",
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
@@ -80,8 +78,7 @@ def test_generate_multiple_times():
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
@@ -98,8 +95,7 @@ def test_generate_multiple_times():
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
@@ -127,8 +123,7 @@ def test_incremental_builder():
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
@@ -143,8 +138,7 @@ def test_incremental_builder():
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
@@ -161,8 +155,7 @@ def test_incremental_builder():
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
