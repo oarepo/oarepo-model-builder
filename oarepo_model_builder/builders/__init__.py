@@ -61,7 +61,7 @@ class OutputBuilder:
             self.json_paths.register(path, condition, method)
 
     def begin(self, schema, settings):
-        self.schema = schema
+        self.schema = schema.schema
         self.model = schema.model
         self.settings = settings
         self.stack = ModelBuilderStack()
@@ -73,7 +73,7 @@ class OutputBuilder:
         log.leave()
 
     def build(self, schema):
-        self.begin(schema.schema, schema.settings)
+        self.begin(schema, schema.settings)
 
         for proc in self.property_preprocessors:
             proc.begin(schema, schema.settings)

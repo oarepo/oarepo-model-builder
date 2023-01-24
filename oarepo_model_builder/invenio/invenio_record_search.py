@@ -25,8 +25,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         self.facets_definition = []
         self.facets_names = []
         self.settings = settings
-        if "sortable" in schema:
-            self.process_top_sortable(schema["sortable"])
+        if "sortable" in schema.schema:
+            self.process_top_sortable(schema.schema["sortable"])
 
     def finish(self, **extra_kwargs):
         super().finish(
