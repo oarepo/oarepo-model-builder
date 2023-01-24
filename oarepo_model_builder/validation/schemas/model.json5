@@ -24,7 +24,7 @@
       "^[^^].*{nested}$": {
         "$ref": "#/$defs/jsonschema-object"
       },
-      "^[^^].*[^]}]$": {
+      "^[^^].*[^]}]$|^.$": {
         oneOf: [
           {
             "$ref": "#/$defs/jsonschema-property"

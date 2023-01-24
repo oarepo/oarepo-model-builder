@@ -18,6 +18,6 @@ class InvenioRecordResourceSetupCfgBuilder(OutputBuilder):
 
         output.add_entry_point(
             "invenio_base.api_blueprints",
-            self.model.record_resource_blueprint_name,
+            self.model.record_api_blueprints_setup_cfg,
             f"{register_function[0]}:{register_function[-1]}",
         )

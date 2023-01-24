@@ -73,6 +73,7 @@ class OutputBuilder:
         log.leave()
 
     def build(self, schema):
+        self.whole_schema = schema
         self.begin(schema.schema, schema.settings)
 
         for proc in self.property_preprocessors:

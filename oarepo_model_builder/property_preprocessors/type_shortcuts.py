@@ -41,7 +41,8 @@ class TypeShortcutsPreprocessor(PropertyPreprocessor):
         if "{" not in data:
             return {"type": data}
         datatype, constraints = data.split("{", maxsplit=1)
-        return {"type": datatype, **yaml.safe_load("{" + constraints)}
+        constraints = constraints.replace(":", ": ")
+        return {"type": datatype, **yaml.safe_load("blah: {" + constraints)["blah"]}
 
     def set_property_type(self, data):
         if "type" in data:

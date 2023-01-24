@@ -4,19 +4,22 @@ import re
 import pytest
 
 from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import \
-    InvenioRecordSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
-from oarepo_model_builder.model_preprocessors.invenio import \
-    InvenioModelPreprocessor
-from oarepo_model_builder.model_preprocessors.opensearch import \
-    OpensearchModelPreprocessor
+from oarepo_model_builder.invenio.invenio_record_schema import (
+    InvenioRecordSchemaBuilder,
+)
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
+from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
+from oarepo_model_builder.model_preprocessors.opensearch import (
+    OpensearchModelPreprocessor,
+)
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import \
-    DataTypePreprocessor
+from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
+    DataTypePreprocessor,
+)
 from oarepo_model_builder.schema import ModelSchema
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 
 OAREPO_MARSHMALLOW = "marshmallow"
 B_SCHEMA = 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()'
@@ -50,7 +53,7 @@ def fulltext_builder():
 
 def _test(fulltext_builder, string_type):
     schema = get_test_schema(a={"type": string_type})
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -74,7 +77,7 @@ def test_fulltext_keyword(fulltext_builder):
 
 def test_simple_array(fulltext_builder):
     schema = get_test_schema(a={"type": "array", "items": {"type": "keyword"}})
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -96,7 +99,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
             },
         }
     )
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -142,7 +145,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
             },
         }
     )
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -183,7 +186,7 @@ def test_use_nested_schema_same_file(fulltext_builder):
             },
         }
     )
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -217,7 +220,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
             },
         }
     )
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -246,7 +249,7 @@ def test_generate_nested_schema_array(fulltext_builder):
             },
         }
     )
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -262,7 +265,7 @@ def test_generate_nested_schema_array(fulltext_builder):
 
 def test_extend_existing(fulltext_builder):
     schema = get_test_schema(a={"type": "keyword"}, b={"type": "keyword"})
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py"), "w"
@@ -300,7 +303,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
             },
         }
     )
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -344,7 +347,7 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
             },
         }
     )
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
@@ -380,7 +383,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
             },
         }
     )
-    fulltext_builder.filesystem = MockFilesystem()
+    fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(

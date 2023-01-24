@@ -122,7 +122,7 @@ class ModelSchema:
 
     @property
     def model(self):
-        return self.schema[self.model_field]
+        return self.schema.get(self.model_field, {})
 
     def merge(self, another):
         self.schema = munch.munchify(
@@ -136,15 +136,29 @@ class ModelSchema:
         :param file_path: file path on filesystem
         :return: parsed json
         """
-        extension = pathlib.Path(file_path).suffix.lower()[1:]
-        if extension in self.loaders:
+        if file_path in self.included_schemas:
+            loaded = self._fetch_included(file_path)
+        else:
+            extension = pathlib.Path(file_path).suffix.lower()[1:]
+            if extension not in self.loaders:
+                raise RuntimeError(
+                    f"Can not load {file_path} - no loader has been found for extension {extension} "
+                    f"in entry point group oarepo_model_builder.loaders"
+                )
             loaded = self.loaders[extension](file_path, self, content=content)
-            return Key.annotate_keys_with_source(loaded, file_path)
+        return Key.annotate_keys_with_source(loaded, file_path)
 
-        raise RuntimeError(
-            f"Can not load {file_path} - no loader has been found for extension {extension} "
-            f"in entry point group oarepo_model_builder.loaders"
-        )
+    def _fetch_included(self, file_path):
+        included = self.included_schemas[file_path]
+        if callable(included):
+            return included(self)
+        extension = pathlib.Path(included).suffix.lower()[1:]
+        if extension not in self.loaders:
+            raise RuntimeError(
+                f"Can not load {included} - no loader has been found for extension {extension} "
+                f"in entry point group oarepo_model_builder.loaders"
+            )
+        return self.loaders[extension](included, self)
 
     def _load_included_file(self, location, source_locations=None):
         """

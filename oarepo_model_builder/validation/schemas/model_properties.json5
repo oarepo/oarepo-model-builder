@@ -55,7 +55,7 @@
       "saved-model-file": {
         "type": "string"
       },
-            "config-dummy-class": {
+      "config-dummy-class": {
         "type": "string"
       },
       "config-package": {
@@ -113,6 +113,18 @@
       "record-mapping-setup-cfg": {
         "type": "string"
       },
+      "record-api-blueprints-setup-cfg": {
+        "type": "string"
+      },
+      "record-blueprints-setup-cfg": {
+        "type": "string"
+      },
+      "oarepo-models-setup-cfg": {
+        "type": "string"
+      },
+      "flask-commands-setup-cfg": {
+        "type": "string"
+      },
       "record-metadata-class": {
         "type": "string"
       },
@@ -167,6 +179,30 @@
       "record-resources-package": {
         "type": "string"
       },
+      "config-dummy-bases": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "ext-bases": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "record-facets-bases": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "record-schema-metadata-bases": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
       "record-bases": {
         "type": "array",
         "items": {
@@ -191,13 +227,13 @@
           "type": "string"
         }
       },
-      "record-resource-class-bases": {
+      "record-resource-bases": {
         "type": "array",
         "items": {
           "type": "string"
         }
       },
-      "record-resource-config-class-bases": {
+      "record-resource-config-bases": {
         "type": "array",
         "items": {
           "type": "string"
@@ -302,6 +338,9 @@
       },
       "extension-suffix": {
         "type": "string"
+      },
+      "mapping": {
+        "$ref": "#/$defs/model-opensearch"
       },
     },
   }
