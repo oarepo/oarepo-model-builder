@@ -18,8 +18,8 @@ class ModelProfile(Profile):
         builder: ModelBuilder,
     ):
         # at first handle "extend"
-        if "extend" in model.model:
-            self.handle_extend(model.model.extend, model, builder)
+        if "extend" in model.current_model:
+            self.handle_extend(model.current_model.extend, model, builder)
         return super().build(model, output_directory, builder)
 
     def handle_extend(
@@ -70,4 +70,4 @@ class ModelProfile(Profile):
         ExtendProfile().build(extended_model, "", builder)
 
         loaded_model = json5.loads(fs.read("model.json5"))
-        deepmerge(model.model, loaded_model)
+        deepmerge(model.current_model, loaded_model)

@@ -12,10 +12,10 @@ class InvenioRecordMetadataModelsSetupCfgBuilder(OutputBuilder):
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
-        metadata_package = package_name(self.model.record_metadata_class)
+        metadata_package = package_name(self.current_model.record_metadata_class)
 
         output.add_entry_point(
             "invenio_db.models",
-            self.model.record_schema_metadata_setup_cfg,
+            self.current_model.record_schema_metadata_setup_cfg,
             metadata_package,
         )

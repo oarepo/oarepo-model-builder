@@ -1,43 +1,43 @@
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
 from invenio_records_resources.services import RecordLink, pagination_links
 
-{% for b in model.record_service_config_bases %}
+{% for b in current_model.record_service_config_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
-{% for b in model.record_service_config_components %}
+{% for b in current_model.record_service_config_components %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
-from {{ model.record_class|package_name }} import {{ model.record_class|base_name }}
-from {{ model.record_permissions_class|package_name }} import {{ model.record_permissions_class|base_name }}
-from {{ model.record_schema_class|package_name }} import {{ model.record_schema_class|base_name }}
-{% if  model.record_search_options_class %}
-from {{ model.record_search_options_class|package_name }} import {{ model.record_search_options_class|base_name }}
+from {{ current_model.record_class|package_name }} import {{ current_model.record_class|base_name }}
+from {{ current_model.record_permissions_class|package_name }} import {{ current_model.record_permissions_class|base_name }}
+from {{ current_model.record_schema_class|package_name }} import {{ current_model.record_schema_class|base_name }}
+{% if  current_model.record_search_options_class %}
+from {{ current_model.record_search_options_class|package_name }} import {{ current_model.record_search_options_class|base_name }}
 {% endif %}
 
 
-class {{ model.record_service_config_class|base_name }}({% for b in model.record_service_config_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
-    """{{ model.record_class|base_name }} service config."""
-    url_prefix = "{{ model.collection_url }}"
+class {{ current_model.record_service_config_class|base_name }}({% for b in current_model.record_service_config_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
+    """{{ current_model.record_class|base_name }} service config."""
+    url_prefix = "{{ current_model.collection_url }}"
 
-    permission_policy_cls = {{ model.record_permissions_class|base_name }}
-    schema = {{ model.record_schema_class|base_name }}
-    {% if model.record_search_options_class %}
-    search = {{ model.record_search_options_class|base_name }}
+    permission_policy_cls = {{ current_model.record_permissions_class|base_name }}
+    schema = {{ current_model.record_schema_class|base_name }}
+    {% if current_model.record_search_options_class %}
+    search = {{ current_model.record_search_options_class|base_name }}
     {% endif %}
-    record_cls = {{ model.record_class|base_name }}
+    record_cls = {{ current_model.record_class|base_name }}
     # todo should i leave this here?
-    service_id = "{{ model.service_id }}"
+    service_id = "{{ current_model.service_id }}"
 
-    {% if model.record_service_config_bases %}
-    components = [ *{% for b in model.record_service_config_bases[:1] %}{{ b|base_name }}.components{% endfor %}{% for c in model.record_service_config_components %}, {{ c|base_name }} {% endfor %}]
+    {% if current_model.record_service_config_bases %}
+    components = [ *{% for b in current_model.record_service_config_bases[:1] %}{{ b|base_name }}.components{% endfor %}{% for c in current_model.record_service_config_components %}, {{ c|base_name }} {% endfor %}]
     {% else %}
-    components = [ *InvenioRecordServiceConfig.components{% for c in model.record_service_config_components %}, {{ c|base_name }} {% endfor %}  ]
+    components = [ *InvenioRecordServiceConfig.components{% for c in current_model.record_service_config_components %}, {{ c|base_name }} {% endfor %}  ]
     {% endif %}
 
 
-    model = "{{ model.model_name }}"
+    model = "{{ current_model.model_name }}"
 
-    {% if model.record_service_config_generate_links %}
+    {% if current_model.record_service_config_generate_links %}
     @property
     def links_item(self):
         return {
@@ -49,4 +49,4 @@ class {{ model.record_service_config_class|base_name }}({% for b in model.record
         return pagination_links("{self.url_prefix}{?args*}")
     {% endif %}
 
-{{ model.invenio_record_service_config_extra_code }}
+{{ current_model.invenio_record_service_config_extra_code }}

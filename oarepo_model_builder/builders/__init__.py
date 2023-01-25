@@ -63,10 +63,10 @@ class OutputBuilder:
     def begin(self, schema, settings):
         self.schema = schema.schema
         self.whole_schema = schema
-        self.model = schema.model
+        self.current_model = schema.current_model
         self.settings = settings
         self.stack = ModelBuilderStack()
-        self.stack.push(None, schema.model)
+        self.stack.push(None, schema.current_model)
         log.enter(2, "Creating %s", self.TYPE)
         self.silent_exceptions = False
 

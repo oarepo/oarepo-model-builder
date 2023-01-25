@@ -116,7 +116,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
                 self.output.primitive(key, self.generate_fake(self.stack))
 
     def build(self, schema):
-        output_name = schema.model[self.output_file_name]
+        output_name = schema.current_model[self.output_file_name]
         output = self.builder.get_output(self.output_file_type, output_name)
         if not output.created:
             return

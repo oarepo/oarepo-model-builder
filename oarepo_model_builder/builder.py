@@ -230,11 +230,11 @@ class ModelBuilder:
 
     def _filter_classes(self, classes: List[Type[object]], plugin_type):
         if (
-            "plugins" not in self.schema.model
-            or plugin_type not in self.schema.model.plugins
+            "plugins" not in self.schema.current_model
+            or plugin_type not in self.schema.current_model.plugins
         ):
             return classes
-        plugin_config = self.schema.model.plugins[plugin_type]
+        plugin_config = self.schema.current_model.plugins[plugin_type]
 
         disabled = plugin_config.get("disable", [])
         enabled = plugin_config.get("enable", [])

@@ -121,7 +121,7 @@ class ModelSchema:
         return self.schema.settings
 
     @property
-    def model(self):
+    def current_model(self):
         return self.schema.get(self.model_field, {})
 
     def merge(self, another):

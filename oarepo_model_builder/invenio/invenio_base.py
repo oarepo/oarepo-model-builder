@@ -11,11 +11,11 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
 
     def finish(self, **extra_kwargs):
         super().finish()
-        python_path = self.class_to_path(self.model[self.class_config])
+        python_path = self.class_to_path(self.current_model[self.class_config])
         self.process_template(
             python_path,
             self.template,
-            current_package_name=package_name(self.model[self.class_config]),
+            current_package_name=package_name(self.current_model[self.class_config]),
             **extra_kwargs,
         )
 
@@ -23,7 +23,7 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
         if self.parent_modules:
             self.create_parent_modules(python_path)
         output: PythonOutput = self.builder.get_output("python", python_path)
-        context = HyphenMunch(settings=self.settings, model=self.model, **extra_kwargs)
+        context = HyphenMunch(settings=self.settings, current_model=self.current_model, **extra_kwargs)
         template = self.call_components(
             "invenio_before_python_template", template, context=context
         )

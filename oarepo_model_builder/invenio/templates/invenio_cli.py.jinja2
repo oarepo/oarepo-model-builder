@@ -5,11 +5,11 @@ from invenio_search import current_search
 from invenio_search.cli import search_version_check
 import tqdm
 
-from {{ model.record_class|package_name }} import {{ model.record_class|base_name }}
-from {{ model.proxies_current_service|package_name }} import {{ model.proxies_current_service|base_name }}
+from {{ current_model.record_class|package_name }} import {{ current_model.record_class|base_name }}
+from {{ current_model.proxies_current_service|package_name }} import {{ current_model.proxies_current_service|base_name }}
 
 
-@click.group(name="{{ model.kebap_package }}")
+@click.group(name="{{ current_model.kebap_package }}")
 def group():
     pass
 
@@ -21,19 +21,19 @@ def group():
 @search_version_check
 def reindex(recreate, queue, *args, **kwargs):
     if recreate:
-        index = {{ model.record_class|base_name }}.index._name
+        index = {{ current_model.record_class|base_name }}.index._name
         status = list(current_search.delete(index_list=[index]))
         print_status(f"Delete index {index}: ", status)
         status = list(current_search.create(index_list=[index]))
         print_status(f"Create index {index}: ", status)
 
     # reindex all
-    id_generator = (x[0] for x in db.session.query({{ model.record_class|base_name }}.model_cls.id).filter(
-        {{ model.record_class|base_name }}.model_cls.is_deleted.is_(False)
+    id_generator = (x[0] for x in db.session.query({{ current_model.record_class|base_name }}.model_cls.id).filter(
+        {{ current_model.record_class|base_name }}.model_cls.is_deleted.is_(False)
     ))
 
     if queue:
-        {{ model.proxies_current_service|base_name }}.indexer.bulk_index(
+        {{ current_model.proxies_current_service|base_name }}.indexer.bulk_index(
             # iterator of ids
             id_generator
         )
@@ -42,9 +42,9 @@ def reindex(recreate, queue, *args, **kwargs):
 
         ids = list(id_generator)
         for rec_id in tqdm.tqdm(ids, "Indexing records"):
-            record = {{ model.record_class|base_name }}.get_record(rec_id)
-            {{ model.proxies_current_service|base_name }}.indexer.index(record)
-        {{ model.proxies_current_service|base_name }}.indexer.refresh()
+            record = {{ current_model.record_class|base_name }}.get_record(rec_id)
+            {{ current_model.proxies_current_service|base_name }}.indexer.index(record)
+        {{ current_model.proxies_current_service|base_name }}.indexer.refresh()
         print(f"Indexing finished, indexed {len(ids)} records")
 
 
@@ -66,4 +66,4 @@ def print_status(title, status):
 def load(data_path, *args, **kwargs):
     with open(data_path) as f:
         for doc in tqdm.tqdm(yaml.load_all(f, yaml.SafeLoader), desc="Saving data"):
-            {{ model.proxies_current_service|base_name }}.create(system_identity, doc)
+            {{ current_model.proxies_current_service|base_name }}.create(system_identity, doc)

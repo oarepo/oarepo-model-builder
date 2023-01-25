@@ -14,7 +14,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
     TYPE = "default"
 
     def transform(self, schema: ModelSchema, settings: Dict):
-        model = schema.model
+        model = schema.current_model
 
         deepmerge(
             model,

@@ -12,10 +12,10 @@ class InvenioCliSetupCfgBuilder(OutputBuilder):
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
-        cli_function = split_package_base_name(self.model.cli_function)
+        cli_function = split_package_base_name(self.current_model.cli_function)
 
         output.add_entry_point(
             "flask.commands",
-            self.model.flask_commands_setup_cfg,
+            self.current_model.flask_commands_setup_cfg,
             f"{'.'.join(cli_function[:-1])}:{cli_function[-1]}",
         )

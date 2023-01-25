@@ -12,7 +12,7 @@ class SetupCfgBuilder(OutputBuilder):
         super().finish()
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
-        output.setdefault("metadata", "name", self.model.package_base.replace("_", "-"))
+        output.setdefault("metadata", "name", self.current_model.package_base.replace("_", "-"))
         version = self.schema.get("version", "1.0.0dev1")
         output.setdefault("metadata", "version", version)
         if parse_version(output.get("metadata", "version").value) < parse_version(
@@ -22,7 +22,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault(
             "metadata",
             "description",
-            f"A sample application for {self.model.package}",
+            f"A sample application for {self.current_model.package}",
         )
         output.setdefault("metadata", "authors", "")
 
@@ -57,6 +57,6 @@ class SetupCfgBuilder(OutputBuilder):
             log(
                 log.INFO,
                 f"""To install the data model, run
-    poetry install -E {self.model.package}            
+    poetry install -E {self.current_model.package}            
             """,
             )

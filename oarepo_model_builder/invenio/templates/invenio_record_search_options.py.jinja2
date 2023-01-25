@@ -5,12 +5,12 @@ def _(x):
     """Identity function for string extraction."""
     return x
 
-{% for b in model.record_search_options_bases %}
+{% for b in current_model.record_search_options_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
-class {{ model.record_search_options_class|base_name }}({% for b in model.record_search_options_bases %}{{ b|base_name }}, {% endfor %}InvenioSearchOptions):
-    """{{ model.record_class|base_name }} search options."""
+class {{ current_model.record_search_options_class|base_name }}({% for b in current_model.record_search_options_bases %}{{ b|base_name }}, {% endfor %}InvenioSearchOptions):
+    """{{ current_model.record_class|base_name }} search options."""
 
     facets = {
 {% for dict in facets_definition %}
@@ -20,8 +20,8 @@ class {{ model.record_search_options_class|base_name }}({% for b in model.record
 {% endfor %}
     }
     sort_options = {
-        {% if model.record_search_options_bases %}
-        **{{ model.record_search_options_bases[0]|base_name }}.sort_options,
+        {% if current_model.record_search_options_bases %}
+        **{{ current_model.record_search_options_bases[0]|base_name }}.sort_options,
         {% else %}
         **InvenioSearchOptions.sort_options,
         {% endif %}
@@ -33,4 +33,4 @@ class {{ model.record_search_options_class|base_name }}({% for b in model.record
     }
 
 
-{{ model.invenio_record_search_options_extra_code }}
+{{ current_model.invenio_record_search_options_extra_code }}

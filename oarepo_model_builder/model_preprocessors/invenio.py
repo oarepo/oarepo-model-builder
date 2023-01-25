@@ -8,7 +8,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
     TYPE = "invenio"
 
     def transform(self, schema, settings):
-        model = schema.model
+        model = schema.current_model
         deepmerge(settings, {"python": {"templates": {}}})
         deepmerge(
             model,

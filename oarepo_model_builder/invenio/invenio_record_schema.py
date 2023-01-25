@@ -247,7 +247,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
     def begin(self, schema, settings):
         super().begin(schema, settings)
         stack = ModelBuilderStack()
-        stack.push("model", schema.model)
+        stack.push("model", schema.current_model)
 
         self.marshmallow_stack = [ObjectMarshmallowNode.from_stack(schema.schema, stack)]
 
@@ -256,7 +256,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         model_node = self.marshmallow_stack[0]
 
         # generate schema classes wherever they are not filled
-        package_name = split_package_name(self.model.record_schema_class)
+        package_name = split_package_name(self.current_model.record_schema_class)
 
         generated_classes = defaultdict(list)
         generated_imports = defaultdict(set)

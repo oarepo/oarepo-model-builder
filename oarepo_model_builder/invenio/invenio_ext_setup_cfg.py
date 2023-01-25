@@ -12,17 +12,17 @@ class InvenioExtSetupCfgBuilder(OutputBuilder):
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
-        package_name, base_name = split_package_base_name(self.model.ext_class)
+        package_name, base_name = split_package_base_name(self.current_model.ext_class)
 
         output.add_entry_point(
             "invenio_base.api_apps",
-            self.model.extension_suffix,  # todo - resolve
+            self.current_model.extension_suffix,  # todo - resolve
             f"{package_name}:{base_name}",
         )
 
         # need to add ext to apps because cli depends on it
         output.add_entry_point(
             "invenio_base.apps",
-            self.model.extension_suffix,
+            self.current_model.extension_suffix,
             f"{package_name}:{base_name}",
         )
