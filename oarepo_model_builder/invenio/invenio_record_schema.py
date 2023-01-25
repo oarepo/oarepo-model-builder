@@ -249,7 +249,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         stack = ModelBuilderStack()
         stack.push("model", schema.model)
 
-        self.marshmallow_stack = [ObjectMarshmallowNode.from_stack(schema, stack)]
+        self.marshmallow_stack = [ObjectMarshmallowNode.from_stack(schema.schema, stack)]
 
     def finish(self):
         super(PythonBuilder, self).finish()

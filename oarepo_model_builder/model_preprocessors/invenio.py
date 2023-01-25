@@ -259,7 +259,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         model.setdefault("invenio-version-extra-code", "")
         model.setdefault("invenio-views-extra-code", "")
 
-        if "model" in schema.schema:
+        if schema.model_field in schema.schema:
+            current_model_field = schema.schema[schema.model_field]
             schema_class = model.record_schema_class
             schema_metadata_class = model.record_schema_metadata_class
             schema_class_base_classes = model.get(
@@ -269,11 +270,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             ]
 
             if (
-                "properties" in schema.schema.model
-                and "metadata" in schema.schema.model.properties
+                "properties" in current_model_field
+                and "metadata" in current_model_field.properties
             ):
                 deepmerge(
-                    schema.schema.model.properties.metadata.setdefault(
+                    current_model_field.properties.metadata.setdefault(
                         "marshmallow", {}
                     ),
                     {
@@ -295,14 +296,14 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 ]
 
             deepmerge(
-                schema.schema.model.setdefault("marshmallow", {}),
+                current_model_field.setdefault("marshmallow", {}),
                 {
                     "schema-class": schema_class,
                     "base-classes": schema_class_base_classes,
                     "generate": True,
                 },
             )
-            schema.schema.model.setdefault("type", "object")
+            current_model_field.setdefault("type", "object")
 
         model.setdefault("generate-record-pid-field", True)
         model.setdefault("record-dumper-extensions", [])
