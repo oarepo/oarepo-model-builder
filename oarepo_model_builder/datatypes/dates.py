@@ -18,12 +18,12 @@ class DateDataType(DataType):
     def marshmallow_validators(self) -> List[str]:
         return super().marshmallow_validators() + [
             # TODO: raise correct exception here
-            "lambda value: strptime(value, '%Y:%m:%d')",
+            "validate_date('%Y:%m:%d')",
         ]
 
     def imports(self, *extra) -> List[Import]:
         return super().imports(
-            Import(import_path="datetime.datetime.strptime", alias=None)
+            Import(import_path="oarepo_runtime.validation.validate_date", alias=None)
         )
 
 
@@ -42,12 +42,12 @@ class TimeDataType(DataType):
     def marshmallow_validators(self) -> List[str]:
         return super().marshmallow_validators() + [
             # TODO: raise correct exception here
-            "lambda value: strptime(value, '%H:%M:%S')",
+            "validate_date('%H:%M:%S')",
         ]
 
     def imports(self, *extra) -> List[Import]:
         return super().imports(
-            Import(import_path="datetime.datetime.strptime", alias=None)
+            Import(import_path="oarepo_runtime.validation.validate_date", alias=None)
         )
 
 

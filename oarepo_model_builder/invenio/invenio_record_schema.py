@@ -205,11 +205,17 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
             package_name,
             base_class_name,
             f"""
-class {base_class_name}({", ".join(self.base_classes)}):
+class {base_class_name}({", ".join(split_base_name(x) for x in self.base_classes)}):
     \"""{base_class_name} schema.\"""
     {field_list}
 """,
         )
+
+    def get_imports(self) -> List[Import]:
+        imports = super().get_imports()
+        for base_class in self.base_classes:
+            imports.append(Import(import_path=base_class, alias=None))
+        return imports
 
 
 @dataclasses.dataclass
@@ -283,7 +289,16 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             imports = [
                 x
                 for x in generated_imports[package_name]
-                if split_package_name(x.import_path) != package_name
+                if split_package_name(x.import_path)
+                not in (
+                    package_name,
+                    # known prefixes
+                    "ma_validates",
+                    "ma",
+                    "ma_fields",
+                    "mu_fields",
+                    "mu_schemas",
+                )
             ]
 
             self.process_template(
