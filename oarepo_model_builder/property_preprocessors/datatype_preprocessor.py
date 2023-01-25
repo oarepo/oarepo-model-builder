@@ -26,7 +26,7 @@ class DataTypePreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=MappingBuilder,
-        path="/properties/*",
+        path="/properties/**",
         condition=lambda current, stack: stack.top.schema_element_type
         in ("property", "items"),
     )
@@ -38,7 +38,7 @@ class DataTypePreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="/properties/*",
+        path="/properties/**",
         condition=lambda current, stack: stack.top.schema_element_type
         in ("property", "items"),
     )
