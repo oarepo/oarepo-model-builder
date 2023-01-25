@@ -38,6 +38,9 @@ class SetupCfgBuilder(OutputBuilder):
         output.add_dependency("invenio_records_resources", ">=0.21.4")
         output.add_dependency("invenio-search", ">=2.1.0")
         output.add_dependency("tqdm", ">=4.64.1")
+        output.add_dependency("oarepo-runtime", ">=1.0.0")
+
+        output.setdefault("options", "packages", "find:")
 
         output.setdefault(
             "options.package_data", "*", "*.json, *.rst, *.md, *.json5, *.jinja2"
