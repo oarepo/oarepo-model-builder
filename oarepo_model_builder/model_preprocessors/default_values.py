@@ -51,7 +51,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "schema-name",
-            lambda: f"{model.kebap_package}-{model.schema_version}.json",
+            lambda: f"{snake_case(model.record_prefix)}-{model.schema_version}.json",
         )
 
         self.set(
@@ -78,7 +78,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
                 "records",
                 "mappings",
                 "os-v2",
-                model.package,
+                snake_case(model.record_prefix),
                 model.schema_name,
             ),
         )
