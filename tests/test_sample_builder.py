@@ -3,10 +3,11 @@ from pathlib import Path
 import faker.config
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints
-from oarepo_model_builder.invenio.invenio_script_sample_data import \
-    InvenioScriptSampleDataBuilder
+from oarepo_model_builder.invenio.invenio_script_sample_data import (
+    InvenioScriptSampleDataBuilder,
+)
 from oarepo_model_builder.schema import ModelSchema
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 
 
 def test_sample_builder_string():
@@ -160,7 +161,7 @@ def build_sample_data(model, count=1):
     faker.config.PROVIDERS.clear()
     faker.config.PROVIDERS.append("tests.faker_constant")
     builder = create_builder_from_entrypoints()
-    builder.filesystem = MockFilesystem()
+    builder.filesystem = InMemoryFileSystem()
     builder.output_dir = Path.cwd()
     sample_builder = InvenioScriptSampleDataBuilder(
         builder=builder, property_preprocessors=[]

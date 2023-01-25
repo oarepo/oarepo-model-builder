@@ -1,8 +1,7 @@
 import os
 
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_model)
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
+from oarepo_model_builder.fs import InMemoryFileSystem
 
 
 def test_no_dependencies():
@@ -35,7 +34,7 @@ def build(kwargs={}):
         isort=False,
         black=False,
     )
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.skip_schema_validation = True
     builder.build(schema, "")

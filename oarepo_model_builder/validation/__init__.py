@@ -52,9 +52,13 @@ def validate_model(model, extra_validation_schemas=None):
     # for each entry of jsonschema-property, add the ^ starting entry to be able to
     # elevate it to array/object level in shorthand notation
     jsonschema_property = schema["$defs"]["jsonschema-property"]["properties"]
+    jsonschema_object = schema["$defs"]["jsonschema-object"].setdefault(
+        "properties", {}
+    )
     for k, v in list(jsonschema_property.items()):
         if k not in ("properties", "items"):
             jsonschema_property[f"^{k}"] = v
+            jsonschema_object[f"^{k}"] = v
 
     with open("schema-dump.json5", "w") as f:
         json.dump(schema, f, indent=4)

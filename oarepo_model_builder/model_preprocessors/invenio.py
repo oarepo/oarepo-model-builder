@@ -13,7 +13,6 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         deepmerge(
             model,
             {
-                "record-prefix": camel_case(split_base_name(model.package)),
                 # just make sure that the templates is always there
                 "marshmallow": {"mapping": {}},
             },
@@ -135,12 +134,22 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "record-mapping-setup-cfg",
-            lambda: f"{model.package_base}",
+            lambda: f"{extension_suffix}",
         )
         self.set(
             model,
             "record-jsonschemas-setup-cfg",
-            lambda: f"{model.package_base}",
+            lambda: f"{extension_suffix}",
+        )
+        self.set(
+            model,
+            "record-api-blueprints-setup-cfg",
+            lambda: f"{extension_suffix}",
+        )
+        self.set(
+            model,
+            "record-blueprints-setup-cfg",
+            lambda: f"{extension_suffix}",
         )
 
         # resource
@@ -212,12 +221,18 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "record-schema-metadata-alembic",
-            lambda: f"{model.package_base}",
+            lambda: f"{extension_suffix}",
         )
         self.set(
             model,
             "record-schema-metadata-setup-cfg",
-            lambda: f"{model.package_base}",
+            lambda: f"{extension_suffix}",
+        )
+
+        self.set(
+            model,
+            "flask-commands-setup-cfg",
+            lambda: f"{extension_suffix}",
         )
 
         self.set(model, "record-resource-blueprint-name", lambda: record_prefix)

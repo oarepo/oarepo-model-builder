@@ -8,10 +8,10 @@ from typing import Dict
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import AbstractFileSystem
 
-# from tests.mock_filesystem import MockFilesystem
+# from oarepo_model_builder.fs import InMemoryFileSystem
 
 
-class MockFilesystem(AbstractFileSystem):
+class InMemoryFileSystem(AbstractFileSystem):
     def __init__(self):
         self.files: Dict[str, StringIO] = {}
 
@@ -61,7 +61,7 @@ def test_include_invenio():
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
@@ -155,7 +155,7 @@ def test_sort():
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
@@ -226,7 +226,7 @@ def test_nested():
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
@@ -321,7 +321,7 @@ def test_search_class():
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")

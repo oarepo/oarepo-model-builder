@@ -86,3 +86,6 @@ tests/test-sample-site
 
 dist
 .vscode
+schema-dump.json5
+schema-dump.json5
+vocabulary-postprocessed-schema.json

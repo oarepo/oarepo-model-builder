@@ -2,12 +2,13 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.multilang import MultilangPreprocessor
 
 try:
@@ -42,7 +43,7 @@ def build_model(model):
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        filesystem=MockFilesystem(),
+        filesystem=InMemoryFileSystem(),
     )
     builder.build(
         model=ModelSchema(
@@ -80,7 +81,7 @@ def test_mapping_preprocessor():
                 }
             }
         ],
-        filesystem=MockFilesystem(),
+        filesystem=InMemoryFileSystem(),
     )
 
     builder.build(

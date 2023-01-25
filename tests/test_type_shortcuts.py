@@ -4,14 +4,16 @@ import json5
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.type_shortcuts import \
-    TypeShortcutsPreprocessor
+from oarepo_model_builder.property_preprocessors.type_shortcuts import (
+    TypeShortcutsPreprocessor,
+)
 from oarepo_model_builder.schema import ModelSchema
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 
 
 def test_object():
@@ -75,7 +77,7 @@ def build_jsonschema(model):
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[TypeShortcutsPreprocessor],
-        filesystem=MockFilesystem(),
+        filesystem=InMemoryFileSystem(),
     )
     builder.build(
         model=ModelSchema(

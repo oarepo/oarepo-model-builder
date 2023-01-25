@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 from typing import Dict
+from oarepo_model_builder.utils.camelcase import camel_case, snake_case
+from oarepo_model_builder.utils.deepmerge import deepmerge
 
 from oarepo_model_builder.utils.jinja import split_base_name
 
@@ -13,6 +15,14 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
 
     def transform(self, schema: ModelSchema, settings: Dict):
         model = schema.model
+
+        deepmerge(
+            model,
+            {
+                "record-prefix": camel_case(split_base_name(model.package)),
+            },
+        )
+
         self.set(
             model,
             "package",
@@ -91,4 +101,10 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             model,
             "saved-model-file",
             lambda: model.package_path / "models" / "model.json",
+        )
+
+        self.set(
+            model,
+            "oarepo-models-setup-cfg",
+            lambda: snake_case(model.record_prefix),
         )

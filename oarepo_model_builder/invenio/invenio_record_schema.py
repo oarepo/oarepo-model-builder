@@ -9,9 +9,11 @@ from oarepo_model_builder.datatypes import Import, datatypes
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.camelcase import camel_case
-from oarepo_model_builder.utils.jinja import (split_base_name,
-                                              split_package_base_name,
-                                              split_package_name)
+from oarepo_model_builder.utils.jinja import (
+    split_base_name,
+    split_package_base_name,
+    split_package_name,
+)
 from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder
@@ -34,6 +36,7 @@ class MarshmallowNode:
     field_arguments: List[str]
     field_imports: List[Import]
     imports: List[Dict[str, str]]
+    used: bool = False
 
     @classmethod
     def from_stack(cls, schema: ModelSchema, stack: ModelBuilderStack):
@@ -112,11 +115,16 @@ class MarshmallowNode:
                 class_name = f"{'.'.join(package_path)}.{class_name}"
         return class_name
 
+    def mark_used(self):
+        if self.read or self.write:
+            self.used = True
+        return self.used
+
 
 @dataclasses.dataclass
 class CompositeMarshmallowNode(MarshmallowNode):
 
-    fields: List["MarshmallowNode"]
+    fields: List["MarshmallowNode"] = None
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
@@ -134,12 +142,21 @@ class CompositeMarshmallowNode(MarshmallowNode):
                 yield fld
         yield self
 
+    def mark_used(self):
+        if self.read or self.write:
+            used = False
+            for fld in self.fields:
+                if fld.mark_used():
+                    used = True
+            self.used = used
+        return self.used
+
 
 @dataclasses.dataclass
 class ObjectMarshmallowNode(CompositeMarshmallowNode):
-    generate: bool
-    schema_class: str
-    base_classes: List[str]
+    generate: bool = True
+    schema_class: str = None
+    base_classes: List[str] = None
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
@@ -167,6 +184,8 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
         ]
 
     def generate_schema_class(self):
+        if not self.used:
+            return None, None, None
         if not self.generate:
             return None, None, None
         if not self.schema_class:
@@ -241,6 +260,10 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
         generated_classes = defaultdict(list)
         generated_imports = defaultdict(set)
+
+        model_node.mark_used()
+        if model_node.generate:
+            model_node.used = True
 
         context = {}
         for fld in model_node.walk():

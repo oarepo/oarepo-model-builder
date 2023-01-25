@@ -16,6 +16,6 @@ class InvenioCliSetupCfgBuilder(OutputBuilder):
 
         output.add_entry_point(
             "flask.commands",
-            self.model.kebap_package,
+            self.model.flask_commands_setup_cfg,
             f"{'.'.join(cli_function[:-1])}:{cli_function[-1]}",
         )

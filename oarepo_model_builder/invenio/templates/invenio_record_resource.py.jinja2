@@ -1,9 +1,9 @@
-{% for b in model.record_resource_class_bases %}
+{% for b in model.record_resource_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
 
-class {{ model.record_resource_class|base_name }}({% for b in model.record_resource_class_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
+class {{ model.record_resource_class|base_name }}({% for b in model.record_resource_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
     """{{ model.record_class|base_name }} resource."""
     # here you can for example redefine
     # create_url_rules function to add your own rules

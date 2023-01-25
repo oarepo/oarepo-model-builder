@@ -62,6 +62,7 @@ class OutputBuilder:
 
     def begin(self, schema, settings):
         self.schema = schema.schema
+        self.whole_schema = schema
         self.model = schema.model
         self.settings = settings
         self.stack = ModelBuilderStack()

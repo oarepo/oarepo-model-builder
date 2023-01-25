@@ -1,25 +1,19 @@
 {
+  "model-opensearch": {
+    "type": "object",
+    "properties": {
+      "os-v2": {
+        "type": "object",
+        "additionalProperties": true
+        // ES mapping section, no schema for it yet
+      }
+    }
+  },
   "settings-opensearch": {
     "type": "object",
     "properties": {
       "version": {
-        "type": "string",
-        "enum": [
-          "os-v2"
-        ]
-      },
-      "keyword-ignore-above": {
-        "type": "number"
-      },
-      "templates": {
-        "type": "object",
-        "properties": {
-          "os-v2": {
-            "type": "object",
-            "additionalProperties": true
-            // ES mapping section, no schema for it yet
-          }
-        }
+        "type": "string"
       }
     }
   }

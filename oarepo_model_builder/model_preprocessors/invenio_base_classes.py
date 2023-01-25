@@ -7,13 +7,13 @@ class InvenioBaseClassesModelPreprocessor(ModelPreprocessor):
     def transform(self, schema, settings):
         self.set_default_and_append_if_not_present(
             schema.model,
-            "record-resource-class-bases",
+            "record-resource-bases",
             [],
             "invenio_records_resources.resources.RecordResource",
         )
         self.set_default_and_append_if_not_present(
             schema.model,
-            "record-resource-config-class-bases",
+            "record-resource-config-bases",
             [],
             "invenio_records_resources.resources.RecordResourceConfig",
         )

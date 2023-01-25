@@ -1,35 +1,31 @@
 {
-  "root": {
-    "type": "object",
+  "model-properties": {
     "properties": {
       "plugins": {
-        "$ref": "#/$defs/plugins"
+        "type": "object",
+        "properties": {
+          "packages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "output": {
+            "$ref": "#/$defs/plugin-config"
+          },
+          "builder": {
+            "$ref": "#/$defs/plugin-config"
+          },
+          "model": {
+            "$ref": "#/$defs/plugin-config"
+          },
+          "property": {
+            "$ref": "#/$defs/plugin-config"
+          }
+        },
+        "additionalProperties": false
       },
     }
-  },
-  "plugins": {
-    "type": "object",
-    "properties": {
-      "packages": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      },
-      "output": {
-        "$ref": "#/$defs/plugin-config"
-      },
-      "builder": {
-        "$ref": "#/$defs/plugin-config"
-      },
-      "model": {
-        "$ref": "#/$defs/plugin-config"
-      },
-      "property": {
-        "$ref": "#/$defs/plugin-config"
-      }
-    },
-    "additionalProperties": false
   },
   "plugin-config": {
     "type": "object",

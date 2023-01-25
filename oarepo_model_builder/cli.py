@@ -9,11 +9,15 @@ from pathlib import Path
 import click
 import yaml
 
-from oarepo_model_builder.conflict_resolvers import (AutomaticResolver,
-                                                     InteractiveResolver)
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_entry_points_dict,
-                                              load_model)
+from oarepo_model_builder.conflict_resolvers import (
+    AutomaticResolver,
+    InteractiveResolver,
+)
+from oarepo_model_builder.entrypoints import (
+    create_builder_from_entrypoints,
+    load_entry_points_dict,
+    load_model,
+)
 from oarepo_model_builder.utils.verbose import log
 
 
@@ -52,8 +56,15 @@ from oarepo_model_builder.utils.verbose import log
     help="Load a config file and replace parts of the model with it. "
     "The config file can be a json, yaml or a python file. "
     "If it is a python file, it is evaluated with the current "
-    'model stored in the "oarepo_model" global variable and '
-    "after the evaluation all globals are set on the model.",
+    'model stored in the "oarepo_model" global variable.',
+    multiple=True,
+)
+@click.option(
+    "--include",
+    "includes",
+    help="A pair of symbolic-name=path-to-the-file. "
+    'If the schema contains "use: <symbolic-name>" or "extend: <symbolic-name>", '
+    "it will be converted into the file path and imported.",
     multiple=True,
 )
 @click.option(
@@ -93,6 +104,7 @@ def run(
     save_model,
     overwrite,
     profile,
+    includes,
 ):
     """
     Compiles an oarepo model file given in MODEL_FILENAME into an Invenio repository model.
@@ -112,6 +124,7 @@ def run(
             save_model,
             overwrite,
             profile,
+            includes,
         )
     except Exception as e:
         if verbosity >= 2:
@@ -139,6 +152,7 @@ def run_internal(
     save_model,
     overwrite,
     profiles,
+    includes,
 ):
     # extend system's search path to add script's path in front (so that scripts called from the compiler are taken
     # from the correct virtual environ)
@@ -169,6 +183,10 @@ def run_internal(
         output_directory,
     )
 
+    includes = {
+        x.split("=", maxsplit=1)[0]: x.split("=", maxsplit=1)[1] for x in includes
+    }
+
     # load model (and resolve includes) and optionally save it before the processing (for debugging)
     model = load_model(
         model_filename,
@@ -178,6 +196,7 @@ def run_internal(
         isort,
         sets,
         merged_models=included_models,
+        extra_included=includes,
     )
     if save_model:
         with open(save_model, "w") as f:

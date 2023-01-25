@@ -3,12 +3,13 @@ import os
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders import OutputBuilderComponent
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.multilang import MultilangPreprocessor
 
 try:
@@ -117,7 +118,7 @@ def build(model, output_builder_components=None, property_preprocessors=None):
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         output_builder_components=output_builder_components,
-        filesystem=MockFilesystem(),
+        filesystem=InMemoryFileSystem(),
         property_preprocessors=property_preprocessors,
         included_validation_schemas=[
             {

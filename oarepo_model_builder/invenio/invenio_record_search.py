@@ -99,10 +99,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 if upper.key == "properties":
                     continue
                 nested_path = nested_path + upper.key + "."
-                if (
-                    upper.data.get("mapping", HyphenMunch({"type": ""})).type
-                    == "nested"
-                ):
+                if upper.data.get("mapping", {"type": ""}).get("type") == "nested":
                     nested_paths.append(nested_path)
             if len(nested_paths) > 0:
                 nested = True

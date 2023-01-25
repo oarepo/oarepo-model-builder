@@ -1,0 +1,9 @@
+  {
+    "model-properties": {
+      "properties": {
+          "extend": {
+              "type": "string"
+          }
+      }
+    }
+  }
