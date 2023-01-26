@@ -21,8 +21,12 @@ from invenio_records.dumpers.relations import RelationDumperExt
 
 class {{ current_model.record_class|base_name }}({% for b in current_model.record_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
     model_cls = {{ current_model.record_metadata_class|base_name }}
+{% if current_model.schema_name %}
     schema = ConstantField("$schema", "{{ current_model.schema_server }}{{ current_model.schema_name }}")
+{% endif %}
+{% if current_model.mapping_file %}
     index = IndexField("{{ current_model.index_name }}")
+{% endif %}
 {% if current_model.generate_record_pid_field %}
     pid = PIDField(
         create=True,
