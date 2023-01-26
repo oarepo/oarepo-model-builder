@@ -18,6 +18,14 @@ from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder
 
+BUILTIN_ALIASES = [
+    "ma_validates",
+    "ma",
+    "ma_fields",
+    "mu_fields",
+    "mu_schemas",
+]
+
 OAREPO_MARSHMALLOW_PROPERTY = "marshmallow"
 
 
@@ -200,12 +208,19 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
         package_name, base_class_name = split_package_base_name(self.schema_class)
 
         field_list = "\n    ".join(field_list)
+        base_classes = []
+        for x in self.base_classes:
+            base_class_package_name, base_class_class_name = split_package_base_name(x)
+            if base_class_package_name in BUILTIN_ALIASES:
+                base_classes.append(x)
+            else:
+                base_classes.append(base_class_class_name)
 
         return (
             package_name,
             base_class_name,
             f"""
-class {base_class_name}({", ".join(split_base_name(x) for x in self.base_classes)}):
+class {base_class_name}({", ".join(base_classes)}):
     \"""{base_class_name} schema.\"""
     {field_list}
 """,
@@ -214,7 +229,8 @@ class {base_class_name}({", ".join(split_base_name(x) for x in self.base_classes
     def get_imports(self) -> List[Import]:
         imports = super().get_imports()
         for base_class in self.base_classes:
-            imports.append(Import(import_path=base_class, alias=None))
+            if "." in base_class:
+                imports.append(Import(import_path=base_class, alias=None))
         return imports
 
 
@@ -293,13 +309,10 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 not in (
                     package_name,
                     # known prefixes
-                    "ma_validates",
-                    "ma",
-                    "ma_fields",
-                    "mu_fields",
-                    "mu_schemas",
+                    *BUILTIN_ALIASES
                 )
             ]
+
 
             self.process_template(
                 python_path,
