@@ -1,12 +1,16 @@
 from invenio_records_resources.services import RecordService as InvenioRecordService
 
+{% if schema.expandable_fields %}
+from oarepo_records_resources.services.service import ExpandableFieldsConfigMixin
+{% endif %}
 
-{% for b in current_model.record_service_bases %}
+
+{% for b in python.record_service_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
+class {{ python.record_service_class|base_name }}({% if schema.expandable_fields %}ExpandableFieldsConfigMixin,{% endif %}
+{{ python.record_service_class|base_name }}({% for b in current_model.record_service_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
+    """{{ python.record_class|base_name }} service."""
 
-class {{ current_model.record_service_class|base_name }}({% for b in current_model.record_service_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
-    """{{ current_model.record_class|base_name }} service."""
-
-{{ current_model.invenio_record_service_extra_code }}
+{{ settings.python.invenio_record_service_extra_code }}
