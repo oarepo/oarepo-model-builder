@@ -88,7 +88,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "index-name",
-            lambda: model.package
+            lambda: snake_case(model.record_prefix)
             + "-"
             + os.path.basename(model.mapping_file).replace(".json", ""),
         )
