@@ -200,15 +200,12 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{model.record_records_package}.dumper.{record_prefix}Dumper",
         )
         #   - search
-        if not (
-            "record-search-options-class" in model
-            and model.record_search_options_class == ""
-        ):  # files plugin requires this to be empty
-            self.set(
-                model,
-                "record-search-options-class",
-                lambda: f"{model.record_services_package}.search.{record_prefix}SearchOptions",
-            )
+
+        self.set(
+            model,
+            "record-search-options-class",
+            lambda: f"{model.record_services_package}.search.{record_prefix}SearchOptions",
+        )
 
         #   - facets
         self.set(
