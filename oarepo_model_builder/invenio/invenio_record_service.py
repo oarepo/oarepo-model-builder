@@ -14,7 +14,7 @@ class InvenioRecordServiceBuilder(InvenioBaseClassPythonBuilder):
         output: PythonOutput = self.builder.get_output("python", python_path)
         context = HyphenMunch(
             settings=self.settings,
-            python=self.settings.python,
+            current_model=self.current_model,
             schema=self.schema,
             **extra_kwargs
         )

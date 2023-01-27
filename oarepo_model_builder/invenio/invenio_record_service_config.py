@@ -42,7 +42,7 @@ class InvenioRecordServiceConfigBuilder(InvenioBaseClassPythonBuilder):
 
         context = HyphenMunch(
             settings=self.settings,
-            python=self.settings.python,
+            current_model=self.current_model,
             expandable_fields_context=expandable_fields_context,
             expandable_fields_classes=expandable_fields_classes,
             **extra_kwargs

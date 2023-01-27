@@ -50,15 +50,16 @@ def update_dict(dct, upd):
     return dict(dct, **upd)
 
 MODEL_BASE = {
-    "oarepo:use": "invenio",
+
     "model": {
         "properties": {
             "file": {"type": "fulltext+keyword"},
             "b": {
                 "type": "keyword",
-                "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
+                "facets": {"field": 'TermsFacet(field="cosi")'},
             },
-        }
+        },
+        "use": "invenio",
     },
 }
 
@@ -91,10 +92,11 @@ IMPORT_SERVICE_1_ALIAS = "from model_picture.proxies import current_service as b
 IMPORT_DEFAULT_FIELD = "from oarepo_records_resources.services.expandable_fields import ReferencedRecordExpandableField"
 IMPORT_CUSTOM_FIELD = "from test_classes import InheritedReferencedRecordExpandableField"
 
-SERVICE_WITH_FIELDS = "class TestService(ExpandableFieldsConfigMixin,InvenioRecordService):"
-SERVICE_WITHOUT_FIELDS = "class TestService(InvenioRecordService):"
+SERVICE_WITH_FIELDS = "class TestService(ExpandableFieldsConfigMixin,RecordService):"
+SERVICE_WITHOUT_FIELDS = "class TestService(RecordService):"
 
-
+CONFIG_PATH = os.path.join("test", "services", "records", "config.py")
+SERVICE_PATH = os.path.join("test", "services", "records", "service.py")
 
 EXPANDABLE_FIELD = """
     @property
@@ -173,8 +175,8 @@ def basic_test_template(expandable_fields_def, is_in_conditions):
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
-    config = builder.filesystem.open(os.path.join("test", "services", "config.py")).read()
-    service = builder.filesystem.open(os.path.join("test", "services", "service.py")).read()
+    config = builder.filesystem.open(CONFIG_PATH).read()
+    service = builder.filesystem.open(SERVICE_PATH).read()
     for condition in is_in_conditions:
         if condition[1] == "service":
             assert is_in(condition[0], service)
@@ -196,8 +198,8 @@ def test_no_expandable_fields():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
-    config = builder.filesystem.open(os.path.join("test", "services", "config.py")).read()
-    service = builder.filesystem.open(os.path.join("test", "services", "service.py")).read()
+    config = builder.filesystem.open(CONFIG_PATH).read()
+    service = builder.filesystem.open(SERVICE_PATH).read()
 
     assert remove_whitespaces(IMPORT_CONFIGMIXIN) not in remove_whitespaces(service)
     assert remove_whitespaces(SERVICE_WITHOUT_FIELDS) in remove_whitespaces(service)
