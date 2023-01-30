@@ -1,5 +1,7 @@
 import click
+import yaml
 from flask.cli import with_appcontext
+from invenio_access.permissions import system_identity
 from invenio_db import db
 from invenio_search import current_search
 from invenio_search.cli import search_version_check
