@@ -1,5 +1,5 @@
 {
-  "root": {
+  "model-properties": {
     "type": "object",
     "properties": {
       "expandable-fields": {

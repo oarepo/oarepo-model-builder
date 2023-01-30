@@ -60,6 +60,8 @@ MODEL_BASE = {
             },
         },
         "use": "invenio",
+        "package": "test",
+        "schema-server": 'local://',
     },
 }
 
@@ -163,7 +165,8 @@ EXPANDABLE_FIELDS_TWO = """
 
 def basic_test_template(expandable_fields_def, is_in_conditions):
     model = MODEL_BASE
-    model = update_dict(model, {"expandable-fields": expandable_fields_def})
+    updated_model_def = update_dict(model["model"], {"expandable-fields": expandable_fields_def})
+    model["model"] = updated_model_def
     schema = load_model(
         "test.yaml",
         "test",

@@ -16,7 +16,7 @@ class InvenioRecordServiceConfigBuilder(InvenioBaseClassPythonBuilder):
 
         expandable_fields_context = []
         expandable_fields_classes = set()
-        expandable_fields = getattr(self.schema, "expandable_fields", [])
+        expandable_fields = getattr(self.current_model, "expandable_fields", [])
         for expandable_field in expandable_fields:
             service_alias = getattr(
                 expandable_field,
