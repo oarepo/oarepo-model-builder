@@ -3,6 +3,7 @@ import json
 from oarepo_model_builder.utils.hyphen_munch import HyphenMunch, munch
 from oarepo_model_builder.validation.model_validation import model_validator
 from marshmallow import ValidationError
+from munch import unmunchify
 
 
 class InvalidModelException(Exception):
@@ -22,7 +23,8 @@ def flatten_errors(err_data, path):
 
 
 def validate_model(model):
-    data = json.loads(json.dumps(model.schema, default=lambda s: repr(s)))
+    # remove munch, keeping stuff like Path etc.
+    data = unmunchify(model.schema)
     validator = model_validator.validator_class("root")()
     try:
         loaded_data = validator.dump(validator.load(data))
@@ -31,6 +33,8 @@ def validate_model(model):
     except ValidationError as e:
         msg = []
         for err, path in flatten_errors(e.messages_dict, ""):
+            if path.endswith("._schema") and err == "Unknown field.":
+                continue
             msg.append(f"{path}: {err}")
         msg = "\n    ".join(msg)
         raise InvalidModelException(f"Invalid model: \n    {msg}")

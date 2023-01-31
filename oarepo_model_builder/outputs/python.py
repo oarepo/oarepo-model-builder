@@ -6,9 +6,12 @@ from jinja2 import Environment, FunctionLoader, pass_context
 from oarepo_model_builder.outputs import OutputBase
 from oarepo_model_builder.templates import templates
 from oarepo_model_builder.utils.cst import PythonContext, merge
-from oarepo_model_builder.utils.jinja import (base_name, in_different_package,
-                                              package_name,
-                                              with_defined_prefix)
+from oarepo_model_builder.utils.jinja import (
+    base_name,
+    in_different_package,
+    package_name,
+    with_defined_prefix,
+)
 from oarepo_model_builder.utils.verbose import log
 
 
@@ -61,6 +64,10 @@ class PythonOutput(OutputBase):
             env.filters[filter_name] = filter_func
 
         try:
+            context = {
+                **context,
+                **{k.replace("-", "_"): v for k, v in list(context.items())},
+            }
             rendered = env.get_template(template_name).render(context)
         except Exception as exc:
             raise RuntimeError(f"Error rendering template {template_name}") from exc

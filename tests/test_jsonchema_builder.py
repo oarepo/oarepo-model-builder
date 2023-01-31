@@ -10,7 +10,9 @@ from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.fs import InMemoryFileSystem
-from tests.multilang import MultilangPreprocessor
+from oarepo_model_builder.validation.model_validation import model_validator
+from tests.multilang import MultilangPreprocessor, MultilingualDataType, UIValidator
+from oarepo_model_builder.datatypes import datatypes
 
 try:
     import json5
@@ -64,7 +66,11 @@ def test_required_inside_metadata():
     assert data == {
         "type": "object",
         "properties": {
-            "metadata": {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
+            "metadata": {
+                "type": "object",
+                "properties": {"a": {"type": "keyword"}},
+                "required": ["a"],
+            }
         },
     }
 
@@ -88,7 +94,10 @@ def test_jsonschema_preprocessor():
         "properties": {
             "a": {
                 "type": "object",
-                "properties": {"lang": {"type": "string"}, "value": {"type": "string"}},
+                "properties": {
+                    "lang": {"type": "string"},
+                    "value": {"type": "string"},
+                },
             }
         },
     }
@@ -113,6 +122,10 @@ def test_components():
 
 
 def build(model, output_builder_components=None, property_preprocessors=None):
+    datatypes._prepare_datatypes()
+    if UIValidator not in model_validator.validator_map["property"]:
+        model_validator.validator_map["property"].append(UIValidator)
+    datatypes.datatypes["multilingual"] = MultilingualDataType
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
@@ -120,15 +133,6 @@ def build(model, output_builder_components=None, property_preprocessors=None):
         output_builder_components=output_builder_components,
         filesystem=InMemoryFileSystem(),
         property_preprocessors=property_preprocessors,
-        included_validation_schemas=[
-            {
-                "base-property": {
-                    "properties": {
-                        "ui": {"type": "object", "additionalProperties": True},
-                    }
-                }
-            }
-        ],
     )
     builder.build(
         model=ModelSchema(

@@ -38,6 +38,13 @@ class ModelValidator:
 
         if not validators:
             raise ValidationError(f'Do not have validators for "{section}"')
+
+        # if any of the validators is extremely permissive, do not add strict meta
+        for v in validators:
+            if hasattr(v, "Meta"):
+                if getattr(v.Meta, "unknown", None) == ma.INCLUDE:
+                    strict = False
+                    break
         if strict:
 
             class Meta:

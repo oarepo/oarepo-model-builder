@@ -10,5 +10,5 @@ class SetupPyBuilder(PythonBuilder):
 
         python_output: PythonOutput = self.builder.get_output("python", "setup.py")
         python_output.merge(
-            "setup_py", {"settings": self.settings, "model": self.current_model}
+            "setup_py", {"settings": self.settings, "current_model": self.current_model}
         )

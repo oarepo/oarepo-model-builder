@@ -1,11 +1,8 @@
 import marshmallow as ma
 from marshmallow import fields
 
-from .utils import ExtendablePartSchema
+from .utils import ExtendablePartSchema, PermissiveSchema
 
 
-class PropertyJSONSchema(ExtendablePartSchema):
+class PropertyJSONSchema(PermissiveSchema):
     generate = fields.Boolean(dump_default=True)
-
-    class Meta:
-        unknown = ma.INCLUDE

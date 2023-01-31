@@ -11,8 +11,8 @@ class ImportSchema(ExtendablePartSchema):
 
 
 class PropertyMarshmallowSchema(ExtendablePartSchema):
-    read = fields.Boolean(dump_default=True)
-    write = fields.Boolean(dump_default=True)
+    read = fields.Boolean(required=False)
+    write = fields.Boolean(required=False)
     imports = fields.List(fields.Nested(ImportSchema), required=False)
     field_name = fields.String(data_key="field-name", required=False)
     field = fields.String(required=False)
@@ -23,7 +23,7 @@ class PropertyMarshmallowSchema(ExtendablePartSchema):
 
 class ModelMarshmallowSchema(ma.Schema):
     class ObjectOnlyMarshmallowProps(ExtendablePartSchema):
-        generate = fields.Boolean(dump_default=True)
+        generate = fields.Boolean(required=False)
         schema_class = fields.String(data_key="schema-class", required=False)
         base_classes = fields.List(
             fields.String(), data_key="base-classes", required=False

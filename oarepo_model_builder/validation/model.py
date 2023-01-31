@@ -2,7 +2,7 @@ import marshmallow as ma
 from marshmallow import fields
 from .model_validation import model_validator
 
-from .utils import ExtendablePartSchema, CheckedConstant
+from .utils import ExtendablePartSchema, CheckedConstant, PermissiveSchema
 
 
 class ModelSchema(ExtendablePartSchema):
@@ -27,6 +27,5 @@ class ModelSchema(ExtendablePartSchema):
         return data
 
 
-class ModelOpenSearchSchema(ma.Schema):
-    class Meta:
-        unknown = ma.INCLUDE
+class ModelOpenSearchSchema(PermissiveSchema):
+    pass

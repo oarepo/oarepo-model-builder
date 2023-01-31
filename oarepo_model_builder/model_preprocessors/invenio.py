@@ -270,16 +270,17 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 "properties" in current_model_field
                 and "metadata" in current_model_field.properties
             ):
-                deepmerge(
-                    current_model_field.properties.metadata.setdefault(
-                        "marshmallow", {}
-                    ),
-                    {
-                        "schema-class": schema_metadata_class,
-                        "base-classes": schema_class_base_classes,
-                        "generate": True,
-                    },
-                )
+                if current_model_field.properties.metadata.get("type") == "object":
+                    deepmerge(
+                        current_model_field.properties.metadata.setdefault(
+                            "marshmallow", {}
+                        ),
+                        {
+                            "schema-class": schema_metadata_class,
+                            "base-classes": schema_class_base_classes,
+                            "generate": True,
+                        },
+                    )
             if (
                 "marshmallow" in schema.schema
                 and "base-schema" in schema.schema["marshmallow"]

@@ -1,11 +1,13 @@
 from oarepo_model_builder.builders import ReplaceElement
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import \
-    InvenioRecordSchemaBuilder
-from oarepo_model_builder.property_preprocessors import (PropertyPreprocessor,
-                                                         process)
+from oarepo_model_builder.invenio.invenio_record_schema import (
+    InvenioRecordSchemaBuilder,
+)
+from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.utils.deepmerge import deepmerge
+import marshmallow as ma
+from oarepo_model_builder.datatypes import DataType
 
 
 class MultilangPreprocessor(PropertyPreprocessor):
@@ -54,3 +56,13 @@ class MultilangPreprocessor(PropertyPreprocessor):
             },
         )
         return data
+
+
+class UIValidator(ma.Schema):
+    ui = ma.fields.Raw()
+
+
+class MultilingualDataType(DataType):
+    model_type = "multilingual"
+    schema_type = "object"
+    mapping_type = "object"

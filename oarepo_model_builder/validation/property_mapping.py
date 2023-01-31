@@ -1,8 +1,7 @@
 import marshmallow as ma
 
-from .utils import ExtendablePartSchema
+from .utils import ExtendablePartSchema, PermissiveSchema
 
 
-class PropertyMapping(ExtendablePartSchema):
-    class Meta:
-        unknown = ma.INCLUDE
+class PropertyMapping(PermissiveSchema):
+    pass

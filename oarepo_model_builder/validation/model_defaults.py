@@ -7,12 +7,25 @@ from marshmallow_union import Union
 from marshmallow_oneofschema import OneOfSchema
 from .model_validation import model_validator
 from marshmallow.exceptions import ValidationError
+import pathlib
+
+
+class PathOrString(fields.Field):
+    def _serialize(self, value, attr, obj, **kwargs):
+        return value  # keep the pathlib.Path in here
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        if not value:
+            return value
+        if isinstance(value, pathlib.Path):
+            return value
+        return value
 
 
 class ModelDefaults(ma.Schema):
     package = fields.String(required=False)
     profile_package = fields.String(data_key="profile-package", required=False)
-    package_path = fields.String(data_key="package-path", required=False)
+    package_path = PathOrString(data_key="package-path")
     jsonschemas_package = fields.String(data_key="jsonschemas-package", required=False)
     mapping_file = fields.String(data_key="mapping-file", required=False)
     collection_url = fields.String(data_key="collection-url", required=False)
@@ -29,7 +42,7 @@ class ModelDefaults(ma.Schema):
     schema_server = fields.String(data_key="schema-server", required=False)
     schema_version = fields.String(data_key="schema-version", required=False)
     package_base_upper = fields.String(data_key="package-base-upper", required=False)
-    saved_model_file = fields.String(data_key="saved-model-file", required=False)
+    saved_model_file = PathOrString(data_key="saved-model-file", required=False)
     config_dummy_class = fields.String(data_key="config-dummy-class", required=False)
     config_package = fields.String(data_key="config-package", required=False)
     config_resource_class_key = fields.String(

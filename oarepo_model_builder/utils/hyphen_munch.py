@@ -17,9 +17,11 @@ class HyphenMunch(munch.AutoMunch):
         try:
             return super().__getitem__(key)
         except:
-            try:
-                key = key.replace("_", "-")
-                return super().__getitem__(key)
-            except:
-                key = key.replace("-", "_")
-                return super().__getitem__(key)
+            key = key.replace("_", "-")
+            return super().__getitem__(key)
+
+    def get(self, key, default=None):
+        try:
+            return self.__getitem__(key)
+        except KeyError:
+            return default

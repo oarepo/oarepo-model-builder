@@ -5,13 +5,13 @@ import enum
 
 
 class OrderEnum(enum.Enum):
-    ASC = "asc"
-    DESC = "desc"
+    asc = "asc"
+    desc = "desc"
 
 
 class PropertySortable(ExtendablePartSchema):
     key = fields.String(required=False)
     order = fields.Enum(
         OrderEnum,
-        dump_default=OrderEnum.ASC,
+        dump_default=OrderEnum.asc,
     )

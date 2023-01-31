@@ -211,13 +211,13 @@ def test_nested():
                                 "properties": {"g": {"type": "keyword"}},
                                 "mapping": {"type": "nested"},
                                 "marshmallow": {
-                                    "class": "nest.f.F",
+                                    "schema-class": "nest.f.F",
                                     "generate": True,
                                 },
                             },
                         },
                         "mapping": {"type": "nested"},
-                        "marshmallow": {"class": "nest.b.B", "generate": True},
+                        "marshmallow": {"schema-class": "nest.b.B", "generate": True},
                     }
                 },
             },
@@ -234,6 +234,7 @@ def test_nested():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
+    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",

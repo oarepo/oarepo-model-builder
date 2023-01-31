@@ -9,7 +9,9 @@ from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.fs import InMemoryFileSystem
-from tests.multilang import MultilangPreprocessor
+from tests.multilang import MultilangPreprocessor, MultilingualDataType, UIValidator
+from oarepo_model_builder.datatypes import datatypes
+from oarepo_model_builder.validation.model_validation import model_validator
 
 try:
     import json5
@@ -51,7 +53,7 @@ def build_model(model):
             {
                 "settings": {
                     "python": {"use-isort": False, "use-black": False},
-                    "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
+                    "opensearch": {"version": "os-v2"},
                 },
                 "model": {"package": "test", **model},
             },
@@ -69,12 +71,16 @@ def build_model(model):
 
 
 def test_mapping_preprocessor():
+    datatypes._prepare_datatypes()
+    if UIValidator not in model_validator.validator_map["property"]:
+        model_validator.validator_map["property"].append(UIValidator)
+    datatypes.datatypes["multilingual"] = MultilingualDataType
+
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
-        included_validation_schemas=[{"property-multilingual": {"properties": {}}}],
         filesystem=InMemoryFileSystem(),
     )
 
@@ -84,7 +90,7 @@ def test_mapping_preprocessor():
             {
                 "settings": {
                     "python": {"use-isort": False, "use-black": False},
-                    "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
+                    "opensearch": {"version": "os-v2"},
                 },
                 "model": {
                     "package": "test",

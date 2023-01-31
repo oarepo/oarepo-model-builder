@@ -116,3 +116,15 @@ class RegexFieldsSchema(ma.Schema):
                     key = field.data_key if field.data_key is not None else attr_name
                     serialized[key] = value
                     break
+
+
+class PermissiveSchema(ExtendablePartSchema):
+    class Meta:
+        unknown = ma.INCLUDE
+
+    def dump(self, obj, *, many=None):
+        if not obj:
+            return super().dump(obj, many=many)
+        if many:
+            return [self.dump(x, many=False) for x in obj]
+        return {**obj, **super().dump(obj, many=False)}
