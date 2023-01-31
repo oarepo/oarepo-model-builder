@@ -27,7 +27,7 @@ def get_model_schema(field_type):
         "",
         {
             "settings": {
-                "python": {"use_isort": False, "use_black": False},
+                "python": {"use-isort": False, "use-black": False},
             },
             "model": {"package": "test", "properties": {"a": {"type": field_type}}},
         },

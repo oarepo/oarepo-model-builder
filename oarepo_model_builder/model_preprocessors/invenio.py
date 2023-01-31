@@ -14,7 +14,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             model,
             {
                 # just make sure that the templates is always there
-                "marshmallow": {"mapping": {}},
+                "marshmallow": {},
             },
         )
 

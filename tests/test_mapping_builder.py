@@ -50,7 +50,7 @@ def build_model(model):
             "",
             {
                 "settings": {
-                    "python": {"use_isort": False, "use_black": False},
+                    "python": {"use-isort": False, "use-black": False},
                     "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
                 },
                 "model": {"package": "test", **model},
@@ -74,13 +74,7 @@ def test_mapping_preprocessor():
         outputs=[MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
-        included_validation_schemas=[
-            {
-                "jsonschema-property": {
-                    "properties": {"type": {"enum": ["multilingual"]}}
-                }
-            }
-        ],
+        included_validation_schemas=[{"property-multilingual": {"properties": {}}}],
         filesystem=InMemoryFileSystem(),
     )
 
@@ -89,7 +83,7 @@ def test_mapping_preprocessor():
             "",
             {
                 "settings": {
-                    "python": {"use_isort": False, "use_black": False},
+                    "python": {"use-isort": False, "use-black": False},
                     "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
                 },
                 "model": {

@@ -2,9 +2,10 @@ import json
 
 from oarepo_model_builder.utils.camelcase import camel_case
 from oarepo_model_builder.utils.jinja import split_package_name
-from oarepo_model_builder.validation import InvalidModelException
+from oarepo_model_builder.validation import InvalidModelException, model_validator
 
 from .datatypes import DataType
+from marshmallow import fields
 
 
 class ObjectDataType(DataType):
@@ -12,6 +13,11 @@ class ObjectDataType(DataType):
     mapping_type = "object"
     marshmallow_field = "ma_fields.Nested"
     model_type = "object"
+
+    class ModelSchema(DataType.ModelSchema):
+        properties = fields.Nested(
+            lambda: model_validator.validator_class("properties", strict=False)()
+        )
 
     def marshmallow(self, **extras):
         ret = super().marshmallow(**extras)
@@ -71,7 +77,7 @@ class ObjectDataType(DataType):
         return class_name
 
 
-class NestedDataType(DataType):
+class NestedDataType(ObjectDataType):
     schema_type = "object"
     mapping_type = "nested"
     marshmallow_field = "ma_fields.Nested"
@@ -93,3 +99,11 @@ class ArrayDataType(DataType):
     mapping_type = None
     marshmallow_field = "ma_fields.List"
     model_type = "array"
+
+    class ModelSchema(DataType.ModelSchema):
+        items = fields.Nested(
+            lambda: model_validator.validator_class("array-items", strict=False)()
+        )
+        uniqueItems = fields.Boolean(required=False)
+        minItems = fields.Integer(required=False)
+        maxItems = fields.Integer(required=False)

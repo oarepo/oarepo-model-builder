@@ -1,6 +1,8 @@
 import copy
 from collections import namedtuple
 from typing import List
+from marshmallow import fields
+import marshmallow as ma
 
 import importlib_metadata
 
@@ -13,6 +15,9 @@ class DataType:
     schema_type = None
     mapping_type = None
     use_dumper = False
+
+    class ModelSchema(ma.Schema):
+        type = fields.String(required=True)
 
     def __init__(self, definition, key, model):
         self.definition = definition
@@ -71,11 +76,14 @@ class DataTypes:
                     self.datatypes[dt.model_type] = dt
 
     def get_datatype(self, data, key, model) -> DataType:
-        self._prepare_datatypes()
-        ret = self.datatypes.get(data.get("type", None))
-        if ret:
-            return ret(data, key, model)
+        datatype_class = self.get_datatype_class(data.get("type", None))
+        if datatype_class:
+            return datatype_class(data, key, model)
         return None
+
+    def get_datatype_class(self, datatype_type):
+        self._prepare_datatypes()
+        return self.datatypes.get(datatype_type)
 
 
 datatypes = DataTypes()

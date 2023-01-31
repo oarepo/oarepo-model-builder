@@ -1,9 +1,27 @@
 from .datatypes import DataType
+from marshmallow import fields
+from marshmallow.exceptions import ValidationError
+import re
 
+
+def validate_regex(value):
+    if not value:
+        return
+    try:
+        re.compile(value)
+    except Exception as e:
+        raise ValidationError(f"Regex '{value}' is not valid. Reported error: '{str(e)}'")
 
 class StringDataType(DataType):
     schema_type = "string"
     marshmallow_field = "ma_fields.String"
+
+    class ModelSchema(DataType.ModelSchema):
+        minLength = fields.Integer(required=False)
+        maxLength = fields.Integer(required=False)
+        regex = fields.String(required=False, validate=validate_regex)
+        enum = fields.List(fields.String(), required=False)
+
 
     def marshmallow_validators(self):
         validators = []

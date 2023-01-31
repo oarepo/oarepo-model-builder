@@ -8,10 +8,5 @@ class OpensearchModelPreprocessor(ModelPreprocessor):
     def transform(self, schema, settings):
         deepmerge(
             settings,
-            {
-                "opensearch": {
-                    "version": "os-v2",
-                    "templates": {"os-v2": {"mappings": {"properties": {}}}},
-                }
-            },
+            {"opensearch": {"version": "os-v2"}},
         )

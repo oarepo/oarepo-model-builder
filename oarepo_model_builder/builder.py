@@ -90,7 +90,6 @@ class ModelBuilder:
         property_preprocessors: List[Type[PropertyPreprocessor]] = (),
         model_preprocessors: List[Type[ModelPreprocessor]] = (),
         output_builder_components: Dict[str, List[Type[OutputBuilderComponent]]] = None,
-        included_validation_schemas=None,
         filesystem=FileSystem(),
         conflict_resolver: ConflictResolver = None,
         overwrite=False,
@@ -118,7 +117,6 @@ class ModelBuilder:
         else:
             self.output_builder_components = {}
         self.filesystem = filesystem
-        self.included_validation_schemas = included_validation_schemas or []
         self.skip_schema_validation = False  # set to True in some tests
         self.conflict_resolver = conflict_resolver
         self.overwrite = overwrite
@@ -214,7 +212,7 @@ class ModelBuilder:
 
     def _validate_model(self, model):
         if not self.skip_schema_validation:
-            validate_model(model, self.included_validation_schemas)
+            validate_model(model)
 
     def _save_outputs(self):
         for output in sorted(self.outputs.values(), key=lambda x: x.path):

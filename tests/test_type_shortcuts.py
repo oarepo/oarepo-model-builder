@@ -9,9 +9,6 @@ from oarepo_model_builder.model_preprocessors.default_values import (
 )
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.type_shortcuts import (
-    TypeShortcutsPreprocessor,
-)
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.fs import InMemoryFileSystem
 
@@ -56,7 +53,7 @@ def test_object_inside_array():
 
 def test_array_brackets():
     data = build_jsonschema(
-        {"properties": {"a[]": {"type": "keyword", "^minLength": 5}}}
+        {"properties": {"a[]": {"type": "keyword", "^minItems": 5}}}
     )
 
     assert data == {
@@ -64,7 +61,7 @@ def test_array_brackets():
         "properties": {
             "a": {
                 "type": "array",
-                "minLength": 5,
+                "minItems": 5,
                 "items": {"type": "keyword"},
             }
         },
@@ -76,7 +73,7 @@ def build_jsonschema(model):
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        property_preprocessors=[TypeShortcutsPreprocessor],
+        property_preprocessors=[],
         filesystem=InMemoryFileSystem(),
     )
     builder.build(
@@ -84,7 +81,7 @@ def build_jsonschema(model):
             "",
             {
                 "settings": {
-                    "python": {"use_isort": False, "use_black": False},
+                    "python": {"use-isort": False, "use-black": False},
                 },
                 "model": {"package": "test", **model},
             },

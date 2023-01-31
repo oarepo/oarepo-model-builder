@@ -30,7 +30,7 @@ def get_test_schema(**props):
         "",
         {
             "settings": {
-                "python": {"use_isort": False, "use_black": False},
+                "python": {"use-isort": False, "use-black": False},
             },
             "model": {"package": "test", "properties": props},
         },

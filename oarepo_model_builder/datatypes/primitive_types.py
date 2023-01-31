@@ -1,6 +1,7 @@
 from typing import List
 
 from .datatypes import DataType, Import
+from marshmallow import fields
 
 
 class NumberDataType(DataType):
@@ -28,17 +29,35 @@ class IntegerDataType(NumberDataType):
     schema_type = "integer"
     model_type = "integer"
 
+    class ModelSchema(DataType.ModelSchema):
+        minimum = fields.Integer(required=False)
+        exclusiveMinimum = fields.Integer(required=False)
+        maximum = fields.Integer(required=False)
+        exclusiveMaximum = fields.Integer(required=False)
+
 
 class FloatDataType(NumberDataType):
     marshmallow_field = "ma_fields.Float"
     schema_type = "number"
     model_type = "float"
 
+    class ModelSchema(DataType.ModelSchema):
+        minimum = fields.Float(required=False)
+        exclusiveMinimum = fields.Float(required=False)
+        maximum = fields.Float(required=False)
+        exclusiveMaximum = fields.Float(required=False)
+
 
 class DoubleDataType(NumberDataType):
     marshmallow_field = "ma_fields.Double"
     schema_type = "number"
     model_type = "double"
+
+    class ModelSchema(DataType.ModelSchema):
+        minimum = fields.Float(required=False)
+        exclusiveMinimum = fields.Float(required=False)
+        maximum = fields.Float(required=False)
+        exclusiveMaximum = fields.Float(required=False)
 
 
 class BooleanDataType(DataType):

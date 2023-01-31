@@ -21,14 +21,22 @@ flatten:
 """
 
 
-from .containers import (ArrayDataType, FlattenDataType, NestedDataType,
-                         ObjectDataType)
-from .datatypes import DataType, Import, datatypes
-from .dates import (DateDataType, DateTimeDataType, EDTFDataType,
-                    EDTFIntervalType, TimeDataType)
+from .containers import ArrayDataType, FlattenDataType, NestedDataType, ObjectDataType
+from .datatypes import DataType, Import, datatypes  # noqa
+from .dates import (
+    DateDataType,
+    DateTimeDataType,
+    EDTFDataType,
+    EDTFIntervalType,
+    TimeDataType,
+)
 from .primitive_types import NumberDataType  # noqa
-from .primitive_types import (BooleanDataType, DoubleDataType, FloatDataType,
-                              IntegerDataType)
+from .primitive_types import (
+    BooleanDataType,
+    DoubleDataType,
+    FloatDataType,
+    IntegerDataType,
+)
 from .strings import StringDataType  # noqa
 from .strings import FulltextDataType, FulltextKeywordDataType, KeywordDataType
 

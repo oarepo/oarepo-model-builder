@@ -122,9 +122,8 @@ def build(model, output_builder_components=None, property_preprocessors=None):
         property_preprocessors=property_preprocessors,
         included_validation_schemas=[
             {
-                "jsonschema-property": {
+                "base-property": {
                     "properties": {
-                        "type": {"enum": ["multilingual"]},
                         "ui": {"type": "object", "additionalProperties": True},
                     }
                 }
@@ -136,7 +135,7 @@ def build(model, output_builder_components=None, property_preprocessors=None):
             "",
             {
                 "settings": {
-                    "python": {"use_isort": False, "use_black": False},
+                    "python": {"use-isort": False, "use-black": False},
                 },
                 "model": {
                     "package": "test",
