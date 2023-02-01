@@ -6,6 +6,10 @@ from oarepo_model_builder.builders.model_saver import (
     ModelRegistrationBuilder,
     ModelSaverBuilder,
 )
+from oarepo_model_builder.entrypoints import (
+    load_entry_points_dict,
+    load_included_models_from_entry_points,
+)
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
@@ -224,6 +228,8 @@ def build(model, output_builder_components=None, property_preprocessors=None):
                     "record-prefix": "Test",
                 },
             },
+            included_models=load_included_models_from_entry_points(),
+            loaders=load_entry_points_dict("oarepo_model_builder.loaders"),
         ),
         output_dir="",
     )
@@ -234,3 +240,153 @@ def build(model, output_builder_components=None, property_preprocessors=None):
         builder.filesystem.read(os.path.join("test", "models", "__init__.py")),
         builder.filesystem.read("setup.cfg"),
     )
+
+
+def test_model_saver_invenio():
+    data = build(
+        {"use": "invenio", "properties": {}},
+        property_preprocessors=[
+            DataTypePreprocessor,
+        ],
+    )
+    print(json.dumps(data[0], indent=4))
+    assert data[0] == {
+        "model": {
+            "type": "object",
+            "config-dummy-class": "test.config.DummyClass",
+            "record-resources-package": "test.resources.records",
+            "package-base-upper": "TEST",
+            "record-class": "test.records.api.TestRecord",
+            "record-resource-class": "test.resources.records.resource.TestResource",
+            "invenio-views-extra-code": "",
+            "record-resource-config-class": "test.resources.records.config.TestResourceConfig",
+            "marshmallow": {
+                "schema-class": "test.services.records.schema.TestSchema",
+                "generate": True,
+                "base-classes": ["InvenioBaseRecordSchema"],
+            },
+            "package": "test",
+            "record-blueprints-setup-cfg": "test",
+            "record-schema-class": "test.services.records.schema.TestSchema",
+            "record-prefix-snake": "test",
+            "record-records-package": "test.records",
+            "ext-class": "test.ext.TestExt",
+            "invenio-config-extra-code": "",
+            "record-services-package": "test.services.records",
+            "properties": {
+                "id": {
+                    "marshmallow": {
+                        "write": False,
+                        "read": False,
+                        "field-class": "ma_fields.String",
+                        "validators": [],
+                        "imports": [],
+                    },
+                    "type": "keyword",
+                    "sample": {"skip": True},
+                },
+                "created": {
+                    "marshmallow": {
+                        "write": False,
+                        "read": True,
+                        "field-class": "ma_fields.String",
+                        "validators": ["validate_date('%Y:%m:%d')"],
+                        "imports": [
+                            {"import": "oarepo_runtime.validation.validate_date"}
+                        ],
+                    },
+                    "type": "date",
+                    "sample": {"skip": True},
+                },
+                "updated": {
+                    "marshmallow": {
+                        "write": False,
+                        "read": True,
+                        "field-class": "ma_fields.String",
+                        "validators": ["validate_date('%Y:%m:%d')"],
+                        "imports": [
+                            {"import": "oarepo_runtime.validation.validate_date"}
+                        ],
+                    },
+                    "type": "date",
+                    "sample": {"skip": True},
+                },
+                "$schema": {
+                    "marshmallow": {
+                        "write": False,
+                        "read": False,
+                        "field-class": "ma_fields.String",
+                        "validators": [],
+                        "imports": [],
+                    },
+                    "type": "keyword",
+                    "sample": {"skip": True},
+                },
+            },
+            "config-resource-register-blueprint-key": "TEST_REGISTER_BLUEPRINT",
+            "record-facets-class": "test.services.records.facets.Test",
+            "record-permissions-class": "test.services.records.permissions.TestPermissionPolicy",
+            "create-blueprint-from-app": "test.views.create_blueprint_from_app_test",
+            "script-import-sample-data": "data/sample_data.yaml",
+            "record-service-config-class": "test.services.records.config.TestServiceConfig",
+            "invenio-record-extra-code": "",
+            "record-dumper-class": "test.records.dumper.TestDumper",
+            "jsonschemas-package": "test.records.jsonschemas",
+            "record-resource-blueprint-name": "Test",
+            "config-resource-class-key": "TEST_RESOURCE_CLASS_TEST",
+            "invenio-record-dumper-extra-code": "",
+            "record-dumper-extensions": [],
+            "collection-url": "/test/",
+            "schema-server": "http://localhost/schemas/",
+            "service-id": "test",
+            "record-search-options-class": "test.services.records.search.TestSearchOptions",
+            "mapping-package": "test.records.mappings",
+            "invenio-record-permissions-extra-code": "",
+            "model-name": "test",
+            "oarepo-models-setup-cfg": "test",
+            "invenio-record-object-schema-extra-code": "",
+            "schema-name": "test-1.0.0.json",
+            "index-name": "test-test-1.0.0",
+            "mapping-file": "test/records/mappings/os-v2/test/test-1.0.0.json",
+            "invenio-version-extra-code": "",
+            "package-path": "test",
+            "config-service-class-key": "TEST_SERVICE_CLASS_TEST",
+            "proxies-current-service": "test.proxies.current_service",
+            "invenio-record-resource-config-extra-code": "",
+            "package-base": "test",
+            "invenio-record-search-options-extra-code": "",
+            "invenio-record-service-extra-code": "",
+            "invenio-record-resource-extra-code": "",
+            "invenio-record-facets-extra-code": "",
+            "flask-extension-name": "test",
+            "invenio-record-service-config-extra-code": "",
+            "saved-model-file": "test/models/model.json",
+            "record-schema-metadata-alembic": "test",
+            "record-schema-metadata-setup-cfg": "test",
+            "invenio-ext-extra-code": "",
+            "schema-file": "test/records/jsonschemas/test-1.0.0.json",
+            "kebap-package": "test",
+            "proxies-current-resource": "test.proxies.current_resource",
+            "cli-function": "test.cli.group",
+            "record-mapping-setup-cfg": "test",
+            "config-package": "test.config",
+            "record-service-config-generate-links": True,
+            "invenio-record-metadata-extra-code": "",
+            "record-prefix": "Test",
+            "generate-record-pid-field": True,
+            "extension-suffix": "test",
+            "record-schema-metadata-class": "test.services.records.schema.TestMetadataSchema",
+            "record-jsonschemas-setup-cfg": "test",
+            "record-metadata-table-name": "test_metadata",
+            "invenio-proxies-extra-code": "",
+            "record-metadata-class": "test.records.models.TestMetadata",
+            "schema-version": "1.0.0",
+            "profile-package": "records",
+            "record-api-blueprints-setup-cfg": "test",
+            "record-service-class": "test.services.records.service.TestService",
+            "config-resource-config-key": "TEST_RESOURCE_CONFIG_TEST",
+            "config-service-config-key": "TEST_SERVICE_CONFIG_TEST",
+            "invenio-record-schema-extra-code": "",
+            "flask-commands-setup-cfg": "test",
+        }
+    }

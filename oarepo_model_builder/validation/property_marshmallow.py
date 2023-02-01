@@ -23,6 +23,9 @@ class PropertyMarshmallowSchema(ExtendablePartSchema):
 
 class ModelMarshmallowSchema(ma.Schema):
     class ObjectOnlyMarshmallowProps(ExtendablePartSchema):
+        imports = fields.List(
+            fields.Nested(ImportSchema), required=False
+        )  # imports must be here as well as it is used on model's root (without field)
         generate = fields.Boolean(required=False)
         schema_class = fields.String(data_key="schema-class", required=False)
         base_classes = fields.List(
