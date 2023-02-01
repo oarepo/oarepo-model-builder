@@ -6,8 +6,12 @@ from typing import Dict, List, Type, Union
 
 import yaml
 
-from .builders import (ModelBuilderStack, OutputBuilder,
-                       OutputBuilderComponent, ReplaceElement)
+from .builders import (
+    ModelBuilderStack,
+    OutputBuilder,
+    OutputBuilderComponent,
+    ReplaceElement,
+)
 from .fs import AbstractFileSystem, FileSystem
 from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
@@ -86,7 +90,6 @@ class ModelBuilder:
         property_preprocessors: List[Type[PropertyPreprocessor]] = (),
         model_preprocessors: List[Type[ModelPreprocessor]] = (),
         output_builder_components: Dict[str, List[Type[OutputBuilderComponent]]] = None,
-        included_validation_schemas=None,
         filesystem=FileSystem(),
         conflict_resolver: ConflictResolver = None,
         overwrite=False,
@@ -114,7 +117,6 @@ class ModelBuilder:
         else:
             self.output_builder_components = {}
         self.filesystem = filesystem
-        self.included_validation_schemas = included_validation_schemas or []
         self.skip_schema_validation = False  # set to True in some tests
         self.conflict_resolver = conflict_resolver
         self.overwrite = overwrite
@@ -195,7 +197,7 @@ class ModelBuilder:
     def _run_output_builders(self, model, property_preprocessors):
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(
-                self.output_builder_classes, "builder"
+            self.output_builder_classes, "builder"
         ):
             output_builder = output_builder_class(
                 builder=self, property_preprocessors=property_preprocessors
@@ -204,13 +206,13 @@ class ModelBuilder:
 
     def _run_model_preprocessors(self, model):
         for model_preprocessor in self._filter_classes(
-                self.model_preprocessor_classes, "model"
+            self.model_preprocessor_classes, "model"
         ):
             model_preprocessor(self).transform(model, model.settings)
 
     def _validate_model(self, model):
         if not self.skip_schema_validation:
-            validate_model(model, self.included_validation_schemas)
+            validate_model(model)
 
     def _save_outputs(self):
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
@@ -226,11 +228,11 @@ class ModelBuilder:
 
     def _filter_classes(self, classes: List[Type[object]], plugin_type):
         if (
-            "plugins" not in self.schema.schema
-            or plugin_type not in self.schema.schema.plugins
+            "plugins" not in self.schema.current_model
+            or plugin_type not in self.schema.current_model.plugins
         ):
             return classes
-        plugin_config = self.schema.schema.plugins[plugin_type]
+        plugin_config = self.schema.current_model.plugins[plugin_type]
 
         disabled = plugin_config.get("disable", [])
         enabled = plugin_config.get("enable", [])

@@ -12,9 +12,7 @@ class SetupCfgBuilder(OutputBuilder):
         super().finish()
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
-        output.setdefault(
-            "metadata", "name", self.settings.package_base.replace("_", "-")
-        )
+        output.setdefault("metadata", "name", self.current_model.package_base.replace("_", "-"))
         version = self.schema.get("version", "1.0.0dev1")
         output.setdefault("metadata", "version", version)
         if parse_version(output.get("metadata", "version").value) < parse_version(
@@ -24,7 +22,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault(
             "metadata",
             "description",
-            f"A sample application for {self.settings.package}",
+            f"A sample application for {self.current_model.package}",
         )
         output.setdefault("metadata", "authors", "")
 
@@ -40,6 +38,9 @@ class SetupCfgBuilder(OutputBuilder):
         output.add_dependency("invenio_records_resources", ">=0.21.4")
         output.add_dependency("invenio-search", ">=2.1.0")
         output.add_dependency("tqdm", ">=4.64.1")
+        output.add_dependency("oarepo-runtime", ">=1.0.0")
+
+        output.setdefault("options", "packages", "find:")
 
         output.setdefault(
             "options.package_data", "*", "*.json, *.rst, *.md, *.json5, *.jinja2"
@@ -59,6 +60,6 @@ class SetupCfgBuilder(OutputBuilder):
             log(
                 log.INFO,
                 f"""To install the data model, run
-    poetry install -E {self.settings.package}            
+    poetry install -E {self.current_model.package}            
             """,
             )

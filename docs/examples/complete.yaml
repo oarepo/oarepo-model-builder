@@ -1,0 +1,15 @@
+model:
+  properties:
+   metadata{}:
+    title: fulltext
+    description: fulltext+keyword
+    kind: keyword{enum:[article, dataset]}
+    printed{}:
+      ^marshmallow:
+        schema-class: PrintedPublicationSchema
+      price: double{minimumExclusive:0}
+      floatPrice: float     # just to test floats
+      published: date
+    sources{nested}[]:
+      source: fulltext
+      period: edtf-interval

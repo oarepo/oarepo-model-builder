@@ -133,4 +133,4 @@ schema_paths = DictValidator(
     primitives="$schema,$id,type",
 )
 
-model_paths = DictValidator({"model": schema_paths})
+model_paths = schema_paths

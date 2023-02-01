@@ -61,10 +61,12 @@ class OutputBuilder:
             self.json_paths.register(path, condition, method)
 
     def begin(self, schema, settings):
-        self.schema = schema
+        self.schema = schema.schema
+        self.whole_schema = schema
+        self.current_model = schema.current_model
         self.settings = settings
         self.stack = ModelBuilderStack()
-        self.stack.push(None, schema)
+        self.stack.push(None, schema.current_model)
         log.enter(2, "Creating %s", self.TYPE)
         self.silent_exceptions = False
 
@@ -72,17 +74,12 @@ class OutputBuilder:
         log.leave()
 
     def build(self, schema):
-        self.begin(schema.schema, schema.settings)
+        self.begin(schema, schema.settings)
 
         for proc in self.property_preprocessors:
             proc.begin(schema, schema.settings)
 
-        try:
-            processing_order = self.schema.schema.processing_order
-        except AttributeError:
-            processing_order = None
-
-        self.build_children(ordering=processing_order)
+        self.build_children()
 
         for proc in self.property_preprocessors:
             proc.finish()
@@ -125,27 +122,13 @@ class OutputBuilder:
                 print(f"Error on handling path {self.stack.path}: {e}", file=sys.stderr)
             raise
 
-    def build_children(self, ordering=None):
+    def build_children(self):
         data = self.stack.top.data
         if isinstance(data, (list, tuple)):
             for k, v in enumerate(data):
                 self.build_node(k, v)
         elif isinstance(data, dict):
             children = list(data.items())
-            if ordering:
-
-                def key_function(x):
-                    try:
-                        return ordering.index(x)
-                    except ValueError:
-                        pass
-                    try:
-                        return ordering.index("*")
-                    except ValueError:
-                        pass
-                    return len(ordering)
-
-                children = children.sort(key=key_function)
             for k, v in children:
                 self.build_node(k, v)
 

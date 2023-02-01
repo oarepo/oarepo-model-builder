@@ -64,6 +64,10 @@ class PythonOutput(OutputBase):
             env.filters[filter_name] = filter_func
 
         try:
+            context = {
+                **context,
+                **{k.replace("-", "_"): v for k, v in list(context.items())},
+            }
             rendered = env.get_template(template_name).render(context)
         except Exception as exc:
             raise RuntimeError(f"Error rendering template {template_name}") from exc

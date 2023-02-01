@@ -49,8 +49,8 @@ SafeDumper.add_multi_representer(Key, key_representer)
 
 
 class ModelSchema:
-    OAREPO_USE = "oarepo:use"
-    OAREPO_USE_SHORTCUT = "^use"
+    USE_KEYWORD = "use"
+    REF_KEYWORD = "$ref"
 
     def __init__(
         self,
@@ -59,6 +59,7 @@ class ModelSchema:
         included_models: Dict[str, Callable] = None,
         merged_models: List[Union[str, Path]] = None,
         loaders=None,
+        model_field="model",
     ):
         """
         Creates and parses model schema
@@ -90,6 +91,8 @@ class ModelSchema:
         self.schema.setdefault("settings", {})
         self.schema = munch.munchify(self.schema, factory=HyphenMunch)
 
+        self.model_field = model_field
+
     def debug_print(self):
         def _print(data, prefix):
             if isinstance(data, dict):
@@ -117,6 +120,10 @@ class ModelSchema:
     def settings(self):
         return self.schema.settings
 
+    @property
+    def current_model(self):
+        return self.schema.get(self.model_field, {})
+
     def merge(self, another):
         self.schema = munch.munchify(
             deepmerge(another, self.schema, []), factory=HyphenMunch
@@ -129,15 +136,29 @@ class ModelSchema:
         :param file_path: file path on filesystem
         :return: parsed json
         """
-        extension = pathlib.Path(file_path).suffix.lower()[1:]
-        if extension in self.loaders:
+        if file_path in self.included_schemas:
+            loaded = self._fetch_included(file_path)
+        else:
+            extension = pathlib.Path(file_path).suffix.lower()[1:]
+            if extension not in self.loaders:
+                raise RuntimeError(
+                    f"Can not load {file_path} - no loader has been found for extension {extension} "
+                    f"in entry point group oarepo_model_builder.loaders"
+                )
             loaded = self.loaders[extension](file_path, self, content=content)
-            return Key.annotate_keys_with_source(loaded, file_path)
+        return Key.annotate_keys_with_source(loaded, file_path)
 
-        raise RuntimeError(
-            f"Can not load {file_path} - no loader has been found for extension {extension} "
-            f"in entry point group oarepo_model_builder.loaders"
-        )
+    def _fetch_included(self, file_path):
+        included = self.included_schemas[file_path]
+        if callable(included):
+            return included(self)
+        extension = pathlib.Path(included).suffix.lower()[1:]
+        if extension not in self.loaders:
+            raise RuntimeError(
+                f"Can not load {included} - no loader has been found for extension {extension} "
+                f"in entry point group oarepo_model_builder.loaders"
+            )
+        return self.loaders[extension](included, self)
 
     def _load_included_file(self, location, source_locations=None):
         """
@@ -195,9 +216,6 @@ class ModelSchema:
 
     def _resolve_shortcuts(self, element):
         if isinstance(element, dict):
-            for k in list(element):
-                if k[0] == "^":
-                    element[f"oarepo:{k[1:]}"] = element.pop(k)
             for v in element.values():
                 self._resolve_shortcuts(v)
         elif isinstance(element, list):
@@ -206,22 +224,28 @@ class ModelSchema:
 
     def _resolve_references(self, element, stack):
         if isinstance(element, dict):
-            if self.OAREPO_USE in element or self.OAREPO_USE_SHORTCUT in element:
+            if self.USE_KEYWORD in element or self.REF_KEYWORD in element:
                 for key in element:
-                    if key in (self.OAREPO_USE, self.OAREPO_USE_SHORTCUT):
+                    if key in (self.USE_KEYWORD, self.REF_KEYWORD):
                         break
                 else:
                     raise  # just for making pycharm happy
                 included_name = element[key]
-                element.pop(self.OAREPO_USE, None)
-                element.pop(self.OAREPO_USE_SHORTCUT, None)
+
+                # if it is a dictionary, then probably it is a name of a property,
+                # so keep it
+                if isinstance(included_name, dict):
+                    return self._resolve_references(element, stack)
+
+                element.pop(self.USE_KEYWORD, None)
+                element.pop(self.REF_KEYWORD, None)
 
                 if not isinstance(included_name, list):
                     included_name = [included_name]
                 for name in included_name:
                     if not name:
                         raise IncludedFileNotFoundException(
-                            f"No file for oarepo:include at path {'/'.join(stack)}"
+                            f"No file for use at path {'/'.join(stack)}"
                         )
                     included_data = self._load_included_file(
                         name, source_locations=Key.get_sources(key)

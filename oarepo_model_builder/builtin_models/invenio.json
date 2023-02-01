@@ -1,50 +1,48 @@
 {
-  "model": {
-    "oarepo:marshmallow": {
-      "base-classes": [
-        "InvenioBaseRecordSchema"
-      ]
+  "marshmallow": {
+    "base-classes": [
+      "InvenioBaseRecordSchema"
+    ]
+  },
+  "properties": {
+    "id": {
+      "type": "keyword",
+      "sample": {
+        "skip": true
+      },
+      "marshmallow": {
+        "read": false,
+        "write": false
+      }
     },
-    "properties": {
-      "id": {
-        "type": "keyword",
-        "oarepo:sample": {
-          "skip": true
-        },
-        "oarepo:marshmallow": {
-          "read": false,
-          "write": false
-        }
+    "created": {
+      "type": "date",
+      "sample": {
+        "skip": true
       },
-      "created": {
-        "type": "date",
-        "oarepo:sample": {
-          "skip": true
-        },
-        "oarepo:marshmallow": {
-          "write": false,
-          "read": true
-        }
+      "marshmallow": {
+        "write": false,
+        "read": true
+      }
+    },
+    "updated": {
+      "type": "date",
+      "sample": {
+        "skip": true
       },
-      "updated": {
-        "type": "date",
-        "oarepo:sample": {
-          "skip": true
-        },
-        "oarepo:marshmallow": {
-          "write": false,
-          "read": true
-        }
+      "marshmallow": {
+        "write": false,
+        "read": true
+      }
+    },
+    "$schema": {
+      "type": "keyword",
+      "marshmallow": {
+        "read": false,
+        "write": false
       },
-      "$schema": {
-        "type": "keyword",
-        "oarepo:marshmallow": {
-          "read": false,
-          "write": false
-        },
-        "oarepo:sample": {
-          "skip": true
-        }
+      "sample": {
+        "skip": true
       }
     }
   }

@@ -3,9 +3,11 @@ from pathlib import Path
 from oarepo_model_builder.loaders import json_loader
 from oarepo_model_builder.schema import ModelSchema
 
+DUMMY_PATH = "/tmp/path.json"  # NOSONAR checking as it is a virtual path
+
 
 def test_loading_from_string():
-    schema = ModelSchema("/tmp/path.json", {})
+    schema = ModelSchema(DUMMY_PATH, {})
     assert schema.schema == {"settings": {}}
 
 
@@ -18,8 +20,8 @@ def test_loading_from_empty_file():
 
 def test_loading_included_resource():
     schema = ModelSchema(
-        "/tmp/path.json",
-        {"a": {"oarepo:use": "test1"}},
+        DUMMY_PATH,
+        {"a": {"use": "test1"}},
         {"test1": lambda schema: {"included": "test1"}},
     )
     assert schema.schema == {
@@ -30,8 +32,8 @@ def test_loading_included_resource():
 
 def test_loading_included_resource_root():
     schema = ModelSchema(
-        "/tmp/path.json",
-        {"oarepo:use": "test1"},
+        DUMMY_PATH,
+        {"use": "test1"},
         {"test1": lambda schema: {"included": "test1"}},
     )
     assert schema.schema == {
@@ -42,8 +44,8 @@ def test_loading_included_resource_root():
 
 def test_loading_jsonpath_resource():
     schema = ModelSchema(
-        "/tmp/path.json",
-        {"oarepo:use": "test1#/test/a"},
+        DUMMY_PATH,
+        {"use": "test1#/test/a"},
         {"test1": lambda schema: {"test": {"a": {"included": "test1"}}}},
     )
     assert schema.schema == {
@@ -53,9 +55,7 @@ def test_loading_jsonpath_resource():
 
 
 def test_loading_current():
-    schema = ModelSchema(
-        "/tmp/path.json", {"b": {"oarepo:use": "#/a"}, "a": {"a": True}}
-    )
+    schema = ModelSchema(DUMMY_PATH, {"b": {"use": "#/a"}, "a": {"a": True}})
     assert schema.schema == {
         "settings": {},
         "b": {"a": True},
@@ -65,7 +65,8 @@ def test_loading_current():
 
 def test_loading_current_by_id():
     schema = ModelSchema(
-        "/tmp/path.json", {"b": {"oarepo:use": "#id"}, "a": {"$id": "id", "a": True}}
+        DUMMY_PATH,
+        {"b": {"use": "#id"}, "a": {"$id": "id", "a": True}},
     )
     assert schema.schema == {
         "settings": {},
@@ -76,9 +77,9 @@ def test_loading_current_by_id():
 
 def test_loading_external_by_id():
     schema = ModelSchema(
-        "/tmp/path.json",
+        DUMMY_PATH,
         {
-            "b": {"oarepo:use": "aa#id"},
+            "b": {"use": "aa#id"},
         },
         {"aa": lambda schema: {"a": {"$id": "id", "a": True}}},
     )

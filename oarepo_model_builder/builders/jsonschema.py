@@ -11,8 +11,13 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     output_file_name = "schema-file"
     parent_module_root_name = "jsonschemas"
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
+        if isinstance(self.stack.top.data, dict) and not self.stack.top.data.get(
+            "jsonschema", {}
+        ).get("generate", True):
+            # do not build the element if it should not be generated
+            return
         self.model_element_enter()
         self.build_children()
         if (
@@ -24,9 +29,9 @@ class JSONSchemaBuilder(JSONBaseBuilder):
         self.model_element_leave()
 
     def merge_jsonschema(self, data):
-        if isinstance(data, dict) and "oarepo:jsonschema" in data:
+        if isinstance(data, dict) and "jsonschema" in data:
             jsonschema = self.call_components(
-                "before_merge_jsonschema", data["oarepo:jsonschema"], stack=self.stack
+                "before_merge_jsonschema", data["jsonschema"], stack=self.stack
             )
             self.output.merge_jsonschema(jsonschema)
 
@@ -36,6 +41,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
             self.output.collect_required()
 
     def on_enter_model(self, output_name):
+        self.output.primitive("type", "object")
         ensure_parent_modules(
             self.builder, Path(output_name), ends_at=self.parent_module_root_name
         )

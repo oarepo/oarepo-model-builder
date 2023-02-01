@@ -2,13 +2,16 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
-from tests.mock_filesystem import MockFilesystem
-from tests.multilang import MultilangPreprocessor
+from oarepo_model_builder.fs import InMemoryFileSystem
+from tests.multilang import MultilangPreprocessor, MultilingualDataType, UIValidator
+from oarepo_model_builder.datatypes import datatypes
+from oarepo_model_builder.validation.model_validation import model_validator
 
 try:
     import json5
@@ -17,9 +20,7 @@ except ImportError:
 
 
 def test_simple_mapping_builder():
-    model = {
-        "properties": {"a": {"type": "keyword", "oarepo:mapping": {"type": "text"}}}
-    }
+    model = {"properties": {"a": {"type": "keyword", "mapping": {"type": "text"}}}}
     data = build_model(model)
 
     assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
@@ -30,7 +31,7 @@ def test_array_mapping_builder():
         "properties": {
             "a": {
                 "type": "array",
-                "items": {"type": "keyword", "oarepo:mapping": {"type": "text"}},
+                "items": {"type": "keyword", "mapping": {"type": "text"}},
             }
         }
     }
@@ -44,18 +45,17 @@ def build_model(model):
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        filesystem=MockFilesystem(),
+        filesystem=InMemoryFileSystem(),
     )
     builder.build(
         model=ModelSchema(
             "",
             {
                 "settings": {
-                    "package": "test",
-                    "python": {"use_isort": False, "use_black": False},
-                    "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
+                    "python": {"use-isort": False, "use-black": False},
+                    "opensearch": {"version": "os-v2"},
                 },
-                "model": model,
+                "model": {"package": "test", **model},
             },
         ),
         output_dir="",
@@ -71,19 +71,17 @@ def build_model(model):
 
 
 def test_mapping_preprocessor():
+    datatypes._prepare_datatypes()
+    if UIValidator not in model_validator.validator_map["property"]:
+        model_validator.validator_map["property"].append(UIValidator)
+    datatypes.datatype_map["multilingual"] = MultilingualDataType
+
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         property_preprocessors=[MultilangPreprocessor],
-        included_validation_schemas=[
-            {
-                "jsonschema-property": {
-                    "properties": {"type": {"enum": ["multilingual"]}}
-                }
-            }
-        ],
-        filesystem=MockFilesystem(),
+        filesystem=InMemoryFileSystem(),
     )
 
     builder.build(
@@ -91,11 +89,13 @@ def test_mapping_preprocessor():
             "",
             {
                 "settings": {
-                    "package": "test",
-                    "python": {"use_isort": False, "use_black": False},
-                    "opensearch": {"version": "os-v2", "templates": {"os-v2": {}}},
+                    "python": {"use-isort": False, "use-black": False},
+                    "opensearch": {"version": "os-v2"},
                 },
-                "model": {"properties": {"a": {"type": "multilingual"}}},
+                "model": {
+                    "package": "test",
+                    "properties": {"a": {"type": "multilingual"}},
+                },
             },
         ),
         output_dir="",

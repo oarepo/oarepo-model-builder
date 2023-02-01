@@ -3,13 +3,16 @@ import os
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders import OutputBuilderComponent
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
-from tests.mock_filesystem import MockFilesystem
-from tests.multilang import MultilangPreprocessor
+from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.validation.model_validation import model_validator
+from tests.multilang import MultilangPreprocessor, MultilingualDataType, UIValidator
+from oarepo_model_builder.datatypes import datatypes
 
 try:
     import json5
@@ -18,11 +21,9 @@ except ImportError:
 
 
 def test_simple_jsonschema_builder():
-    data = build(
-        {"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}}
-    )
+    data = build({"properties": {"a": {"type": "keyword", "ui": {"class": "bolder"}}}})
 
-    assert data == {"properties": {"a": {"type": "keyword"}}}
+    assert data == {"type": "object", "properties": {"a": {"type": "keyword"}}}
 
 
 def test_required():
@@ -32,13 +33,17 @@ def test_required():
                 "a": {
                     "type": "keyword",
                     "required": True,
-                    "oarepo:ui": {"class": "bolder"},
+                    "ui": {"class": "bolder"},
                 }
             }
         }
     )
 
-    assert data == {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
+    assert data == {
+        "type": "object",
+        "properties": {"a": {"type": "keyword"}},
+        "required": ["a"],
+    }
 
 
 def test_required_inside_metadata():
@@ -50,7 +55,7 @@ def test_required_inside_metadata():
                         "a": {
                             "type": "keyword",
                             "required": True,
-                            "oarepo:ui": {"class": "bolder"},
+                            "ui": {"class": "bolder"},
                         }
                     }
                 }
@@ -59,34 +64,42 @@ def test_required_inside_metadata():
     )
 
     assert data == {
+        "type": "object",
         "properties": {
-            "metadata": {"properties": {"a": {"type": "keyword"}}, "required": ["a"]}
-        }
+            "metadata": {
+                "type": "object",
+                "properties": {"a": {"type": "keyword"}},
+                "required": ["a"],
+            }
+        },
     }
 
 
 def test_min_length():
     data = build({"properties": {"a": {"type": "keyword", "minLength": 5}}})
-    assert data == {"properties": {"a": {"type": "keyword", "minLength": 5}}}
+    assert data == {
+        "type": "object",
+        "properties": {"a": {"type": "keyword", "minLength": 5}},
+    }
 
 
 def test_jsonschema_preprocessor():
     data = build(
-        {
-            "properties": {
-                "a": {"type": "multilingual", "oarepo:ui": {"class": "bolder"}}
-            }
-        },
+        {"properties": {"a": {"type": "multilingual", "ui": {"class": "bolder"}}}},
         property_preprocessors=[MultilangPreprocessor],
     )
 
     assert data == {
+        "type": "object",
         "properties": {
             "a": {
                 "type": "object",
-                "properties": {"lang": {"type": "string"}, "value": {"type": "string"}},
+                "properties": {
+                    "lang": {"type": "string"},
+                    "value": {"type": "string"},
+                },
             }
-        }
+        },
     }
 
 
@@ -99,43 +112,39 @@ class TestJSONSchemaOutputComponent(OutputBuilderComponent):
 
 def test_components():
     data = build(
-        {"properties": {"a": {"type": "keyword", "oarepo:ui": {"class": "bolder"}}}},
+        {"properties": {"a": {"type": "keyword", "ui": {"class": "bolder"}}}},
         output_builder_components={
             JSONSchemaOutput.TYPE: [TestJSONSchemaOutputComponent]
         },
     )
 
-    assert data == {"properties": {"a": {"type": "integer"}}}
+    assert data == {"type": "object", "properties": {"a": {"type": "integer"}}}
 
 
 def build(model, output_builder_components=None, property_preprocessors=None):
+    datatypes._prepare_datatypes()
+    if UIValidator not in model_validator.validator_map["property"]:
+        model_validator.validator_map["property"].append(UIValidator)
+    datatypes.datatype_map["multilingual"] = MultilingualDataType
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
         output_builder_components=output_builder_components,
-        filesystem=MockFilesystem(),
+        filesystem=InMemoryFileSystem(),
         property_preprocessors=property_preprocessors,
-        included_validation_schemas=[
-            {
-                "jsonschema-property": {
-                    "properties": {
-                        "type": {"enum": ["multilingual"]},
-                        "oarepo:ui": {"type": "object", "additionalProperties": True},
-                    }
-                }
-            }
-        ],
     )
     builder.build(
         model=ModelSchema(
             "",
             {
                 "settings": {
-                    "package": "test",
-                    "python": {"use_isort": False, "use_black": False},
+                    "python": {"use-isort": False, "use-black": False},
                 },
-                "model": model,
+                "model": {
+                    "package": "test",
+                    **model,
+                },
             },
         ),
         output_dir="",

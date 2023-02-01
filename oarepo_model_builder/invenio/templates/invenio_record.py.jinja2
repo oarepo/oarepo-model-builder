@@ -1,29 +1,24 @@
-from invenio_records.systemfields import ConstantField, RelationsField
+from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.systemfields import IndexField,
 
 from invenio_records_resources.records.systemfields.pid import PIDField, PIDFieldContext
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 
-{% for b in python.record_bases %}
+{% for b in current_model.record_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
-from {{ python.record_metadata_class|package_name }} import {{ python.record_metadata_class|base_name }}
-from {{ python.record_dumper_class|package_name }} import {{ python.record_dumper_class|base_name }}
+from {{ current_model.record_metadata_class|package_name }} import {{ current_model.record_metadata_class|base_name }}
+from {{ current_model.record_dumper_class|package_name }} import {{ current_model.record_dumper_class|base_name }}
 
-{% for rel in invenio_relations %}
-{% for imp in rel.imports or [] %}
-import {{ imp }}
-{% endfor %}
-{% endfor %}
-{% if invenio_relations %}
-from invenio_records.dumpers.relations import RelationDumperExt
+class {{ current_model.record_class|base_name }}({% for b in current_model.record_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
+    model_cls = {{ current_model.record_metadata_class|base_name }}
+{% if current_model.schema_name %}
+    schema = ConstantField("$schema", "{{ current_model.schema_server }}{{ current_model.schema_name }}")
 {% endif %}
-
-class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
-    model_cls = {{ python.record_metadata_class|base_name }}
-    schema = ConstantField("$schema", "{{ settings.schema_server }}{{ settings.schema_name }}")
-    index = IndexField("{{ settings.index_name }}")
-{% if python.generate_record_pid_field %}
+{% if current_model.mapping_file %}
+    index = IndexField("{{ current_model.index_name }}")
+{% endif %}
+{% if current_model.generate_record_pid_field %}
     pid = PIDField(
         create=True,
         provider=RecordIdProviderV2,
@@ -31,22 +26,8 @@ class {{ python.record_class|base_name }}({% for b in python.record_bases %}{{ b
     )
 {% endif %}
     dumper_extensions = [
-        {%- for ext in python.record_dumper_extensions %}{{ ext }}{% if not loop.last %}, {% endif %}{% endfor -%}
-        {% if invenio_relations %}
-            RelationDumperExt("relations"),
-        {% endif %}
+        {%- for ext in current_model.record_dumper_extensions %}{{ ext }}{% if not loop.last %}, {% endif %}{% endfor -%}
     ]
-    dumper = {{ python.record_dumper_class|base_name }}(extensions=dumper_extensions)
+    dumper = {{ current_model.record_dumper_class|base_name }}(extensions=dumper_extensions)
 
-    {% if invenio_relations %}
-    relations = RelationsField(
-        {% for rel in invenio_relations %}
-        {{ rel.name }}={{ rel.type }}(
-            {% for param in rel.params %}{{ param }},
-            {% endfor %}
-        ),
-        {% endfor %}
-    )
-    {% endif %}
-
-{{ settings.python.invenio_record_extra_code }}
+{{ current_model.invenio_record_extra_code }}

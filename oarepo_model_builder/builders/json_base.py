@@ -28,13 +28,15 @@ class JSONBaseBuilder(OutputBuilder):
         if self.stack.top_type != self.stack.PRIMITIVE:
             self.output.leave()
 
-    @process("/model")
-    def enter_model(self):
-        output_name = self.settings[self.output_file_name]
+    def begin(self, schema, settings):
+        super().begin(schema, settings)
+        output_name = self.current_model[self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)
         self.on_enter_model(output_name)
-        self.build_children()
+
+    def finish(self):
         self.on_leave_model()
+        return super().finish()
 
     def on_enter_model(self, output_name):
         pass

@@ -125,7 +125,7 @@ def load_model(
         schema.schema[k] = v
     check_plugin_packages(schema)
     if package:
-        schema.settings["package"] = package
+        schema.current_model.package = package
     if "python" not in schema.settings:
         schema.settings.python = HyphenMunch()
     schema.settings.python.use_isort = isort

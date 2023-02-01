@@ -1,17 +1,20 @@
+from io import StringIO
 from pathlib import Path
+from typing import Dict
 
 
 class AbstractFileSystem:
     def open(self, path, *args, **kwargs):
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError()
 
     def exists(self, path):
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError()
 
     def mkdir(self, path):
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError()
 
     def make_executable(self, path):
+        # does nothing on abstract system as it does not have any notion of executable files
         pass
 
 
@@ -20,11 +23,11 @@ class FileSystem(AbstractFileSystem):
         self.opened_files = set()
         self.overwrite = False
 
-    def open(self, path, mode="r", **kwargs):
+    def open(self, path, mode: str = "r", **kwargs):
         if self.overwrite:
             if "r" in mode and path not in self.opened_files:
                 raise FileNotFoundError(f"File {path} not found")
-            if "w" or "a" in mode:
+            if "w" in mode or "a" in mode:
                 self.opened_files.add(path)
         return open(path, mode=mode, **kwargs)
 
@@ -39,3 +42,38 @@ class FileSystem(AbstractFileSystem):
 
     def make_executable(self, path):
         Path(path).chmod(0o777)
+
+
+class InMemoryFileSystem(AbstractFileSystem):
+    def __init__(self):
+        self.files: Dict[str, StringIO] = {}
+
+    def open(self, path: str, mode: str = "r"):
+        path = Path(path).absolute()
+        if mode == "r":
+            if path not in self.files:
+                raise FileNotFoundError(
+                    f"File {path} not found. Known files {[f for f in self.files]}"
+                )
+            return StringIO(self.files[path].getvalue())
+        self.files[path] = StringIO()
+        self.files[path].close = lambda: None
+        return self.files[path]
+
+    def exists(self, path):
+        path = Path(path).absolute()
+        return path in self.files
+
+    def mkdir(self, path):
+        # noop on in-memory system
+        pass
+
+    def read(self, path):
+        with self.open(path) as f:
+            return f.read()
+
+    def snapshot(self):
+        ret = {}
+        for fname, io in self.files.items():
+            ret[fname] = io.getvalue()
+        return ret

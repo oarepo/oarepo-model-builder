@@ -15,10 +15,10 @@ class EnumPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: stack.top.schema_element_type == "property",
     )
-    def modify_date_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
+    def modify_enum_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
         if "enum" not in data:
             return data
 
@@ -26,32 +26,32 @@ class EnumPreprocessor(PropertyPreprocessor):
         alternatives = [f'"{x}"' for x in data["enum"]]
 
         deepmerge(
-            data.setdefault("oarepo:marshmallow", {}),
+            data.setdefault("marshmallow", {}),
             {"validators": [f'ma_valid.OneOf([{", ".join(alternatives)}])']},
         )
         return data
 
     @process(
         model_builder=JSONSchemaBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: stack.top.schema_element_type == "property",
     )
-    def modify_date_jsonschema(self, data, stack: ModelBuilderStack, **kwargs):
+    def modify_enum_jsonschema(self, data, stack: ModelBuilderStack, **kwargs):
         if "enum" not in data:
             return data
 
-        deepmerge(data.setdefault("oarepo:jsonschema", {}), {"enum": data["enum"]})
+        deepmerge(data.setdefault("jsonschema", {}), {"enum": data["enum"]})
         return data
 
     @process(
         model_builder=InvenioScriptSampleDataBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: stack.top.schema_element_type == "property",
     )
-    def modify_date_sampledata(self, data, stack: ModelBuilderStack, **kwargs):
+    def modify_enum_sampledata(self, data, stack: ModelBuilderStack, **kwargs):
         if "enum" not in data:
             return data
-        if "oarepo:sample" in data:
+        if "sample" in data:
             return data
-        data["oarepo:sample"] = data["enum"]
+        data["sample"] = data["enum"]
         return data

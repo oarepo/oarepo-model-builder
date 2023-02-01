@@ -3,10 +3,11 @@ from pathlib import Path
 import faker.config
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints
-from oarepo_model_builder.invenio.invenio_script_sample_data import \
-    InvenioScriptSampleDataBuilder
+from oarepo_model_builder.invenio.invenio_script_sample_data import (
+    InvenioScriptSampleDataBuilder,
+)
 from oarepo_model_builder.schema import ModelSchema
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 
 
 def test_sample_builder_string():
@@ -103,7 +104,7 @@ def test_sample_builder_simple_array():
             {
                 "a": {
                     "type": "array",
-                    "oarepo:sample": {"count": 1},
+                    "sample": {"count": 1},
                     "items": {"type": "string"},
                 }
             }
@@ -117,7 +118,7 @@ def test_sample_builder_simple_array():
             {
                 "a": {
                     "type": "array",
-                    "oarepo:sample": {"count": 2},
+                    "sample": {"count": 2},
                     "items": {"type": "string"},
                 }
             }
@@ -133,7 +134,7 @@ def test_sample_builder_complex_array():
             {
                 "a": {
                     "type": "array",
-                    "oarepo:sample": {"count": 2},
+                    "sample": {"count": 2},
                     "items": {
                         "type": "object",
                         "properties": {
@@ -160,7 +161,7 @@ def build_sample_data(model, count=1):
     faker.config.PROVIDERS.clear()
     faker.config.PROVIDERS.append("tests.faker_constant")
     builder = create_builder_from_entrypoints()
-    builder.filesystem = MockFilesystem()
+    builder.filesystem = InMemoryFileSystem()
     builder.output_dir = Path.cwd()
     sample_builder = InvenioScriptSampleDataBuilder(
         builder=builder, property_preprocessors=[]
@@ -168,12 +169,12 @@ def build_sample_data(model, count=1):
     schema = ModelSchema(
         "test.json",
         {
-            "model": {"properties": model},
-            "settings": {"script-import-sample-data": "test.py"},
-            "oarepo:sample": {"count": count},
+            "model": {"script-import-sample-data": "test.yaml", "properties": model},
+            "settings": {},
+            "sample": {"count": count},
         },
     )
     sample_builder.build(schema)
     builder._save_outputs()
-    sample_data = builder.filesystem.read("test.py")
+    sample_data = builder.filesystem.read("test.yaml")
     return sample_data

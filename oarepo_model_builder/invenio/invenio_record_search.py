@@ -6,8 +6,8 @@ from ..utils.deepmerge import deepmerge
 from ..utils.hyphen_munch import HyphenMunch
 from .invenio_base import InvenioBaseClassPythonBuilder
 
-OAREPO_FACETS_PROPERTY = "oarepo:facets"
-OAREPO_SORTABLE_PROPERTY = "oarepo:sortable"
+OAREPO_FACETS_PROPERTY = "facets"
+OAREPO_SORTABLE_PROPERTY = "sortable"
 
 
 class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
@@ -25,8 +25,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         self.facets_definition = []
         self.facets_names = []
         self.settings = settings
-        if "oarepo:sortable" in schema:
-            self.process_top_sortable(schema["oarepo:sortable"])
+        if "sortable" in schema.schema:
+            self.process_top_sortable(schema.schema["sortable"])
 
     def finish(self, **extra_kwargs):
         super().finish(
@@ -34,13 +34,11 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             facets_definition=self.facets_definition,
             sort_definition=self.sort_options_data,
         )
-        python_path = self.class_to_path(self.settings.python["record-facets-class"])
+        python_path = self.class_to_path(self.current_model.record_facets_class)
         self.process_template(
             python_path,
             "record-facets",
-            current_package_name=package_name(
-                self.settings.python["record-facets-class"]
-            ),
+            current_package_name=package_name(self.current_model.record_facets_class),
             search_options_data=self.search_options_data,
             **extra_kwargs,
         )
@@ -54,7 +52,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 fields_options = deepmerge(fields_options, {field: data[k][field]})
             self.sort_options_data.append({k: fields_options})
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
         schema_element_type = self.stack.top.schema_element_type
 
@@ -96,15 +94,12 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             nested_paths = []
             nested_path = ""
             nested = False
-            path_stack = self.stack.stack[3:]  # start inside model properties
+            path_stack = self.stack.stack[2:]  # start inside model properties
             for upper in path_stack:
                 if upper.key == "properties":
                     continue
                 nested_path = nested_path + upper.key + "."
-                if (
-                    upper.data.get("oarepo:mapping", HyphenMunch({"type": ""})).type
-                    == "nested"
-                ):
+                if upper.data.get("mapping", {"type": ""}).get("type") == "nested":
                     nested_paths.append(nested_path)
             if len(nested_paths) > 0:
                 nested = True
@@ -181,7 +176,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         return field_class + "(" + text + ")"
 
     def process_name(self, path, type):
-        path_array = (path.split("/"))[3:]
+        path_array = (path.split("/"))[2:]
         name = path_array[0]
         if len(path_array) == 1:
             return name

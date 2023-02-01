@@ -12,7 +12,7 @@ class MappingBuilder(JSONBaseBuilder):
     output_file_name = "mapping-file"
     parent_module_root_name = "mappings"
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
         # ignore schema leaves different than "type" - for example, minLength, ...
         # that should not be present in mapping
@@ -37,9 +37,9 @@ class MappingBuilder(JSONBaseBuilder):
             self.model_element_leave()
 
     def merge_mapping(self, data):
-        if isinstance(data, dict) and "oarepo:mapping" in data:
+        if isinstance(data, dict) and "mapping" in data:
             mapping = self.call_components(
-                "before_merge_mapping", data["oarepo:mapping"], stack=self.stack
+                "before_merge_mapping", data["mapping"], stack=self.stack
             )
             self.output.merge_mapping(mapping)
 
@@ -47,9 +47,17 @@ class MappingBuilder(JSONBaseBuilder):
         ensure_parent_modules(
             self.builder, Path(output_name), ends_at=self.parent_module_root_name
         )
-        self.output.merge(
-            self.settings.opensearch.templates[self.settings.opensearch.version]
-        )
+        if "mapping" in self.current_model:
+            if (
+                "opensearch" not in self.settings
+                or "version" not in self.settings.opensearch
+            ):
+                raise ValueError(
+                    "Please define settings.opensearch.version (for example, to os-v2)"
+                )
+            self.output.merge(
+                self.current_model.mapping[self.settings.opensearch.version]
+            )
         self.output.enter("mappings", {})
 
     def finish(self):

@@ -1,17 +1,19 @@
 from oarepo_model_builder.builders import ReplaceElement
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import \
-    InvenioRecordSchemaBuilder
-from oarepo_model_builder.property_preprocessors import (PropertyPreprocessor,
-                                                         process)
+from oarepo_model_builder.invenio.invenio_record_schema import (
+    InvenioRecordSchemaBuilder,
+)
+from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.utils.deepmerge import deepmerge
+import marshmallow as ma
+from oarepo_model_builder.datatypes import DataType
 
 
 class MultilangPreprocessor(PropertyPreprocessor):
     @process(
         model_builder=JSONSchemaBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: current.type == "multilingual",
     )
     def modify_multilang_schema(self, data, stack, **kwargs):
@@ -21,7 +23,7 @@ class MultilangPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=MappingBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: current.type == "multilingual",
     )
     def modify_multilang_mapping(self, data, stack, **kwargs):
@@ -40,13 +42,13 @@ class MultilangPreprocessor(PropertyPreprocessor):
 
     @process(
         model_builder=InvenioRecordSchemaBuilder,
-        path="**/properties/*",
+        path="/properties/*",
         condition=lambda current, stack: current.type == "multilingual",
     )
     def modify_multilang_marshmallow(self, data, stack, **kwargs):
         data["type"] = "object"
         deepmerge(
-            data.setdefault("oarepo:marshmallow", {}),
+            data.setdefault("marshmallow", {}),
             {
                 "imports": [{"import": "tests.multilang", "alias": "multilingual"}],
                 "class": "multilingual.MultilingualSchema",
@@ -54,3 +56,13 @@ class MultilangPreprocessor(PropertyPreprocessor):
             },
         )
         return data
+
+
+class UIValidator(ma.Schema):
+    ui = ma.fields.Raw()
+
+
+class MultilingualDataType(DataType):
+    model_type = "multilingual"
+    schema_type = "object"
+    mapping_type = "object"

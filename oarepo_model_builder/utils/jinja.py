@@ -15,6 +15,8 @@ def split_base_name(value):
 
 
 def split_package_base_name(value):
+    if "." not in value:
+        return None, value
     return value.rsplit(".", maxsplit=1)
 
 

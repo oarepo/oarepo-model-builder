@@ -1,75 +1,40 @@
-import copy
-import importlib.resources
 import json
 
-import json5
-import lazy_object_proxy
-import pkg_resources
-from jsonschema import Draft202012Validator
-from jsonschema.exceptions import relevance
-
-from oarepo_model_builder.utils.deepmerge import deepmerge
+from oarepo_model_builder.utils.hyphen_munch import HyphenMunch, munch
+from oarepo_model_builder.validation.model_validation import model_validator
+from marshmallow import ValidationError
+from munch import unmunchify
 
 
 class InvalidModelException(Exception):
     pass
 
 
-@lazy_object_proxy.Proxy
-def model_json_schema():
-    main_schema_path = (
-        importlib.resources.files("oarepo_model_builder.validation")
-        / "schemas"
-        / "common-schema.json5"
-    )
-    schema = json5.loads(main_schema_path.read_text())
-    for ep in pkg_resources.iter_entry_points(group="oarepo.model_schemas"):
-        filename = ".".join(ep.attrs)
-        data = pkg_resources.resource_string(ep.module_name, filename)
-        data = json5.loads(data)
-        schema["$defs"] = deepmerge(data, schema["$defs"], listmerge="extend")
-
-    return schema
-
-
-def validate_model(model, extra_validation_schemas=None):
-    schema = copy.deepcopy(model_json_schema)
-    if extra_validation_schemas:
-        for e in extra_validation_schemas:
-            schema["$defs"] = deepmerge(e, schema["$defs"], listmerge="extend")
+def flatten_errors(err_data, path):
+    if isinstance(err_data, (list, tuple)):
+        for err in err_data:
+            yield from flatten_errors(err, path)
+    elif isinstance(err_data, dict):
+        for k, v in err_data.items():
+            subpath = f"{path}.{k}" if path else k
+            yield from flatten_errors(v, subpath)
     else:
-        schema = model_json_schema
+        yield str(err_data), path
 
-    data = json.loads(json.dumps(model.schema, default=lambda s: repr(s)))
-    replace_array_keys(data)
 
-    if "oarepo:model-validation" in data:
-        schema["$defs"] = deepmerge(
-            data.pop("oarepo:model-validation"), schema["$defs"], listmerge="extend"
-        )
-
-    validator = Draft202012Validator(schema)
-
-    errors = list(validator.iter_errors(data))
-
-    if not errors:
+def validate_model(model):
+    # remove munch, keeping stuff like Path etc.
+    data = unmunchify(model.schema)
+    validator = model_validator.validator_class("root")()
+    try:
+        loaded_data = validator.dump(validator.load(data))
+        model.schema = munch.munchify(loaded_data, HyphenMunch)
         return True
-
-    errors.sort(key=lambda e: (relevance(e), e.path))
-    print("\nErrors (most relevant first):")
-    for err in errors:
-        print(f'    on path "/{"/".join(str(x) for x in err.path)}" : {err.message}')
-        print(f'         schema path "/{"/".join(str(x) for x in err.schema_path)}"')
-    raise InvalidModelException("Invalid model")
-
-
-def replace_array_keys(schema):
-    if isinstance(schema, (list, tuple)):
-        for l in schema:
-            replace_array_keys(l)
-    elif isinstance(schema, dict):
-        for k, v in list(schema.items()):
-            replace_array_keys(v)
-            if k.endswith("[]"):
-                del schema[k]
-                schema[k[:-2]] = v
+    except ValidationError as e:
+        msg = []
+        for err, path in flatten_errors(e.messages_dict, ""):
+            if path.endswith("._schema") and err == "Unknown field.":
+                continue
+            msg.append(f"{path}: {err}")
+        msg = "\n    ".join(msg)
+        raise InvalidModelException(f"Invalid model: \n    {msg}")

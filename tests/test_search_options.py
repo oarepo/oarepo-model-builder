@@ -5,68 +5,39 @@ from io import StringIO
 from pathlib import Path
 from typing import Dict
 
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_model)
-from oarepo_model_builder.fs import AbstractFileSystem
+from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
+from oarepo_model_builder.fs import InMemoryFileSystem
 
-# from tests.mock_filesystem import MockFilesystem
-
-
-class MockFilesystem(AbstractFileSystem):
-    def __init__(self):
-        self.files: Dict[str, StringIO] = {}
-
-    def open(self, path: str, mode: str = "r"):
-        path = Path(path).absolute()
-        if mode == "r":
-            if not path in self.files:
-                raise FileNotFoundError(
-                    f"File {path} not found. Known files {[f for f in self.files]}"
-                )
-            return StringIO(self.files[path].getvalue())
-        self.files[path] = StringIO()
-        self.files[path].close = lambda: None
-        return self.files[path]
-
-    def exists(self, path):
-        path = Path(path).absolute()
-        return path in self.files
-
-    def mkdir(self, path):
-        pass
-
-    def snapshot(self):
-        ret = {}
-        for fname, io in self.files.items():
-            ret[fname] = io.getvalue()
-        return ret
+DUMMY_YAML = "test.yaml"
 
 
 def test_include_invenio():
     schema = load_model(
-        "test.yaml",
+        DUMMY_YAML,
         "test",
         model_content={
-            "oarepo:use": "invenio",
             "model": {
+                "use": "invenio",
                 "properties": {
-                    "a": {"type": "fulltext+keyword"},
+                    "a": {"type": "fulltext+keyword"},  # NOSONAR
                     "b": {
                         "type": "keyword",
-                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
+                        "facets": {"field": 'TermsFacet(field="cosi")'},  # NOSONAR
                     },
-                }
+                },
             },
         },
         isort=False,
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "records", "facets.py")).read()
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -132,33 +103,35 @@ _schema = TermsFacet(field = "$schema")
 
 def test_sort():
     schema = load_model(
-        "test.yaml",
+        DUMMY_YAML,
         "test",
         model_content={
-            "oarepo:use": "invenio",
             "model": {
+                "use": "invenio",
                 "properties": {
                     "a": {
                         "type": "fulltext+keyword",
-                        "oarepo:sortable": {"key": "a_test"},
+                        "sortable": {"key": "a_test"},
                     },
                     "b": {
                         "type": "keyword",
-                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
-                        "oarepo:sortable": {"key": "b_test", "order": "desc"},
+                        "facets": {"field": 'TermsFacet(field="cosi")'},
+                        "sortable": {"key": "b_test", "order": "desc"},
                     },
-                }
+                },
             },
         },
         isort=False,
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "records", "search.py")).read()
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "search.py")
+    ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -192,11 +165,11 @@ class TestSearchOptions(InvenioSearchOptions):
 
 def test_nested():
     schema = load_model(
-        "test.yaml",
+        DUMMY_YAML,
         "test",
         model_content={
-            "oarepo:use": "invenio",
             "model": {
+                "use": "invenio",
                 "properties": {
                     "b": {
                         "properties": {
@@ -206,29 +179,32 @@ def test_nested():
                             "d": {"type": "fulltext+keyword"},
                             "f": {
                                 "properties": {"g": {"type": "keyword"}},
-                                "oarepo:mapping": {"type": "nested"},
-                                "oarepo:marshmallow": {
-                                    "class": "nest.f.F",
+                                "mapping": {"type": "nested"},
+                                "marshmallow": {
+                                    "schema-class": "nest.f.F",
                                     "generate": True,
                                 },
                             },
                         },
-                        "oarepo:mapping": {"type": "nested"},
-                        "oarepo:marshmallow": {"class": "nest.b.B", "generate": True},
+                        "mapping": {"type": "nested"},
+                        "marshmallow": {"schema-class": "nest.b.B", "generate": True},
                     }
-                }
+                },
             },
         },
         isort=False,
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "records", "facets.py")).read()
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -298,30 +274,32 @@ _schema = TermsFacet(field = "$schema")
 
 def test_search_class():
     schema = load_model(
-        "test.yaml",
+        DUMMY_YAML,
         "test",
         model_content={
-            "oarepo:use": "invenio",
             "model": {
+                "use": "invenio",
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
                     "b": {
                         "type": "keyword",
-                        "oarepo:facets": {"field": 'TermsFacet(field="cosi")'},
+                        "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
-                }
+                },
             },
         },
         isort=False,
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
 
-    data = builder.filesystem.open(os.path.join("test", "services", "records", "search.py")).read()
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "search.py")
+    ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",

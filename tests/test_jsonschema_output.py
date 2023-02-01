@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 
 try:
     import json5
@@ -11,7 +11,7 @@ except ImportError:
 
 def test_create_simple_schema():
     class FakeBuilder:
-        filesystem = MockFilesystem()
+        filesystem = InMemoryFileSystem()
 
     output = JSONSchemaOutput(FakeBuilder(), Path("blah.json"))
     output.begin()

@@ -3,24 +3,28 @@ import os
 import re
 from pathlib import Path
 
+import yaml
+
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
 
 
 def test_array_shortcuts():
     schema = load_model(
-        "test.yaml",
+        "test.yaml",  # NOSONAR
         "test",
         model_content={
-            "oarepo:use": "invenio",
-            "model": {"properties": {"a[]": {"type": "keyword", "required": True}}},
+            "model": {
+                "use": "invenio",
+                "properties": {"a[]": {"type": "keyword", "^required": True}},
+            },
         },
         isort=False,
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
@@ -41,11 +45,14 @@ from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
 
+from oarepo_runtime.validation import validate_date
+
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
-    created = mu_fields.ISODateString(dump_only=True)
-    updated = mu_fields.ISODateString(dump_only=True)
-    a = ma_fields.List(ma_fields.String())        """,
+    a = ma_fields.List(ma_fields.String())        
+    created = ma_fields.String(validate=[validate_date('%Y:%m:%d')], dump_only=True)
+    updated = ma_fields.String(validate=[validate_date('%Y:%m:%d')], dump_only=True)
+    """,
     )
 
     data = builder.filesystem.read(
@@ -81,3 +88,122 @@ class TestSchema(InvenioBaseRecordSchema):
         "required": ["a"],
         "type": "object",
     }
+
+
+def test_singleline_type_shortcut():
+    data = """
+model:
+  properties:
+    metadata:
+      properties:
+        title: fulltext
+"""
+
+    schema = load_model(
+        "test.yaml",
+        "test",
+        model_content=yaml.safe_load(data),
+        isort=False,
+        black=False,
+    )
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "")
+
+
+def test_object_shortcut():
+    data = """
+model:
+  properties:
+    metadata{}:
+      title: fulltext
+"""
+
+    schema = load_model(
+        "test.yaml",
+        "test",
+        model_content=yaml.safe_load(data),
+        isort=False,
+        black=False,
+    )
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "")
+
+
+def test_array_shortcut():
+    data = """
+model:
+  properties:
+    metadata[]:
+      type: fulltext
+"""
+
+    schema = load_model(
+        "test.yaml",
+        "test",
+        model_content=yaml.safe_load(data),
+        isort=False,
+        black=False,
+    )
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "")
+
+
+def test_array_single_line_shortcut():
+    data = """
+model:
+  properties:
+    metadata[]: fulltext
+"""
+
+    schema = load_model(
+        "test.yaml",
+        "test",
+        model_content=yaml.safe_load(data),
+        isort=False,
+        black=False,
+    )
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "")
+
+
+def test_misc_shortcuts():
+    data = """
+model:
+  properties:
+    metadata:
+      properties:
+        title: fulltext
+"""
+    """
+      description: fulltext+keyword
+      kind: keyword{enum:[article, dataset]}
+      printed{}:
+      ^marshmallow:
+        schema-class: PrintedPublicationSchema
+      price: double{minimumExclusive:0}
+      floatPrice: float     # just to test floats
+      published: date
+      "sources{nested}[]":
+        source: fulltext
+        period: edtf-interval
+"""
+
+    schema = load_model(
+        "test.yaml",
+        "test",
+        model_content=yaml.safe_load(data),
+        isort=False,
+        black=False,
+    )
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "")

@@ -1,17 +1,17 @@
 import re
-from {{ python.config_package|package_name }} import {{ python.config_package|base_name }} as config
-{% for b in python.ext_bases %}
+from {{ current_model.config_package|package_name }} import {{ current_model.config_package|base_name }} as config
+{% for b in current_model.ext_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
-class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
-    """{{ python.package }} extension."""
+class {{ current_model.ext_class|base_name }}({% for b in current_model.ext_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
+    """{{ current_model.package }} extension."""
 
     def __init__(self, app=None):
         """Extension initialization."""
         self.resource = None
         self.service = None
-        {% if python.ext_bases %}
+        {% if current_model.ext_bases %}
         super().__init__(None)
         {% endif %}
         if app:
@@ -19,7 +19,7 @@ class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_
 
     def init_app(self, app):
         """Flask application initialization."""
-        {% if python.ext_bases %}
+        {% if current_model.ext_bases %}
         super().init_app(app=app)
         {% endif %}
         self.init_config(app)
@@ -28,19 +28,19 @@ class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_
             self.register_flask_extension(app)
 
     def register_flask_extension(self, app):
-        {% if python.ext_bases %}
+        {% if current_model.ext_bases %}
         super().register_extension()
         {% endif %}
-        app.extensions["{{ python.flask_extension_name }}"] = self
+        app.extensions["{{ current_model.flask_extension_name }}"] = self
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        self.service = app.config["{{ settings.python.config_service_class_key }}"](
-            config=app.config["{{settings.python.config_service_config_key}}"](),
+        self.service = app.config["{{ current_model.config_service_class_key }}"](
+            config=app.config["{{current_model.config_service_config_key}}"](),
         )
-        self.resource = app.config["{{ settings.python.config_resource_class_key }}"](
+        self.resource = app.config["{{ current_model.config_resource_class_key }}"](
             service=self.service,
-            config=app.config["{{settings.python.config_resource_config_key}}"](),
+            config=app.config["{{current_model.config_resource_config_key}}"](),
         )
 
     def init_config(self, app):
@@ -63,4 +63,4 @@ class {{ python.ext_class|base_name }}({% for b in python.ext_bases %}{{ b|base_
                 return True
         return False
 
-{{ settings.python.invenio_ext_extra_code }}
+{{ current_model.invenio_ext_extra_code }}

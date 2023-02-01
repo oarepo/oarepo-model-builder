@@ -9,15 +9,19 @@ class HyphenMunch(munch.AutoMunch):
             value, (munch.AutoMunch, munch.Munch)
         ):
             value = munch.munchify(value, HyphenMunch)
+
+        key = key.replace("_", "-")
         return super().__setitem__(key, value)
 
     def __getitem__(self, key):
         try:
             return super().__getitem__(key)
         except:
-            try:
-                key = key.replace("_", "-")
-                return super().__getitem__(key)
-            except:
-                key = key.replace("-", "_")
-                return super().__getitem__(key)
+            key = key.replace("_", "-")
+            return super().__getitem__(key)
+
+    def get(self, key, default=None):
+        try:
+            return self.__getitem__(key)
+        except KeyError:
+            return default

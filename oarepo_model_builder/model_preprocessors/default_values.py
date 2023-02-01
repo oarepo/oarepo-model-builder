@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 from typing import Dict
+from oarepo_model_builder.utils.camelcase import camel_case, snake_case
+from oarepo_model_builder.utils.deepmerge import deepmerge
 
 from oarepo_model_builder.utils.jinja import split_base_name
 
@@ -12,93 +14,97 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
     TYPE = "default"
 
     def transform(self, schema: ModelSchema, settings: Dict):
+        model = schema.current_model
+
+        deepmerge(
+            model,
+            {
+                "record-prefix": camel_case(split_base_name(model.package)),
+            },
+        )
+
         self.set(
-            settings,
+            model,
             "package",
             lambda: os.path.basename(
                 schema.schema.get("output-directory", os.getcwd())
             ).replace("-", "_"),
         )
 
-        self.set(settings, "processing-order", lambda: ["settings", "*", "model"])
-
         self.set(
-            settings,
+            model,
             "package-base",
-            lambda: split_base_name(settings.package),
+            lambda: split_base_name(model.package),
         )
 
-        self.set(settings, "package-base-upper", lambda: settings.package_base.upper())
+        self.set(model, "package-base-upper", lambda: model.package_base.upper())
 
-        self.set(settings, "kebap-package", lambda: settings.package.replace("_", "-"))
+        self.set(model, "kebap-package", lambda: model.package.replace("_", "-"))
 
-        @self.set(settings, "package-path")
+        @self.set(model, "package-path")
         def c():
-            package_path = settings.package.split(".")
+            package_path = model.package.split(".")
             return Path(package_path[0]).joinpath(*package_path[1:])
 
-        self.set(
-            settings, "schema-version", lambda: schema.schema.get("version", "1.0.0")
-        )
+        self.set(model, "schema-version", lambda: schema.schema.get("version", "1.0.0"))
 
         self.set(
-            settings,
+            model,
             "schema-name",
-            lambda: f"{settings.kebap_package}-{settings.schema_version}.json",
+            lambda: f"{snake_case(model.record_prefix)}-{model.schema_version}.json",
         )
 
         self.set(
-            settings,
+            model,
             "schema-file",
             lambda: os.path.join(
-                settings.package_path, "records", "jsonschemas", settings.schema_name
+                model.package_path, "records", "jsonschemas", model.schema_name
             ),
         )
 
-        self.set(
-            settings, "mapping-package", lambda: f"{settings.package}.records.mappings"
-        )
+        self.set(model, "mapping-package", lambda: f"{model.package}.records.mappings")
 
         self.set(
-            settings,
+            model,
             "jsonschemas-package",
-            lambda: f"{settings.package}.records.jsonschemas",
+            lambda: f"{model.package}.records.jsonschemas",
         )
 
         self.set(
-            settings,
+            model,
             "mapping-file",
             lambda: os.path.join(
-                settings.package_path,
+                model.package_path,
                 "records",
                 "mappings",
                 "os-v2",
-                settings.package,
-                settings.schema_name,
+                snake_case(model.record_prefix),
+                model.schema_name,
             ),
         )
 
-        self.set(settings, "schema-server", lambda: "http://localhost/schemas/")
+        self.set(model, "schema-server", lambda: "http://localhost/schemas/")
 
         self.set(
-            settings,
+            model,
             "index-name",
-            lambda: settings.package
+            lambda: snake_case(model.record_prefix)
             + "-"
-            + os.path.basename(settings.mapping_file).replace(".json", ""),
+            + os.path.basename(model.mapping_file).replace(".json", ""),
         )
 
-        self.set(settings, "collection-url", lambda: f"/{settings.kebap_package}/")
-        self.set(settings, "model-name", lambda: settings.package_base)
+        self.set(model, "collection-url", lambda: f"/{model.kebap_package}/")
+        self.set(model, "model-name", lambda: model.package_base)
 
         # for outputting the model
         self.set(
-            settings,
+            model,
             "saved-model-file",
-            lambda: settings.package_path / "models" / "model.json",
+            lambda: model.package_path / "models" / "model.json",
         )
+
         self.set(
-            settings,
-            "inherited-model-file",
-            lambda: settings.package_path / "models" / "inherited_model.json",
+            model,
+            "oarepo-models-setup-cfg",
+            lambda: snake_case(model.record_prefix),
         )

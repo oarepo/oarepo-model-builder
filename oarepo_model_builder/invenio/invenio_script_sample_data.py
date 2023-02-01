@@ -77,14 +77,14 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             "oarepo_model_builder.sample_data_providers", profile=None
         ) + [faker_provider]
 
-    @process("/model/**", condition=lambda current, stack: stack.schema_valid)
+    @process("**", condition=lambda current, stack: stack.schema_valid)
     def model_element(self):
         schema_element_type = self.stack.top.schema_element_type
 
         if schema_element_type == "property":
             self.generate_property(self.stack.top.key)
         elif schema_element_type == "items":
-            # the count is in the oarepo:sample section above the "items" element, so need to look at [-2], not the top
+            # the count is in the sample section above the "items" element, so need to look at [-2], not the top
             count = self.get_count(self.stack[-2].data, None)
             if count is None:
                 count = self.faker.random_int(1, 5)
@@ -116,7 +116,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
                 self.output.primitive(key, self.generate_fake(self.stack))
 
     def build(self, schema):
-        output_name = schema.settings[self.output_file_name]
+        output_name = schema.current_model[self.output_file_name]
         output = self.builder.get_output(self.output_file_type, output_name)
         if not output.created:
             return
@@ -125,7 +125,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             super().build(schema)
 
     def get_count(self, schema, default_count=50):
-        return schema.get("oarepo:sample", {}).get("count", default_count)
+        return schema.get("sample", {}).get("count", default_count)
 
     def skip(self, stack):
         return get_oarepo_sample(stack).get("skip", False)
@@ -146,8 +146,8 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
 
 
 def get_oarepo_sample(stack):
-    if isinstance(stack.top.data, dict) and "oarepo:sample" in stack.top.data:
-        sample = stack.top.data.get("oarepo:sample")
+    if isinstance(stack.top.data, dict) and "sample" in stack.top.data:
+        sample = stack.top.data.get("sample")
         if isinstance(sample, dict):
             return sample
         if isinstance(sample, str):
@@ -192,24 +192,3 @@ def faker_provider(faker, settings, stack, params):
                 )
                 method = "sentence"
     return getattr(faker, method)(**params)
-
-
-class InvenioScriptSampleDataShellBuilder(OutputBuilder):
-    TYPE = "invenio_script_sample_data_loader"
-
-    def finish(self):
-        context = {"settings": self.schema.settings}
-
-        env = Environment(
-            loader=FunctionLoader(
-                lambda tn: templates.get_template(tn, context["settings"])
-            ),
-            autoescape=False,
-        )
-
-        ensure_directory(self.builder, "scripts")
-        output = self.builder.get_output("diff", "scripts/load_sample_data.sh")
-        output.write(
-            env.get_template("script-import-sample-data-shell").render(context)
-        )
-        output.make_executable()

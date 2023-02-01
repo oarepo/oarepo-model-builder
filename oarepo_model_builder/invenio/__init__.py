@@ -17,9 +17,6 @@ TEMPLATES = {
     "record-facets": "templates/invenio_record_facets.py.jinja2",
     # utils and included
     "imports": "templates/imports.py.jinja2",
-    # scripts
-    "script-import-sample-data": "templates/script_import_sample_data.py.jinja2",
-    "script-import-sample-data-shell": "templates/script_import_sample_data.sh.jinja2",
     # cli
     "cli": "templates/invenio_cli.py.jinja2",
 }

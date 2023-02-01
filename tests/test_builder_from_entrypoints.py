@@ -5,10 +5,10 @@ import sys
 from pathlib import Path
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
 
-OAREPO_USE = "oarepo:use"
+OAREPO_USE = "use"
 
 
 def test_include_invenio():
@@ -17,14 +17,13 @@ def test_include_invenio():
         "test",
         model_content={
             "version": "1.0.0",
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
@@ -44,12 +43,13 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
+from oarepo_runtime.validation import validate_date
 
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
     a = ma_fields.String()
-    created = mu_fields.ISODateString(dump_only=True)
-    updated = mu_fields.ISODateString(dump_only=True)
+    created = ma_fields.String(validate=[validate_date('%Y:%m:%d')], dump_only=True)
+    updated = ma_fields.String(validate=[validate_date('%Y:%m:%d')], dump_only=True)
     """,
     )
 
@@ -78,19 +78,28 @@ def test_generate_multiple_times():
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
     snapshot_1 = filesystem.snapshot()
 
+    # need to reload the schema because of caches ...
+    schema = load_model(
+        "test.yaml",
+        "test",
+        model_content={
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
+        },
+        isort=False,
+        black=False,
+    )
     builder.build(schema, "")
     snapshot_2 = filesystem.snapshot()
 
@@ -114,14 +123,13 @@ def test_incremental_builder():
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
     )
 
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
@@ -130,8 +138,7 @@ def test_incremental_builder():
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
@@ -141,27 +148,26 @@ def test_incremental_builder():
     snapshot_1 = filesystem.snapshot()
 
     snapshot_1.pop(
-        Path.cwd() / "scripts/sample_data.yaml"
+        Path.cwd() / "data/sample_data.yaml"
     )  # these are always regenerated and random, so do not check them
 
     schema = load_model(
         "test.yaml",
         "test",
         model_content={
-            OAREPO_USE: "invenio",
-            "model": {"properties": {"a": {"type": "keyword"}}},
+            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
     )
-    filesystem = MockFilesystem()
+    filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
     snapshot_2 = filesystem.snapshot()
 
     ret = snapshot_2.pop(
-        Path.cwd() / "scripts/sample_data.yaml"
+        Path.cwd() / "data/sample_data.yaml"
     )  # these are always regenerated and random, so do not check them
 
     assert set(snapshot_1.keys()) == set(snapshot_2.keys())

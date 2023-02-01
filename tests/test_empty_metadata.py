@@ -8,10 +8,10 @@ from tempfile import mkdtemp, tempdir
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import FileSystem
-from tests.mock_filesystem import MockFilesystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
 
-OAREPO_USE = "oarepo:use"
+OAREPO_USE = "use"
 
 
 def test_empty_metadata():
@@ -20,8 +20,7 @@ def test_empty_metadata():
         "test",
         model_content={
             "version": "1.0.0",
-            OAREPO_USE: "invenio",
-            "model": {"properties": None},
+            "model": {OAREPO_USE: "invenio", "properties": None},
         },
         isort=False,
         black=False,
