@@ -42,7 +42,6 @@ class TimeDataType(BaseDateDataType):
 
     def marshmallow_validators(self) -> List[str]:
         return super().marshmallow_validators() + [
-            # TODO: raise correct exception here
             "validate_date('%H:%M:%S')",
         ]
 

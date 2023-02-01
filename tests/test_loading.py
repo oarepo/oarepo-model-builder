@@ -3,7 +3,7 @@ from pathlib import Path
 from oarepo_model_builder.loaders import json_loader
 from oarepo_model_builder.schema import ModelSchema
 
-DUMMY_PATH = "/tmp/path.json"  # Compliant
+DUMMY_PATH = "/tmp/path.json"  # NOSONAR checking as it is a virtual path
 
 
 def test_loading_from_string():
