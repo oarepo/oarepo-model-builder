@@ -1,10 +1,10 @@
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.datatypes import datatypes
-from oarepo_model_builder.invenio.invenio_record_schema import \
-    InvenioRecordSchemaBuilder
-from oarepo_model_builder.property_preprocessors import (PropertyPreprocessor,
-                                                         process)
+from oarepo_model_builder.invenio.invenio_record_schema import (
+    InvenioRecordSchemaBuilder,
+)
+from oarepo_model_builder.property_preprocessors import PropertyPreprocessor, process
 from oarepo_model_builder.stack import ModelBuilderStack
 from oarepo_model_builder.utils.deepmerge import deepmerge
 
@@ -19,7 +19,9 @@ class DataTypePreprocessor(PropertyPreprocessor):
         in ("property", "items"),
     )
     def modify_jsonschema(self, data, stack: ModelBuilderStack, **kwargs):
-        datatype = datatypes.get_datatype(data, stack.top.key, self.schema.current_model)
+        datatype = datatypes.get_datatype(
+            data, stack.top.key, self.schema.current_model, self.schema
+        )
         if not datatype:
             return data
         return datatype.json_schema()
@@ -31,7 +33,9 @@ class DataTypePreprocessor(PropertyPreprocessor):
         in ("property", "items"),
     )
     def modify_mapping(self, data, stack: ModelBuilderStack, **kwargs):
-        datatype = datatypes.get_datatype(data, stack.top.key, self.schema.current_model)
+        datatype = datatypes.get_datatype(
+            data, stack.top.key, self.schema.current_model, self.schema
+        )
         if not datatype:
             return data
         return datatype.mapping()
@@ -43,7 +47,9 @@ class DataTypePreprocessor(PropertyPreprocessor):
         in ("property", "items"),
     )
     def modify_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
-        datatype = datatypes.get_datatype(data, stack.top.key, self.schema.current_model)
+        datatype = datatypes.get_datatype(
+            data, stack.top.key, self.schema.current_model, self.schema
+        )
         if not datatype:
             return data
         ret = datatype.marshmallow()
