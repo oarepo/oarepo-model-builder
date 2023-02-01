@@ -62,7 +62,7 @@ class RegexFieldsSchema(ma.Schema):
         return loaded
 
     @cached_property
-    def compiled_regexs(self):
+    def compiled_regex_fields(self):
         return [(re.compile(x["key"]), x["field"]) for x in self.opts.regex_fields]
 
     def load_regex_fields(self, loaded_data, data, error_store, index):
@@ -72,7 +72,7 @@ class RegexFieldsSchema(ma.Schema):
             if fld in loaded_data:
                 continue
 
-            for fld_regex, field in self.compiled_regexs:
+            for fld_regex, field in self.compiled_regex_fields:
                 if fld_regex.match(fld):
                     field = field()
                     self._bind_field(fld, field)
@@ -105,17 +105,20 @@ class RegexFieldsSchema(ma.Schema):
             if attr_name in serialized:
                 continue
 
-            for fld_regex, field in self.compiled_regexs:
+            for fld_regex, field in self.compiled_regex_fields:
                 if fld_regex.match(attr_name):
-                    field = field()
-                    self._bind_field(attr_name, field)
-
-                    value = field.serialize(attr_name, obj, accessor=self.get_attribute)
-                    if value is ma.missing:
-                        break
-                    key = field.data_key if field.data_key is not None else attr_name
-                    serialized[key] = value
+                    self.save_regex_field(serialized, attr_name, field, obj)
                     break
+
+    def save_regex_field(self, serialized, attr_name, field, obj):
+        field = field()
+        self._bind_field(attr_name, field)
+
+        value = field.serialize(attr_name, obj, accessor=self.get_attribute)
+        if value is ma.missing:
+            return
+        key = field.data_key if field.data_key is not None else attr_name
+        serialized[key] = value
 
 
 class PermissiveSchema(ExtendablePartSchema):

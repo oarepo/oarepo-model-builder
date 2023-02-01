@@ -62,7 +62,7 @@ def test_model_saver():
             "schema-version": "1.0.0",
             "record-resource-class": "test.resources.records.resource.TestResource",
             "marshmallow": {
-                "schema-class": "test.services.records.schema.TestSchema",
+                "schema-class": "test.services.records.schema.TestSchema",  # NOSONAR
                 "base-classes": ["ma.Schema"],
                 "generate": True,
             },
@@ -106,7 +106,7 @@ def test_model_saver():
             "properties": {
                 "a": {
                     "marshmallow": {
-                        "field-class": "ma_fields.String",
+                        "field-class": "ma_fields.String",  # NOSONAR
                         "validators": [],
                         "imports": [],
                     },
@@ -135,7 +135,7 @@ def test_model_saver():
                 },
                 "metadata": {
                     "marshmallow": {
-                        "schema-class": "test.services.records.schema.TestMetadataSchema",
+                        "schema-class": "test.services.records.schema.TestMetadataSchema",  # NOSONAR
                         "base-classes": ["ma.Schema"],
                         "generate": True,
                         "field-class": "ma_fields.Nested",

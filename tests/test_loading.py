@@ -3,9 +3,11 @@ from pathlib import Path
 from oarepo_model_builder.loaders import json_loader
 from oarepo_model_builder.schema import ModelSchema
 
+DUMMY_PATH = "/tmp/path.json"
+
 
 def test_loading_from_string():
-    schema = ModelSchema("/tmp/path.json", {})  # Compliant
+    schema = ModelSchema(DUMMY_PATH, {})  # Compliant
     assert schema.schema == {"settings": {}}
 
 
@@ -18,7 +20,7 @@ def test_loading_from_empty_file():
 
 def test_loading_included_resource():
     schema = ModelSchema(
-        "/tmp/path.json",  # Compliant
+        DUMMY_PATH,  # Compliant
         {"a": {"use": "test1"}},
         {"test1": lambda schema: {"included": "test1"}},
     )
@@ -30,7 +32,7 @@ def test_loading_included_resource():
 
 def test_loading_included_resource_root():
     schema = ModelSchema(
-        "/tmp/path.json",  # Compliant
+        DUMMY_PATH,  # Compliant
         {"use": "test1"},
         {"test1": lambda schema: {"included": "test1"}},
     )
@@ -42,7 +44,7 @@ def test_loading_included_resource_root():
 
 def test_loading_jsonpath_resource():
     schema = ModelSchema(
-        "/tmp/path.json",  # Compliant
+        DUMMY_PATH,  # Compliant
         {"use": "test1#/test/a"},
         {"test1": lambda schema: {"test": {"a": {"included": "test1"}}}},
     )
@@ -54,7 +56,7 @@ def test_loading_jsonpath_resource():
 
 def test_loading_current():
     schema = ModelSchema(
-        "/tmp/path.json", {"b": {"use": "#/a"}, "a": {"a": True}}  # Compliant
+        DUMMY_PATH, {"b": {"use": "#/a"}, "a": {"a": True}}  # Compliant
     )
     assert schema.schema == {
         "settings": {},
@@ -65,7 +67,7 @@ def test_loading_current():
 
 def test_loading_current_by_id():
     schema = ModelSchema(
-        "/tmp/path.json",  # Compliant
+        DUMMY_PATH,  # Compliant
         {"b": {"use": "#id"}, "a": {"$id": "id", "a": True}},
     )
     assert schema.schema == {
@@ -77,7 +79,7 @@ def test_loading_current_by_id():
 
 def test_loading_external_by_id():
     schema = ModelSchema(
-        "/tmp/path.json",  # Compliant
+        DUMMY_PATH,  # Compliant
         {
             "b": {"use": "aa#id"},
         },

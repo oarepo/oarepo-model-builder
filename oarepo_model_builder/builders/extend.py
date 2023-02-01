@@ -13,12 +13,12 @@ class ExtendBuilder(JSONBaseBuilder):
         self.model_element_leave()
 
     def enter_model(self):
+        # build children are handled in model_element, so no default handling here
         pass
 
     def output_primitive(self, top, data):
-        if data is not None:
-            if not isinstance(data, (str, float, int, bool)):
-                data = str(data)
+        if data is not None and not isinstance(data, (str, float, int, bool)):
+            data = str(data)
         return super().output_primitive(top, data)
 
     def begin(self, schema, settings):
