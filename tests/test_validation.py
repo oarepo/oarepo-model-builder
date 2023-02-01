@@ -20,7 +20,7 @@ def test_unknown_on_top_validation():
 
 
 def test_settings_on_model():
-    parsed = model_validator.validate(
+    model_validator.validate(
         {
             "model": {
                 "profile-package": "test",

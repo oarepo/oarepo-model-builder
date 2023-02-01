@@ -3,10 +3,13 @@ from typing import List
 from .datatypes import DataType, Import
 
 
-class DateDataType(DataType):
+class BaseDateDataType(DataType):
+    marshmallow_field = "ma_fields.String"
+
+
+class DateDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
-    marshmallow_field = "ma_fields.String"
     model_type = "date"
 
     def mapping(self, **extras):
@@ -17,7 +20,6 @@ class DateDataType(DataType):
 
     def marshmallow_validators(self) -> List[str]:
         return super().marshmallow_validators() + [
-            # TODO: raise correct exception here
             "validate_date('%Y:%m:%d')",
         ]
 
@@ -27,10 +29,9 @@ class DateDataType(DataType):
         )
 
 
-class TimeDataType(DataType):
+class TimeDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
-    marshmallow_field = "ma_fields.Str"
     model_type = "time"
 
     def mapping(self, **extras):
@@ -51,7 +52,7 @@ class TimeDataType(DataType):
         )
 
 
-class DateTimeDataType(DataType):
+class DateTimeDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
     marshmallow_field = "mu_fields.ISODateString"
@@ -64,10 +65,9 @@ class DateTimeDataType(DataType):
         return super().json_schema(format="date-time", **extras)
 
 
-class EDTFDataType(DataType):
+class EDTFDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
-    marshmallow_field = "ma_fields.Str"
     model_type = "edtf"
 
     def mapping(self, **extras):
@@ -84,10 +84,9 @@ class EDTFDataType(DataType):
         return super().imports(Import(name="edtf.Date", alias="EDTFDate"))
 
 
-class EDTFIntervalType(DataType):
+class EDTFIntervalType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date_range"
-    marshmallow_field = "ma_fields.Str"
     model_type = "edtf-interval"
 
     def mapping(self, **extras):

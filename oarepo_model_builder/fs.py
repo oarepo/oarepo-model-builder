@@ -5,15 +5,16 @@ from typing import Dict
 
 class AbstractFileSystem:
     def open(self, path, *args, **kwargs):
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError()
 
     def exists(self, path):
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError()
 
     def mkdir(self, path):
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError()
 
     def make_executable(self, path):
+        # does nothing on abstract system as it does not have any notion of executable files
         pass
 
 
@@ -22,11 +23,11 @@ class FileSystem(AbstractFileSystem):
         self.opened_files = set()
         self.overwrite = False
 
-    def open(self, path, mode="r", **kwargs):
+    def open(self, path, mode: str = "r", **kwargs):
         if self.overwrite:
             if "r" in mode and path not in self.opened_files:
                 raise FileNotFoundError(f"File {path} not found")
-            if "w" or "a" in mode:
+            if "w" in mode or "a" in mode:
                 self.opened_files.add(path)
         return open(path, mode=mode, **kwargs)
 
@@ -50,7 +51,7 @@ class InMemoryFileSystem(AbstractFileSystem):
     def open(self, path: str, mode: str = "r"):
         path = Path(path).absolute()
         if mode == "r":
-            if not path in self.files:
+            if path not in self.files:
                 raise FileNotFoundError(
                     f"File {path} not found. Known files {[f for f in self.files]}"
                 )
@@ -64,6 +65,7 @@ class InMemoryFileSystem(AbstractFileSystem):
         return path in self.files
 
     def mkdir(self, path):
+        # noop on in-memory system
         pass
 
     def read(self, path):

@@ -3,11 +3,11 @@ from pathlib import Path
 from oarepo_model_builder.loaders import json_loader
 from oarepo_model_builder.schema import ModelSchema
 
-DUMMY_PATH = "/tmp/path.json"
+DUMMY_PATH = "/tmp/path.json"  # Compliant
 
 
 def test_loading_from_string():
-    schema = ModelSchema(DUMMY_PATH, {})  # Compliant
+    schema = ModelSchema(DUMMY_PATH, {})
     assert schema.schema == {"settings": {}}
 
 
@@ -20,7 +20,7 @@ def test_loading_from_empty_file():
 
 def test_loading_included_resource():
     schema = ModelSchema(
-        DUMMY_PATH,  # Compliant
+        DUMMY_PATH,
         {"a": {"use": "test1"}},
         {"test1": lambda schema: {"included": "test1"}},
     )
@@ -32,7 +32,7 @@ def test_loading_included_resource():
 
 def test_loading_included_resource_root():
     schema = ModelSchema(
-        DUMMY_PATH,  # Compliant
+        DUMMY_PATH,
         {"use": "test1"},
         {"test1": lambda schema: {"included": "test1"}},
     )
@@ -44,7 +44,7 @@ def test_loading_included_resource_root():
 
 def test_loading_jsonpath_resource():
     schema = ModelSchema(
-        DUMMY_PATH,  # Compliant
+        DUMMY_PATH,
         {"use": "test1#/test/a"},
         {"test1": lambda schema: {"test": {"a": {"included": "test1"}}}},
     )
@@ -55,9 +55,7 @@ def test_loading_jsonpath_resource():
 
 
 def test_loading_current():
-    schema = ModelSchema(
-        DUMMY_PATH, {"b": {"use": "#/a"}, "a": {"a": True}}  # Compliant
-    )
+    schema = ModelSchema(DUMMY_PATH, {"b": {"use": "#/a"}, "a": {"a": True}})
     assert schema.schema == {
         "settings": {},
         "b": {"a": True},
@@ -67,7 +65,7 @@ def test_loading_current():
 
 def test_loading_current_by_id():
     schema = ModelSchema(
-        DUMMY_PATH,  # Compliant
+        DUMMY_PATH,
         {"b": {"use": "#id"}, "a": {"$id": "id", "a": True}},
     )
     assert schema.schema == {
@@ -79,7 +77,7 @@ def test_loading_current_by_id():
 
 def test_loading_external_by_id():
     schema = ModelSchema(
-        DUMMY_PATH,  # Compliant
+        DUMMY_PATH,
         {
             "b": {"use": "aa#id"},
         },

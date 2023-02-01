@@ -1,6 +1,6 @@
 import copy
 from collections import namedtuple
-from typing import List
+from typing import List, Union
 from marshmallow import fields
 import marshmallow as ma
 
@@ -59,23 +59,23 @@ class DataType:
     def facet(self, nested_facet):
         return nested_facet
 
-    def dumper_class(self, data):
+    def dumper_class(self, data):  # NOSONAR
         return None
 
 
 class DataTypes:
     def __init__(self) -> None:
-        self.datatypes = {}
+        self.datatype_map = {}
 
     def _prepare_datatypes(self):
-        if not self.datatypes:
+        if not self.datatype_map:
             for entry in importlib_metadata.entry_points(
                 group="oarepo_model_builder.datatypes"
             ):
                 for dt in entry.load():
-                    self.datatypes[dt.model_type] = dt
+                    self.datatype_map[dt.model_type] = dt
 
-    def get_datatype(self, data, key, model) -> DataType:
+    def get_datatype(self, data, key, model) -> Union[DataType, None]:
         datatype_class = self.get_datatype_class(data.get("type", None))
         if datatype_class:
             return datatype_class(data, key, model)
@@ -83,7 +83,7 @@ class DataTypes:
 
     def get_datatype_class(self, datatype_type):
         self._prepare_datatypes()
-        return self.datatypes.get(datatype_type)
+        return self.datatype_map.get(datatype_type)
 
 
 datatypes = DataTypes()

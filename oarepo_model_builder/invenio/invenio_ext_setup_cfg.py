@@ -16,7 +16,7 @@ class InvenioExtSetupCfgBuilder(OutputBuilder):
 
         output.add_entry_point(
             "invenio_base.api_apps",
-            self.current_model.extension_suffix,  # todo - resolve
+            self.current_model.extension_suffix,
             f"{package_name}:{base_name}",
         )
 
