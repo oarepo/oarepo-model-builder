@@ -48,7 +48,9 @@ class MarshmallowNode:
 
     @classmethod
     def from_stack(cls, schema: ModelSchema, stack: ModelBuilderStack):
-        datatype = datatypes.get_datatype(stack.top.data, stack.top.key, schema.model)
+        datatype = datatypes.get_datatype(
+            stack.top.data, stack.top.key, schema.model, schema
+        )
         definition = datatype.marshmallow()
         imports = datatype.imports()
         field_arguments = copy.copy(definition.get("arguments", []))

@@ -58,7 +58,9 @@ class PropertyPreprocessor:
                 _output_builder_type == "*"
                 or output_builder_type == _output_builder_type
             ):
-                return method(data, stack=stack)
+                return method(
+                    data, stack=stack, output_builder_type=output_builder_type
+                )
 
     def process(self, output_builder_type: str, data, stack: ModelBuilderStack):
         return self._call_method(data, stack, output_builder_type)

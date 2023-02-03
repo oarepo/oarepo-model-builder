@@ -14,15 +14,15 @@ class DataType:
     marshmallow_field = None
     schema_type = None
     mapping_type = None
-    use_dumper = False
 
     class ModelSchema(ma.Schema):
         type = fields.String(required=True)
 
-    def __init__(self, definition, key, model):
+    def __init__(self, definition, key, model, schema):
         self.definition = definition
         self.key = key
         self.model = model
+        self.schema = schema
 
     def _copy_definition(self, **extras):
         ret = copy.deepcopy(self.definition)
@@ -75,10 +75,10 @@ class DataTypes:
                 for dt in entry.load():
                     self.datatype_map[dt.model_type] = dt
 
-    def get_datatype(self, data, key, model) -> Union[DataType, None]:
+    def get_datatype(self, data, key, model, schema) -> Union[DataType, None]:
         datatype_class = self.get_datatype_class(data.get("type", None))
         if datatype_class:
-            return datatype_class(data, key, model)
+            return datatype_class(data, key, model, schema)
         return None
 
     def get_datatype_class(self, datatype_type):
