@@ -1,20 +1,38 @@
 from marshmallow import fields
 from .model_validation import model_validator
 from marshmallow_union import Union
+from marshmallow.exceptions import ValidationError
 
 from .utils import ExtendablePartSchema
+import typing
+
+
+class StrictString(fields.String):
+    def _deserialize(self, value, attr, data, **kwargs) -> typing.Any:
+        if value is None or isinstance(value, str):
+            return super()._deserialize(value, attr, data, **kwargs)
+        raise ValidationError(
+            f"String value expected, found {type(value)} with value {repr(value)[:30]}..."
+        )
+
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Union[str, None]:
+        if value is None or isinstance(value, str):
+            return super()._serialize(value, attr, obj, **kwargs)
+        raise ValidationError(
+            f"String value expected, found {type(value)} with value {repr(value)[:30]}..."
+        )
 
 
 class Property(ExtendablePartSchema):
     facets = fields.Nested(lambda: model_validator.validator_class("property-facets")())
     sample = Union(
         [
-            fields.String(),  # use this constant value for the sample data
+            fields.Nested(lambda: model_validator.validator_class("property-sample")()),
             fields.List(fields.Boolean()),  # or array of booleans
             fields.List(fields.Integer()),  # or array of booleans
             fields.List(fields.Float()),  # or array of booleans
             fields.List(fields.String()),  # or array of strings
-            fields.Nested(lambda: model_validator.validator_class("property-sample")()),
+            StrictString(),  # use this constant value for the sample data
         ],
         required=False,
     )

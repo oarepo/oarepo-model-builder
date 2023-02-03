@@ -6,53 +6,23 @@ from pathlib import Path
 from typing import Dict
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
-from oarepo_model_builder.fs import AbstractFileSystem
+from oarepo_model_builder.fs import InMemoryFileSystem
 
-# from oarepo_model_builder.fs import InMemoryFileSystem
-
-
-class InMemoryFileSystem(AbstractFileSystem):
-    def __init__(self):
-        self.files: Dict[str, StringIO] = {}
-
-    def open(self, path: str, mode: str = "r"):
-        path = Path(path).absolute()
-        if mode == "r":
-            if not path in self.files:
-                raise FileNotFoundError(
-                    f"File {path} not found. Known files {[f for f in self.files]}"
-                )
-            return StringIO(self.files[path].getvalue())
-        self.files[path] = StringIO()
-        self.files[path].close = lambda: None
-        return self.files[path]
-
-    def exists(self, path):
-        path = Path(path).absolute()
-        return path in self.files
-
-    def mkdir(self, path):
-        pass
-
-    def snapshot(self):
-        ret = {}
-        for fname, io in self.files.items():
-            ret[fname] = io.getvalue()
-        return ret
+DUMMY_YAML = "test.yaml"
 
 
 def test_include_invenio():
     schema = load_model(
-        "test.yaml",
+        DUMMY_YAML,
         "test",
         model_content={
             "model": {
                 "use": "invenio",
                 "properties": {
-                    "a": {"type": "fulltext+keyword"},
+                    "a": {"type": "fulltext+keyword"},  # NOSONAR
                     "b": {
                         "type": "keyword",
-                        "facets": {"field": 'TermsFacet(field="cosi")'},
+                        "facets": {"field": 'TermsFacet(field="cosi")'},  # NOSONAR
                     },
                 },
             },
@@ -133,7 +103,7 @@ _schema = TermsFacet(field = "$schema")
 
 def test_sort():
     schema = load_model(
-        "test.yaml",
+        DUMMY_YAML,
         "test",
         model_content={
             "model": {
@@ -195,7 +165,7 @@ class TestSearchOptions(InvenioSearchOptions):
 
 def test_nested():
     schema = load_model(
-        "test.yaml",
+        DUMMY_YAML,
         "test",
         model_content={
             "model": {
@@ -304,7 +274,7 @@ _schema = TermsFacet(field = "$schema")
 
 def test_search_class():
     schema = load_model(
-        "test.yaml",
+        DUMMY_YAML,
         "test",
         model_content={
             "model": {

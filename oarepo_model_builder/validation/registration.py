@@ -57,7 +57,7 @@ validators = {
     # /model/marshmallow: defines marshmallow on the model-level
     "property-marshmallow-model": ModelMarshmallowSchema.ObjectOnlyMarshmallowProps,
     #
-    # /model/properties, /model/properties/<elementname>/properties, ...
+    # /model/properties, /model/properties/<element_name>/properties, ...
     # defines content of the properties (any key mapping to object-field).
     # You mostly do not want to modify this.
     "properties": PropertiesSchema,

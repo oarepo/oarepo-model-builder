@@ -36,7 +36,7 @@ from oarepo_model_builder.utils.verbose import log
 @click.option(
     "--set",
     "sets",
-    help="Overwrite option in the model file. Example " "--set name=value",
+    help="Overwrite option in the model file. Example: --set name=value",
     multiple=True,
 )
 @click.option(
@@ -91,7 +91,7 @@ from oarepo_model_builder.utils.verbose import log
     "included_models", nargs=-1, type=click.Path(exists=True), required=False
 )
 def run(
-    output_directory,
+    output_directory,  # NOSONAR
     package,
     sets,
     configs,
@@ -139,7 +139,7 @@ def run(
 
 
 def run_internal(
-    output_directory,
+    output_directory,  # NOSONAR
     model_filename,
     included_models,
     package,

@@ -12,7 +12,7 @@ from tests.utils import assert_python_equals
 
 def test_array_shortcuts():
     schema = load_model(
-        "test.yaml",
+        "test.yaml",  # NOSONAR
         "test",
         model_content={
             "model": {

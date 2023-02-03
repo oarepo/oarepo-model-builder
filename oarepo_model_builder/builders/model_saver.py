@@ -29,7 +29,10 @@ class ModelSaverBuilder(JSONBaseBuilder):
         super().model_element_enter()
         if self.stack.top.schema_element_type in ("items", "property"):
             datatype: DataType = datatypes.get_datatype(
-                self.stack.top.data, self.stack.top.key, self.current_model
+                self.stack.top.data,
+                self.stack.top.key,
+                self.current_model,
+                self.whole_schema,
             )
             if datatype:
                 marshmallow = datatype.marshmallow()

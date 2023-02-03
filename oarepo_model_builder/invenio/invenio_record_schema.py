@@ -1,7 +1,7 @@
 import copy
 import dataclasses
 from collections import defaultdict, namedtuple
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.builders.python import PythonBuilder
@@ -48,7 +48,9 @@ class MarshmallowNode:
 
     @classmethod
     def from_stack(cls, schema: ModelSchema, stack: ModelBuilderStack):
-        datatype = datatypes.get_datatype(stack.top.data, stack.top.key, schema.model)
+        datatype = datatypes.get_datatype(
+            stack.top.data, stack.top.key, schema.model, schema
+        )
         definition = datatype.marshmallow()
         imports = datatype.imports()
         field_arguments = copy.copy(definition.get("arguments", []))
@@ -132,7 +134,7 @@ class MarshmallowNode:
 @dataclasses.dataclass
 class CompositeMarshmallowNode(MarshmallowNode):
 
-    fields: List["MarshmallowNode"] = None
+    fields: List["MarshmallowNode"] = dataclasses.field(default_factory=list)
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
@@ -163,8 +165,8 @@ class CompositeMarshmallowNode(MarshmallowNode):
 @dataclasses.dataclass
 class ObjectMarshmallowNode(CompositeMarshmallowNode):
     generate: bool = True
-    schema_class: str = None
-    base_classes: List[str] = None
+    schema_class: Union[str, None] = None
+    base_classes: Union[List[str], None] = None
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
@@ -178,7 +180,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
     def prepare(self, package_name: str, context: Dict[str, Any]):
         super().prepare(package_name, context)
 
-        known_classes: Dict[str, str] = context.setdefault("known_classes", {})
+        context.setdefault("known_classes", {})
 
         if self.exact_field:
             return
@@ -271,7 +273,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         stack = ModelBuilderStack()
         stack.push("model", schema.current_model)
 
-        self.marshmallow_stack = [ObjectMarshmallowNode.from_stack(schema.schema, stack)]
+        self.marshmallow_stack = [
+            ObjectMarshmallowNode.from_stack(schema.schema, stack)
+        ]
 
     def finish(self):
         super(PythonBuilder, self).finish()
@@ -309,10 +313,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                 not in (
                     package_name,
                     # known prefixes
-                    *BUILTIN_ALIASES
+                    *BUILTIN_ALIASES,
                 )
             ]
-
 
             self.process_template(
                 python_path,

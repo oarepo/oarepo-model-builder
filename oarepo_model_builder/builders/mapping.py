@@ -50,12 +50,14 @@ class MappingBuilder(JSONBaseBuilder):
         if "mapping" in self.current_model:
             if (
                 "opensearch" not in self.settings
-                or not "version" in self.settings.opensearch
+                or "version" not in self.settings.opensearch
             ):
                 raise ValueError(
                     "Please define settings.opensearch.version (for example, to os-v2)"
                 )
-            self.output.merge(self.current_model.mapping[self.settings.opensearch.version])
+            self.output.merge(
+                self.current_model.mapping[self.settings.opensearch.version]
+            )
         self.output.enter("mappings", {})
 
     def finish(self):
