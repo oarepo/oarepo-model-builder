@@ -62,3 +62,23 @@ class DataTypePreprocessor(PropertyPreprocessor):
                 for i in imports
             ]
         )
+
+    @process(
+        model_builder="*",
+        path="/properties/**",
+        condition=lambda current, stack: stack.top.schema_element_type
+        in ("property", "items"),
+        priority=-100,  # fallback priority
+    )
+    def modify_generic(
+        self, data, stack: ModelBuilderStack, output_builder_type, **kwargs
+    ):
+        datatype = datatypes.get_datatype(
+            data, stack.top.key, self.schema.current_model, self.schema
+        )
+        if not datatype:
+            return data
+        method = getattr(datatype, "process_" + output_builder_type, None)
+        if method and callable(method):
+            return method()
+        return data
