@@ -22,3 +22,9 @@ class ModelPreprocessor:
         arr = getattr(container, key)
         if appended not in arr:
             arr.append(appended)
+
+    def set_default_and_prepend_if_not_present(self, container, key, value, prepended):
+        container.setdefault(key, value)
+        arr = getattr(container, key)
+        if prepended not in arr:
+            arr.insert(0, prepended)
