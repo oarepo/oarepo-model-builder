@@ -14,7 +14,6 @@ class DataType:
     marshmallow_field = None
     schema_type = None
     mapping_type = None
-    use_dumper = False
 
     class ModelSchema(ma.Schema):
         type = fields.String(required=True)
