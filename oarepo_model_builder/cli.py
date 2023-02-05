@@ -30,7 +30,7 @@ from oarepo_model_builder.utils.verbose import log
 @click.option(
     "--package",
     help="Package into which the model is generated. "
-    "If not passed, the name of the current directory, "
+    "If not passed, the name of the output directory, "
     "converted into python package name, is used.",
 )
 @click.option(
@@ -163,6 +163,10 @@ def run_internal(
     )
     if not output_directory:
         output_directory = os.getcwd()
+
+    if not package:
+        package = Path(model_filename).name.split(".")[0]
+
     # set the logging level, it will be warning - 1 (that is, 29) if not verbose,
     # so that warnings only will be emitted. With each verbosity level
     # it will decrease
