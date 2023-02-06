@@ -24,6 +24,7 @@ class DataTypePreprocessor(PropertyPreprocessor):
         )
         if not datatype:
             return data
+        self.merge_with_data(data, datatype.model_schema())
         return datatype.json_schema()
 
     @process(
@@ -38,6 +39,7 @@ class DataTypePreprocessor(PropertyPreprocessor):
         )
         if not datatype:
             return data
+        self.merge_with_data(data, datatype.model_schema())
         return datatype.mapping()
 
     @process(
@@ -52,6 +54,7 @@ class DataTypePreprocessor(PropertyPreprocessor):
         )
         if not datatype:
             return data
+        self.merge_with_data(data, datatype.model_schema())
         ret = datatype.marshmallow()
         imports = datatype.imports()
         ret.setdefault("imports", []).extend(
@@ -78,7 +81,13 @@ class DataTypePreprocessor(PropertyPreprocessor):
         )
         if not datatype:
             return data
+        self.merge_with_data(data, datatype.model_schema())
         method = getattr(datatype, "process_" + output_builder_type, None)
         if method and callable(method):
             return method()
+        return data
+
+    def merge_with_data(self, data, extra_schema):
+        if extra_schema:
+            return deepmerge(data, extra_schema)
         return data

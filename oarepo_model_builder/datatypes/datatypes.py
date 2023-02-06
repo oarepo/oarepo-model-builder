@@ -32,7 +32,7 @@ class DataType:
         return ret
 
     def model_schema(self, **extras):
-        return self._copy_definition(**extras)
+        return None
 
     def json_schema(self, **extras):
         return self._copy_definition(type=self.schema_type, **extras)
