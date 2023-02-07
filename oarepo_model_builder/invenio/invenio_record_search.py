@@ -70,9 +70,11 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             if 'type' in data:
                 fd = datatypes.get_datatype(data, data.type, self.current_model, self.schema)
                 fd.facet('g')
-                if fd.key == 'nested' or fd.key == 'object':
-                    pass
-                    # print('kvik')
+                if fd.schema_type == 'object':
+                    self.facet_stack.append(fd.facet(key = self.stack.top.key, props_num= self.properties_types(data['properties'])))
+                elif  fd.schema_type == 'array':
+                    self.facet_stack.append(fd.facet(key = self.stack.top.key, props_num= self.properties_types(data['items'], True)))
+
                 # if not fd.facet('q'):
                 #     pass
             # process children
@@ -106,80 +108,89 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             and not (data.type == "array" and array_items_type == "fulltext")
         ):
             definition = data.get(OAREPO_FACETS_PROPERTY, {})
-            nested_paths = []
-            nested_path = ""
-            nested = False
-            path_stack = self.stack.stack[2:]  # start inside model properties
-            for upper in path_stack:
-                if upper.key == "properties":
-                    continue
-                nested_path = nested_path + upper.key + "."
-                if upper.data.get("mapping", {"type": ""}).get("type") == "nested":
-                    nested_paths.append(nested_path)
-            if len(nested_paths) > 0:
-                nested = True
 
-            if "key" in definition:
-                name = definition["key"]
+            d_type = datatypes.get_datatype(data, data.type, self.current_model, self.schema)
+            self.facet_stack.append(d_type.facet(key=self.stack.top.key, definition=definition))
+
+            # todo smazat ten if
+            test = True
+            if test:
+                pass
             else:
-                name = self.process_name(self.stack.path, type="name")
-            if data.type == "fulltext+keyword" and "key" not in definition:
-                name = name + "_keyword"
-            if name == "$schema":
-                name = "_schema"
-            if name == "id":
-                name = "_id"
-            class_string = ""
+                nested_paths = []
+                nested_path = ""
+                nested = False
+                path_stack = self.stack.stack[2:]  # start inside model properties
+                for upper in path_stack:
+                    if upper.key == "properties":
+                        continue
+                    nested_path = nested_path + upper.key + "."
+                    if upper.data.get("mapping", {"type": ""}).get("type") == "nested":
+                        nested_paths.append(nested_path)
+                if len(nested_paths) > 0:
+                    nested = True
 
-            if nested:
-                class_string = "NestedLabeledFacet("
-                for path in nested_paths:
-                    if nested_paths[-1] == path:
-                        class_string = class_string + "path = " + '"' + path[:-1] + '"'
+                if "key" in definition:
+                    name = definition["key"]
+                else:
+                    name = self.process_name(self.stack.path, type="name")
+                if data.type == "fulltext+keyword" and "key" not in definition:
+                    name = name + "_keyword"
+                if name == "$schema":
+                    name = "_schema"
+                if name == "id":
+                    name = "_id"
+                class_string = ""
+
+                if nested:
+                    class_string = "NestedLabeledFacet("
+                    for path in nested_paths:
+                        if nested_paths[-1] == path:
+                            class_string = class_string + "path = " + '"' + path[:-1] + '"'
+                        else:
+                            class_string = (
+                                class_string
+                                + "path = "
+                                + '"'
+                                + path[:-1]
+                                + '"'
+                                + ", nested_facet = NestedLabeledFacet("
+                            )
+
+                if "field" in definition:
+                    field = definition["field"]
+                    if nested:
+                        class_string = class_string + " , nested_facet =" + field
+                        for x in nested_paths:
+                            class_string = class_string + ")"
+                        self.search_options_data.append({name: class_string})
                     else:
-                        class_string = (
-                            class_string
-                            + "path = "
-                            + '"'
-                            + path[:-1]
-                            + '"'
-                            + ", nested_facet = NestedLabeledFacet("
+                        self.search_options_data.append({name: field})
+                else:
+                    search_data = []
+                    field = self.process_name(self.stack.path, type="field")
+                    if data.type == "fulltext+keyword":
+                        field = field + ".keyword"
+                    search_data.append(["field", field])
+                    facets_class = definition.get("class", "TermsFacet")
+                    for key, value in definition.items():
+                        if "class" != key and "field" != key:
+                            search_data.append([key, value])
+                    if nested:
+                        search_options = self.process_search_options(
+                            search_data, facets_class
                         )
+                        search_options = class_string + " , nested_facet =" + search_options
+                        for x in nested_paths:
+                            search_options = search_options + ")"
 
-            if "field" in definition:
-                field = definition["field"]
-                if nested:
-                    class_string = class_string + " , nested_facet =" + field
-                    for x in nested_paths:
-                        class_string = class_string + ")"
-                    self.search_options_data.append({name: class_string})
-                else:
-                    self.search_options_data.append({name: field})
-            else:
-                search_data = []
-                field = self.process_name(self.stack.path, type="field")
-                if data.type == "fulltext+keyword":
-                    field = field + ".keyword"
-                search_data.append(["field", field])
-                facets_class = definition.get("class", "TermsFacet")
-                for key, value in definition.items():
-                    if "class" != key and "field" != key:
-                        search_data.append([key, value])
-                if nested:
-                    search_options = self.process_search_options(
+                    else:
+                        search_options = self.process_search_options(
                         search_data, facets_class
-                    )
-                    search_options = class_string + " , nested_facet =" + search_options
-                    for x in nested_paths:
-                        search_options = search_options + ")"
-
-                else:
-                    search_options = self.process_search_options(
-                        search_data, facets_class
-                    )
-                self.search_options_data.append({name: search_options})
-            facets_name = "facets." + name
-            self.facets_definition.append({name: facets_name})
+                        )
+                    self.search_options_data.append({name: search_options})
+                facets_name = "facets." + name
+                self.facets_definition.append({name: facets_name})
 
     def process_search_options(self, data, field_class):
         text = ""

@@ -76,12 +76,17 @@ class ObjectDataType(DataType):
                 class_name = f"{'.'.join(package_path)}.{class_name}"
         return class_name
 
+    def facet(self, key, definition= None, props_num = None):
+        return {"path": key, "class": "TermFacet", 'props_num' : props_num}
 
 class NestedDataType(ObjectDataType):
     schema_type = "object"
     mapping_type = "nested"
     marshmallow_field = "ma_fields.Nested"
     model_type = "nested"
+
+    def facet(self, key, definition= None, props_num = None):
+        return {"path": key, "class": "NestedLabeledFacet", 'props_num' : props_num}
 
 
 
@@ -91,6 +96,8 @@ class FlattenDataType(DataType):
     marshmallow_field = "ma_fields.Raw"
     model_type = "flatten"
 
+    def facet(self, key, definition= None, props_num = None):
+        return {"path": key, "class": "TermFacet", 'props_num' : props_num}
 
 class ArrayDataType(DataType):
     schema_type = "array"
@@ -105,3 +112,6 @@ class ArrayDataType(DataType):
         uniqueItems = fields.Boolean(required=False)
         minItems = fields.Integer(required=False)
         maxItems = fields.Integer(required=False)
+
+    def facet(self, key, definition= None, props_num = None):
+        return {"path": key, "class": "TermFacet", 'props_num' : props_num}
