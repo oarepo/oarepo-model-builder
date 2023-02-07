@@ -13,11 +13,9 @@ class ModelSchema(ExtendablePartSchema):
     opensearch = fields.Nested(
         lambda: model_validator.validator_class("model-opensearch", strict=False)()
     )
-    plugins = (
-        fields.Nested(
+    plugins = fields.Nested(
             lambda: model_validator.validator_class("plugins-schema")(), required=False
-        ),
-    )
+        )
 
     @ma.pre_load(pass_many=False)
     def set_properties_before_load(self, data, **kwargs):
