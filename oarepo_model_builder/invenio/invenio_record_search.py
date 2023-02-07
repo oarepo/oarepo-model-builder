@@ -1,3 +1,5 @@
+import re
+
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
 from ..datatypes import datatypes
@@ -67,8 +69,10 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             data = self.stack.top.data
             if 'type' in data:
                 fd = datatypes.get_datatype(data, data.type, self.current_model, self.schema)
-                if fd.key == 'nested':
-                    print('kvik')
+                fd.facet('g')
+                if fd.key == 'nested' or fd.key == 'object':
+                    pass
+                    # print('kvik')
                 # if not fd.facet('q'):
                 #     pass
             # process children
@@ -200,6 +204,15 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         for i in del_indices:
             del self.facet_stack[i]
         self.facet_stack.reverse()
+
+    def refactor_name(self, facet_name):
+        re.sub('@', "_", facet_name) #for relation field purposes
+        if facet_name == 'id': facet_name = "_id" #special case
+        if not facet_name[0].isalpha() and facet_name[0] != "_":
+            facet_name = facet_name + "_"
+
+        return  facet_name
+
 
     def properties_types(self, data, array = False):#todo check
         count = 0
