@@ -23,6 +23,6 @@ class PluginsSchema(ma.Schema):
 
 
 class PluginConfigSchema(ma.Schema):
-    disable = Union(CheckedConstant("__all__"), fields.List(fields.String()))
+    disable = Union([CheckedConstant("__all__"), fields.List(fields.String())])
     enable = fields.List(fields.String())
     include = fields.List(fields.String())
