@@ -1,5 +1,6 @@
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
+from ..datatypes import datatypes
 
 from ..outputs.json_stack import JSONStack
 from ..utils.deepmerge import deepmerge
@@ -27,6 +28,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         self.settings = settings
         if "sortable" in schema.schema:
             self.process_top_sortable(schema.schema["sortable"])
+
+        self.facet_stack = []
 
     def finish(self, **extra_kwargs):
         super().finish(
@@ -59,7 +62,15 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         definition = None
         recurse = True
 
+
         if recurse:
+            data = self.stack.top.data
+            if 'type' in data:
+                fd = datatypes.get_datatype(data, data.type, self.current_model, self.schema)
+                if fd.key == 'nested':
+                    print('kvik')
+                # if not fd.facet('q'):
+                #     pass
             # process children
             self.build_children()
 
@@ -174,6 +185,37 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             else:
                 text = text + ", " + x[0] + ' = "' + x[1] + '"'
         return field_class + "(" + text + ")"
+
+    def clean_stack(self):
+        self.facet_stack.reverse()
+        del_indices = []
+        del self.facet_stack[:1]
+        for facet in self.facet_stack:
+            if 'props_num' in facet and facet['props_num'] == 1:
+                del_indices.append(self.facet_stack.index(facet))
+            elif 'props_num' in facet:
+                facet['props_num'] = facet['props_num'] -1
+
+                break
+        for i in del_indices:
+            del self.facet_stack[i]
+        self.facet_stack.reverse()
+
+    def properties_types(self, data, array = False):#todo check
+        count = 0
+        if array:
+            if 'type' in data and data['type'] == 'object':
+                data = data['properties']
+                print(data)
+            elif 'type' in data and data['type'] != "text" and data['type'] != "fulltext":
+                return 1
+            else: return 0
+        for d in data:
+            if 'properties' in data[d]:
+                count = count + 1
+            elif 'type' in data[d] and data[d].type != "text" and data[d].type != "fulltext": #todo pomoci facet spis nejak hm
+                count = count + 1
+        return count
 
     def process_name(self, path, type):
         path_array = (path.split("/"))[2:]

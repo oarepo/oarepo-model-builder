@@ -1,5 +1,7 @@
 
 import os
+import re
+
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import InMemoryFileSystem
@@ -19,6 +21,7 @@ def test_include_invenio():
                         "type": "keyword",
                         "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
+                    "c": "fulltext"
                 },
             },
         },

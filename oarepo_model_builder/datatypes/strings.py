@@ -50,13 +50,15 @@ class FulltextDataType(StringDataType):
     mapping_type = "text"
     model_type = "fulltext"
 
+    def facet(self, key, definition=None, props_num=None):
+        return False
+
 
 class KeywordDataType(StringDataType):
     mapping_type = "keyword"
     model_type = "keyword"
 
-    def facet(self, nested_facet):
-        return f"TermsFacet({self.path})"
+
 
 
 class FulltextKeywordDataType(StringDataType):

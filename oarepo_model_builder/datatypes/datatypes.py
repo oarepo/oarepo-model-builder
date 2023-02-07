@@ -56,8 +56,8 @@ class DataType:
     def imports(self, *extra) -> List[Import]:
         return extra
 
-    def facet(self, nested_facet):
-        return nested_facet
+    def facet(self, key, definition=None, props_num=None):
+        return key, definition, props_num
 
     def dumper_class(self, data):  # NOSONAR
         return None
