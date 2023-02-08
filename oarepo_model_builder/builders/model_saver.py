@@ -33,6 +33,7 @@ class ModelSaverBuilder(JSONBaseBuilder):
                 self.stack.top.key,
                 self.current_model,
                 self.whole_schema,
+                self.stack,
             )
             if datatype:
                 marshmallow = datatype.marshmallow()

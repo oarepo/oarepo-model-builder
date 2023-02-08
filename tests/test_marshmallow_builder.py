@@ -87,6 +87,27 @@ def test_simple_array(fulltext_builder):
     assert "a = ma_fields.List(ma_fields.String())" in data
 
 
+def test_array_of_objects(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "type": "array",
+            "items": {"type": "object", "properties": {"b": {"type": "integer"}}},
+        }
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(schema, output_dir="")
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert (
+        'class AItemSchema(ma.Schema):\n    """AItemSchema schema."""\n    b = ma_fields.Integer()'
+        in data
+    )
+    assert "a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))" in data
+
+
 def test_generate_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={

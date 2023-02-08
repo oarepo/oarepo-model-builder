@@ -24,7 +24,11 @@ class ObjectDataType(DataType):
 
         schema_class = ret.get("schema-class", None)
         if not schema_class:
-            schema_class = camel_case(self.key) + "Schema"
+            if self.stack.top.schema_element_type == "items":
+                schema_class_base = self.stack[-2].key + "Item"
+            else:
+                schema_class_base = self.key
+            schema_class = camel_case(schema_class_base) + "Schema"
 
         package_name = split_package_name(self.model.record_schema_class)
 
@@ -34,8 +38,11 @@ class ObjectDataType(DataType):
             self.definition, sort_keys=True, default=lambda x: repr(x)
         ).encode("utf-8")
 
+        if "known-classes" not in self.model:
+            self.model.known_classes = {}
+
         schema_class = self._find_unique_schema_class(
-            self.model.setdefault("known-classes", {}), schema_class, fingerprint
+            self.model.known_classes, schema_class, fingerprint
         )
 
         self.model.known_classes[schema_class] = fingerprint
@@ -48,7 +55,7 @@ class ObjectDataType(DataType):
         if schema_class in known_classes:
             # reuse class with the same fingerprint
             if fingerprint != known_classes[schema_class]:
-                for i in range(100):
+                for i in range(1, 100):
                     candidate = f"{schema_class}_{i}"
                     if candidate not in known_classes:
                         schema_class = candidate
