@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
 from typing import Dict
+
 from oarepo_model_builder.utils.camelcase import camel_case, snake_case
 from oarepo_model_builder.utils.deepmerge import deepmerge
-
 from oarepo_model_builder.utils.jinja import split_base_name
 
 from ..schema import ModelSchema

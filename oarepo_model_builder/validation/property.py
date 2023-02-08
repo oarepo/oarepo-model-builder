@@ -1,10 +1,11 @@
-from marshmallow import fields
-from .model_validation import model_validator
-from marshmallow_union import Union
-from marshmallow.exceptions import ValidationError
-
-from .utils import ExtendablePartSchema
 import typing
+
+from marshmallow import fields
+from marshmallow.exceptions import ValidationError
+from marshmallow_union import Union
+
+from .model_validation import model_validator
+from .utils import ExtendablePartSchema
 
 
 class StrictString(fields.String):

@@ -1,7 +1,7 @@
 import marshmallow as ma
 from marshmallow import fields
-from .model_validation import model_validator
 
+from .model_validation import model_validator
 from .utils import ExtendablePartSchema
 
 

@@ -1,7 +1,8 @@
+import enum
+
 from marshmallow import fields
 
 from .utils import ExtendablePartSchema
-import enum
 
 
 class OrderEnum(enum.Enum):

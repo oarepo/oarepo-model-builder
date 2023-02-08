@@ -1,10 +1,10 @@
 import copy
 from collections import namedtuple
 from typing import List, Union
-from marshmallow import fields
-import marshmallow as ma
 
 import importlib_metadata
+import marshmallow as ma
+from marshmallow import fields
 
 Import = namedtuple("Import", "import_path,alias")
 

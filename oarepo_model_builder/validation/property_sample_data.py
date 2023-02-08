@@ -1,5 +1,5 @@
-from marshmallow import fields
 import marshmallow as ma
+from marshmallow import fields
 
 from .utils import ExtendablePartSchema
 

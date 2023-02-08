@@ -1,7 +1,9 @@
 import sys
-from oarepo_model_builder.validation.model_validation import model_validator
+
 import pytest
 from marshmallow.exceptions import ValidationError
+
+from oarepo_model_builder.validation.model_validation import model_validator
 
 
 def test_empty_model_validation():

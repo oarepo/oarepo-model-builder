@@ -1,5 +1,7 @@
 import copy
 import dataclasses
+import logging
+import re
 from collections import defaultdict, namedtuple
 from typing import Any, Dict, List, Tuple, Union
 
@@ -9,15 +11,14 @@ from oarepo_model_builder.datatypes import Import, datatypes
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.camelcase import camel_case
-from oarepo_model_builder.utils.jinja import (
-    split_base_name,
-    split_package_base_name,
-    split_package_name,
-)
+from oarepo_model_builder.utils.jinja import (split_base_name,
+                                              split_package_base_name,
+                                              split_package_name)
 from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder
-import re
+
+log = logging.getLogger("invenio_record_schema")
 
 BUILTIN_ALIASES = [
     "ma_validates",
@@ -310,15 +311,16 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             if hasattr(fld, "generate_schema_class"):
                 package, class_name, generated_class = fld.generate_schema_class()
                 if (package_name, class_name) in known_classes:
-                    raise RuntimeError(
-                        f"Class renaming has not worked, have {package_name}.{class_name} twice"
+                    log.info(
+                        f"Class renaming: have {package_name}.{class_name} twice, will use the first definition"
                     )
-                known_classes.add((package_name, class_name))
-                if class_name:
-                    imports = generated_imports[package]
-                    for _f in fld.walk():
-                        imports.update(_f.get_imports())
-                    generated_classes[package].append(generated_class)
+                else:
+                    known_classes.add((package_name, class_name))
+                    if class_name:
+                        imports = generated_imports[package]
+                        for _f in fld.walk():
+                            imports.update(_f.get_imports())
+                        generated_classes[package].append(generated_class)
 
         # create python files ...
         for package_name in generated_classes:

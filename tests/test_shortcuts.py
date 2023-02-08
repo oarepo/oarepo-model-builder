@@ -5,7 +5,8 @@ from pathlib import Path
 
 import yaml
 
-from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
+from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
+                                              load_model)
 from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
 

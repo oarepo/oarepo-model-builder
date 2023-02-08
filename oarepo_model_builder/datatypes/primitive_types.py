@@ -1,7 +1,8 @@
 from typing import List
 
-from .datatypes import DataType, Import
 from marshmallow import fields
+
+from .datatypes import DataType, Import
 
 
 class NumberDataType(DataType):

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from functools import cached_property, partial
+
 import importlib_metadata
 import marshmallow as ma
 from marshmallow.exceptions import ValidationError

@@ -1,11 +1,16 @@
 import json
+import logging
+from hashlib import sha256
+
+from marshmallow import fields
 
 from oarepo_model_builder.utils.camelcase import camel_case
 from oarepo_model_builder.utils.jinja import split_package_name
 from oarepo_model_builder.validation import InvalidModelException, model_validator
 
 from .datatypes import DataType
-from marshmallow import fields
+
+log = logging.getLogger("datatypes")
 
 
 class ObjectDataType(DataType):
@@ -21,7 +26,6 @@ class ObjectDataType(DataType):
 
     def marshmallow(self, **extras):
         ret = super().marshmallow(**extras)
-
         schema_class = ret.get("schema-class", None)
         if not schema_class:
             if self.stack.top.schema_element_type == "items":
@@ -34,15 +38,20 @@ class ObjectDataType(DataType):
 
         schema_class = self._get_class_name(package_name, schema_class)
 
-        fingerprint = json.dumps(
-            self.definition, sort_keys=True, default=lambda x: repr(x)
-        ).encode("utf-8")
+        fingerprint = sha256(
+            json.dumps(
+                self.definition, sort_keys=True, default=lambda x: repr(x)
+            ).encode("utf-8")
+        ).hexdigest()
 
         if "known-classes" not in self.model:
             self.model.known_classes = {}
 
         schema_class = self._find_unique_schema_class(
             self.model.known_classes, schema_class, fingerprint
+        )
+        log.debug(
+            "%s: fp %s, schema class %s", self.stack.path, fingerprint, schema_class
         )
 
         self.model.known_classes[schema_class] = fingerprint
@@ -55,20 +64,51 @@ class ObjectDataType(DataType):
         if schema_class in known_classes:
             # reuse class with the same fingerprint
             if fingerprint != known_classes[schema_class]:
+                path = []
+                for pth in reversed(self.stack.stack[:-1]):
+                    if pth.schema_element_type == "property":
+                        path.insert(0, pth.key)
+                        candidate = self._get_schema_class_candidate(
+                            schema_class,
+                            fingerprint,
+                            prefix="".join(x.title() for x in path),
+                            known_classes=known_classes,
+                        )
+                        if candidate:
+                            return candidate
                 for i in range(1, 100):
-                    candidate = f"{schema_class}_{i}"
-                    if candidate not in known_classes:
-                        schema_class = candidate
-                        break
-                    if fingerprint == known_classes[candidate]:
-                        schema_class = candidate
-                        break
-                else:
-                    raise InvalidModelException(
-                        f"Too many marshmallow classes with name {schema_class}. Please specify your own class names"
+                    candidate = self._get_schema_class_candidate(
+                        schema_class,
+                        fingerprint,
+                        suffix=f"_{i}",
+                        known_classes=known_classes,
                     )
+                    if candidate:
+                        return candidate
+
+                raise InvalidModelException(
+                    f"Too many marshmallow classes with name {schema_class}. Please specify your own class names"
+                )
 
         return schema_class
+
+    def _get_schema_class_candidate(
+        self, schema_class, fingerprint, suffix="", prefix="", known_classes=None
+    ):
+        print(" ... trying", schema_class, prefix, suffix)
+        pkg_clz = schema_class.rsplit(".", maxsplit=1)
+        if len(pkg_clz) > 1:
+            pkg, clz = f"{pkg_clz[0]}.", pkg_clz[1]
+        else:
+            pkg = ""
+            clz = pkg_clz[0]
+
+        candidate = f"{pkg}{prefix}{clz}{suffix}"
+        if candidate not in known_classes:
+            return candidate
+        if fingerprint == known_classes[candidate]:
+            return candidate
+        return None
 
     def _get_class_name(self, package_name: str, class_name: str):
         if "." not in class_name:

@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 
 try:
     import json5

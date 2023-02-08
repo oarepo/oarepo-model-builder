@@ -6,12 +6,8 @@ from typing import Dict, List, Type, Union
 
 import yaml
 
-from .builders import (
-    ModelBuilderStack,
-    OutputBuilder,
-    OutputBuilderComponent,
-    ReplaceElement,
-)
+from .builders import (ModelBuilderStack, OutputBuilder,
+                       OutputBuilderComponent, ReplaceElement)
 from .fs import AbstractFileSystem, FileSystem
 from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
