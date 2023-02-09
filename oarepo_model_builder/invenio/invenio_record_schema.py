@@ -11,9 +11,11 @@ from oarepo_model_builder.datatypes import Import, datatypes
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.camelcase import camel_case
-from oarepo_model_builder.utils.jinja import (split_base_name,
-                                              split_package_base_name,
-                                              split_package_name)
+from oarepo_model_builder.utils.jinja import (
+    split_base_name,
+    split_package_base_name,
+    split_package_name,
+)
 from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder
@@ -115,6 +117,7 @@ class MarshmallowNode:
                 rw_arguments.append("load_only=True")
             if self.stack.top.key != self.field_name:
                 rw_arguments.append(f'data_key="{self.stack.top.key}"')
+                rw_arguments.append(f'attribute="{self.stack.top.key}"')
             return (
                 f"{self.field_class}"
                 + f"({', '.join(self.field_arguments + rw_arguments)})"
@@ -251,6 +254,7 @@ class ArrayMarshmallowNode(CompositeMarshmallowNode):
         rw_arguments = []
         if self.stack.top.key != self.field_name:
             rw_arguments.append(f'data_key="{self.stack.top.key}"')
+            rw_arguments.append(f'attribute="{self.stack.top.key}"')
         if rw_arguments:
             rw_arguments = ", " + ", ".join(rw_arguments)
         else:
