@@ -73,7 +73,7 @@ from oarepo_model_builder.utils.verbose import log
     "--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"])
 )
 @click.option(
-    "--overwrite",
+    "--overwrite", type="bool", default=False,
     help="Do not merge with content in already existing files, overwrite them",
 )
 @click.option(
