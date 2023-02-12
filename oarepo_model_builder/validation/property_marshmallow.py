@@ -21,6 +21,11 @@ class PropertyMarshmallowSchema(ExtendablePartSchema):
     validators = fields.List(fields.String(), required=False)
 
 
+class ExtraField(ma.Schema):
+    name = fields.String(required=True)
+    value = fields.String(required=True)
+
+
 class ModelMarshmallowSchema(ma.Schema):
     class ObjectOnlyMarshmallowProps(ExtendablePartSchema):
         imports = fields.List(
@@ -30,6 +35,9 @@ class ModelMarshmallowSchema(ma.Schema):
         schema_class = fields.String(data_key="schema-class", required=False)
         base_classes = fields.List(
             fields.String(), data_key="base-classes", required=False
+        )
+        extra_fields = fields.List(
+            fields.Nested(ExtraField), required=False, data_key="extra-fields"
         )
 
     marshmallow = fields.Nested(

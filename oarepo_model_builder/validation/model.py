@@ -16,6 +16,8 @@ class ModelSchema(ExtendablePartSchema):
     plugins = fields.Nested(
         lambda: model_validator.validator_class("plugins-schema")(), required=False
     )
+    jsonschema = fields.Nested(PermissiveSchema())
+    mapping = fields.Nested(PermissiveSchema())
 
     @ma.pre_load(pass_many=False)
     def set_properties_before_load(self, data, **kwargs):

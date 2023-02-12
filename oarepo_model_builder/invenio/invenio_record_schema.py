@@ -178,6 +178,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
     generate: bool = True
     schema_class: Union[str, None] = None
     base_classes: Union[List[str], None] = None
+    extra_fields: Union[List[Dict[str, str]], None] = None
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
@@ -185,6 +186,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
             "generate": definition.get("generate", True),
             "schema_class": definition.get("schema-class", None),
             "base_classes": definition.get("base-classes", ["ma.Schema"]),
+            "extra_fields": definition.get("extra-fields", []),
             **super()._kwargs(definition, schema, stack),
         }
 
@@ -211,6 +213,9 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
             return None, None, None
 
         field_list = []
+        for fld in self.extra_fields:
+            field_list.append(f"{fld.name} = {fld.value}")
+
         for fld in self.fields:
             if fld.read or fld.write:
                 # and generate the field

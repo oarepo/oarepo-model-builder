@@ -33,6 +33,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
             jsonschema = self.call_components(
                 "before_merge_jsonschema", data["jsonschema"], stack=self.stack
             )
+            jsonschema.pop("generate", None)
             self.output.merge_jsonschema(jsonschema)
 
     def check_and_output_required(self):
@@ -42,6 +43,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
 
     def on_enter_model(self, output_name):
         self.output.primitive("type", "object")
+        self.merge_jsonschema(self.stack.top.data)
         ensure_parent_modules(
             self.builder, Path(output_name), ends_at=self.parent_module_root_name
         )
