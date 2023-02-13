@@ -21,12 +21,16 @@ def convert_name_to_python(name):
     return identifier
 
 
-def convert_name_to_python_class(name):
-    # Replace any spaces or special characters in the string with an underscore
-    class_name = re.sub(r"[^\w\s]", "", name)
-    class_name = re.sub(r"\s+", "_", class_name)
+def capitalize(s):
+    return s[0].capitalize() + s[1:]
 
-    # Capitalize the first letter of each word to form a nicely looking class name
-    class_name = "".join([word.capitalize() for word in class_name.split("_")])
+
+def convert_name_to_python_class(name):
+    class_name = "".join([capitalize(word) for word in name.split("-")])
+    class_name = "".join([capitalize(word) for word in class_name.split("_")])
+
+    # Replace any spaces or special characters in the string with an underscore
+    class_name = re.sub(r"[^\w\s]", "", class_name)
+    class_name = re.sub(r"\s+", "_", class_name)
 
     return class_name

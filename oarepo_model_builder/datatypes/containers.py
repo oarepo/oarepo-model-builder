@@ -7,6 +7,7 @@ from marshmallow import fields
 from oarepo_model_builder.utils.camelcase import camel_case
 from oarepo_model_builder.utils.jinja import split_package_name
 from oarepo_model_builder.validation import InvalidModelException, model_validator
+from oarepo_model_builder.utils.python_name import convert_name_to_python_class
 
 from .datatypes import DataType
 
@@ -32,7 +33,7 @@ class ObjectDataType(DataType):
                 schema_class_base = self.stack[-2].key + "Item"
             else:
                 schema_class_base = self.key
-            schema_class = camel_case(schema_class_base) + "Schema"
+            schema_class = convert_name_to_python_class(schema_class_base) + "Schema"
 
         package_name = split_package_name(self.model.record_schema_class)
 
@@ -103,7 +104,11 @@ class ObjectDataType(DataType):
             pkg = ""
             clz = pkg_clz[0]
 
-        candidate = f"{pkg}{prefix}{clz}{suffix}"
+        candidate = f"{pkg}{prefix}{clz}{suffix}".rsplit(".", maxsplit=1)
+        if len(candidate) > 1:
+            candidate = candidate[0] + "." + convert_name_to_python_class(candidate[1])
+        else:
+            candidate = convert_name_to_python_class(candidate[0])
         if candidate not in known_classes:
             return candidate
         if fingerprint == known_classes[candidate]:
