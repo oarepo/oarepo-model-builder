@@ -174,7 +174,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                     {convert_name_to_python(name): search_options}
                 )
             facets_name = "facets." + name
-            self.facets_definition.append({name: facets_name})
+            self.facets_definition.append({convert_name_to_python(name): facets_name})
 
     def process_search_options(self, data, field_class):
         text = ""
