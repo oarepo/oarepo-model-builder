@@ -16,6 +16,7 @@ from oarepo_model_builder.utils.jinja import (
     split_package_base_name,
     split_package_name,
 )
+from oarepo_model_builder.utils.python_name import convert_name_to_python
 from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder
@@ -76,9 +77,7 @@ class MarshmallowNode:
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
         field_name = definition.get("field-name", stack.top.key)
-        field_name = field_name.replace("-", "_")
-        field_name = re.sub("\W", "", field_name)
-        field_name = re.sub("^[^a-zA-Z_]+", "", field_name)
+        field_name = convert_name_to_python(field_name)
         return {
             "read": definition.get("read", True),
             "write": definition.get("write", True),

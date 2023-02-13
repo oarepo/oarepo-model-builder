@@ -1,10 +1,14 @@
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
+from oarepo_model_builder.utils.python_name import convert_name_to_python
 
 from ..outputs.json_stack import JSONStack
 from ..utils.deepmerge import deepmerge
 from ..utils.hyphen_munch import HyphenMunch
 from .invenio_base import InvenioBaseClassPythonBuilder
+import re
+import keyword
+
 
 OAREPO_FACETS_PROPERTY = "facets"
 OAREPO_SORTABLE_PROPERTY = "sortable"
@@ -20,7 +24,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         self.template = "record-search-options"
         self.search_options_data = []
         self.sort_options_data = []
-        self.search_facets_definiton = []
+        self.search_facets_definition = []
         self.search_options_stack = JSONStack()
         self.facets_definition = []
         self.facets_names = []
@@ -137,9 +141,13 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                     class_string = class_string + " , nested_facet =" + field
                     for x in nested_paths:
                         class_string = class_string + ")"
-                    self.search_options_data.append({name: class_string})
+                    self.search_options_data.append(
+                        {convert_name_to_python(name): class_string}
+                    )
                 else:
-                    self.search_options_data.append({name: field})
+                    self.search_options_data.append(
+                        {convert_name_to_python(name): field}
+                    )
             else:
                 search_data = []
                 field = self.process_name(self.stack.path, type="field")
@@ -162,7 +170,9 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                     search_options = self.process_search_options(
                         search_data, facets_class
                     )
-                self.search_options_data.append({name: search_options})
+                self.search_options_data.append(
+                    {convert_name_to_python(name): search_options}
+                )
             facets_name = "facets." + name
             self.facets_definition.append({name: facets_name})
 
