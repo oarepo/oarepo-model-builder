@@ -50,8 +50,8 @@ class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
     
     a = ma_fields.String(validate=[ma_valid.OneOf(["a", "b", "c"])])
-    created = ma_fields.String(validate=[validate_date('%Y:%m:%d')], dump_only=True)
-    updated = ma_fields.String(validate=[validate_date('%Y:%m:%d')], dump_only=True)
+    created = ma_fields.String(validate=[validate_date('%Y-%m-%d')], dump_only=True)
+    updated = ma_fields.String(validate=[validate_date('%Y-%m-%d')], dump_only=True)
 """,
     )
 
