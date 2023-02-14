@@ -124,15 +124,15 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 facet_def = ""
                 facet_name = ""
                 facet_path = ""
-
+                nested_count = 0
                 #todo prohnat nazvy tou metodou
                 for facet in self.facet_stack:
-                    print(facet)
                     facet_name = facet_name + facet["path"] + "_" #todo maybe in method
                     facet_path = facet_path + self.refactor_name(facet["path"], True) + "." #todo maybe in method
                     if 'defined_class' in facet:
                         facet_def = facet_def + facet["class"]
                     elif facet['class'].startswith("Nested"):
+                        nested_count += 1
                         facet_def = facet_def + f"NestedLabeledFacet(path =\" {facet_path[:-1]}\", nested_facet="
                     elif 'props_num' in facet:
                         pass
@@ -142,7 +142,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                         facet_path = (facet_path[::-1]).replace('_keyword.'[::-1], '.keyword.'[::-1], 1)[::-1] \
                             if facet_path.endswith('_keyword.') else facet_path
                         facet_def = facet_def + facet["class"] + f"\"{facet_path[:-1]}\""
-                        # for i in range(0, len(self.facet_stack)): #todo toto uz nieje aktualne
+                        for i in range(0, nested_count): #todo toto uz nieje aktualne
+                            facet_def = facet_def + ')'
                         facet_def = facet_def + ')'
                 self.clean_stack()
                 # if facet_name == "$schema_":
