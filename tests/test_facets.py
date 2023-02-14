@@ -171,6 +171,7 @@ def test_object():
                                 "properties": {"g": {"type": "keyword"}},
 
                             },
+                            "e": "fulltext"
                         }
                     }
                 },

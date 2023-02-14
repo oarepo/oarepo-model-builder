@@ -113,5 +113,9 @@ class ArrayDataType(DataType):
         minItems = fields.Integer(required=False)
         maxItems = fields.Integer(required=False)
 
-    def facet(self, key, definition= None, props_num = None):
+    def facet(self, key, definition={}, props_num = None):
+        # if 'properties' in definition['items'] or 'items' in definition['items']:
+        #     obj = True
+        if props_num == 0: #todo nested??????
+            return False
         return {"path": key, "class": "TermFacet", 'props_num' : props_num}

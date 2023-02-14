@@ -46,6 +46,11 @@ class StringDataType(DataType):
         return validators
 
 
+    def facet(self, key, definition={}, props_num=None):
+        name = definition.get('key', key)
+        field = definition.get('field', "TermsFacet(field = ")
+        return {"path": name, "class": field}
+
 class FulltextDataType(StringDataType):
     mapping_type = "text"
     model_type = "fulltext"
@@ -70,3 +75,8 @@ class FulltextKeywordDataType(StringDataType):
         mapping_el = ret.setdefault("mapping", {})
         mapping_el.setdefault("fields", {}).setdefault("keyword", {"type": "keyword"})
         return ret
+
+    def facet(self, key, definition={}, props_num = None):
+        key = definition.get('key', key + "_keyword")
+        field = definition.get('field', "TermsFacet(field = ")
+        return {"path": key, "class" : field}
