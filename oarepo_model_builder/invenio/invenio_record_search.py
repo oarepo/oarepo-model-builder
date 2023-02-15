@@ -6,6 +6,7 @@ from ..outputs.json_stack import JSONStack
 from ..utils.deepmerge import deepmerge
 from ..utils.hyphen_munch import HyphenMunch
 from .invenio_base import InvenioBaseClassPythonBuilder
+from oarepo_model_builder.utils.python_name import convert_name_to_python
 
 OAREPO_FACETS_PROPERTY = "facets"
 OAREPO_SORTABLE_PROPERTY = "sortable"
@@ -126,8 +127,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 nested_count = 0
                 #todo prohnat nazvy tou metodou
                 for facet in self.facet_stack:
-                    facet_name = facet_name + facet["path"] + "_" #todo maybe in method
-                    facet_path = facet_path + self.refactor_name(facet["path"], True) + "." #todo maybe in method
+                    facet_name = facet_name + convert_name_to_python(facet["path"]) + "_" #todo maybe in method
+                    facet_path = facet_path + facet["path"] + "." #todo maybe in method
                     # if 'simple_array' in facet:
                     #     pass
                     if 'defined_class' in facet:
@@ -153,7 +154,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 #     facet_name = "_schema_"
                 # if facet_name == "id_":
                 #     facet_name = "_id_"
-                self.search_options_data.append({self.refactor_name(facet_name[:-1]): facet_def})
+                self.search_options_data.append({facet_name[:-1]: facet_def})
             # else:
             #     nested_paths = []
             #     nested_path = ""
@@ -255,15 +256,15 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             del self.facet_stack[i]
         self.facet_stack.reverse()
 
-    def refactor_name(self, facet_name, facet_path = False):
-        facet_name = facet_name.replace('@', "_") #for relation field purposes
-        if not facet_path:
-            if facet_name == 'id': facet_name = "_id" #special case
-            if not facet_name[0].isalpha() and facet_name[0] != "_":
-                facet_name = facet_name[1:]
-                facet_name = "_" + facet_name
-
-        return  facet_name
+    # def refactor_name(self, facet_name, facet_path = False):
+    #     facet_name = facet_name.replace('@', "_") #for relation field purposes
+    #     if not facet_path:
+    #         if facet_name == 'id': facet_name = "_id" #special case
+    #         if not facet_name[0].isalpha() and facet_name[0] != "_":
+    #             facet_name = facet_name[1:]
+    #             facet_name = "_" + facet_name
+    #
+    #     return  facet_name
 
 
     def properties_types(self, data, array = False):#todo check
