@@ -129,6 +129,8 @@ class ObjectDataType(DataType):
         return class_name
 
     def facet(self, key, definition= None, props_num = None):
+        if props_num == 0:
+            return False
         return {"path": key, "class": "TermFacet", 'props_num' : props_num}
 
 class NestedDataType(ObjectDataType):
@@ -155,7 +157,7 @@ class FlattenDataType(DataType):
     model_type = "flatten"
 
     def facet(self, key, definition= None, props_num = None):
-        return {"path": key, "class": "TermFacet", 'props_num' : props_num}
+        return False #todo ?
 
 class ArrayDataType(DataType):
     schema_type = "array"

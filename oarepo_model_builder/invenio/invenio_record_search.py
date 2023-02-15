@@ -66,19 +66,20 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
 
         if recurse:
-
-            if 'type' in data:
+            try:
                 self.definition = data.get(OAREPO_FACETS_PROPERTY, {})
                 fd = datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack)
                 # fd.facet('g')
                 ft = False
                 if fd.schema_type == 'object':
-                    ft = fd.facet(key = self.stack.top.key, props_num= self.properties_types(data['properties']))
+                    properties = data.get('properties', {})
+                    ft = fd.facet(key = self.stack.top.key, props_num= self.properties_types(properties))
                 elif fd.schema_type == 'array':
                     ft = fd.facet(key = self.stack.top.key, props_num= self.properties_types(data['items'], True), definition=self.definition)
 
                 if ft:
                     self.facet_stack.append(ft)
+            except: pass
                 # if not fd.facet('q'):
                 #     pass
             # process children
