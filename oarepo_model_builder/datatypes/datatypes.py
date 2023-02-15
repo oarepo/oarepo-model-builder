@@ -1,10 +1,10 @@
 import copy
 from collections import namedtuple
 from typing import List, Union
-from marshmallow import fields
-import marshmallow as ma
 
 import importlib_metadata
+import marshmallow as ma
+from marshmallow import fields
 
 Import = namedtuple("Import", "import_path,alias")
 
@@ -18,11 +18,12 @@ class DataType:
     class ModelSchema(ma.Schema):
         type = fields.String(required=True)
 
-    def __init__(self, definition, key, model, schema):
+    def __init__(self, definition, key, model, schema, stack):
         self.definition = definition
         self.key = key
         self.model = model
         self.schema = schema
+        self.stack = stack
 
     def _copy_definition(self, **extras):
         ret = copy.deepcopy(self.definition)
@@ -75,10 +76,10 @@ class DataTypes:
                 for dt in entry.load():
                     self.datatype_map[dt.model_type] = dt
 
-    def get_datatype(self, data, key, model, schema) -> Union[DataType, None]:
+    def get_datatype(self, data, key, model, schema, stack) -> Union[DataType, None]:
         datatype_class = self.get_datatype_class(data.get("type", None))
         if datatype_class:
-            return datatype_class(data, key, model, schema)
+            return datatype_class(data, key, model, schema, stack)
         return None
 
     def get_datatype_class(self, datatype_type):

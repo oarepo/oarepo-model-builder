@@ -1,13 +1,16 @@
 from pathlib import Path
 from typing import Union
+
+import json5
+
 from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
+from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
+                                              load_model)
 from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.profiles import Profile
 from oarepo_model_builder.profiles.extend import ExtendProfile
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.utils.deepmerge import deepmerge
-import json5
 
 
 class ModelProfile(Profile):

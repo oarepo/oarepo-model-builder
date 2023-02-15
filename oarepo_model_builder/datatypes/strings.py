@@ -1,7 +1,9 @@
-from .datatypes import DataType
+import re
+
 from marshmallow import fields
 from marshmallow.exceptions import ValidationError
-import re
+
+from .datatypes import DataType
 
 
 def validate_regex(value):
@@ -10,7 +12,10 @@ def validate_regex(value):
     try:
         re.compile(value)
     except Exception as e:
-        raise ValidationError(f"Regex '{value}' is not valid. Reported error: '{str(e)}'")
+        raise ValidationError(
+            f"Regex '{value}' is not valid. Reported error: '{str(e)}'"
+        )
+
 
 class StringDataType(DataType):
     schema_type = "string"
@@ -21,7 +26,6 @@ class StringDataType(DataType):
         maxLength = fields.Integer(required=False)
         regex = fields.String(required=False, validate=validate_regex)
         enum = fields.List(fields.String(), required=False)
-
 
     def marshmallow_validators(self):
         validators = []

@@ -1,8 +1,8 @@
 import marshmallow as ma
 from marshmallow import fields
-from .model_validation import model_validator
 
-from .utils import ExtendablePartSchema, CheckedConstant, PermissiveSchema
+from .model_validation import model_validator
+from .utils import CheckedConstant, ExtendablePartSchema, PermissiveSchema
 
 
 class ModelSchema(ExtendablePartSchema):
@@ -13,11 +13,11 @@ class ModelSchema(ExtendablePartSchema):
     opensearch = fields.Nested(
         lambda: model_validator.validator_class("model-opensearch", strict=False)()
     )
-    plugins = (
-        fields.Nested(
-            lambda: model_validator.validator_class("plugins-schema")(), required=False
-        ),
+    plugins = fields.Nested(
+        lambda: model_validator.validator_class("plugins-schema")(), required=False
     )
+    jsonschema = fields.Nested(PermissiveSchema())
+    mapping = fields.Nested(PermissiveSchema())
 
     @ma.pre_load(pass_many=False)
     def set_properties_before_load(self, data, **kwargs):

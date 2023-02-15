@@ -4,12 +4,14 @@ from functools import cached_property
 from deepdiff import DeepDiff
 
 from .schema import Ref, SchemaPathValidator, model_paths
+from munch import munchify
+from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
 class ReplaceElement(Exception):
     def __init__(self, data):
         super().__init__()
-        self.data = data
+        self.data = munchify(data, factory=HyphenMunch)
 
 
 class RemoveElement(ReplaceElement):

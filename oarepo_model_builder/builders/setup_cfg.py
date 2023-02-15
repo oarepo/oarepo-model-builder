@@ -12,7 +12,9 @@ class SetupCfgBuilder(OutputBuilder):
         super().finish()
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
-        output.setdefault("metadata", "name", self.current_model.package_base.replace("_", "-"))
+        output.setdefault(
+            "metadata", "name", self.current_model.package_base.replace("_", "-")
+        )
         version = self.schema.get("version", "1.0.0dev1")
         output.setdefault("metadata", "version", version)
         if parse_version(output.get("metadata", "version").value) < parse_version(

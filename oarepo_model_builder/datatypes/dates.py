@@ -20,7 +20,7 @@ class DateDataType(BaseDateDataType):
 
     def marshmallow_validators(self) -> List[str]:
         return super().marshmallow_validators() + [
-            "validate_date('%Y:%m:%d')",
+            "validate_date('%Y-%m-%d')",
         ]
 
     def imports(self, *extra) -> List[Import]:

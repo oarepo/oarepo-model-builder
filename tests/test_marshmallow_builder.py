@@ -4,22 +4,19 @@ import re
 import pytest
 
 from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.invenio.invenio_record_schema import (
-    InvenioRecordSchemaBuilder,
-)
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
-from oarepo_model_builder.model_preprocessors.opensearch import (
-    OpensearchModelPreprocessor,
-)
-from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
-    DataTypePreprocessor,
-)
-from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.invenio.invenio_record_schema import \
+    InvenioRecordSchemaBuilder
+from oarepo_model_builder.model_preprocessors.default_values import \
+    DefaultValuesModelPreprocessor
+from oarepo_model_builder.model_preprocessors.invenio import \
+    InvenioModelPreprocessor
+from oarepo_model_builder.model_preprocessors.opensearch import \
+    OpensearchModelPreprocessor
+from oarepo_model_builder.outputs.python import PythonOutput
+from oarepo_model_builder.property_preprocessors.datatype_preprocessor import \
+    DataTypePreprocessor
+from oarepo_model_builder.schema import ModelSchema
 
 OAREPO_MARSHMALLOW = "marshmallow"
 B_SCHEMA = 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()'
@@ -85,6 +82,27 @@ def test_simple_array(fulltext_builder):
     ) as f:
         data = f.read()
     assert "a = ma_fields.List(ma_fields.String())" in data
+
+
+def test_array_of_objects(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "type": "array",
+            "items": {"type": "object", "properties": {"b": {"type": "integer"}}},
+        }
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(schema, output_dir="")
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert (
+        'class AItemSchema(ma.Schema):\n    """AItemSchema schema."""\n    b = ma_fields.Integer()'
+        in data
+    )
+    assert "a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))" in data
 
 
 def test_generate_nested_schema_same_file(fulltext_builder):

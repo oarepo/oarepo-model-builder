@@ -1,10 +1,11 @@
 import marshmallow as ma
-from marshmallow import fields
-from .model_validation import PROPERTY_BY_TYPE_PREFIX, model_validator
 import yaml
-from marshmallow_oneofschema import OneOfSchema
-from marshmallow.exceptions import ValidationError
+from marshmallow import fields
 from marshmallow.decorators import PRE_LOAD
+from marshmallow.exceptions import ValidationError
+from marshmallow_oneofschema import OneOfSchema
+
+from .model_validation import PROPERTY_BY_TYPE_PREFIX, model_validator
 from .utils import RegexFieldsSchema
 
 

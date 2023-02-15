@@ -10,7 +10,6 @@ class HyphenMunch(munch.AutoMunch):
         ):
             value = munch.munchify(value, HyphenMunch)
 
-        key = key.replace("_", "-")
         return super().__setitem__(key, value)
 
     def __getitem__(self, key):
@@ -25,3 +24,7 @@ class HyphenMunch(munch.AutoMunch):
             return self.__getitem__(key)
         except KeyError:
             return default
+
+    def __setattr__(self, k, v):
+        k = k.replace("_", "-")
+        self[k] = v

@@ -1,5 +1,7 @@
 import copy
 import dataclasses
+import logging
+import re
 from collections import defaultdict, namedtuple
 from typing import Any, Dict, List, Tuple, Union
 
@@ -14,9 +16,12 @@ from oarepo_model_builder.utils.jinja import (
     split_package_base_name,
     split_package_name,
 )
+from oarepo_model_builder.utils.python_name import convert_name_to_python
 from oarepo_model_builder.validation import InvalidModelException
 
 from .invenio_base import InvenioBaseClassPythonBuilder
+
+log = logging.getLogger("invenio_record_schema")
 
 BUILTIN_ALIASES = [
     "ma_validates",
@@ -49,7 +54,7 @@ class MarshmallowNode:
     @classmethod
     def from_stack(cls, schema: ModelSchema, stack: ModelBuilderStack):
         datatype = datatypes.get_datatype(
-            stack.top.data, stack.top.key, schema.model, schema
+            stack.top.data, stack.top.key, schema.model, schema, stack
         )
         definition = datatype.marshmallow()
         imports = datatype.imports()
@@ -71,10 +76,12 @@ class MarshmallowNode:
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
+        field_name = definition.get("field-name", stack.top.key)
+        field_name = convert_name_to_python(field_name)
         return {
             "read": definition.get("read", True),
             "write": definition.get("write", True),
-            "field_name": definition.get("field_name", stack.top.key),
+            "field_name": field_name,
             "exact_field": definition.get("field", None),
             "field_class": definition.get("field-class", None),
             "imports": definition.get("imports", []),
@@ -107,6 +114,9 @@ class MarshmallowNode:
                 rw_arguments.append("dump_only=True")
             elif self.write and not self.read:
                 rw_arguments.append("load_only=True")
+            if self.stack.top.key != self.field_name:
+                rw_arguments.append(f'data_key="{self.stack.top.key}"')
+                rw_arguments.append(f'attribute="{self.stack.top.key}"')
             return (
                 f"{self.field_class}"
                 + f"({', '.join(self.field_arguments + rw_arguments)})"
@@ -167,6 +177,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
     generate: bool = True
     schema_class: Union[str, None] = None
     base_classes: Union[List[str], None] = None
+    extra_fields: Union[List[Dict[str, str]], None] = None
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
@@ -174,13 +185,12 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
             "generate": definition.get("generate", True),
             "schema_class": definition.get("schema-class", None),
             "base_classes": definition.get("base-classes", ["ma.Schema"]),
+            "extra_fields": definition.get("extra-fields", []),
             **super()._kwargs(definition, schema, stack),
         }
 
     def prepare(self, package_name: str, context: Dict[str, Any]):
         super().prepare(package_name, context)
-
-        context.setdefault("known_classes", {})
 
         if self.exact_field:
             return
@@ -202,6 +212,9 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
             return None, None, None
 
         field_list = []
+        for fld in self.extra_fields:
+            field_list.append(f"{fld.name} = {fld.value}")
+
         for fld in self.fields:
             if fld.read or fld.write:
                 # and generate the field
@@ -242,7 +255,15 @@ class ArrayMarshmallowNode(CompositeMarshmallowNode):
     def _field_rhs(self):
         # wrap the child's RHS with list
         ret = self._first_child._field_rhs
-        return f"ma_fields.List({ret})"
+        rw_arguments = []
+        if self.stack.top.key != self.field_name:
+            rw_arguments.append(f'data_key="{self.stack.top.key}"')
+            rw_arguments.append(f'attribute="{self.stack.top.key}"')
+        if rw_arguments:
+            rw_arguments = ", " + ", ".join(rw_arguments)
+        else:
+            rw_arguments = ""
+        return f"ma_fields.List({ret}{rw_arguments})"
 
     @property
     def field_imports(self) -> List[Import]:
@@ -292,15 +313,22 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             model_node.used = True
 
         context = {}
+        known_classes = set()
         for fld in model_node.walk():
             fld.prepare(package_name, context)
             if hasattr(fld, "generate_schema_class"):
                 package, class_name, generated_class = fld.generate_schema_class()
-                if class_name:
-                    imports = generated_imports[package]
-                    for _f in fld.walk():
-                        imports.update(_f.get_imports())
-                    generated_classes[package].append(generated_class)
+                if (package_name, class_name) in known_classes:
+                    log.info(
+                        f"Class renaming: have {package_name}.{class_name} twice, will use the first definition"
+                    )
+                else:
+                    known_classes.add((package_name, class_name))
+                    if class_name:
+                        imports = generated_imports[package]
+                        for _f in fld.walk():
+                            imports.update(_f.get_imports())
+                        generated_classes[package].append(generated_class)
 
         # create python files ...
         for package_name in generated_classes:

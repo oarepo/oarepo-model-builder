@@ -1,13 +1,15 @@
+import pathlib
 import re
 import typing
+
 import marshmallow as ma
 from marshmallow import fields
 from marshmallow.error_store import ErrorStore
-from marshmallow_union import Union
-from marshmallow_oneofschema import OneOfSchema
-from .model_validation import model_validator
 from marshmallow.exceptions import ValidationError
-import pathlib
+from marshmallow_oneofschema import OneOfSchema
+from marshmallow_union import Union
+
+from .model_validation import model_validator
 
 
 class PathOrString(fields.Field):

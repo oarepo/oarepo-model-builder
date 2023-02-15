@@ -1,8 +1,8 @@
 import marshmallow as ma
 from marshmallow import fields
-from .model_validation import model_validator
 from marshmallow_union import Union
 
+from .model_validation import model_validator
 from .utils import CheckedConstant
 
 
@@ -23,6 +23,6 @@ class PluginsSchema(ma.Schema):
 
 
 class PluginConfigSchema(ma.Schema):
-    disable = Union(CheckedConstant("__all__"), fields.List(fields.String()))
+    disable = Union([fields.List(fields.String()), CheckedConstant("__all__")])
     enable = fields.List(fields.String())
     include = fields.List(fields.String())

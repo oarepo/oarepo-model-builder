@@ -1,9 +1,10 @@
 import json
 
-from oarepo_model_builder.utils.hyphen_munch import HyphenMunch, munch
-from oarepo_model_builder.validation.model_validation import model_validator
 from marshmallow import ValidationError
 from munch import unmunchify
+
+from oarepo_model_builder.utils.hyphen_munch import HyphenMunch, munch
+from oarepo_model_builder.validation.model_validation import model_validator
 
 
 class InvalidModelException(Exception):

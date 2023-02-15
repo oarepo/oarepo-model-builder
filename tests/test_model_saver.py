@@ -6,10 +6,12 @@ from oarepo_model_builder.builders.model_saver import (
     ModelRegistrationBuilder,
     ModelSaverBuilder,
 )
+from oarepo_model_builder.datatypes import datatypes
 from oarepo_model_builder.entrypoints import (
     load_entry_points_dict,
     load_included_models_from_entry_points,
 )
+from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
@@ -21,10 +23,8 @@ from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
     DataTypePreprocessor,
 )
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.fs import InMemoryFileSystem
-from tests.multilang import MultilangPreprocessor, MultilingualDataType, UIValidator
-from oarepo_model_builder.datatypes import datatypes
 from oarepo_model_builder.validation.model_validation import model_validator
+from tests.multilang import MultilangPreprocessor, MultilingualDataType, UIValidator
 
 try:
     import json5
@@ -290,7 +290,7 @@ def test_model_saver_invenio():
                         "write": False,
                         "read": True,
                         "field-class": "ma_fields.String",
-                        "validators": ["validate_date('%Y:%m:%d')"],
+                        "validators": ["validate_date('%Y-%m-%d')"],
                         "imports": [
                             {"import": "oarepo_runtime.validation.validate_date"}
                         ],
@@ -303,7 +303,7 @@ def test_model_saver_invenio():
                         "write": False,
                         "read": True,
                         "field-class": "ma_fields.String",
-                        "validators": ["validate_date('%Y:%m:%d')"],
+                        "validators": ["validate_date('%Y-%m-%d')"],
                         "imports": [
                             {"import": "oarepo_runtime.validation.validate_date"}
                         ],
