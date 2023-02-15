@@ -1,5 +1,3 @@
-import re
-
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
 from ..datatypes import datatypes
@@ -70,7 +68,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
             if 'type' in data:
                 self.definition = data.get(OAREPO_FACETS_PROPERTY, {})
-                fd = datatypes.get_datatype(data, data.type, self.current_model, self.schema)
+                fd = datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack)
                 # fd.facet('g')
                 ft = False
                 if fd.schema_type == 'object':
@@ -105,7 +103,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         #         array_items_type = None
         # print(data)
         if schema_element_type == "property" and \
-                (('type' in data) and (datatypes.get_datatype(data, data.type, self.current_model, self.schema).schema_type != 'object')):
+                (('type' in data) and (datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack).schema_type != 'object')):
                 #todo check ze sem neleze obj array - array co ma v sobe obejkt, coz ale nejde detekovat pres count
                 #mozna veskere kontejnery
             # and data.type != "text"
@@ -116,7 +114,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
             # definition = data.get(OAREPO_FACETS_PROPERTY, {})
 
-            d_type = datatypes.get_datatype(data, data.type, self.current_model, self.schema)
+            d_type = datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack)
             ft = d_type.facet(key=self.stack.top.key, definition=self.definition)
             if ft and data.type != "array": self.facet_stack.append(ft)
             print(self.facet_stack)

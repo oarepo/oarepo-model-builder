@@ -137,8 +137,13 @@ class NestedDataType(ObjectDataType):
     marshmallow_field = "ma_fields.Nested"
     model_type = "nested"
 
-    def facet(self, key, definition= None, props_num = None):
-        print('s')
+    def facet(self, key, definition={}, props_num = None):
+        # key = definition.get('key', key)
+        upper = self.stack[-2]
+        if key in definition:
+            key = definition['key']
+        elif upper.json_schema_type == "array":
+            key = upper.key
         return {"path": key, "class": "NestedLabeledFacet", 'props_num' : props_num}
 
 
