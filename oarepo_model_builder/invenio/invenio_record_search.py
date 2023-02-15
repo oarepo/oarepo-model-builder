@@ -118,7 +118,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
             d_type = datatypes.get_datatype(data, data.type, self.current_model, self.schema)
             ft = d_type.facet(key=self.stack.top.key, definition=self.definition)
-            if ft: self.facet_stack.append(ft)
+            if ft and data.type != "array": self.facet_stack.append(ft)
             print(self.facet_stack)
             # todo smazat ten if
             if True and len(self.facet_stack) > 0:
@@ -137,7 +137,9 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                     elif facet['class'].startswith("Nested"):
                         nested_count += 1
                         facet_def = facet_def + f"NestedLabeledFacet(path =\" {facet_path[:-1]}\", nested_facet="
-                    elif 'props_num' in facet and facet['props_num'] is not None:
+                    elif 'props_num' in facet:
+                            # and facet['props_num'] is not None:
+
                         pass
                     # elif facet["class"].endswith(")"): #todo lip mozna? toto je z definice tak...
                     #     facet_def = facet_def + facet["class"]
@@ -273,10 +275,14 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 self.definition['obj'] = True
                 data = data['properties']
                 print(data)
-            elif 'type' in data and data['type'] != "text" and data['type'] != "fulltext":
-                self.definition['simple_array'] = True
+            elif 'type' in data and data['type'] == "fulltext+keyword":
+                self.definition['keyword'] = True
                 return 1
-            else: return 0 #todo nehodit do facet!!!
+            elif 'type' in data and data['type'] != "text" and data['type'] != "fulltext":
+                # self.definition['simple_array'] = True
+                return 1
+            else:
+                return 0
         for d in data:
             if 'properties' in data[d]:
                 count = count + 1

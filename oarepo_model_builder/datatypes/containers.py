@@ -116,9 +116,15 @@ class ArrayDataType(DataType):
     def facet(self, key, definition={}, props_num = None):
         # if 'properties' in definition['items'] or 'items' in definition['items']:
         #     obj = True
-        # facet_def = {"path": key, "class": "TermFacet", 'props_num' : props_num}
+        key = definition.get('key', key)
+        if key not in definition and 'keyword' in definition:
+            key = key + "_keyword"
+        field = definition.get('field', "TermsFacet(field = ")
+        facet_def = {"path": key, "class": field}
         if props_num == 0: #todo nested?????? #todo check if facetable
             return False
-        if 'simple_array' in definition:
-            return False #todo simply zero?
-        return {"path": key, "class": "TermsFacet(field = ", 'props_num' : props_num}
+        if int(props_num or 0) > 1:
+            facet_def['props_num'] = props_num
+        # if 'simple_array' in definition:
+        #     return False #todo simply zero?
+        return facet_def
