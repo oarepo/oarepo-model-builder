@@ -478,3 +478,82 @@ updated = TermsFacet(field = "updated")
 _schema = TermsFacet(field = "$schema")
 """,
     )
+
+def test_array_nested2():
+    schema = load_model(
+        DUMMY_YAML,
+        "test",
+        model_content={
+            "model": {
+                "use": "invenio",
+                "properties": {
+                    "obj": {
+                        "type": "object",
+                        "properties": {
+                            "arr": {
+                                "type": "array",
+                                "items": {
+                                    "type": "nested",
+                                    "properties": {
+                                        "d": {"type": "keyword"},
+                                        "e": {
+                                            "type": "object",
+                                            "properties": {
+                                                "f": "keyword"
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+                        }
+
+                    },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data)
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+        \"""Facet definitions.\"""
+
+from invenio_records_resources.services.records.facets import TermsFacet
+from invenio_search.engine import dsl
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+
+
+obj_arr_d = NestedLabeledFacet(path ="obj.arr", nested_facet=TermsFacet(field = "obj.arr.d"))
+
+obj_arr_e_f = NestedLabeledFacet(path ="obj.arr", nested_facet=TermsFacet(field = "obj.arr.e.f"))
+
+
+_id = TermsFacet(field = "id")
+
+
+
+created = TermsFacet(field = "created")
+
+
+
+updated = TermsFacet(field = "updated")
+
+
+
+_schema = TermsFacet(field = "$schema")
+""",
+    )

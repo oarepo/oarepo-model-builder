@@ -270,11 +270,14 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
     def properties_types(self, data, array = False):#todo check
         count = 0
+        #todo add this to facet method?
         if array:
             if 'type' in data and data['type'] == 'object': #todo  1: check if facetable
                 self.definition['obj'] = True
                 data = data['properties']
                 print(data)
+            elif 'type' in data and data['type'] == 'nested':
+                self.definition['nested'] = True
             elif 'type' in data and data['type'] == "fulltext+keyword":
                 self.definition['keyword'] = True
                 return 1

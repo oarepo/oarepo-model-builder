@@ -86,6 +86,7 @@ class NestedDataType(ObjectDataType):
     model_type = "nested"
 
     def facet(self, key, definition= None, props_num = None):
+        print('s')
         return {"path": key, "class": "NestedLabeledFacet", 'props_num' : props_num}
 
 
@@ -119,12 +120,21 @@ class ArrayDataType(DataType):
         key = definition.get('key', key)
         if key not in definition and 'keyword' in definition:
             key = key + "_keyword"
+
         field = definition.get('field', "TermsFacet(field = ")
+        facet_def = {}
+        if 'nested' in definition:
+            field = "NestedLabeledFacet"
+        elif 'field' in definition:
+            facet_def['defined_class'] = True
         facet_def = {"path": key, "class": field}
+
+
         if props_num == 0: #todo nested?????? #todo check if facetable
             return False
         if int(props_num or 0) > 1:
             facet_def['props_num'] = props_num
         # if 'simple_array' in definition:
         #     return False #todo simply zero?
+        print('facet_def', facet_def)
         return facet_def
