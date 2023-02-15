@@ -75,7 +75,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 ft = False
                 if fd.schema_type == 'object':
                     ft = fd.facet(key = self.stack.top.key, props_num= self.properties_types(data['properties']))
-                elif  fd.schema_type == 'array':
+                elif fd.schema_type == 'array':
                     ft = fd.facet(key = self.stack.top.key, props_num= self.properties_types(data['items'], True), definition=self.definition)
 
                 if ft:
@@ -105,8 +105,9 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         #         array_items_type = None
         # print(data)
         if schema_element_type == "property" and \
-                ((('type' in data) and (datatypes.get_datatype(data, data.type, self.current_model, self.schema).schema_type != 'object'))): #todo check ze sem neleze obj array - array co ma v sobe obejkt, coz ale nejde detekovat pres count
-
+                (('type' in data) and (datatypes.get_datatype(data, data.type, self.current_model, self.schema).schema_type != 'object')):
+                #todo check ze sem neleze obj array - array co ma v sobe obejkt, coz ale nejde detekovat pres count
+                #mozna veskere kontejnery
             # and data.type != "text"
             # and data.type != "fulltext"
             # and data.type != "object"
@@ -129,12 +130,14 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 for facet in self.facet_stack:
                     facet_name = facet_name + facet["path"] + "_" #todo maybe in method
                     facet_path = facet_path + self.refactor_name(facet["path"], True) + "." #todo maybe in method
+                    # if 'simple_array' in facet:
+                    #     pass
                     if 'defined_class' in facet:
                         facet_def = facet_def + facet["class"]
                     elif facet['class'].startswith("Nested"):
                         nested_count += 1
                         facet_def = facet_def + f"NestedLabeledFacet(path =\" {facet_path[:-1]}\", nested_facet="
-                    elif 'props_num' in facet:
+                    elif 'props_num' in facet and facet['props_num'] is not None:
                         pass
                     # elif facet["class"].endswith(")"): #todo lip mozna? toto je z definice tak...
                     #     facet_def = facet_def + facet["class"]
@@ -142,7 +145,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                         facet_path = (facet_path[::-1]).replace('_keyword.'[::-1], '.keyword.'[::-1], 1)[::-1] \
                             if facet_path.endswith('_keyword.') else facet_path
                         facet_def = facet_def + facet["class"] + f"\"{facet_path[:-1]}\""
-                        for i in range(0, nested_count): #todo toto uz nieje aktualne
+                        for i in range(0, nested_count):
                             facet_def = facet_def + ')'
                         facet_def = facet_def + ')'
                 self.clean_stack()
@@ -266,11 +269,12 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
     def properties_types(self, data, array = False):#todo check
         count = 0
         if array:
-            if 'type' in data and data['type'] == 'object':
+            if 'type' in data and data['type'] == 'object': #todo  1: check if facetable
                 self.definition['obj'] = True
                 data = data['properties']
                 print(data)
             elif 'type' in data and data['type'] != "text" and data['type'] != "fulltext":
+                self.definition['simple_array'] = True
                 return 1
             else: return 0 #todo nehodit do facet!!!
         for d in data:
