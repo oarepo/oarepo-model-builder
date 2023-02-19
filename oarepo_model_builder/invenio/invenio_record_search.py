@@ -155,7 +155,10 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 #     facet_name = "_schema_"
                 # if facet_name == "id_":
                 #     facet_name = "_id_"
-                self.search_options_data.append({facet_name[:-1]: facet_def})
+                facet_name = facet_name[:-1]
+                self.search_options_data.append({facet_name: facet_def})
+                search_ops_name = "facets." + facet_name
+                self.facets_definition.append({facet_name: search_ops_name})
             # else:
             #     nested_paths = []
             #     nested_path = ""
