@@ -58,10 +58,6 @@ class TimeDataType(BaseDateDataType):
             Import(import_path="oarepo_runtime.validation.validate_date", alias=None)
         )
 
-    # def facet(self, key, definition={}, props_num=None):
-    #     key = definition.get('key', key)
-    #     field = definition.get('field', "TermsFacet(field = ")
-    #     return {"path": key, "class": field}
 
 class DateTimeDataType(BaseDateDataType):
     schema_type = "string"
@@ -74,11 +70,7 @@ class DateTimeDataType(BaseDateDataType):
 
     def json_schema(self, **extras):
         return super().json_schema(format="date-time", **extras)
-    #
-    # def facet(self, key, definition={}, props_num=None):
-    #     key = definition.get('key', key)
-    #     field = definition.get('field', "TermsFacet(field = ")
-    #     return {"path": key, "class": field}
+
 
 class EDTFDataType(BaseDateDataType):
     schema_type = "string"
@@ -117,10 +109,3 @@ class EDTFIntervalType(BaseDateDataType):
     def imports(self, *args):
         return super().imports(Import(name="edtf.Interval", alias="EDTFInterval"))
 
-    # def facet(self, key, definition={}, props_num=None):
-    #     key = definition.get('key', key)
-    #     field = definition.get('field', "TermsFacet(field = ")
-    #     facet_def = {"path": key, "class": field}
-    #     if 'field' in definition:
-    #         facet_def['defined_class'] = True
-    #     return facet_def

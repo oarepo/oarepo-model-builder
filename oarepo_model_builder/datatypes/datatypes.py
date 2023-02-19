@@ -58,7 +58,7 @@ class DataType:
         return extra
 
     def facet(self, key, definition=None, props_num=None):
-        return key, definition, props_num
+        return False
 
     def dumper_class(self, data):  # NOSONAR
         return None

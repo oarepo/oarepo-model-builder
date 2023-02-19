@@ -156,8 +156,15 @@ class FlattenDataType(DataType):
     marshmallow_field = "ma_fields.Raw"
     model_type = "flatten"
 
-    def facet(self, key, definition= None, props_num = None):
-        return False #todo ?
+    def facet(self, key, definition= {}, props_num = None):
+        facet_def = {}
+        if 'field' in definition:
+            key = definition.get('key', key)
+            facet_def = {'path': key, 'class': definition['field']}
+            facet_def['defined_class'] = True
+            return facet_def
+        else:
+            return False
 
 class ArrayDataType(DataType):
     schema_type = "array"

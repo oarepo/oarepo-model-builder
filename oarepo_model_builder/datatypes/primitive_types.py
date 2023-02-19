@@ -24,6 +24,14 @@ class NumberDataType(DataType):
 
         return validators
 
+    def facet(self, key, definition={}, props_num=None):
+        key = definition.get('key', key)
+        field = definition.get('field', "TermsFacet(field = ")
+        facet_def = {"path": key, "class": field}
+        if 'field' in definition:
+            facet_def['defined_class'] = True
+        return facet_def
+
 
 class IntegerDataType(NumberDataType):
     marshmallow_field = "ma_fields.Integer"

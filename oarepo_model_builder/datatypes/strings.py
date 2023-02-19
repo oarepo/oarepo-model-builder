@@ -90,8 +90,3 @@ class FulltextKeywordDataType(StringDataType):
         if 'field' in definition:
             facet_def['defined_class'] = True
         return facet_def
-    #
-    # def facet(self, key, definition={}, props_num = None):
-    #     key = definition.get('key', key + "_keyword")
-    #     field = definition.get('field', "TermsFacet(field = ")
-    #     return {"path": key, "class" : field}
