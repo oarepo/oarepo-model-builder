@@ -57,7 +57,7 @@ class DataType:
     def imports(self, *extra) -> List[Import]:
         return extra
 
-    def facet(self, key, definition=None, props_num=None):
+    def facet(self, key, definition={}, props_num=None, create = True):
         return False
 
     def dumper_class(self, data):  # NOSONAR

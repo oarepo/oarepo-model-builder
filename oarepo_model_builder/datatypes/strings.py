@@ -4,6 +4,7 @@ from marshmallow import fields
 from marshmallow.exceptions import ValidationError
 
 from .datatypes import DataType
+from ..utils.facet_helpers import searchable
 
 
 def validate_regex(value):
@@ -49,7 +50,9 @@ class StringDataType(DataType):
 
         return validators
 
-    def facet(self, key, definition={}, props_num=None):
+    def facet(self, key, definition={}, props_num=None, create = True):
+        if not searchable(definition, create):
+            return False
         key = definition.get('key', key)
         field = definition.get('field', "TermsFacet(field = ")
         facet_def = {"path": key, "class": field}
@@ -61,7 +64,7 @@ class FulltextDataType(StringDataType):
     mapping_type = "text"
     model_type = "fulltext"
 
-    def facet(self, key, definition=None, props_num=None):
+    def facet(self, key, definition=None, props_num=None, create = True):
         return False
 
 
@@ -83,7 +86,9 @@ class FulltextKeywordDataType(StringDataType):
         return ret
 
 
-    def facet(self, key, definition={}, props_num=None):
+    def facet(self, key, definition={}, props_num=None, create = True):
+        if not searchable(definition, create):
+            return False
         key = definition.get('key', key + "_keyword")
         field = definition.get('field', "TermsFacet(field = ")
         facet_def = {"path": key, "class": field}

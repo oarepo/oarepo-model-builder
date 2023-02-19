@@ -109,7 +109,6 @@ def test_nested():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -244,6 +243,7 @@ def test_nest_obj():
                         "properties": {
                             "c": {
                                 "type": "keyword",
+
                             },
                             "d": {"type": "fulltext+keyword"},
                             "f": {
@@ -282,7 +282,6 @@ def test_nest_obj():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -363,7 +362,6 @@ def test_array():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -446,7 +444,6 @@ def test_array_nested():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -479,3 +476,159 @@ _schema = TermsFacet(field = "$schema")
 """,
     )
 
+#todo use invenio searchable?
+def test_top_facets():
+    schema = load_model(
+        DUMMY_YAML,
+        "test",
+        model_content={
+            "model": {
+                "use": "invenio",
+                "searchable": False,
+                "invenio_searchable" : True,
+                "properties": {
+                    "a":  {"type": "fulltext+keyword",
+                           "facets": {"searchable": True}},
+                    "b": {
+                        "type": "keyword",
+                        "facets": {"field": 'TermsFacet(field="cosi")'},
+                    },
+                    "c": "keyword",
+                    "arr": {
+                        "type": "array",
+                        "facets": {"searchable": True},
+                        "items": {
+                            "type": "nested",
+                            "properties": {
+                                "d": {"type": "keyword"},
+                                "e": {
+                                    "type": "object",
+                                    "properties": {
+                                        "f": "keyword"
+                                    }
+                                }
+
+                            }
+                        }
+
+                    },
+                    "lst2": {
+                        "type": "array",
+                        "items": {"type": "keyword"},
+                        "facets": {"field": 'TermsFacet(field="cosi")'}
+                    },
+                    "lst[]": "keyword",
+                },
+            },
+        },
+        isort=False,
+        black=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data)
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+\"""Facet definitions.\"""
+
+from invenio_records_resources.services.records.facets import TermsFacet
+from invenio_search.engine import dsl
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+
+
+
+a_keyword = TermsFacet(field = "a.keyword")
+
+
+
+b = TermsFacet(field="cosi")
+
+
+
+arr_d = NestedLabeledFacet(path ="arr", nested_facet=TermsFacet(field = "arr.d"))
+
+arr_e_f = NestedLabeledFacet(path ="arr", nested_facet=TermsFacet(field = "arr.e.f"))
+
+lst2 = TermsFacet(field="cosi")
+
+_id = TermsFacet(field = "id")
+
+
+
+created = TermsFacet(field = "created")
+
+
+
+updated = TermsFacet(field = "updated")
+
+
+
+_schema = TermsFacet(field = "$schema")
+
+    """,
+    )
+
+
+def test_searchable_true():
+    schema = load_model(
+        DUMMY_YAML,
+        "test",
+        model_content={
+            "model": {
+                "use": "invenio",
+                "invenio_searchable" : False,
+                "properties": {
+                    "a":  {"type": "fulltext+keyword",
+                           "facets": {"searchable": False}},
+                    "b": {
+                        "type": "keyword",
+                        "facets": {"field": 'TermsFacet(field="cosi")'},
+                    },
+                    "c": "fulltext",
+                    "f": {
+                                "type" : "object",
+                                "facets": {"searchable": False},
+                                "properties": {"g": {"type": "keyword"}},
+
+                            },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "")
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data)
+
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+\"""Facet definitions.\"""
+
+from invenio_records_resources.services.records.facets import TermsFacet
+from invenio_search.engine import dsl
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+
+
+
+
+b = TermsFacet(field="cosi")
+
+
+    """,
+    )
