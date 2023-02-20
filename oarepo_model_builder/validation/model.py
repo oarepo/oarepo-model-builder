@@ -18,6 +18,7 @@ class ModelSchema(ExtendablePartSchema):
     )
     jsonschema = fields.Nested(PermissiveSchema())
     mapping = fields.Nested(PermissiveSchema())
+    searchable = fields.Boolean(required=False)
 
     @ma.pre_load(pass_many=False)
     def set_properties_before_load(self, data, **kwargs):

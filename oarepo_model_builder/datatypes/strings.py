@@ -4,6 +4,7 @@ from marshmallow import fields
 from marshmallow.exceptions import ValidationError
 
 from .datatypes import DataType
+from ..utils.facet_helpers import searchable
 
 
 def validate_regex(value):
@@ -49,18 +50,29 @@ class StringDataType(DataType):
 
         return validators
 
+    def facet(self, key, definition={}, props_num=None, create = True):
+        if not searchable(definition, create):
+            return False
+        key = definition.get('key', key)
+        field = definition.get('field', "TermsFacet(field = ")
+        facet_def = {"path": key, "class": field}
+        if 'field' in definition:
+            facet_def['defined_class'] = True
+        return facet_def
 
 class FulltextDataType(StringDataType):
     mapping_type = "text"
     model_type = "fulltext"
+
+    def facet(self, key, definition=None, props_num=None, create = True):
+        return False
 
 
 class KeywordDataType(StringDataType):
     mapping_type = "keyword"
     model_type = "keyword"
 
-    def facet(self, nested_facet):
-        return f"TermsFacet({self.path})"
+
 
 
 class FulltextKeywordDataType(StringDataType):
@@ -72,3 +84,14 @@ class FulltextKeywordDataType(StringDataType):
         mapping_el = ret.setdefault("mapping", {})
         mapping_el.setdefault("fields", {}).setdefault("keyword", {"type": "keyword"})
         return ret
+
+
+    def facet(self, key, definition={}, props_num=None, create = True):
+        if not searchable(definition, create):
+            return False
+        key = definition.get('key', key + "_keyword")
+        field = definition.get('field', "TermsFacet(field = ")
+        facet_def = {"path": key, "class": field}
+        if 'field' in definition:
+            facet_def['defined_class'] = True
+        return facet_def

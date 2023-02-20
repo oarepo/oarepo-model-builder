@@ -1,6 +1,7 @@
 from typing import List
 
 from .datatypes import DataType, Import
+from ..utils.facet_helpers import searchable
 
 
 class BaseDateDataType(DataType):
@@ -27,6 +28,16 @@ class DateDataType(BaseDateDataType):
         return super().imports(
             Import(import_path="oarepo_runtime.validation.validate_date", alias=None)
         )
+
+    def facet(self, key, definition={}, props_num=None, create = True):
+        if not searchable(definition, create):
+            return False
+        key = definition.get('key', key)
+        field = definition.get('field', "TermsFacet(field = ")
+        facet_def = {"path": key, "class": field}
+        if 'field' in definition:
+            facet_def['defined_class'] = True
+        return facet_def
 
 
 class TimeDataType(BaseDateDataType):
@@ -100,3 +111,4 @@ class EDTFIntervalType(BaseDateDataType):
 
     def imports(self, *args):
         return super().imports(Import(name="edtf.Interval", alias="EDTFInterval"))
+

@@ -13,6 +13,9 @@
       "marshmallow": {
         "read": false,
         "write": false
+      },
+      "facets" : {
+        "searchable": true
       }
     },
     "created": {
@@ -23,6 +26,9 @@
       "marshmallow": {
         "write": false,
         "read": true
+      },
+      "facets" : {
+        "searchable": true
       }
     },
     "updated": {
@@ -33,6 +39,9 @@
       "marshmallow": {
         "write": false,
         "read": true
+      },
+      "facets" : {
+        "searchable": true
       }
     },
     "$schema": {
@@ -43,6 +52,9 @@
       },
       "sample": {
         "skip": true
+      },
+      "facets" : {
+        "searchable": true
       }
     }
   }

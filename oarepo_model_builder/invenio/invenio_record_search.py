@@ -1,14 +1,11 @@
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
-from oarepo_model_builder.utils.python_name import convert_name_to_python
+from ..datatypes import datatypes
 
 from ..outputs.json_stack import JSONStack
 from ..utils.deepmerge import deepmerge
-from ..utils.hyphen_munch import HyphenMunch
 from .invenio_base import InvenioBaseClassPythonBuilder
-import re
-import keyword
-
+from oarepo_model_builder.utils.python_name import convert_name_to_python
 
 OAREPO_FACETS_PROPERTY = "facets"
 OAREPO_SORTABLE_PROPERTY = "sortable"
@@ -24,13 +21,13 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         self.template = "record-search-options"
         self.search_options_data = []
         self.sort_options_data = []
-        self.search_facets_definition = []
         self.search_options_stack = JSONStack()
         self.facets_definition = []
-        self.facets_names = []
         self.settings = settings
         if "sortable" in schema.schema:
             self.process_top_sortable(schema.schema["sortable"])
+        self.facet_switch = self.schema.model.get("searchable", True)
+        self.facet_stack = []
 
     def finish(self, **extra_kwargs):
         super().finish(
@@ -58,16 +55,26 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
     @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
-        schema_element_type = self.stack.top.schema_element_type
 
-        definition = None
+        schema_element_type = self.stack.top.schema_element_type
+        data = self.stack.top.data
         recurse = True
 
         if recurse:
-            # process children
-            self.build_children()
+            try:
+                self.definition = data.get(OAREPO_FACETS_PROPERTY, {})
+                fd = datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack)
+                ft = False
+                if fd.schema_type == 'object':
+                    properties = data.get('properties', {})
+                    ft = fd.facet(key = self.stack.top.key, props_num= self.properties_types(properties),definition = self.definition,  create=self.facet_switch)
+                elif fd.schema_type == 'array':
+                    ft = fd.facet(key = self.stack.top.key, props_num= self.properties_types(data['items'], True), definition=self.definition, create=self.facet_switch)
+                if ft:
+                    self.facet_stack.append(ft)
+            except: pass
 
-        data = self.stack.top.data
+            self.build_children()
 
         if not self.search_options_stack:
             return
@@ -79,103 +86,42 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 self.sort_options_data.append(
                     self.process_sort_options(self.stack.path, sort_definition)
                 )
-        array_items_type = None
-        if schema_element_type == "property" and data.type == "array":
-            try:
-                array_items_type = data["items"]["type"]
-            except:
-                array_items_type = None
 
-        if (
-            schema_element_type == "property"
-            and data.type != "text"
-            and data.type != "fulltext"
-            and data.type != "object"
-            and data.type != "nested"
-            and not (data.type == "array" and array_items_type == "fulltext")
-        ):
-            definition = data.get(OAREPO_FACETS_PROPERTY, {})
-            nested_paths = []
-            nested_path = ""
-            nested = False
-            path_stack = self.stack.stack[2:]  # start inside model properties
-            for upper in path_stack:
-                if upper.key == "properties":
-                    continue
-                nested_path = nested_path + upper.key + "."
-                if upper.data.get("mapping", {"type": ""}).get("type") == "nested":
-                    nested_paths.append(nested_path)
-            if len(nested_paths) > 0:
-                nested = True
+        if schema_element_type == "property" and \
+                (('type' in data) and (datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack).schema_type != 'object')):
 
-            if "key" in definition:
-                name = definition["key"]
-            else:
-                name = self.process_name(self.stack.path, type="name")
-            if data.type == "fulltext+keyword" and "key" not in definition:
-                name = name + "_keyword"
-            if name == "$schema":
-                name = "_schema"
-            if name == "id":
-                name = "_id"
-            class_string = ""
-
-            if nested:
-                class_string = "NestedLabeledFacet("
-                for path in nested_paths:
-                    if nested_paths[-1] == path:
-                        class_string = class_string + "path = " + '"' + path[:-1] + '"'
+            d_type = datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack)
+            ft = d_type.facet(key=self.stack.top.key, definition=self.definition, create=self.facet_switch)
+            if ft and data.type != "array": self.facet_stack.append(ft)
+            if len(self.facet_stack) > 0:
+                facet_def = ""
+                facet_name = ""
+                facet_path = ""
+                nested_count = 0
+                for facet in self.facet_stack:
+                    facet_name = facet_name + convert_name_to_python(facet["path"]) + "_"
+                    facet_path = facet_path + facet["path"] + "."
+                    if 'defined_class' in facet:
+                        facet_def = facet_def + facet["class"]
+                    elif facet['class'].startswith("Nested"):
+                        nested_count += 1
+                        facet_def = facet_def + f"NestedLabeledFacet(path =\" {facet_path[:-1]}\", nested_facet="
+                    elif 'props_num' in facet:
+                        pass
                     else:
-                        class_string = (
-                            class_string
-                            + "path = "
-                            + '"'
-                            + path[:-1]
-                            + '"'
-                            + ", nested_facet = NestedLabeledFacet("
-                        )
+                        facet_path = (facet_path[::-1]).replace('_keyword.'[::-1], '.keyword.'[::-1], 1)[::-1] \
+                            if facet_path.endswith('_keyword.') else facet_path
+                        facet_def = facet_def + facet["class"] + f"\"{facet_path[:-1]}\""
+                        for i in range(0, nested_count):
+                            facet_def = facet_def + ')'
+                        facet_def = facet_def + ')'
+                self.clean_stack()
 
-            if "field" in definition:
-                field = definition["field"]
-                if nested:
-                    class_string = class_string + " , nested_facet =" + field
-                    for x in nested_paths:
-                        class_string = class_string + ")"
-                    self.search_options_data.append(
-                        {convert_name_to_python(name): class_string}
-                    )
-                else:
-                    self.search_options_data.append(
-                        {convert_name_to_python(name): field}
-                    )
-            else:
-                search_data = []
-                field = self.process_name(self.stack.path, type="field")
-                if data.type == "fulltext+keyword":
-                    field = field + ".keyword"
-                search_data.append(["field", field])
-                facets_class = definition.get("class", "TermsFacet")
-                for key, value in definition.items():
-                    if "class" != key and "field" != key:
-                        search_data.append([key, value])
-                if nested:
-                    search_options = self.process_search_options(
-                        search_data, facets_class
-                    )
-                    search_options = class_string + " , nested_facet =" + search_options
-                    for x in nested_paths:
-                        search_options = search_options + ")"
+                facet_name = facet_name[:-1]
+                self.search_options_data.append({facet_name: facet_def})
+                search_ops_name = "facets." + facet_name
+                self.facets_definition.append({facet_name: search_ops_name})
 
-                else:
-                    search_options = self.process_search_options(
-                        search_data, facets_class
-                    )
-                self.search_options_data.append(
-                    {convert_name_to_python(name): search_options}
-                )
-            self.facets_definition.append(
-                {name: "facets." + convert_name_to_python(name)}
-            )
 
     def process_search_options(self, data, field_class):
         text = ""
@@ -185,6 +131,50 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             else:
                 text = text + ", " + x[0] + ' = "' + x[1] + '"'
         return field_class + "(" + text + ")"
+
+    def clean_stack(self):
+        self.facet_stack.reverse()
+        del_indices = []
+        del self.facet_stack[:1]
+        for facet in self.facet_stack:
+            if 'props_num' in facet and facet['props_num'] == 1:
+                del_indices.append(self.facet_stack.index(facet))
+            elif 'props_num' in facet:
+                facet['props_num'] = facet['props_num'] -1
+                break
+        for i in del_indices[::-1]:
+            del self.facet_stack[i]
+        self.facet_stack.reverse()
+
+
+    def properties_types(self, data, array = False):
+        count = 0
+        ft = False
+        if array:
+            if 'type' in data and data['type'] == 'object':
+                self.definition['obj'] = True
+                data = data['properties']
+            elif 'type' in data and data['type'] == 'nested':
+                self.definition['nested'] = True
+            elif 'type' in data and data['type'] == "fulltext+keyword":
+                self.definition['keyword'] = True
+                return 1
+            elif 'type' in data:
+                fd = datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack)
+                ft = fd.facet(key="")
+                if ft:
+                    return 1
+            else:
+                return 0
+        for d in data:
+            if 'properties' in data[d]:
+                count = count + 1
+            elif 'type' in data[d]:
+                fd = datatypes.get_datatype(data[d], data[d].type, self.current_model, self.schema, self.stack)
+                ft = fd.facet(key=d)
+                if ft:
+                    count = count + 1
+        return count
 
     def process_name(self, path, type):
         path_array = (path.split("/"))[2:]
@@ -217,3 +207,4 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             field = "-" + field
 
         return {key: dict(fields=[field])}
+
