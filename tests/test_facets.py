@@ -485,7 +485,6 @@ def test_top_facets():
             "model": {
                 "use": "invenio",
                 "searchable": False,
-                "invenio_searchable" : True,
                 "properties": {
                     "a":  {"type": "fulltext+keyword",
                            "facets": {"searchable": True}},
@@ -584,7 +583,6 @@ def test_searchable_true():
         model_content={
             "model": {
                 "use": "invenio",
-                "invenio_searchable" : False,
                 "properties": {
                     "a":  {"type": "fulltext+keyword",
                            "facets": {"searchable": False}},
@@ -629,6 +627,20 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 b = TermsFacet(field="cosi")
 
+
+_id = TermsFacet(field = "id")
+
+
+
+created = TermsFacet(field = "created")
+
+
+
+updated = TermsFacet(field = "updated")
+
+
+
+_schema = TermsFacet(field = "$schema")
 
     """,
     )

@@ -28,8 +28,6 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             self.process_top_sortable(schema.schema["sortable"])
         self.facet_switch = self.schema.model.get("searchable", True)
         self.facet_stack = []
-        self.invenio_facet_switch = self.schema.model.get("invenio_searchable", True)
-        self.invenio_searchable_fix()
 
     def finish(self, **extra_kwargs):
         super().finish(
@@ -210,10 +208,3 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
         return {key: dict(fields=[field])}
 
-    def invenio_searchable_fix(self):
-        try:
-            self.stack.top.data.properties.id["facets"] = {"searchable" : self.invenio_facet_switch}
-            self.stack.top.data.properties["$schema"]["facets"] = {"searchable" : self.invenio_facet_switch}
-            self.stack.top.data.properties.created["facets"] = {"searchable" : self.invenio_facet_switch}
-            self.stack.top.data.properties.updated["facets"] = {"searchable" : self.invenio_facet_switch}
-        except: pass #invenio not included
