@@ -476,7 +476,6 @@ _schema = TermsFacet(field = "$schema")
 """,
     )
 
-#todo use invenio searchable?
 def test_top_facets():
     schema = load_model(
         DUMMY_YAML,
