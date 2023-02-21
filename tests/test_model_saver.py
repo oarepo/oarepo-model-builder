@@ -280,6 +280,7 @@ def test_model_saver_invenio():
                     },
                     "type": "keyword",
                     "sample": {"skip": True},
+                    "facets": {"searchable": True}
                 },
                 "created": {
                     "marshmallow": {
@@ -293,6 +294,7 @@ def test_model_saver_invenio():
                     },
                     "type": "date",
                     "sample": {"skip": True},
+                    "facets": {"searchable": True}
                 },
                 "updated": {
                     "marshmallow": {
@@ -306,6 +308,7 @@ def test_model_saver_invenio():
                     },
                     "type": "date",
                     "sample": {"skip": True},
+                    "facets": {"searchable": True}
                 },
                 "$schema": {
                     "marshmallow": {
@@ -317,6 +320,7 @@ def test_model_saver_invenio():
                     },
                     "type": "keyword",
                     "sample": {"skip": True},
+                    "facets": {"searchable": True}
                 },
             },
             "config-resource-register-blueprint-key": "TEST_REGISTER_BLUEPRINT",
