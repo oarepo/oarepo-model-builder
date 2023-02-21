@@ -41,6 +41,8 @@ def merger(source, destination, result, destination_first):
         merge_file(source, destination, result or destination, destination_first)
     else:
         for fn in source.glob("**/*"):
+            if not fn.is_file():
+                continue
             relative_fn = fn.relative_to(source)
             merge_file(
                 fn,
@@ -59,8 +61,12 @@ def merge_file(source: Path, destination: Path, result: Path, destination_first:
         raise AttributeError(
             f"Suffixes of source and destination files must match, have {source}, {destination}"
         )
+    result.parent.mkdir(parents=True, exist_ok=True)
     if not destination.exists():
-        shutil.copy(source, destination)
+        if source.is_file():
+            shutil.copy(source, result)
+        else:
+            shutil.copytree(source, result)
         return
     if source_suffix == "yaml":
         merge_json(
@@ -93,11 +99,13 @@ def merge_file(source: Path, destination: Path, result: Path, destination_first:
         merge_python(source, destination, result, destination_first)
     else:
         raise NotImplementedError(
-            f"Merging file type {source_suffix} is not implemented yet"
+            f"Merging file type {source_suffix} (file {source}) is not implemented yet"
         )
 
 
-def merge_json(source, destination, result, destination_first, load_func, dump_func):
+def merge_json(
+    source, destination, result: Path, destination_first, load_func, dump_func
+):
     with open(source) as f:
         source_data = load_func(f)
     with open(destination) as f:
