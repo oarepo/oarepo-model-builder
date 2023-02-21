@@ -9,11 +9,15 @@ from pathlib import Path
 import click
 import yaml
 
-from oarepo_model_builder.conflict_resolvers import (AutomaticResolver,
-                                                     InteractiveResolver)
-from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
-                                              load_entry_points_dict,
-                                              load_model)
+from oarepo_model_builder.conflict_resolvers import (
+    AutomaticResolver,
+    InteractiveResolver,
+)
+from oarepo_model_builder.entrypoints import (
+    create_builder_from_entrypoints,
+    load_entry_points_dict,
+    load_model,
+)
 from oarepo_model_builder.utils.verbose import log
 
 

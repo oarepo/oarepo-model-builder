@@ -4,8 +4,9 @@ import faker.config
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.invenio.invenio_script_sample_data import \
-    InvenioScriptSampleDataBuilder
+from oarepo_model_builder.invenio.invenio_script_sample_data import (
+    InvenioScriptSampleDataBuilder,
+)
 from oarepo_model_builder.schema import ModelSchema
 
 

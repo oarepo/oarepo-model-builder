@@ -2,8 +2,7 @@ import logging
 
 from libcst import Assign, Integer, Name
 
-from .common import (IdentityBaseMerger, IdentityMerger, MergerBase,
-                     PythonContext)
+from .common import IdentityBaseMerger, IdentityMerger, MergerBase, PythonContext
 from .mergers import expression_mergers, simple_line_mergers
 
 log = logging.getLogger("oarepo_model_builder.cst")

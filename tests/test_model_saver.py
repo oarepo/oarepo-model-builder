@@ -3,24 +3,28 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.model_saver import (
-    ModelRegistrationBuilder, ModelSaverBuilder)
+    ModelRegistrationBuilder,
+    ModelSaverBuilder,
+)
 from oarepo_model_builder.datatypes import datatypes
 from oarepo_model_builder.entrypoints import (
-    load_entry_points_dict, load_included_models_from_entry_points)
+    load_entry_points_dict,
+    load_included_models_from_entry_points,
+)
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
-from oarepo_model_builder.model_preprocessors.invenio import \
-    InvenioModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
+from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
 from oarepo_model_builder.outputs.cfg import CFGOutput
 from oarepo_model_builder.outputs.json import JSONOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import \
-    DataTypePreprocessor
+from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
+    DataTypePreprocessor,
+)
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.validation.model_validation import model_validator
-from tests.multilang import (MultilangPreprocessor, MultilingualDataType,
-                             UIValidator)
+from tests.multilang import MultilangPreprocessor, MultilingualDataType, UIValidator
 
 try:
     import json5

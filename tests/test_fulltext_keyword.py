@@ -7,15 +7,18 @@ from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.model_preprocessors.default_values import \
-    DefaultValuesModelPreprocessor
-from oarepo_model_builder.model_preprocessors.opensearch import \
-    OpensearchModelPreprocessor
+from oarepo_model_builder.model_preprocessors.default_values import (
+    DefaultValuesModelPreprocessor,
+)
+from oarepo_model_builder.model_preprocessors.opensearch import (
+    OpensearchModelPreprocessor,
+)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import \
-    DataTypePreprocessor
+from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
+    DataTypePreprocessor,
+)
 from oarepo_model_builder.schema import ModelSchema
 
 
