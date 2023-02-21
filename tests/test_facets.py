@@ -1,12 +1,12 @@
-
 import os
 import re
 
-
-from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
+from oarepo_model_builder.entrypoints import (create_builder_from_entrypoints,
+                                              load_model)
 from oarepo_model_builder.fs import InMemoryFileSystem
 
 DUMMY_YAML = "test.yaml"
+
 
 def test_include_invenio():
     schema = load_model(
@@ -16,12 +16,12 @@ def test_include_invenio():
             "model": {
                 "use": "invenio",
                 "properties": {
-                    "a":  "fulltext+keyword",
+                    "a": "fulltext+keyword",
                     "b": {
                         "type": "keyword",
                         "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
-                    "c": "fulltext"
+                    "c": "fulltext",
                 },
             },
         },
@@ -72,6 +72,7 @@ _schema = TermsFacet(field = "$schema")
     """,
     )
 
+
 def test_nested():
     schema = load_model(
         DUMMY_YAML,
@@ -88,11 +89,10 @@ def test_nested():
                             },
                             "d": {"type": "fulltext+keyword"},
                             "f": {
-                                "type" : "nested",
+                                "type": "nested",
                                 "properties": {"g": {"type": "keyword"}},
-
                             },
-                        }
+                        },
                     }
                 },
             },
@@ -149,7 +149,10 @@ updated = TermsFacet(field = "updated")
 
 _schema = TermsFacet(field = "$schema")
     
-""",)
+""",
+    )
+
+
 def test_object():
     schema = load_model(
         DUMMY_YAML,
@@ -166,12 +169,11 @@ def test_object():
                             },
                             "d": {"type": "fulltext+keyword"},
                             "f": {
-                                "type" : "object",
+                                "type": "object",
                                 "properties": {"g": {"type": "keyword"}},
-
                             },
-                            "e": "fulltext"
-                        }
+                            "e": "fulltext",
+                        },
                     }
                 },
             },
@@ -230,6 +232,7 @@ _schema = TermsFacet(field = "$schema")
 """,
     )
 
+
 def test_nest_obj():
     schema = load_model(
         DUMMY_YAML,
@@ -243,15 +246,13 @@ def test_nest_obj():
                         "properties": {
                             "c": {
                                 "type": "keyword",
-
                             },
                             "d": {"type": "fulltext+keyword"},
                             "f": {
-                                "type" : "object",
+                                "type": "object",
                                 "properties": {"g": {"type": "keyword"}},
-
                             },
-                        }
+                        },
                     },
                     "b_obj": {
                         "type": "object",
@@ -263,10 +264,9 @@ def test_nest_obj():
                             "f": {
                                 "type": "nested",
                                 "properties": {"g": {"type": "keyword"}},
-
                             },
-                        }
-                    }
+                        },
+                    },
                 },
             },
         },
@@ -335,6 +335,7 @@ _schema = TermsFacet(field = "$schema")
 """,
     )
 
+
 def test_array():
     schema = load_model(
         DUMMY_YAML,
@@ -343,10 +344,9 @@ def test_array():
             "model": {
                 "use": "invenio",
                 "properties": {
-
                     "a[]": "keyword",
                     "b[]": "fulltext",
-                    "c[]": "fulltext+keyword"
+                    "c[]": "fulltext+keyword",
                 },
             },
         },
@@ -398,6 +398,7 @@ _schema = TermsFacet(field = "$schema")
 """,
     )
 
+
 def test_array_nested():
     schema = load_model(
         DUMMY_YAML,
@@ -417,17 +418,12 @@ def test_array_nested():
                                         "d": {"type": "keyword"},
                                         "e": {
                                             "type": "object",
-                                            "properties": {
-                                                "f": "keyword"
-                                            }
-                                        }
-
-                                    }
-                                }
-
+                                            "properties": {"f": "keyword"},
+                                        },
+                                    },
+                                },
                             }
-                        }
-
+                        },
                     },
                 },
             },
@@ -476,6 +472,7 @@ _schema = TermsFacet(field = "$schema")
 """,
     )
 
+
 def test_top_facets():
     schema = load_model(
         DUMMY_YAML,
@@ -485,8 +482,7 @@ def test_top_facets():
                 "use": "invenio",
                 "searchable": False,
                 "properties": {
-                    "a":  {"type": "fulltext+keyword",
-                           "facets": {"searchable": True}},
+                    "a": {"type": "fulltext+keyword", "facets": {"searchable": True}},
                     "b": {
                         "type": "keyword",
                         "facets": {"field": 'TermsFacet(field="cosi")'},
@@ -499,21 +495,14 @@ def test_top_facets():
                             "type": "nested",
                             "properties": {
                                 "d": {"type": "keyword"},
-                                "e": {
-                                    "type": "object",
-                                    "properties": {
-                                        "f": "keyword"
-                                    }
-                                }
-
-                            }
-                        }
-
+                                "e": {"type": "object", "properties": {"f": "keyword"}},
+                            },
+                        },
                     },
                     "lst2": {
                         "type": "array",
                         "items": {"type": "keyword"},
-                        "facets": {"field": 'TermsFacet(field="cosi")'}
+                        "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
                     "lst[]": "keyword",
                 },
@@ -583,19 +572,17 @@ def test_searchable_true():
             "model": {
                 "use": "invenio",
                 "properties": {
-                    "a":  {"type": "fulltext+keyword",
-                           "facets": {"searchable": False}},
+                    "a": {"type": "fulltext+keyword", "facets": {"searchable": False}},
                     "b": {
                         "type": "keyword",
                         "facets": {"field": 'TermsFacet(field="cosi")'},
                     },
                     "c": "fulltext",
                     "f": {
-                                "type" : "object",
-                                "facets": {"searchable": False},
-                                "properties": {"g": {"type": "keyword"}},
-
-                            },
+                        "type": "object",
+                        "facets": {"searchable": False},
+                        "properties": {"g": {"type": "keyword"}},
+                    },
                 },
             },
         },

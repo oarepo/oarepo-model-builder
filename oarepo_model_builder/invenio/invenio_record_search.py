@@ -3,12 +3,12 @@ import re
 
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
-from ..datatypes import datatypes
+from oarepo_model_builder.utils.python_name import convert_name_to_python
 
+from ..datatypes import datatypes
 from ..outputs.json_stack import JSONStack
 from ..utils.deepmerge import deepmerge
 from .invenio_base import InvenioBaseClassPythonBuilder
-from oarepo_model_builder.utils.python_name import convert_name_to_python
 
 OAREPO_FACETS_PROPERTY = "facets"
 OAREPO_SORTABLE_PROPERTY = "sortable"

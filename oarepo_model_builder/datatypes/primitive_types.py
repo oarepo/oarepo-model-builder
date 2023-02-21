@@ -2,8 +2,8 @@ from typing import List
 
 from marshmallow import fields
 
-from .datatypes import DataType, Import
 from ..utils.facet_helpers import searchable
+from .datatypes import DataType, Import
 
 
 class NumberDataType(DataType):
@@ -25,14 +25,14 @@ class NumberDataType(DataType):
 
         return validators
 
-    def facet(self, key, definition={}, props_num=None, create = True):
+    def facet(self, key, definition={}, props_num=None, create=True):
         if not searchable(definition, create):
             return False
-        key = definition.get('key', key)
-        field = definition.get('field', "TermsFacet(field = ")
+        key = definition.get("key", key)
+        field = definition.get("field", "TermsFacet(field = ")
         facet_def = {"path": key, "class": field}
-        if 'field' in definition:
-            facet_def['defined_class'] = True
+        if "field" in definition:
+            facet_def["defined_class"] = True
         return facet_def
 
 
@@ -76,12 +76,12 @@ class BooleanDataType(DataType):
     marshmallow_field = "ma_fields.Boolean"
     model_type = "boolean"
 
-    def facet(self, key, definition={}, props_num=None, create = True):
+    def facet(self, key, definition={}, props_num=None, create=True):
         if not searchable(definition, create):
             return False
-        key = definition.get('key', key)
-        field = definition.get('field', "TermsFacet(field = ")
+        key = definition.get("key", key)
+        field = definition.get("field", "TermsFacet(field = ")
         facet_def = {"path": key, "class": field}
-        if 'field' in definition:
-            facet_def['defined_class'] = True
+        if "field" in definition:
+            facet_def["defined_class"] = True
         return facet_def
