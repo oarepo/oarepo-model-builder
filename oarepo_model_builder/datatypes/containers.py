@@ -7,11 +7,10 @@ from marshmallow import fields
 from oarepo_model_builder.utils.camelcase import camel_case
 from oarepo_model_builder.utils.jinja import split_package_name
 from oarepo_model_builder.utils.python_name import convert_name_to_python_class
-from oarepo_model_builder.validation import (InvalidModelException,
-                                             model_validator)
+from oarepo_model_builder.validation import InvalidModelException, model_validator
 
-from .datatypes import DataType
 from ..utils.facet_helpers import searchable
+from .datatypes import DataType
 
 log = logging.getLogger("datatypes")
 
@@ -130,18 +129,21 @@ class ObjectDataType(DataType):
                 class_name = f"{'.'.join(package_path)}.{class_name}"
         return class_name
 
-    def facet(self, key, definition={}, props_num = None, create = True):
-        key = definition.get('key', key)
-        field = definition.get('field', "TermFacet")
+    def facet(self, key, definition={}, props_num=None, create=True):
+        key = definition.get("key", key)
+        field = definition.get("field", "TermFacet")
         if "searchable" in definition:
             for d in self.stack.top.data.properties:
-                self.stack.top.data.properties[d]['facets'] = {"searchable" : definition["searchable"]}
+                self.stack.top.data.properties[d]["facets"] = {
+                    "searchable": definition["searchable"]
+                }
         if not searchable(definition, create):
             return False
         if props_num == 0:
             return False
 
-        return {"path": key, "class": field, 'props_num' : props_num}
+        return {"path": key, "class": field, "props_num": props_num}
+
 
 class NestedDataType(ObjectDataType):
     schema_type = "object"
@@ -149,19 +151,20 @@ class NestedDataType(ObjectDataType):
     marshmallow_field = "ma_fields.Nested"
     model_type = "nested"
 
-    def facet(self, key, definition={}, props_num = None, create = True):
+    def facet(self, key, definition={}, props_num=None, create=True):
         if "searchable" in definition:
             for d in self.stack.top.data.properties:
-                self.stack.top.data.properties[d]['facets'] = {"searchable" : definition["searchable"]}
+                self.stack.top.data.properties[d]["facets"] = {
+                    "searchable": definition["searchable"]
+                }
         if not searchable(definition, create):
             return False
         upper = self.stack[-2]
         if key in definition:
-            key = definition['key']
+            key = definition["key"]
         elif upper.json_schema_type == "array":
             key = upper.key
-        return {"path": key, "class": "NestedLabeledFacet", 'props_num' : props_num}
-
+        return {"path": key, "class": "NestedLabeledFacet", "props_num": props_num}
 
 
 class FlattenDataType(DataType):
@@ -170,17 +173,18 @@ class FlattenDataType(DataType):
     marshmallow_field = "ma_fields.Raw"
     model_type = "flatten"
 
-    def facet(self, key, definition= {}, props_num = None, create = True):
+    def facet(self, key, definition={}, props_num=None, create=True):
         if not searchable(definition, create):
             return False
         facet_def = {}
-        if 'field' in definition:
-            key = definition.get('key', key)
-            facet_def = {'path': key, 'class': definition['field']}
-            facet_def['defined_class'] = True
+        if "field" in definition:
+            key = definition.get("key", key)
+            facet_def = {"path": key, "class": definition["field"]}
+            facet_def["defined_class"] = True
             return facet_def
         else:
             return False
+
 
 class ArrayDataType(DataType):
     schema_type = "array"
@@ -196,33 +200,39 @@ class ArrayDataType(DataType):
         minItems = fields.Integer(required=False)
         maxItems = fields.Integer(required=False)
 
-    def facet(self, key, definition={}, props_num = None, create = True):
+    def facet(self, key, definition={}, props_num=None, create=True):
         if "searchable" in definition:
-            if 'properties' in self.stack.top.data['items']:
-                self.stack.top.data['items']['facets'] = {"searchable" : definition["searchable"]}
-                for d in self.stack.top.data['items'].properties:
-                    self.stack.top.data['items'].properties[d]['facets'] = {"searchable" : definition["searchable"]}
+            if "properties" in self.stack.top.data["items"]:
+                self.stack.top.data["items"]["facets"] = {
+                    "searchable": definition["searchable"]
+                }
+                for d in self.stack.top.data["items"].properties:
+                    self.stack.top.data["items"].properties[d]["facets"] = {
+                        "searchable": definition["searchable"]
+                    }
             else:
-                for d in self.stack.top.data['items']:
-                    self.stack.top.data['items'][d]['facets'] = {"searchable" : definition["searchable"]}
+                for d in self.stack.top.data["items"]:
+                    self.stack.top.data["items"][d]["facets"] = {
+                        "searchable": definition["searchable"]
+                    }
         if not searchable(definition, create):
             return False
-        key = definition.get('key', key)
-        if key not in definition and 'keyword' in definition:
+        key = definition.get("key", key)
+        if key not in definition and "keyword" in definition:
             key = key + "_keyword"
 
-        field = definition.get('field', "TermsFacet(field = ")
+        field = definition.get("field", "TermsFacet(field = ")
         facet_def = {}
-        if 'nested' in definition:
+        if "nested" in definition:
             field = "NestedLabeledFacet"
-        elif 'field' in definition:
-            facet_def['defined_class'] = True
-        facet_def["path"] =  key
+        elif "field" in definition:
+            facet_def["defined_class"] = True
+        facet_def["path"] = key
         facet_def["class"] = field
 
         if props_num == 0:
             return False
         if int(props_num or 0) > 1:
-            facet_def['props_num'] = props_num
+            facet_def["props_num"] = props_num
 
         return facet_def

@@ -1,7 +1,7 @@
-from functools import partial
 import json
 import shutil
 import sys
+from functools import partial
 from pathlib import Path
 
 import click

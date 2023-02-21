@@ -11,7 +11,6 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 DUMMY_YAML = "test.yaml"
 
 
-
 def test_sort():
     schema = load_model(
         DUMMY_YAML,
@@ -72,7 +71,6 @@ class TestSearchOptions(InvenioSearchOptions):
     }
     """,
     )
-
 
 
 def test_search_class():
