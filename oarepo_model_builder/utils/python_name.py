@@ -1,5 +1,5 @@
-import re
 import keyword
+import re
 
 
 def convert_name_to_python(name):

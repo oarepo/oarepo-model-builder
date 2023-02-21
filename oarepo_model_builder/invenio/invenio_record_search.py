@@ -1,3 +1,6 @@
+import keyword
+import re
+
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
 from oarepo_model_builder.utils.python_name import convert_name_to_python
@@ -6,9 +9,6 @@ from ..outputs.json_stack import JSONStack
 from ..utils.deepmerge import deepmerge
 from ..utils.hyphen_munch import HyphenMunch
 from .invenio_base import InvenioBaseClassPythonBuilder
-import re
-import keyword
-
 
 OAREPO_FACETS_PROPERTY = "facets"
 OAREPO_SORTABLE_PROPERTY = "sortable"
