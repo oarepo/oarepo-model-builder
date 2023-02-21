@@ -2,10 +2,11 @@ import json
 from functools import cached_property
 
 from deepdiff import DeepDiff
+from munch import munchify
+
+from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 from .schema import Ref, SchemaPathValidator, model_paths
-from munch import munchify
-from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
 class ReplaceElement(Exception):

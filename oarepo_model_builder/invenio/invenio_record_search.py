@@ -1,3 +1,6 @@
+import keyword
+import re
+
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
 from ..datatypes import datatypes
