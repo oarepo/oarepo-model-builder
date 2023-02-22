@@ -95,7 +95,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
             d_type = datatypes.get_datatype(data, data.type, self.current_model, self.schema, self.stack)
             ft = d_type.facet(key=self.stack.top.key, definition=self.definition, create=self.facet_switch)
-            if ft and data.type != "array": self.facet_stack.append(ft)
+            if ft and data.type != "array":
+                self.facet_stack.append(ft)
             if len(self.facet_stack) > 0:
                 facet_def = ""
                 facet_name = ""
@@ -121,9 +122,10 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 self.clean_stack()
 
                 facet_name = facet_name[:-1]
-                self.search_options_data.append({facet_name: facet_def})
-                search_ops_name = "facets." + facet_name
-                self.facets_definition.append({facet_name: search_ops_name})
+                if facet_def:
+                    self.search_options_data.append({facet_name: facet_def})
+                    search_ops_name = "facets." + facet_name
+                    self.facets_definition.append({facet_name: search_ops_name})
 
 
     def process_search_options(self, data, field_class):
