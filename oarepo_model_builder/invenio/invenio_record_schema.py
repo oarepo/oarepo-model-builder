@@ -143,7 +143,6 @@ class MarshmallowNode:
 
 @dataclasses.dataclass
 class CompositeMarshmallowNode(MarshmallowNode):
-
     fields: List["MarshmallowNode"] = dataclasses.field(default_factory=list)
 
     @classmethod

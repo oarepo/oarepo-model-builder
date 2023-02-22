@@ -52,7 +52,7 @@ class RegexFieldsSchema(ma.Schema):
         )
         # load all regex fields
         if many:
-            for (loaded_data, orig_data) in zip(loaded, data):
+            for loaded_data, orig_data in zip(loaded, data):
                 self.load_regex_fields(loaded_data, orig_data, error_store, index)
         else:
             self.load_regex_fields(loaded, data, error_store, index)
@@ -91,7 +91,7 @@ class RegexFieldsSchema(ma.Schema):
     def _serialize(self, obj, *, many: bool = False):
         serialized = super()._serialize(obj, many=many)
         if many:
-            for (serialized_data, orig_data) in zip(serialized, obj):
+            for serialized_data, orig_data in zip(serialized, obj):
                 self.save_regex_fields(serialized_data, orig_data)
         else:
             self.save_regex_fields(serialized, obj)

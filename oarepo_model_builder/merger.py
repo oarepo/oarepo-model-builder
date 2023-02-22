@@ -28,7 +28,11 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
     "--destination-first/--source-first",
     help="Take destination first and merge source only if it is not in destination. Normally merges destination into source and replaces destination with the result",
 )
-def merger(source, destination, result, destination_first):
+@click.option(
+    "--overwrite",
+    help="Do not perform merging but overwrite destination files with source files",
+)
+def merger(source, destination, result, destination_first, overwrite):
     source = Path(source)
     destination = Path(destination)
 
@@ -38,7 +42,9 @@ def merger(source, destination, result, destination_first):
                 "If source is a file, destination must be a file as well", err=True
             )
             sys.exit(1)
-        merge_file(source, destination, result or destination, destination_first)
+        merge_file(
+            source, destination, result or destination, destination_first, overwrite
+        )
     else:
         for fn in source.glob("**/*"):
             if not fn.is_file():
@@ -51,10 +57,17 @@ def merger(source, destination, result, destination_first):
                 if result
                 else destination.joinpath(relative_fn),
                 destination_first,
+                overwrite,
             )
 
 
-def merge_file(source: Path, destination: Path, result: Path, destination_first: bool):
+def merge_file(
+    source: Path,
+    destination: Path,
+    result: Path,
+    destination_first: bool,
+    overwrite: bool,
+):
     source_suffix = source.suffix[1:]
     destination_suffix = destination.suffix[1:]
     if source_suffix != destination_suffix:
@@ -62,7 +75,7 @@ def merge_file(source: Path, destination: Path, result: Path, destination_first:
             f"Suffixes of source and destination files must match, have {source}, {destination}"
         )
     result.parent.mkdir(parents=True, exist_ok=True)
-    if not destination.exists():
+    if not destination.exists() or overwrite:
         if source.is_file():
             shutil.copy(source, result)
         else:
