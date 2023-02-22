@@ -4,6 +4,6 @@ from .utils import ExtendablePartSchema
 
 
 class PropertyFacets(ExtendablePartSchema):
-    clazz = fields.String(data_key="class", required=False)
+    key = fields.String(required=False)
     field = fields.String(required=False)
     searchable = fields.Boolean(required=False)

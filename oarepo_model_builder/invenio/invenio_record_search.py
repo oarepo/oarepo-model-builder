@@ -195,6 +195,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 self.definition["nested"] = True
             elif "type" in data and data["type"] == "fulltext+keyword":
                 self.definition["keyword"] = True
+                self.definition["basic_array"] = True
                 return 1
             elif "type" in data:
                 fd = datatypes.get_datatype(
@@ -202,6 +203,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 )
                 ft = fd.facet(key="")
                 if ft:
+                    self.definition["basic_array"] = True
                     return 1
             else:
                 return 0
