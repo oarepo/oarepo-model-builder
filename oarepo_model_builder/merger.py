@@ -29,7 +29,7 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
     help="Take destination first and merge source only if it is not in destination. Normally merges destination into source and replaces destination with the result",
 )
 @click.option(
-    "--overwrite",
+    "--overwrite/--no-overwrite",
     help="Do not perform merging but overwrite destination files with source files",
 )
 def merger(source, destination, result, destination_first, overwrite):
