@@ -147,7 +147,7 @@ updated = TermsFacet(field = "updated")
 
 
 _schema = TermsFacet(field = "$schema")
-    
+
 """,
     )
 
@@ -357,10 +357,11 @@ def test_array():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "")
-
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
+    print(data)
+
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -398,6 +399,90 @@ _schema = TermsFacet(field = "$schema")
     )
 
 
+def test_array_object():
+    schema = load_model(
+        DUMMY_YAML,
+        "test",
+        model_content={
+            "model": {
+                "use": "invenio",
+                "properties": {
+                    "arr": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "a": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {"c": "keyword"},
+                                    },
+                                }
+                            },
+                        },
+                    },
+                    "test": {
+                        "type": "array",
+                        "items": {"type": "array", "items": {"type": "keyword"}},
+                    },
+                    "test2": {
+                        "type": "array",
+                        "items": {
+                            "type": "nested",
+                            "properties": {"g": {"type": "keyword"}},
+                        },
+                    },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data)
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+        \"""Facet definitions.\"""
+
+from invenio_records_resources.services.records.facets import TermsFacet
+from invenio_search.engine import dsl
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+
+
+arr_a_c = TermsFacet(field = "arr.a.c")
+
+test = TermsFacet(field = "test")
+
+test2_g = NestedLabeledFacet(path =" test2", nested_facet=TermsFacet(field = "test2.g"))
+
+_id = TermsFacet(field = "id")
+
+
+
+created = TermsFacet(field = "created")
+
+
+
+updated = TermsFacet(field = "updated")
+
+
+
+_schema = TermsFacet(field = "$schema")
+""",
+    )
+
+
 def test_array_nested():
     schema = load_model(
         DUMMY_YAML,
@@ -414,7 +499,10 @@ def test_array_nested():
                                 "items": {
                                     "type": "nested",
                                     "properties": {
-                                        "d": {"type": "keyword"},
+                                        "d": {
+                                            "type": "fulltext+keyword",
+                                            "facets": {"key": "test"},
+                                        },
                                         "e": {
                                             "type": "object",
                                             "properties": {"f": "keyword"},
@@ -439,6 +527,7 @@ def test_array_nested():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
+    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -450,7 +539,7 @@ from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
-obj_arr_d = NestedLabeledFacet(path ="obj.arr", nested_facet=TermsFacet(field = "obj.arr.d"))
+obj_arr_test = NestedLabeledFacet(path ="obj.arr", nested_facet=TermsFacet(field = "obj.arr.test"))
 
 obj_arr_e_f = NestedLabeledFacet(path ="obj.arr", nested_facet=TermsFacet(field = "obj.arr.e.f"))
 

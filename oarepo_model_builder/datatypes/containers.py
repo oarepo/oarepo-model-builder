@@ -130,6 +130,9 @@ class ObjectDataType(DataType):
         return class_name
 
     def facet(self, key, definition={}, props_num=None, create=True):
+        upper = self.stack[-2]
+        if upper.json_schema_type == "array" and key == "items":
+            return False
         key = definition.get("key", key)
         field = definition.get("field", "TermFacet")
         if "searchable" in definition:
@@ -201,6 +204,9 @@ class ArrayDataType(DataType):
         maxItems = fields.Integer(required=False)
 
     def facet(self, key, definition={}, props_num=None, create=True):
+        upper = self.stack[-2]
+        if upper.json_schema_type == "array" and key == "items":
+            return False
         if "searchable" in definition:
             if "properties" in self.stack.top.data["items"]:
                 self.stack.top.data["items"]["facets"] = {
@@ -232,7 +238,7 @@ class ArrayDataType(DataType):
 
         if props_num == 0:
             return False
-        if int(props_num or 0) > 1:
+        if int(props_num or 0) >= 1 and "basic_array" not in definition:
             facet_def["props_num"] = props_num
 
         return facet_def
