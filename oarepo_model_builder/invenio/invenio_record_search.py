@@ -58,7 +58,6 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
     @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
-
         schema_element_type = self.stack.top.schema_element_type
         data = self.stack.top.data
         recurse = True
@@ -112,7 +111,6 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 != "object"
             )
         ):
-
             d_type = datatypes.get_datatype(
                 data, data.type, self.current_model, self.schema, self.stack
             )
