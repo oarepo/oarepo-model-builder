@@ -10,3 +10,6 @@ class RootSchema(ExtendablePartSchema):
     version = fields.String(required=False, dump_default="1.0.0")
     title = fields.String(required=False)
     output_directory = fields.String(data_key="output-directory", required=False)
+    defs = fields.Nested(
+        lambda: model_validator.validator_class("properties")(), data_key="$defs"
+    )

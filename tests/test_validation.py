@@ -60,3 +60,27 @@ def test_inline_props_on_model():
             },
         },
     }
+
+
+def test_validate_defs():
+    validation_result = model_validator.validate(
+        {
+            "model": {},
+            "$defs": {
+                "a": "boolean",
+                "b": "integer{minimum:1}",
+                "c": "float{exclusiveMaximum: 1.0}",
+                "d": "double",
+            },
+        }
+    )
+    assert validation_result == {
+        "version": "1.0.0",
+        "$defs": {
+            "a": {"type": "boolean"},
+            "b": {"minimum": 1, "type": "integer"},
+            "c": {"exclusiveMaximum": 1.0, "type": "float"},
+            "d": {"type": "double"},
+        },
+        "model": {"properties": {}, "type": "object"},
+    }
