@@ -79,7 +79,7 @@ def merge_file(
         if source.is_file():
             shutil.copy(source, result)
         else:
-            shutil.copytree(source, result)
+            shutil.copytree(source, result, dirs_exist_ok=True)
         return
     if source_suffix == "yaml":
         merge_json(
