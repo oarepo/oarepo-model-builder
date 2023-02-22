@@ -314,3 +314,5 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
         model.setdefault("script-import-sample-data", "data/sample_data.yaml")
         self.set(model, "service-id", lambda: model.flask_extension_name)
+
+        model.setdefault("permissions", {"presets": []})

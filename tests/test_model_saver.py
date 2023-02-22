@@ -184,6 +184,7 @@ def test_model_saver():
             "record-schema-metadata-class": "test.services.records.schema.TestMetadataSchema",
             "record-prefix": "Test",
             "proxies-current-service": "test.proxies.current_service",
+            "permissions": {"presets": []},
             "record-services-package": "test.services.records",
         }
     }
@@ -392,5 +393,6 @@ def test_model_saver_invenio():
             "config-service-config-key": "TEST_SERVICE_CONFIG_TEST",
             "invenio-record-schema-extra-code": "",
             "flask-commands-setup-cfg": "test",
+            "permissions": {"presets": []},
         }
     }
