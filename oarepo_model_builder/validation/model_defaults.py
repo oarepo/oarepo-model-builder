@@ -24,6 +24,13 @@ class PathOrString(fields.Field):
         return value
 
 
+class ModelPermissionsSchema(ma.Schema):
+    presets = fields.List(fields.String())
+
+    class Meta:
+        unknown = ma.RAISE
+
+
 class ModelDefaults(ma.Schema):
     package = fields.String(required=False)
     profile_package = fields.String(data_key="profile-package", required=False)
@@ -250,3 +257,5 @@ class ModelDefaults(ma.Schema):
     extension_suffix = fields.String(data_key="extension-suffix", required=False)
 
     mapping = fields.Nested(ma.Schema())
+
+    permissions = fields.Nested(ModelPermissionsSchema(), required=False)
