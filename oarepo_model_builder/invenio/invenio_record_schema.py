@@ -11,9 +11,11 @@ from oarepo_model_builder.datatypes import Import, datatypes
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.camelcase import camel_case
-from oarepo_model_builder.utils.jinja import (split_base_name,
-                                              split_package_base_name,
-                                              split_package_name)
+from oarepo_model_builder.utils.jinja import (
+    split_base_name,
+    split_package_base_name,
+    split_package_name,
+)
 from oarepo_model_builder.utils.python_name import convert_name_to_python
 from oarepo_model_builder.validation import InvalidModelException
 
@@ -141,7 +143,6 @@ class MarshmallowNode:
 
 @dataclasses.dataclass
 class CompositeMarshmallowNode(MarshmallowNode):
-
     fields: List["MarshmallowNode"] = dataclasses.field(default_factory=list)
 
     @classmethod

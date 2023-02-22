@@ -1,7 +1,7 @@
-from functools import partial
 import json
 import shutil
 import sys
+from functools import partial
 from pathlib import Path
 
 import click
@@ -28,7 +28,11 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
     "--destination-first/--source-first",
     help="Take destination first and merge source only if it is not in destination. Normally merges destination into source and replaces destination with the result",
 )
-def merger(source, destination, result, destination_first):
+@click.option(
+    "--overwrite/--no-overwrite",
+    help="Do not perform merging but overwrite destination files with source files",
+)
+def merger(source, destination, result, destination_first, overwrite):
     source = Path(source)
     destination = Path(destination)
 
@@ -38,9 +42,13 @@ def merger(source, destination, result, destination_first):
                 "If source is a file, destination must be a file as well", err=True
             )
             sys.exit(1)
-        merge_file(source, destination, result or destination, destination_first)
+        merge_file(
+            source, destination, result or destination, destination_first, overwrite
+        )
     else:
         for fn in source.glob("**/*"):
+            if not fn.is_file():
+                continue
             relative_fn = fn.relative_to(source)
             merge_file(
                 fn,
@@ -49,18 +57,29 @@ def merger(source, destination, result, destination_first):
                 if result
                 else destination.joinpath(relative_fn),
                 destination_first,
+                overwrite,
             )
 
 
-def merge_file(source: Path, destination: Path, result: Path, destination_first: bool):
+def merge_file(
+    source: Path,
+    destination: Path,
+    result: Path,
+    destination_first: bool,
+    overwrite: bool,
+):
     source_suffix = source.suffix[1:]
     destination_suffix = destination.suffix[1:]
     if source_suffix != destination_suffix:
         raise AttributeError(
             f"Suffixes of source and destination files must match, have {source}, {destination}"
         )
-    if not destination.exists():
-        shutil.copy(source, destination)
+    result.parent.mkdir(parents=True, exist_ok=True)
+    if not destination.exists() or overwrite:
+        if source.is_file():
+            shutil.copy(source, result)
+        else:
+            shutil.copytree(source, result, dirs_exist_ok=True)
         return
     if source_suffix == "yaml":
         merge_json(
@@ -93,11 +112,13 @@ def merge_file(source: Path, destination: Path, result: Path, destination_first:
         merge_python(source, destination, result, destination_first)
     else:
         raise NotImplementedError(
-            f"Merging file type {source_suffix} is not implemented yet"
+            f"Merging file type {source_suffix} (file {source}) is not implemented yet"
         )
 
 
-def merge_json(source, destination, result, destination_first, load_func, dump_func):
+def merge_json(
+    source, destination, result: Path, destination_first, load_func, dump_func
+):
     with open(source) as f:
         source_data = load_func(f)
     with open(destination) as f:

@@ -41,19 +41,19 @@ class ModelValidator:
             raise ValidationError(f'Do not have validators for "{section}"')
 
         # if any of the validators is extremely permissive, do not add strict meta
+        parent_meta_classes = set()
         for v in validators:
             if hasattr(v, "Meta"):
+                parent_meta_classes.add(v.Meta)
                 if getattr(v.Meta, "unknown", None) == ma.INCLUDE:
                     strict = False
                     break
+        meta_options = {}
         if strict:
+            meta_options["unknown"] = ma.RAISE
 
-            class Meta:
-                unknown = ma.RAISE
-
-            return type(f"{section.title()}Validator", validators, {"Meta": Meta})
-        else:
-            return type(f"{section.title()}Validator", validators, {})
+        meta_class = type("Meta", tuple(parent_meta_classes), meta_options)
+        return type(f"{section.title()}Validator", validators, {"Meta": meta_class})
 
     def get_property_validator_class(self, section):
         datatype_name = section[len(PROPERTY_BY_TYPE_PREFIX) :]

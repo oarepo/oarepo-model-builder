@@ -6,14 +6,15 @@ from .property import ObjectProperty, Property
 from .property_facets import PropertyFacets
 from .property_jsonschema import PropertyJSONSchema
 from .property_mapping import PropertyMapping
-from .property_marshmallow import (ModelMarshmallowSchema,
-                                   ObjectPropertyMarshmallowSchema,
-                                   PropertyMarshmallowSchema)
+from .property_marshmallow import (
+    ModelMarshmallowSchema,
+    ObjectPropertyMarshmallowSchema,
+    PropertyMarshmallowSchema,
+)
 from .property_sample_data import ModelSampleConfiguration, PropertySampleData
 from .property_sortable import PropertySortable
 from .root import RootSchema
-from .settings import (SettingsOpenSearchSchema, SettingsPythonSchema,
-                       SettingsSchema)
+from .settings import SettingsOpenSearchSchema, SettingsPythonSchema, SettingsSchema
 
 #
 # Validators is a dictionary of "points" in model schema mapped to a single ma.Schema class

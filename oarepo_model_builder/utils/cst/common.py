@@ -71,7 +71,6 @@ class PythonContext:
         new_node: Union[CSTNode, None],
         merged_node: Union[CSTNode, None],
     ) -> Union[CSTNode, object]:
-
         logger.debug(
             "\nDecide called with operations %s on node %s %s",
             self.top.operations,
