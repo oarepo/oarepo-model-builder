@@ -31,6 +31,10 @@ class Provider:
         rnd = self.generator.random.randrange(-100, 100 + 1, 1)
         return rnd / 10
 
+    def random_boolean(self):
+        rnd = self.generator.random.randrange(0, 2, 1)
+        return rnd == 1
+
     def sample_object(self):
         return {
             self.generator.word(): self.generator.word()
@@ -174,6 +178,12 @@ def faker_provider(faker, settings, stack, params):
                 method = "random_int"
             elif data_type == "number":
                 method = "random_float"
+            elif data_type == "double":
+                method = "random_float"
+            elif data_type == "float":
+                method = "random_float"
+            elif data_type == "boolean":
+                method = "random_boolean"
             elif data_type == "date":
                 method = "date"
             elif data_type == "object":
