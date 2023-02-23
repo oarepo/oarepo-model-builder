@@ -1,5 +1,3 @@
-
-
 def pytest_configure():
     pass
     # logging.basicConfig(level=logging.ERROR)

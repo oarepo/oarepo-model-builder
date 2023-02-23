@@ -1,4 +1,3 @@
-
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 
