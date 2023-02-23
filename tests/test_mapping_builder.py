@@ -23,7 +23,7 @@ def test_simple_mapping_builder():
     model = {"properties": {"a": {"type": "keyword", "mapping": {"type": "text"}}}}
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
+    assert data == {"mappings": {"properties": {"a": {"type": "text", "index": True}}}}
 
 
 def test_array_mapping_builder():
@@ -37,7 +37,7 @@ def test_array_mapping_builder():
     }
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
+    assert data == {"mappings": {"properties": {"a": {"type": "text", "index": True}}}}
 
 
 def build_model(model):
@@ -115,11 +115,11 @@ def test_mapping_preprocessor():
                 "a": {
                     "type": "object",
                     "properties": {
-                        "lang": {"type": "keyword"},
-                        "value": {"type": "text"},
+                        "lang": {"type": "keyword", "index": True},
+                        "value": {"type": "text", "index": True},
                     },
                 },
-                "a_cs": {"type": "text"},
+                "a_cs": {"type": "text", "index": True},
             }
         }
     }
