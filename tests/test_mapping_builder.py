@@ -181,7 +181,7 @@ def test_deep_no_index():
                 "a": {
                     "properties": {"b": {"type": "keyword", "index": False}},
                     "type": "object",
-                    "index": False,
+                    "enabled": False,
                 }
             }
         }
@@ -207,7 +207,7 @@ def test_deep_no_index_children():
                 "a": {
                     "properties": {"b": {"type": "keyword", "index": False}},
                     "type": "object",
-                    "index": False,
+                    "enabled": False,
                 }
             }
         }
