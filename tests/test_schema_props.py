@@ -75,11 +75,11 @@ class TestSchema(InvenioBaseRecordSchema):
     assert data == {
         "mappings": {
             "properties": {
-                "$schema": {"type": "keyword", "index": True},
-                "a": {"type": "keyword", "index": True},
-                "created": {"type": "date", "index": True},
-                "id": {"type": "keyword", "index": True},
-                "updated": {"type": "date", "index": True},
+                "$schema": {"type": "keyword"},
+                "a": {"type": "keyword"},
+                "created": {"type": "date"},
+                "id": {"type": "keyword"},
+                "updated": {"type": "date"},
             }
         }
     }

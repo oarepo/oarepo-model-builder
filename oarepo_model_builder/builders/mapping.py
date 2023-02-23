@@ -18,16 +18,19 @@ class MappingBuilder(JSONBaseBuilder):
         # that should not be present in mapping
         element_type = self.stack.top.schema_element_type
 
-        if element_type in ("properties", "property", "type", "items"):
-            if element_type == "items":
-                # do not output "items" container
-                self.build_children()
-                self.set_searchable()
-                self.merge_mapping(self.stack.top.data)
-                return
-            elif element_type == "type" and self.stack.top.data == "array":
-                # do not output "type=array"
-                return
+        if element_type == "items":
+            # do not output "items" container
+            self.build_children()
+            self.set_searchable()
+            self.merge_mapping(self.stack.top.data)
+
+        elif element_type in ("properties", "property"):
+            self.index_enabled_stack.append(
+                self.stack.top.data.get("facets", {}).get(
+                    "searchable", self.index_enabled_stack[-1]
+                )
+            )
+            self.children_indexed.append(False)
 
             self.model_element_enter()
 
@@ -40,15 +43,25 @@ class MappingBuilder(JSONBaseBuilder):
 
             self.model_element_leave()
 
+            self.index_enabled_stack.pop()
+            self.children_indexed.pop()
+
+        elif element_type == "type" and self.stack.top.data != "array":
+            # do not output "type=array"
+            self.model_element_enter()
+            self.model_element_leave()
+
     def set_searchable(self):
-        default_searchable = self.current_model.get("searchable", True)
-        if self.stack.top.data.type not in ("object", "nested", "array"):
-            facets_searchable = self.stack.top.data.get("facets", {}).get(
-                "searchable", default_searchable
-            )
-            self.stack.top.data.setdefault("mapping", {}).setdefault(
-                "index", facets_searchable
-            )
+        if self.stack.top.data.type != "array":
+            if self.stack.top.data.type in ("object", "nested"):
+                searchable = self.children_indexed[-1]
+            else:
+                searchable = self.index_enabled_stack[-1] or self.children_indexed[-1]
+            if not searchable:
+                self.stack.top.data.setdefault("mapping", {})["index"] = False
+            else:
+                for idx in range(0, len(self.children_indexed)):
+                    self.children_indexed[idx] = True
 
     def merge_mapping(self, data):
         if isinstance(data, dict) and "mapping" in data:
@@ -58,6 +71,8 @@ class MappingBuilder(JSONBaseBuilder):
             self.output.merge_mapping(mapping)
 
     def on_enter_model(self, output_name):
+        self.index_enabled_stack = [self.current_model.get("searchable", True)]
+        self.children_indexed = [False]
         ensure_parent_modules(
             self.builder, Path(output_name), ends_at=self.parent_module_root_name
         )
