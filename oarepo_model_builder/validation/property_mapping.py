@@ -1,6 +1,5 @@
-import marshmallow as ma
 
-from .utils import ExtendablePartSchema, PermissiveSchema
+from .utils import PermissiveSchema
 
 
 class PropertyMapping(PermissiveSchema):

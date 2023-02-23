@@ -1,5 +1,3 @@
-from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 from .invenio_base import InvenioBaseClassPythonBuilder
 

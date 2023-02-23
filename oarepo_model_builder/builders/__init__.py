@@ -4,7 +4,7 @@ import copy
 import functools
 import inspect
 import sys
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List
 
 from oarepo_model_builder.property_preprocessors import PropertyPreprocessor
 from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement

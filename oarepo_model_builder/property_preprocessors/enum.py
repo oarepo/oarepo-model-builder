@@ -1,5 +1,4 @@
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
-from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.invenio.invenio_record_schema import (
     InvenioRecordSchemaBuilder,
 )

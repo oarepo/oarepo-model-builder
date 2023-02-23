@@ -4,11 +4,6 @@ from typing import Callable, List
 import faker
 import faker.providers
 from faker import Faker
-from jinja2 import Environment, FunctionLoader
-
-from oarepo_model_builder.builders import OutputBuilder
-from oarepo_model_builder.builders.utils import ensure_directory
-from oarepo_model_builder.templates import templates
 
 from ..builder import ModelBuilder
 from ..builders import process
@@ -35,6 +30,10 @@ class Provider:
     def random_float(self):
         rnd = self.generator.random.randrange(-100, 100 + 1, 1)
         return rnd / 10
+
+    def random_boolean(self):
+        rnd = self.generator.random.randrange(0, 2, 1)
+        return rnd == 1
 
     def sample_object(self):
         return {
@@ -179,6 +178,12 @@ def faker_provider(faker, settings, stack, params):
                 method = "random_int"
             elif data_type == "number":
                 method = "random_float"
+            elif data_type == "double":
+                method = "random_float"
+            elif data_type == "float":
+                method = "random_float"
+            elif data_type == "boolean":
+                method = "random_boolean"
             elif data_type == "date":
                 method = "date"
             elif data_type == "object":

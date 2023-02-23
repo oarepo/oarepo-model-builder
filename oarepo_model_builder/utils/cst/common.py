@@ -2,7 +2,7 @@ from collections import namedtuple
 from dataclasses import dataclass, field
 from enum import Enum
 from logging import getLogger
-from typing import Callable, List, Set, Union
+from typing import List, Set, Union
 
 from libcst import Arg, CSTNode, Element, Module
 

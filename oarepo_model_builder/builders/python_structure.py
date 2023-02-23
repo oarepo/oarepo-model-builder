@@ -1,7 +1,6 @@
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.builders.python import PythonBuilder
 from oarepo_model_builder.builders.utils import ensure_parent_modules
-from oarepo_model_builder.stack import ModelBuilderStack
 
 
 class PythonStructureBuilder(PythonBuilder):

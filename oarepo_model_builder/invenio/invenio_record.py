@@ -1,4 +1,3 @@
-from ..builders import process
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 

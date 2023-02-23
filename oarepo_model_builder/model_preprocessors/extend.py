@@ -1,8 +1,4 @@
-import os
-from pathlib import Path
 from typing import Dict
-
-from oarepo_model_builder.utils.jinja import split_base_name
 
 from ..schema import ModelSchema
 from . import ModelPreprocessor

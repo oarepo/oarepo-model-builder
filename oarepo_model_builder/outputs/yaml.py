@@ -1,4 +1,3 @@
-import json
 
 import yaml
 from deepdiff import DeepDiff

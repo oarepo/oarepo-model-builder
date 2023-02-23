@@ -1,16 +1,14 @@
 import copy
 import dataclasses
 import logging
-import re
-from collections import defaultdict, namedtuple
-from typing import Any, Dict, List, Tuple, Union
+from collections import defaultdict
+from typing import Any, Dict, List, Union
 
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.builders.python import PythonBuilder
 from oarepo_model_builder.datatypes import Import, datatypes
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
-from oarepo_model_builder.utils.camelcase import camel_case
 from oarepo_model_builder.utils.jinja import (
     split_base_name,
     split_package_base_name,

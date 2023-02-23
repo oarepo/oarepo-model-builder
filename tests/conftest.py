@@ -1,4 +1,3 @@
-import logging
 
 
 def pytest_configure():

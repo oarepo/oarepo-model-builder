@@ -1,5 +1,4 @@
-from collections import defaultdict
-from functools import cached_property, partial
+from functools import cached_property
 
 import importlib_metadata
 import marshmallow as ma

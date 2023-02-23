@@ -2,8 +2,8 @@ import itertools
 
 from libcst import Arg
 
-from .common import IdentityMerger, MergerBase, PythonContext, merge
-from .mergers import call_mergers, expression_mergers
+from .common import IdentityMerger, MergerBase, PythonContext
+from .mergers import expression_mergers
 
 
 class CallMerger(MergerBase):

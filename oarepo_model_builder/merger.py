@@ -10,7 +10,6 @@ import libcst as cst
 import yaml
 
 from oarepo_model_builder.utils.cst import PythonContext, merge
-from oarepo_model_builder.utils.cst.common import ConflictResolver
 from oarepo_model_builder.utils.deepmerge import deepmerge
 
 

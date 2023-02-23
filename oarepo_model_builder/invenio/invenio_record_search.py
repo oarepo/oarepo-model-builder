@@ -1,5 +1,3 @@
-import keyword
-import re
 
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
@@ -190,7 +188,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         if array:
             try:
                 sch_type = self.get_type(data)
-            except: sch_type = None
+            except:
+                sch_type = None
             if "type" in data and data["type"] == "nested":
                 self.definition["nested"] = True
             elif sch_type and sch_type == "object":
