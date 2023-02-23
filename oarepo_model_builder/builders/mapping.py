@@ -17,10 +17,12 @@ class MappingBuilder(JSONBaseBuilder):
         # ignore schema leaves different than "type" - for example, minLength, ...
         # that should not be present in mapping
         element_type = self.stack.top.schema_element_type
+
         if element_type in ("properties", "property", "type", "items"):
             if element_type == "items":
                 # do not output "items" container
                 self.build_children()
+                self.set_searchable()
                 self.merge_mapping(self.stack.top.data)
                 return
             elif element_type == "type" and self.stack.top.data == "array":
@@ -31,10 +33,22 @@ class MappingBuilder(JSONBaseBuilder):
 
             # process children
             self.build_children()
+            if element_type == "property":
+                self.set_searchable()
 
             self.merge_mapping(self.stack.top.data)
 
             self.model_element_leave()
+
+    def set_searchable(self):
+        default_searchable = self.current_model.get("searchable", True)
+        if self.stack.top.data.type not in ("object", "nested", "array"):
+            facets_searchable = self.stack.top.data.get("facets", {}).get(
+                "searchable", default_searchable
+            )
+            self.stack.top.data.setdefault("mapping", {}).setdefault(
+                "index", facets_searchable
+            )
 
     def merge_mapping(self, data):
         if isinstance(data, dict) and "mapping" in data:
