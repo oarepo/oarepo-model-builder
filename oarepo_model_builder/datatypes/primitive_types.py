@@ -1,4 +1,3 @@
-
 from marshmallow import fields
 
 from ..utils.facet_helpers import searchable
@@ -45,6 +44,7 @@ class IntegerDataType(NumberDataType):
         exclusiveMinimum = fields.Integer(required=False)
         maximum = fields.Integer(required=False)
         exclusiveMaximum = fields.Integer(required=False)
+        enum = fields.List(fields.Integer(), required=False)
 
 
 class FloatDataType(NumberDataType):
@@ -57,6 +57,7 @@ class FloatDataType(NumberDataType):
         exclusiveMinimum = fields.Float(required=False)
         maximum = fields.Float(required=False)
         exclusiveMaximum = fields.Float(required=False)
+        enum = fields.List(fields.Float(), required=False)
 
 
 class DoubleDataType(NumberDataType):
@@ -69,6 +70,7 @@ class DoubleDataType(NumberDataType):
         exclusiveMinimum = fields.Float(required=False)
         maximum = fields.Float(required=False)
         exclusiveMaximum = fields.Float(required=False)
+        enum = fields.List(fields.Float(), required=False)
 
 
 class BooleanDataType(DataType):
