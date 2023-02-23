@@ -1,14 +1,8 @@
-import json
-import os
-import re
 import shutil
-import sys
-from pathlib import Path
-from tempfile import mkdtemp, tempdir
+from tempfile import mkdtemp
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
-from oarepo_model_builder.fs import FileSystem, InMemoryFileSystem
-from tests.utils import assert_python_equals
+from oarepo_model_builder.fs import FileSystem
 
 OAREPO_USE = "use"
 

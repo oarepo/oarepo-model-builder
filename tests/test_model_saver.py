@@ -24,7 +24,7 @@ from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
 )
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.validation.model_validation import model_validator
-from tests.multilang import MultilangPreprocessor, MultilingualDataType, UIValidator
+from tests.multilang import MultilingualDataType, UIValidator
 
 try:
     import json5

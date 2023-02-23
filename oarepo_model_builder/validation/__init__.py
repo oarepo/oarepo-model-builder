@@ -1,4 +1,3 @@
-import json
 
 from marshmallow import ValidationError
 from munch import unmunchify

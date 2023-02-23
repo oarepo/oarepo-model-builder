@@ -1,4 +1,3 @@
-import sys
 
 import pytest
 from marshmallow.exceptions import ValidationError

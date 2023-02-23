@@ -1,7 +1,6 @@
 from oarepo_model_builder.model_preprocessors import ModelPreprocessor
-from oarepo_model_builder.utils.camelcase import camel_case, snake_case
+from oarepo_model_builder.utils.camelcase import snake_case
 from oarepo_model_builder.utils.deepmerge import deepmerge
-from oarepo_model_builder.utils.jinja import split_base_name
 
 
 class InvenioModelPreprocessor(ModelPreprocessor):

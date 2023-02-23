@@ -1,7 +1,5 @@
 from ..builders import OutputBuilder
-from ..outputs.cfg import CFGOutput
 from ..outputs.toml import TOMLOutput
-from ..utils.verbose import log
 
 
 class PyprojectTOMLBuilder(OutputBuilder):

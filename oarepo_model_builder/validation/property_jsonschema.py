@@ -1,7 +1,6 @@
-import marshmallow as ma
 from marshmallow import fields
 
-from .utils import ExtendablePartSchema, PermissiveSchema
+from .utils import PermissiveSchema
 
 
 class PropertyJSONSchema(PermissiveSchema):

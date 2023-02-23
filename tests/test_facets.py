@@ -398,6 +398,7 @@ _schema = TermsFacet(field = "$schema")
 """,
     )
 
+
 def test_array_obj2():
     schema = load_model(
         DUMMY_YAML,
@@ -413,14 +414,13 @@ def test_array_obj2():
                             "properties": {
                                 "id": {
                                     "type": "keyword",
-
                                 },
-                                "title": {"type": "fulltext+keyword"}
+                                "title": {"type": "fulltext+keyword"},
                             },
                         },
                     }
+                },
             },
-        },
         },
         isort=False,
         black=False,
@@ -434,6 +434,7 @@ def test_array_obj2():
         os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
+
 
 def test_array_object():
     schema = load_model(

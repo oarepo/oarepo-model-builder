@@ -4,11 +4,6 @@ from typing import Callable, List
 import faker
 import faker.providers
 from faker import Faker
-from jinja2 import Environment, FunctionLoader
-
-from oarepo_model_builder.builders import OutputBuilder
-from oarepo_model_builder.builders.utils import ensure_directory
-from oarepo_model_builder.templates import templates
 
 from ..builder import ModelBuilder
 from ..builders import process
