@@ -55,13 +55,15 @@ class MappingBuilder(JSONBaseBuilder):
         if self.stack.top.data.type != "array":
             if self.stack.top.data.type in ("object", "nested"):
                 searchable = self.children_indexed[-1]
+                if not searchable:
+                    self.stack.top.data.setdefault("mapping", {})["enabled"] = False
             else:
                 searchable = self.index_enabled_stack[-1] or self.children_indexed[-1]
-            if not searchable:
-                self.stack.top.data.setdefault("mapping", {})["index"] = False
-            else:
-                for idx in range(0, len(self.children_indexed)):
-                    self.children_indexed[idx] = True
+                if not searchable:
+                    self.stack.top.data.setdefault("mapping", {})["index"] = False
+                else:
+                    for idx in range(0, len(self.children_indexed)):
+                        self.children_indexed[idx] = True
 
     def merge_mapping(self, data):
         if isinstance(data, dict) and "mapping" in data:
