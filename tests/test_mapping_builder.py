@@ -123,3 +123,33 @@ def test_mapping_preprocessor():
             }
         }
     }
+
+
+def test_no_index():
+    model = {"properties": {"a": {"type": "keyword", "facets": {"searchable": False}}}}
+    data = build_model(model)
+
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword", "index": False}}}
+    }
+
+
+def test_no_index_on_model():
+    model = {"properties": {"a": {"type": "keyword"}}, "searchable": False}
+    data = build_model(model)
+
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword", "index": False}}}
+    }
+
+
+def test_override_no_index_on_model():
+    model = {
+        "properties": {"a": {"type": "keyword", "facets": {"searchable": True}}},
+        "searchable": False,
+    }
+    data = build_model(model)
+
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword", "index": True}}}
+    }
