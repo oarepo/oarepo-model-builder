@@ -23,7 +23,7 @@ def test_simple_mapping_builder():
     model = {"properties": {"a": {"type": "keyword", "mapping": {"type": "text"}}}}
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "text", "index": True}}}}
+    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
 
 
 def test_array_mapping_builder():
@@ -37,7 +37,7 @@ def test_array_mapping_builder():
     }
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "text", "index": True}}}}
+    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
 
 
 def build_model(model):
@@ -115,11 +115,100 @@ def test_mapping_preprocessor():
                 "a": {
                     "type": "object",
                     "properties": {
-                        "lang": {"type": "keyword", "index": True},
-                        "value": {"type": "text", "index": True},
+                        "lang": {"type": "keyword"},
+                        "value": {"type": "text"},
                     },
                 },
-                "a_cs": {"type": "text", "index": True},
+                "a_cs": {"type": "text"},
+            }
+        }
+    }
+
+
+def test_no_index():
+    model = {"properties": {"a": {"type": "keyword", "facets": {"searchable": False}}}}
+    data = build_model(model)
+
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword", "index": False}}}
+    }
+
+
+def test_no_index_on_model():
+    model = {"properties": {"a": {"type": "keyword"}}, "searchable": False}
+    data = build_model(model)
+
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword", "index": False}}}
+    }
+
+
+def test_override_no_index_on_model():
+    model = {
+        "properties": {"a": {"type": "keyword", "facets": {"searchable": True}}},
+        "searchable": False,
+    }
+    data = build_model(model)
+
+    assert data == {"mappings": {"properties": {"a": {"type": "keyword"}}}}
+
+
+def test_override_no_index_on_model():
+    model = {
+        "properties": {"a": {"type": "keyword", "facets": {"searchable": True}}},
+        "searchable": False,
+    }
+    data = build_model(model)
+
+    assert data == {"mappings": {"properties": {"a": {"type": "keyword"}}}}
+
+
+def test_deep_no_index():
+    model = {
+        "properties": {
+            "a": {
+                "type": "object",
+                "facets": {"searchable": False},
+                "properties": {"b": {"type": "keyword"}},
+            }
+        }
+    }
+    data = build_model(model)
+
+    assert data == {
+        "mappings": {
+            "properties": {
+                "a": {
+                    "properties": {"b": {"type": "keyword", "index": False}},
+                    "type": "object",
+                    "index": False,
+                }
+            }
+        }
+    }
+
+
+def test_deep_no_index_children():
+    model = {
+        "properties": {
+            "a": {
+                "type": "object",
+                "properties": {
+                    "b": {"type": "keyword", "facets": {"searchable": False}}
+                },
+            }
+        }
+    }
+    data = build_model(model)
+
+    assert data == {
+        "mappings": {
+            "properties": {
+                "a": {
+                    "properties": {"b": {"type": "keyword", "index": False}},
+                    "type": "object",
+                    "index": False,
+                }
             }
         }
     }
