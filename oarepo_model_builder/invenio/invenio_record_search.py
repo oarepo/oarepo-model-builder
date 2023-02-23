@@ -188,11 +188,14 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         count = 0
         ft = False
         if array:
-            if "type" in data and data["type"] == "object":
+            try:
+                sch_type = self.get_type(data)
+            except: sch_type = None
+            if "type" in data and data["type"] == "nested":
+                self.definition["nested"] = True
+            elif sch_type and sch_type == "object":
                 self.definition["obj"] = True
                 data = data["properties"]
-            elif "type" in data and data["type"] == "nested":
-                self.definition["nested"] = True
             elif "type" in data and data["type"] == "fulltext+keyword":
                 self.definition["keyword"] = True
                 self.definition["basic_array"] = True
@@ -250,3 +253,9 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             field = "-" + field
 
         return {key: dict(fields=[field])}
+
+    def get_type(self, data):
+        fd = datatypes.get_datatype(
+            data, data.type, self.current_model, self.schema, self.stack
+        )
+        return fd.schema_type

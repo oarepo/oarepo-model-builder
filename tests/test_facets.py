@@ -398,6 +398,42 @@ _schema = TermsFacet(field = "$schema")
 """,
     )
 
+def test_array_obj2():
+    schema = load_model(
+        DUMMY_YAML,
+        "test",
+        model_content={
+            "model": {
+                "use": "invenio",
+                "properties": {
+                    "internal_array_ref_array": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "keyword",
+
+                                },
+                                "title": {"type": "fulltext+keyword"}
+                            },
+                        },
+                    }
+            },
+        },
+        },
+        isort=False,
+        black=False,
+    )
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data)
 
 def test_array_object():
     schema = load_model(
