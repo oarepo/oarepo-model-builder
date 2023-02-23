@@ -1,4 +1,3 @@
-
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
 from oarepo_model_builder.utils.python_name import convert_name_to_python
