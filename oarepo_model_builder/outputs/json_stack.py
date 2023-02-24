@@ -79,3 +79,7 @@ class JSONStack:
     def merge(self, value):
         real_top = self.real_top
         real_top.update(deepmerge(value, real_top, []))
+
+    def replace(self, value):
+        self.real_top.clear()
+        self.merge(value)
