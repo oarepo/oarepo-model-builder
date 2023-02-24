@@ -179,7 +179,6 @@ def test_deep_no_index():
         "mappings": {
             "properties": {
                 "a": {
-                    "properties": {"b": {"type": "keyword", "index": False}},
                     "type": "object",
                     "enabled": False,
                 }
@@ -205,7 +204,6 @@ def test_deep_no_index_children():
         "mappings": {
             "properties": {
                 "a": {
-                    "properties": {"b": {"type": "keyword", "index": False}},
                     "type": "object",
                     "enabled": False,
                 }

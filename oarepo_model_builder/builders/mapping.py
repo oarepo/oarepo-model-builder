@@ -70,7 +70,10 @@ class MappingBuilder(JSONBaseBuilder):
             mapping = self.call_components(
                 "before_merge_mapping", data["mapping"], stack=self.stack
             )
-            self.output.merge_mapping(mapping)
+            if not mapping.get("enabled", True):
+                self.output.replace_mapping(mapping)
+            else:
+                self.output.merge_mapping(mapping)
 
     def on_enter_model(self, output_name):
         self.index_enabled_stack = [self.current_model.get("searchable", True)]
