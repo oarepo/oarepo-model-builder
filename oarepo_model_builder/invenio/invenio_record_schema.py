@@ -22,7 +22,7 @@ from .invenio_base import InvenioBaseClassPythonBuilder
 log = logging.getLogger("invenio_record_schema")
 
 BUILTIN_ALIASES = [
-    "ma_validates",
+    "ma_validate",
     "ma",
     "ma_fields",
     "mu_fields",

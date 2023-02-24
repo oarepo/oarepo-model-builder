@@ -40,13 +40,13 @@ class StringDataType(DataType):
 
         if ranges:
             params = ", ".join(f"{k}={v}" for k, v in ranges.items())
-            validators.append(f"ma_validates.Length({params})")
+            validators.append(f"ma_validate.Length({params})")
 
         if "pattern" in self.definition:
             pattern = self.definition["pattern"]
             pattern = pattern.replace("\\", "\\\\")
             pattern = pattern.replace('"', '\\"')
-            validators.append(f'ma_validates.Regexp("{pattern}")')
+            validators.append(f'ma_validate.Regexp("{pattern}")')
 
         return validators
 

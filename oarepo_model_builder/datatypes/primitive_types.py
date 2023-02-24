@@ -19,7 +19,7 @@ class NumberDataType(DataType):
 
         if ranges:
             params = ", ".join(f"{k}={v}" for k, v in ranges.items())
-            validators.append(f"ma_validates.Range({params})")
+            validators.append(f"ma_validate.Range({params})")
 
         return validators
 
