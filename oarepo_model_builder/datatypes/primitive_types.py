@@ -61,7 +61,7 @@ class FloatDataType(NumberDataType):
 
 
 class DoubleDataType(NumberDataType):
-    marshmallow_field = "ma_fields.Double"
+    marshmallow_field = "ma_fields.Float"
     schema_type = "number"
     model_type = "double"
 
