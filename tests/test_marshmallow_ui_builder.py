@@ -8,6 +8,12 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.invenio.invenio_record_ui_schema import (
     InvenioRecordUISchemaBuilder,
 )
+from oarepo_model_builder.invenio.invenio_record_resource_config import (
+    InvenioRecordResourceConfigBuilder,
+)
+from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
+    InvenioRecordUISerializerBuilder,
+)
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
@@ -40,7 +46,11 @@ def get_test_schema(**props):
 @pytest.fixture
 def fulltext_builder():
     return ModelBuilder(
-        output_builders=[InvenioRecordUISchemaBuilder],
+        output_builders=[
+            InvenioRecordUISchemaBuilder,
+            InvenioRecordUISerializerBuilder,
+            InvenioRecordResourceConfigBuilder,
+        ],
         outputs=[PythonOutput],
         model_preprocessors=[
             DefaultValuesModelPreprocessor,
@@ -431,3 +441,91 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
     ) as f:
         data = f.read()
     assert B_SCHEMA in re.sub(r"\s", "", data)
+
+
+def test_generate_json_serializer(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "type": "keyword",
+        }
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(schema, output_dir="")
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "resources", "records", "ui.py")
+    ) as f:
+        data = f.read()
+        print(data)
+    assert (
+        re.sub(
+            r"\s",
+            "",
+            """
+from flask_resources import BaseListSchema, MarshmallowSerializer
+from flask_resources.serializers import JSONSerializer
+
+from test.services.records.ui_schema import TestUISchema
+
+
+
+class TestUIJSONSerializer(MarshmallowSerializer):
+    \"""UI JSON serializer.\"""
+
+    def __init__(self):
+        \"""Initialise Serializer.\"""
+        super().__init__(
+            format_serializer_cls=JSONSerializer,
+            object_schema_cls=TestUISchema,
+            list_schema_cls=BaseListSchema,
+            schema_context={"object_key": "ui"},
+        )    
+    """,
+        )
+        == re.sub(r"\s", "", data)
+    )
+
+
+def test_generate_resource_config(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "type": "keyword",
+        }
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(schema, output_dir="")
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "resources", "records", "config.py")
+    ) as f:
+        data = f.read()
+        print(data)
+    assert (
+        re.sub(
+            r"\s",
+            "",
+            """
+import importlib_metadata
+from flask_resources import ResponseHandler
+
+from test.resources.records.ui import TestUIJSONSerializer
+
+
+
+class TestResourceConfig():
+    \"""TestRecord resource config.\"""
+
+    blueprint_name = 'Test'
+    url_prefix = '/test/'
+
+    @property
+    def response_handlers(self):
+        entrypoint_response_handlers = {}
+        for x in importlib_metadata.entry_points(group='invenio.test.response_handlers'):
+            entrypoint_response_handlers.update(x.load())
+        return {
+            "application/vnd.inveniordm.v1+json": ResponseHandler(TestUIJSONSerializer()),
+            **super().response_handlers,
+            **entrypoint_response_handlers
+        }    """,
+        )
+        == re.sub(r"\s", "", data)
+    )

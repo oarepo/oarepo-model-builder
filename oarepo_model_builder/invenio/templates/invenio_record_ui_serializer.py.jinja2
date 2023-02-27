@@ -5,7 +5,7 @@ from {{current_model.record_ui_schema_class|package_name}} import {{current_mode
 
 
 
-class UIJSONSerializer(MarshmallowSerializer):
+class {{current_model.record_ui_serializer_class|base_name}}(MarshmallowSerializer):
     """UI JSON serializer."""
 
     def __init__(self):
