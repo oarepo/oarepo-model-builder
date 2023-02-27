@@ -193,6 +193,7 @@ def test_model_saver():
         "record-prefix-snake": "test",
         "cli-function": "test.cli.group",
         "record-mapping-setup-cfg": "test",
+        "record-ui-serializer-class": "test.resources.records.ui.TestUIJSONSerializer",
     }
     assert data[1].strip() == ""
     assert (
@@ -409,4 +410,5 @@ def test_model_saver_invenio():
         "record-prefix-snake": "test",
         "record-services-package": "test.services.records",
         "invenio-record-schema-extra-code": "",
+        "record-ui-serializer-class": "test.resources.records.ui.TestUIJSONSerializer",
     }

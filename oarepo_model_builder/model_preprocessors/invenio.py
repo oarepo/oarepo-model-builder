@@ -194,6 +194,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         )
         self.set(
             model,
+            "record-ui-serializer-class",
+            lambda: f"{model.record_resources_package}.ui.{record_prefix}UIJSONSerializer",
+        )
+        self.set(
+            model,
             "record-schema-metadata-class",
             lambda: f"{model.record_services_package}.schema.{record_prefix}MetadataSchema",
         )

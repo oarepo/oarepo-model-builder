@@ -119,6 +119,9 @@ class ModelDefaults(ma.Schema):
     record_ui_schema_class = fields.String(
         data_key="record-ui-schema-class", required=False
     )
+    record_ui_serializer_class = fields.String(
+        data_key="record-ui-serializer-class", required=False
+    )
     record_schema_metadata_alembic = fields.String(
         data_key="record-schema-metadata-alembic", required=False
     )
