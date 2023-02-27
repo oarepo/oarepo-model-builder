@@ -27,15 +27,23 @@ class ObjectDataType(DataType):
 
     def marshmallow(self, **extras):
         marshmallow_definition = super().marshmallow(**extras)
-        self._extend_marshmallow(marshmallow_definition)
+        self._extend_marshmallow(
+            marshmallow_definition, record_schema_class=self.model.record_schema_class
+        )
         return marshmallow_definition
 
     def ui_marshmallow(self, **extras):
         marshmallow_definition = super().ui_marshmallow(**extras)
-        self._extend_marshmallow(marshmallow_definition, suffix="UISchema")
+        self._extend_marshmallow(
+            marshmallow_definition,
+            record_schema_class=self.model.record_ui_schema_class,
+            suffix="UISchema",
+        )
         return marshmallow_definition
 
-    def _extend_marshmallow(self, marshmallow_definition, suffix="Schema"):
+    def _extend_marshmallow(
+        self, marshmallow_definition, record_schema_class=None, suffix="Schema"
+    ):
         schema_class = marshmallow_definition.get("schema-class", None)
         if not schema_class:
             if self.stack.top.schema_element_type == "items":
@@ -44,7 +52,7 @@ class ObjectDataType(DataType):
                 schema_class_base = self.key
             schema_class = convert_name_to_python_class(schema_class_base) + suffix
 
-        package_name = split_package_name(self.model.record_schema_class)
+        package_name = split_package_name(record_schema_class)
 
         schema_class = self._get_class_name(package_name, schema_class)
 

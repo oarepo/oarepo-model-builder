@@ -63,8 +63,6 @@ class DataType:
         elif self.marshmallow_field:
             ret.setdefault("field-class", self.marshmallow_field)
         # no validators for ui, as it is dump only
-        ret["read"] = True
-        ret["write"] = False
         for k, v in extras.items():
             if v is not None:
                 ret[k] = v

@@ -69,16 +69,17 @@ class StringDataType(DataType):
 
     def ui_marshmallow(self, **extras):
         ret = super().ui_marshmallow(**extras)
-        gettext_prefix = (
-            self.definition.get("ui", {}).get("i18n-prefix")
-            or self.model.get("i18n-prefix")
-            or self.model.get("package")
-        )
-        ret.setdefault("arguments", []).extend(
-            [
-                f'value_prefix="{gettext_prefix}"',
-            ]
-        )
+        if "enum" in self.definition:
+            gettext_prefix = (
+                self.definition.get("ui", {}).get("i18n-prefix")
+                or self.model.get("i18n-prefix")
+                or self.model.get("package")
+            )
+            ret.setdefault("arguments", []).extend(
+                [
+                    f'value_prefix="{gettext_prefix}"',
+                ]
+            )
         return ret
 
     def imports(self, *extra) -> List[Import]:

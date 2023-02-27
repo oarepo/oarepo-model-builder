@@ -76,7 +76,6 @@ class DoubleDataType(NumberDataType):
 
 class BooleanDataType(DataType):
     marshmallow_field = "ma_fields.Boolean"
-    ui_marshmallow_field = "oarepo_ui.marshmallow.LocalizedBoolean"
     model_type = "boolean"
 
     def facet(self, key, definition={}, props_num=None, create=True):
