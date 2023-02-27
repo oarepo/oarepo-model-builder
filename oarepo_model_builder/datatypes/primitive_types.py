@@ -1,7 +1,8 @@
+from typing import List
 from marshmallow import fields
 
 from ..utils.facet_helpers import searchable
-from .datatypes import DataType
+from .datatypes import DataType, Import
 
 
 class NumberDataType(DataType):
@@ -75,6 +76,7 @@ class DoubleDataType(NumberDataType):
 
 class BooleanDataType(DataType):
     marshmallow_field = "ma_fields.Boolean"
+    ui_marshmallow_field = "oarepo_ui.marshmallow.LocalizedBoolean"
     model_type = "boolean"
 
     def facet(self, key, definition={}, props_num=None, create=True):
@@ -86,3 +88,12 @@ class BooleanDataType(DataType):
         if "field" in definition:
             facet_def["defined_class"] = True
         return facet_def
+
+    def imports(self, *extra) -> List[Import]:
+        return super().imports(
+            *extra,
+            Import(
+                import_path="oarepo_ui.marshmallow.LocalizedBoolean",
+                alias=None,
+            ),
+        )

@@ -29,8 +29,6 @@ BUILTIN_ALIASES = [
     "mu_schemas",
 ]
 
-OAREPO_MARSHMALLOW_PROPERTY = "marshmallow"
-
 
 @dataclasses.dataclass
 class MarshmallowNode:
@@ -50,11 +48,13 @@ class MarshmallowNode:
     used: bool = False
 
     @classmethod
-    def from_stack(cls, schema: ModelSchema, stack: ModelBuilderStack):
+    def from_stack(
+        cls, schema: ModelSchema, stack: ModelBuilderStack, marshmallow_field: str
+    ):
         datatype = datatypes.get_datatype(
             stack.top.data, stack.top.key, schema.model, schema, stack
         )
-        definition = datatype.marshmallow()
+        definition = getattr(datatype, marshmallow_field)()
         imports = datatype.imports()
         field_arguments = copy.copy(definition.get("arguments", []))
         validators = definition.get("validators", [])
@@ -191,7 +191,6 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
 
         if self.exact_field:
             return
-
         self.field_arguments = [
             f"lambda: {split_base_name(self.schema_class)}()"
         ] + self.field_arguments
@@ -283,6 +282,8 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_schema"
     class_config = "record-schema-class"
     template = "record-schema"
+    OAREPO_MARSHMALLOW_PROPERTY = "marshmallow"
+    extra_imports = []
 
     marshmallow_stack: List[MarshmallowNode]
 
@@ -292,7 +293,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         stack.push("model", schema.current_model)
 
         self.marshmallow_stack = [
-            ObjectMarshmallowNode.from_stack(schema.schema, stack)
+            ObjectMarshmallowNode.from_stack(
+                schema.schema, stack, marshmallow_field=self.OAREPO_MARSHMALLOW_PROPERTY
+            )
         ]
 
     def finish(self):
@@ -300,7 +303,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         model_node = self.marshmallow_stack[0]
 
         # generate schema classes wherever they are not filled
-        package_name = split_package_name(self.current_model.record_schema_class)
+        package_name = split_package_name(
+            getattr(self.current_model, self.class_config)
+        )
 
         generated_classes = defaultdict(list)
         generated_imports = defaultdict(set)
@@ -340,7 +345,9 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
                     # known prefixes
                     *BUILTIN_ALIASES,
                 )
-            ]
+            ] + self.extra_imports
+
+            imports = list(sorted(imports, key=lambda x: x.import_path))
 
             self.process_template(
                 python_path,
@@ -364,7 +371,11 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             else:
                 # primitive value
                 node_class = MarshmallowNode
-            fld = node_class.from_stack(self.schema, self.stack)
+            fld = node_class.from_stack(
+                self.schema,
+                self.stack,
+                marshmallow_field=self.OAREPO_MARSHMALLOW_PROPERTY,
+            )
             self.marshmallow_stack[-1].add_field(fld)
             self.marshmallow_stack.append(fld)
             self.build_children()

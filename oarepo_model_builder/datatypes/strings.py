@@ -1,10 +1,11 @@
 import re
+from typing import List
 
 from marshmallow import fields
 from marshmallow.exceptions import ValidationError
 
 from ..utils.facet_helpers import searchable
-from .datatypes import DataType
+from .datatypes import DataType, Import
 
 
 def validate_regex(value):
@@ -59,6 +60,38 @@ class StringDataType(DataType):
         if "field" in definition:
             facet_def["defined_class"] = True
         return facet_def
+
+    @property
+    def ui_marshmallow_field(self):
+        if "enum" in self.definition:
+            return "oarepo_ui.marshmallow.LocalizedEnum"
+        return self.marshmallow_field
+
+    def ui_marshmallow(self, **extras):
+        ret = super().ui_marshmallow(**extras)
+        gettext_prefix = (
+            self.definition.get("ui", {}).get("i18n-prefix")
+            or self.model.get("i18n-prefix")
+            or self.model.get("package")
+        )
+        ret.setdefault("arguments", []).extend(
+            [
+                f'value_prefix="{gettext_prefix}"',
+            ]
+        )
+        return ret
+
+    def imports(self, *extra) -> List[Import]:
+        if "enum" in self.definition:
+            return super().imports(
+                *extra,
+                Import(
+                    import_path="oarepo_ui.marshmallow.LocalizedEnum",
+                    alias=None,
+                ),
+            )
+        else:
+            return super().imports(*extra)
 
 
 class FulltextDataType(StringDataType):

@@ -15,6 +15,7 @@ from .property_sample_data import ModelSampleConfiguration, PropertySampleData
 from .property_sortable import PropertySortable
 from .root import RootSchema
 from .settings import SettingsOpenSearchSchema, SettingsPythonSchema, SettingsSchema
+from .ui import ModelUISchema, PropertyUISchema
 
 #
 # Validators is a dictionary of "points" in model schema mapped to a single ma.Schema class
@@ -53,6 +54,9 @@ validators = {
     # /model/opensearch: defines opensearch index settings (analyzers, etc).
     # You mostly do not want to extend this
     "model-opensearch": ModelOpenSearchSchema,
+    #
+    # /model/ui: extensibility point for defining ui props on the model level
+    "model-ui": [ModelUISchema, ModelMarshmallowSchema],
     #
     # /model/marshmallow: defines marshmallow on the model-level
     "property-marshmallow-model": ModelMarshmallowSchema.ObjectOnlyMarshmallowProps,
@@ -99,6 +103,9 @@ validators = {
     #
     # An extension point for properties/aaa/sortable
     "property-sortable": PropertySortable,
+    #
+    # An extension point for properties/aaa/ui
+    "property-ui": PropertyUISchema,
     #
     # property-by-type-xxx defines an extension point for schemas
     # that are dependent on property type. The schema is taken automatically

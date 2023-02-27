@@ -123,8 +123,8 @@ def test_components():
 
 def build(model, output_builder_components=None, property_preprocessors=None):
     datatypes._prepare_datatypes()
-    if UIValidator not in model_validator.validator_map["property"]:
-        model_validator.validator_map["property"].append(UIValidator)
+    if UIValidator not in model_validator.validator_map["property-ui"]:
+        model_validator.validator_map["property-ui"].append(UIValidator)
     datatypes.datatype_map["multilingual"] = MultilingualDataType
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],

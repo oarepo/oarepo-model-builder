@@ -16,6 +16,9 @@ class ModelSchema(ExtendablePartSchema):
     plugins = fields.Nested(
         lambda: model_validator.validator_class("plugins-schema")(), required=False
     )
+    ui = fields.Nested(
+        lambda: model_validator.validator_class("model-ui")(), required=False
+    )
     jsonschema = fields.Nested(PermissiveSchema())
     mapping = fields.Nested(PermissiveSchema())
     searchable = fields.Boolean(required=False)

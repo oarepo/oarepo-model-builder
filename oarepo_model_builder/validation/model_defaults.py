@@ -116,6 +116,9 @@ class ModelDefaults(ma.Schema):
         data_key="record-resource-config-class", required=False
     )
     record_schema_class = fields.String(data_key="record-schema-class", required=False)
+    record_ui_schema_class = fields.String(
+        data_key="record-ui-schema-class", required=False
+    )
     record_schema_metadata_alembic = fields.String(
         data_key="record-schema-metadata-alembic", required=False
     )

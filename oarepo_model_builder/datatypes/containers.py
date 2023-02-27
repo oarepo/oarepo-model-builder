@@ -26,14 +26,23 @@ class ObjectDataType(DataType):
         )
 
     def marshmallow(self, **extras):
-        ret = super().marshmallow(**extras)
-        schema_class = ret.get("schema-class", None)
+        marshmallow_definition = super().marshmallow(**extras)
+        self._extend_marshmallow(marshmallow_definition)
+        return marshmallow_definition
+
+    def ui_marshmallow(self, **extras):
+        marshmallow_definition = super().ui_marshmallow(**extras)
+        self._extend_marshmallow(marshmallow_definition, suffix="UISchema")
+        return marshmallow_definition
+
+    def _extend_marshmallow(self, marshmallow_definition, suffix="Schema"):
+        schema_class = marshmallow_definition.get("schema-class", None)
         if not schema_class:
             if self.stack.top.schema_element_type == "items":
                 schema_class_base = self.stack[-2].key + "Item"
             else:
                 schema_class_base = self.key
-            schema_class = convert_name_to_python_class(schema_class_base) + "Schema"
+            schema_class = convert_name_to_python_class(schema_class_base) + suffix
 
         package_name = split_package_name(self.model.record_schema_class)
 
@@ -57,9 +66,9 @@ class ObjectDataType(DataType):
 
         self.model.known_classes[schema_class] = fingerprint
 
-        ret["schema-class"] = schema_class
+        marshmallow_definition["schema-class"] = schema_class
 
-        return ret
+        return marshmallow_definition
 
     def _find_unique_schema_class(self, known_classes, schema_class, fingerprint):
         if schema_class in known_classes:
