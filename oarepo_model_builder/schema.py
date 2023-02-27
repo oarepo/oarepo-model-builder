@@ -201,6 +201,8 @@ class ModelSchema:
                     )
 
         ret = copy.deepcopy(ret)
+        if ret is None:
+            ret = {}
         ret.pop("$id", None)
         return ret
 
