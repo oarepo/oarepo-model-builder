@@ -5,11 +5,11 @@ import pytest
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.invenio.invenio_record_ui_schema import (
-    InvenioRecordUISchemaBuilder,
-)
 from oarepo_model_builder.invenio.invenio_record_resource_config import (
     InvenioRecordResourceConfigBuilder,
+)
+from oarepo_model_builder.invenio.invenio_record_ui_schema import (
+    InvenioRecordUISchemaBuilder,
 )
 from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
     InvenioRecordUISerializerBuilder,

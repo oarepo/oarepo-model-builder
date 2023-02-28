@@ -1,4 +1,5 @@
 from typing import List
+
 from marshmallow import fields
 
 from ..utils.facet_helpers import searchable

@@ -139,5 +139,5 @@ class EDTFIntervalType(BaseDateDataType):
                 import_path="oarepo_ui.marshmallow.LocalizedEDTFInterval",
                 alias=None,
             ),
-            *extra
+            *extra,
         )
