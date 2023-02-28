@@ -11,7 +11,7 @@ class BaseDateDataType(DataType):
 class DateDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
-    ui_marshmallow_field = "LocalizedDate"
+    ui_marshmallow_field = "l10n.LocalizedDate"
     model_type = "date"
 
     def mapping(self, **extras):
@@ -28,9 +28,7 @@ class DateDataType(BaseDateDataType):
     def imports(self, *extra) -> List[Import]:
         return super().imports(
             Import(import_path="oarepo_runtime.validation.validate_date", alias=None),
-            Import(
-                import_path="oarepo_runtime.ui.marshmallow.LocalizedDate", alias=None
-            ),
+            Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
         )
 
     def facet(self, key, definition={}, props_num=None, create=True):
@@ -48,7 +46,7 @@ class TimeDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
     model_type = "time"
-    ui_marshmallow_field = "LocalizedTime"
+    ui_marshmallow_field = "l10n.LocalizedTime"
 
     def mapping(self, **extras):
         return super().mapping(format="strict_time||strict_time_no_millis")
@@ -64,9 +62,7 @@ class TimeDataType(BaseDateDataType):
     def imports(self, *extra) -> List[Import]:
         return super().imports(
             Import(import_path="oarepo_runtime.validation.validate_date", alias=None),
-            Import(
-                import_path="oarepo_runtime.ui.marshmallow.LocalizedTime", alias=None
-            ),
+            Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
         )
 
 
@@ -75,7 +71,7 @@ class DateTimeDataType(BaseDateDataType):
     mapping_type = "date"
     marshmallow_field = "mu_fields.ISODateString"
     model_type = "datetime"
-    ui_marshmallow_field = "LocalizedDateTime"
+    ui_marshmallow_field = "l10n.LocalizedDateTime"
 
     def mapping(self, **extras):
         return super().mapping(format="strict_date_time||strict_date_time_no_millis")
@@ -85,10 +81,7 @@ class DateTimeDataType(BaseDateDataType):
 
     def imports(self, *extra) -> List[Import]:
         return super().imports(
-            Import(
-                import_path="oarepo_runtime.ui.marshmallow.LocalizedDateTime",
-                alias=None,
-            ),
+            Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
         )
 
 
@@ -96,7 +89,7 @@ class EDTFDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
     model_type = "edtf"
-    ui_marshmallow_field = "LocalizedEDTF"
+    ui_marshmallow_field = "l10n.LocalizedEDTF"
 
     def mapping(self, **extras):
         return super().mapping(
@@ -110,10 +103,7 @@ class EDTFDataType(BaseDateDataType):
 
     def imports(self, *_extra) -> List[Import]:
         return super().imports(
-            Import(
-                import_path="oarepo_runtime.ui.marshmallow.LocalizedEDTF",
-                alias=None,
-            ),
+            Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
             Import(name="edtf.Date", alias="EDTFDate"),
         )
 
@@ -122,7 +112,7 @@ class EDTFIntervalType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date_range"
     model_type = "edtf-interval"
-    ui_marshmallow_field = "LocalizedEDTFInterval"
+    ui_marshmallow_field = "l10n.LocalizedEDTFInterval"
 
     def mapping(self, **extras):
         return super().mapping(
@@ -137,9 +127,6 @@ class EDTFIntervalType(BaseDateDataType):
     def imports(self, *extra):
         return super().imports(
             Import(name="edtf.Interval", alias="EDTFInterval"),
-            Import(
-                import_path="oarepo_runtime.ui.marshmallow.LocalizedEDTFInterval",
-                alias=None,
-            ),
+            Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
             *extra,
         )
