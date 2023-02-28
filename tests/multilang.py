@@ -60,7 +60,8 @@ class MultilangPreprocessor(PropertyPreprocessor):
 
 
 class UIValidator(ma.Schema):
-    ui = ma.fields.Raw()
+    class Meta:
+        unknown = ma.INCLUDE
 
 
 class MultilingualDataType(DataType):

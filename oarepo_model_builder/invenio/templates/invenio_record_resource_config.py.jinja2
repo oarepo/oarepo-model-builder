@@ -1,5 +1,7 @@
 import importlib_metadata
+from flask_resources import ResponseHandler
 
+from {{current_model.record_ui_serializer_class|package_name}} import {{current_model.record_ui_serializer_class|base_name}}
 
 {% for b in current_model.record_resource_config_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
@@ -17,6 +19,7 @@ class {{ current_model.record_resource_config_class|base_name }}({% for b in cur
         for x in importlib_metadata.entry_points(group='invenio.{{ current_model.package }}.response_handlers'):
             entrypoint_response_handlers.update(x.load())
         return {
+            "application/vnd.inveniordm.v1+json": ResponseHandler({{current_model.record_ui_serializer_class|base_name}}()),
             **super().response_handlers,
             **entrypoint_response_handlers
         }

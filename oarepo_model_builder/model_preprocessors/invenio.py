@@ -189,6 +189,16 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         )
         self.set(
             model,
+            "record-ui-schema-class",
+            lambda: f"{model.record_services_package}.ui_schema.{record_prefix}UISchema",
+        )
+        self.set(
+            model,
+            "record-ui-serializer-class",
+            lambda: f"{model.record_resources_package}.ui.{record_prefix}UIJSONSerializer",
+        )
+        self.set(
+            model,
             "record-schema-metadata-class",
             lambda: f"{model.record_services_package}.schema.{record_prefix}MetadataSchema",
         )
@@ -297,6 +307,16 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 {
                     "schema-class": schema_class,
                     "base-classes": schema_class_base_classes,
+                    "generate": True,
+                },
+            )
+            # ui-level of current_model_field
+            ui_schema_class = model.record_ui_schema_class
+            deepmerge(
+                current_model_field.setdefault("ui", {}).setdefault("marshmallow", {}),
+                {
+                    "schema-class": ui_schema_class,
+                    "base-classes": ["BaseObjectSchema"],
                     "generate": True,
                 },
             )

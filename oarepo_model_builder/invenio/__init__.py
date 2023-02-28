@@ -7,6 +7,7 @@ TEMPLATES = {
     "record-service": "templates/invenio_record_service.py.jinja2",
     "record-schema": "templates/invenio_record_schema.py.jinja2",
     "record-dumper": "templates/invenio_record_dumper.py.jinja2",
+    "record-ui-serializer": "templates/invenio_record_ui_serializer.py.jinja2",
     "record-resource-config": "templates/invenio_record_resource_config.py.jinja2",
     "record-resource": "templates/invenio_record_resource.py.jinja2",
     "views": "templates/invenio_views.py.jinja2",

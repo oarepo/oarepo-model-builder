@@ -49,6 +49,7 @@ class Property(ExtendablePartSchema):
     sortable = fields.Nested(
         lambda: model_validator.validator_class("property-sortable")()
     )
+    ui = fields.Nested(lambda: model_validator.validator_class("property-ui")())
 
 
 class ObjectProperty(ExtendablePartSchema):

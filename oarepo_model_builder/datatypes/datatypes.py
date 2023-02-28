@@ -12,6 +12,7 @@ Import = namedtuple("Import", "import_path,alias")
 class DataType:
     model_type = None
     marshmallow_field = None
+    ui_marshmallow_field = None
     schema_type = None
     mapping_type = None
 
@@ -32,7 +33,7 @@ class DataType:
                 ret[k] = v
         return ret
 
-    def model_schema(self, **extras):
+    def model_schema(self, **_extras):
         return None
 
     def json_schema(self, **extras):
@@ -46,6 +47,22 @@ class DataType:
         if self.marshmallow_field:
             ret.setdefault("field-class", self.marshmallow_field)
         ret.setdefault("validators", []).extend(self.marshmallow_validators())
+        for k, v in extras.items():
+            if v is not None:
+                ret[k] = v
+        return ret
+
+    def ui_marshmallow(self, **extras):
+        ui = self.definition.get("ui", {})
+        if "marshmallow" in ui:
+            ret = copy.deepcopy(ui.get("marshmallow", {}))
+        else:
+            ret = copy.deepcopy(self.definition.get("marshmallow", {}))
+        if self.ui_marshmallow_field:
+            ret.setdefault("field-class", self.ui_marshmallow_field)
+        elif self.marshmallow_field:
+            ret.setdefault("field-class", self.marshmallow_field)
+        # no validators for ui, as it is dump only
         for k, v in extras.items():
             if v is not None:
                 ret[k] = v
