@@ -93,7 +93,7 @@ class BooleanDataType(DataType):
         return super().imports(
             *extra,
             Import(
-                import_path="oarepo_ui.marshmallow.LocalizedBoolean",
+                import_path="oarepo_runtime.ui.marshmallow.LocalizedBoolean",
                 alias=None,
             ),
         )

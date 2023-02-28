@@ -37,8 +37,8 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
+from oarepo_runtime.ui.marshmallow import LocalizedDate
 from oarepo_runtime.validation import validate_date
-from oarepo_ui.marshmallow import LocalizedDate
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
     a = ma_fields.Raw()
