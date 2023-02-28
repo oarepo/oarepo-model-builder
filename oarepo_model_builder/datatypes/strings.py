@@ -64,7 +64,7 @@ class StringDataType(DataType):
     @property
     def ui_marshmallow_field(self):
         if "enum" in self.definition:
-            return "oarepo_ui.marshmallow.LocalizedEnum"
+            return "oarepo_runtime.ui.marshmallow.LocalizedEnum"
         return self.marshmallow_field
 
     def ui_marshmallow(self, **extras):
@@ -87,7 +87,7 @@ class StringDataType(DataType):
             return super().imports(
                 *extra,
                 Import(
-                    import_path="oarepo_ui.marshmallow.LocalizedEnum",
+                    import_path="oarepo_runtime.ui.marshmallow.LocalizedEnum",
                     alias=None,
                 ),
             )
