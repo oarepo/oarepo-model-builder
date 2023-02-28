@@ -67,7 +67,7 @@ def _test(fulltext_builder, string_type):
     fulltext_builder.build(schema, output_dir="")
 
     with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "records", "ui_schema.py")
+        os.path.join("test", "services", "records", "ui_schema.py")  # NOSONAR
     ) as f:
         data = f.read()
     assert "a = ma_fields.String()" in data
@@ -357,7 +357,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
     assert "from test.services.records.schema2 import B" in data
 
     with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "records", "schema2.py")
+        os.path.join("test", "services", "records", "schema2.py")  # NOSONAR
     ) as f:
         data = f.read()
     assert B_SCHEMA in re.sub(r"\s", "", data)
