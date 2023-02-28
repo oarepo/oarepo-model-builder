@@ -88,12 +88,3 @@ class BooleanDataType(DataType):
         if "field" in definition:
             facet_def["defined_class"] = True
         return facet_def
-
-    def imports(self, *extra) -> List[Import]:
-        return super().imports(
-            *extra,
-            Import(
-                import_path="oarepo_runtime.ui.marshmallow.LocalizedBoolean",
-                alias=None,
-            ),
-        )
