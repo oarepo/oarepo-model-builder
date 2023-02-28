@@ -350,7 +350,7 @@ def test_model_saver_invenio():
                     "validators": ["validate_date('%Y-%m-%d')"],
                     "imports": [
                         {"import": "oarepo_runtime.validation.validate_date"},
-                        {"import": "oarepo_runtime.ui.marshmallow.LocalizedDate"},
+                        {"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"},
                     ],
                 },
                 "facets": {"searchable": True},
@@ -365,7 +365,7 @@ def test_model_saver_invenio():
                     "validators": ["validate_date('%Y-%m-%d')"],
                     "imports": [
                         {"import": "oarepo_runtime.validation.validate_date"},
-                        {"import": "oarepo_runtime.ui.marshmallow.LocalizedDate"},
+                        {"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"},
                     ],
                 },
                 "facets": {"searchable": True},

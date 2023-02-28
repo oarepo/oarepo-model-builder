@@ -41,8 +41,7 @@ from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
 
-from oarepo_runtime.ui.marshmallow import LocalizedDate
-from oarepo_runtime.ui.marshmallow import LocalizedEnum
+from oarepo_runtime.ui import marshmallow as l10n
 from oarepo_runtime.validation import validate_date
 
 class TestSchema(InvenioBaseRecordSchema):
