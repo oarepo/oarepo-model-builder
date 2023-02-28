@@ -11,7 +11,7 @@ class BaseDateDataType(DataType):
 class DateDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
-    ui_marshmallow_field = "oarepo_runtime.ui.marshmallow.LocalizedDate"
+    ui_marshmallow_field = "LocalizedDate"
     model_type = "date"
 
     def mapping(self, **extras):
@@ -48,7 +48,7 @@ class TimeDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
     model_type = "time"
-    ui_marshmallow_field = "oarepo_runtime.ui.marshmallow.LocalizedTime"
+    ui_marshmallow_field = "LocalizedTime"
 
     def mapping(self, **extras):
         return super().mapping(format="strict_time||strict_time_no_millis")
@@ -75,7 +75,7 @@ class DateTimeDataType(BaseDateDataType):
     mapping_type = "date"
     marshmallow_field = "mu_fields.ISODateString"
     model_type = "datetime"
-    ui_marshmallow_field = "oarepo_runtime.ui.marshmallow.LocalizedDateTime"
+    ui_marshmallow_field = "LocalizedDateTime"
 
     def mapping(self, **extras):
         return super().mapping(format="strict_date_time||strict_date_time_no_millis")
@@ -96,7 +96,7 @@ class EDTFDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
     model_type = "edtf"
-    ui_marshmallow_field = "oarepo_runtime.ui.marshmallow.LocalizedEDTF"
+    ui_marshmallow_field = "LocalizedEDTF"
 
     def mapping(self, **extras):
         return super().mapping(
@@ -122,7 +122,7 @@ class EDTFIntervalType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date_range"
     model_type = "edtf-interval"
-    ui_marshmallow_field = "oarepo_runtime.ui.marshmallow.LocalizedEDTFInterval"
+    ui_marshmallow_field = "LocalizedEDTFInterval"
 
     def mapping(self, **extras):
         return super().mapping(
