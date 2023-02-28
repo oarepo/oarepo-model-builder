@@ -104,15 +104,13 @@ class EDTFDataType(BaseDateDataType):
             "mu_fields.EDTFValidator(types=EDTFDate)"
         ]
 
-    def imports(self, *args):
-        return super().imports(Import(name="edtf.Date", alias="EDTFDate"))
-
-    def imports(self, *extra) -> List[Import]:
+    def imports(self, *_extra) -> List[Import]:
         return super().imports(
             Import(
                 import_path="oarepo_ui.marshmallow.LocalizedEDTF",
                 alias=None,
             ),
+            Import(name="edtf.Date", alias="EDTFDate"),
         )
 
 

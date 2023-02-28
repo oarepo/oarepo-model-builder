@@ -33,7 +33,7 @@ class DataType:
                 ret[k] = v
         return ret
 
-    def model_schema(self, **extras):
+    def model_schema(self, **_extras):
         return None
 
     def json_schema(self, **extras):
