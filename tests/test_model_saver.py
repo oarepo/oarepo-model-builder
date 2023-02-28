@@ -56,7 +56,7 @@ def test_model_saver():
     print(json.dumps(data[0]))
     assert data[0]["model"] == {
         "type": "object",
-        "record-ui-schema-class": "test.services.records.ui_schema.TestUISchema",
+        "record-ui-schema-class": "test.services.records.ui_schema.TestUISchema",  # NOSONAR
         "record-dumper-extensions": [],
         "schema-name": "test-1.0.0.json",
         "flask-extension-name": "test",
@@ -147,7 +147,7 @@ def test_model_saver():
         "invenio-record-dumper-extra-code": "",
         "ui": {
             "marshmallow": {
-                "schema-class": "test.services.records.ui_schema.TestUISchema",
+                "schema-class": "test.services.records.ui_schema.TestUISchema",  # NOSONAR
                 "generate": True,
                 "base-classes": ["BaseObjectSchema"],
             }
@@ -266,7 +266,7 @@ def test_model_saver_invenio():
         "ui": {
             "marshmallow": {
                 "base-classes": ["BaseObjectSchema"],
-                "schema-class": "test.services.records.ui_schema.TestUISchema",
+                "schema-class": "test.services.records.ui_schema.TestUISchema",  # NOSONAR
                 "generate": True,
             }
         },
@@ -274,7 +274,7 @@ def test_model_saver_invenio():
         "flask-commands-setup-cfg": "test",
         "record-search-options-class": "test.services.records.search.TestSearchOptions",
         "invenio-version-extra-code": "",
-        "record-ui-schema-class": "test.services.records.ui_schema.TestUISchema",
+        "record-ui-schema-class": "test.services.records.ui_schema.TestUISchema",  # NOSOONAR
         "index-name": "test-test-1.0.0",
         "schema-server": "http://localhost/schemas/",
         "service-id": "test",

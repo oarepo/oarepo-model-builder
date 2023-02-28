@@ -199,7 +199,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
     assert "from test.services.schema2 import B" in data
 
     with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "schema2.py")
+        os.path.join("test", "services", "schema2.py")  # NOSONAR
     ) as f:
         data = f.read()
     assert B_SCHEMA in re.sub(r"\s", "", data)
@@ -437,7 +437,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
     assert "from test.services.schema2 import B" in data
 
     with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "schema2.py")
+        os.path.join("test", "services", "schema2.py")  # NOSONAR
     ) as f:
         data = f.read()
     assert B_SCHEMA in re.sub(r"\s", "", data)
