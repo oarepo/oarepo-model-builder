@@ -1,6 +1,6 @@
 from typing import List
 
-from ..utils.facet_helpers import searchable
+from ..utils.facet_helpers import facet_definiton, facet_name
 from .datatypes import DataType, Import
 
 
@@ -31,15 +31,17 @@ class DateDataType(BaseDateDataType):
             Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
         )
 
-    def facet(self, key, definition={}, props_num=None, create=True):
-        if not searchable(definition, create):
-            return False
-        key = definition.get("key", key)
-        field = definition.get("field", "TermsFacet(field = ")
-        facet_def = {"path": key, "class": field}
-        if "field" in definition:
-            facet_def["defined_class"] = True
-        return facet_def
+    def get_facet(self, stack, parent_path):
+        key, field = facet_definiton(self)
+        path = parent_path
+        if len(parent_path) > 0 and self.key:
+            path = parent_path + "." + self.key
+        elif self.key:
+            path = self.key
+        if field:
+            return field, facet_name(path)
+        else:
+            return f'TermsFacet(field="{path}")', facet_name(path)
 
 
 class TimeDataType(BaseDateDataType):
