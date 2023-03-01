@@ -11,5 +11,5 @@ class ModelUISchema(ExtendablePartSchema):
 class PropertyUISchema(ExtendablePartSchema):
     i18n_prefix = fields.String(data_key="i18n-prefix")
     marshmallow = fields.Nested(
-        lambda: model_validator.validator_class("property-marshmallow")()
+        lambda: model_validator.validator_class("property-marshmallow-object")()
     )

@@ -202,6 +202,11 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             "record-schema-metadata-class",
             lambda: f"{model.record_services_package}.schema.{record_prefix}MetadataSchema",
         )
+        self.set(
+            model,
+            "record-ui-schema-metadata-class",
+            lambda: f"{model.record_services_package}.ui_schema.{record_prefix}MetadataUISchema",
+        )
         #   - dumper
         self.set(
             model,
@@ -290,6 +295,20 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                             "generate": True,
                         },
                     )
+
+                    # ui-level of metadata
+                    ui_schema_class = model.record_ui_schema_metadata_class
+                    deepmerge(
+                        current_model_field.properties.metadata.setdefault(
+                            "ui", {}
+                        ).setdefault("marshmallow", {}),
+                        {
+                            "schema-class": ui_schema_class,
+                            "base-classes": ["BaseObjectSchema"],
+                            "generate": True,
+                        },
+                    )
+
             if (
                 "marshmallow" in schema.schema
                 and "base-schema" in schema.schema["marshmallow"]
