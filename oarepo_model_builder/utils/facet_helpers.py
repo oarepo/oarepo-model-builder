@@ -1,19 +1,18 @@
-def searchable(definition, create):
-    if create:
-        if definition != {}:
-            if "searchable" in definition and not definition["searchable"]:
-                return False
-            else:
-                return True
-        else:
-            return True
-    else:
-        if definition != {}:
-            if "searchable" in definition and definition["searchable"]:
-                return True
-            elif "field" in definition or "key" in definition:
-                return True
-            else:
-                return False
-        else:
-            return False
+from .python_name import convert_name_to_python
+
+
+def facet_definiton(obj):
+    key = None
+    field = None
+    if "facets" in obj.definition:
+        key = obj.definition["facets"].get("key", obj.key)
+        field = obj.definition["facets"].get("field", None)
+    if not key:
+        key = obj.key
+    return key, field
+
+
+def facet_name(path):
+    path.replace(".", "_")
+    path = convert_name_to_python(path)
+    return path

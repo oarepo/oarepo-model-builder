@@ -74,9 +74,6 @@ class DataType:
     def imports(self, *extra) -> List[Import]:
         return extra
 
-    def facet(self, key, definition={}, props_num=None, create=True):
-        return False
-
     def dumper_class(self, data):  # NOSONAR
         return None
 
@@ -102,6 +99,10 @@ class DataTypes:
     def get_datatype_class(self, datatype_type):
         self._prepare_datatypes()
         return self.datatype_map.get(datatype_type)
+
+    def facet(self, stack):
+        facet, path = stack[0].get_facet(stack[1:], "")
+        return facet, path
 
 
 datatypes = DataTypes()

@@ -6,7 +6,8 @@ def convert_name_to_python(name):
     # special case :)
 
     name = name.replace("@v", "_version")
-    name = name.replace("id", "_id")
+    if name == "id":
+        name = name.replace("id", "_id")
     # Replace any spaces or special characters in the string with an underscore
     identifier = re.sub(r"[^\w\s]", "_", name)
     identifier = re.sub(r"\s+", "_", identifier)
