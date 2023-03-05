@@ -304,7 +304,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                         ).setdefault("marshmallow", {}),
                         {
                             "schema-class": ui_schema_class,
-                            "base-classes": ["BaseObjectSchema"],
+                            "base-classes": ["ma.Schema"],
                             "generate": True,
                         },
                     )
@@ -335,7 +335,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 current_model_field.setdefault("ui", {}).setdefault("marshmallow", {}),
                 {
                     "schema-class": ui_schema_class,
-                    "base-classes": ["BaseObjectSchema"],
+                    "base-classes": ["ma.Schema"],
                     "generate": True,
                 },
             )
