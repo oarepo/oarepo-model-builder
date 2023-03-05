@@ -148,7 +148,7 @@ def test_model_saver():
                 "type": "object",
                 "ui": {
                     "marshmallow": {
-                        "base-classes": ["BaseObjectSchema"],
+                        "base-classes": ["ma.Schema"],
                         "generate": True,
                         "schema-class": "test.services.records.ui_schema.TestMetadataUISchema",
                     }
@@ -197,7 +197,7 @@ def test_model_saver():
         "type": "object",
         "ui": {
             "marshmallow": {
-                "base-classes": ["BaseObjectSchema"],
+                "base-classes": ["ma.Schema"],
                 "generate": True,
                 "schema-class": "test.services.records.ui_schema.TestUISchema",
             }
@@ -273,7 +273,7 @@ def test_model_saver_invenio():
         "schema-name": "test-1.0.0.json",
         "ui": {
             "marshmallow": {
-                "base-classes": ["BaseObjectSchema"],
+                "base-classes": ["ma.Schema"],
                 "schema-class": "test.services.records.ui_schema.TestUISchema",  # NOSONAR
                 "generate": True,
             }

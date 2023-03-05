@@ -7,4 +7,3 @@ class InvenioRecordUISchemaBuilder(InvenioRecordSchemaBuilder):
     class_config = "record-ui-schema-class"
     template = "record-schema"
     OAREPO_MARSHMALLOW_PROPERTY = "ui_marshmallow"
-    extra_imports = [Import(import_path="flask_resources.BaseObjectSchema", alias=None)]
