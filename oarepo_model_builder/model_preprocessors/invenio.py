@@ -2,6 +2,8 @@ from oarepo_model_builder.model_preprocessors import ModelPreprocessor
 from oarepo_model_builder.utils.camelcase import snake_case
 from oarepo_model_builder.utils.deepmerge import deepmerge
 
+MARSHMALLOW_SCHEMA_BASE_CLASS = "ma.Schema"
+
 
 class InvenioModelPreprocessor(ModelPreprocessor):
     TYPE = "invenio"
@@ -277,7 +279,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             schema_class_base_classes = model.get(
                 "record_schema_metadata_bases", []
             ) + [
-                "ma.Schema"  # alias will be recognized automatically
+                MARSHMALLOW_SCHEMA_BASE_CLASS  # alias will be recognized automatically
             ]
 
             if (
@@ -304,7 +306,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                         ).setdefault("marshmallow", {}),
                         {
                             "schema-class": ui_schema_class,
-                            "base-classes": ["ma.Schema"],
+                            "base-classes": [MARSHMALLOW_SCHEMA_BASE_CLASS],
                             "generate": True,
                         },
                     )
@@ -335,7 +337,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 current_model_field.setdefault("ui", {}).setdefault("marshmallow", {}),
                 {
                     "schema-class": ui_schema_class,
-                    "base-classes": ["ma.Schema"],
+                    "base-classes": [MARSHMALLOW_SCHEMA_BASE_CLASS],
                     "generate": True,
                 },
             )
