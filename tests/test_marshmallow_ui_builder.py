@@ -152,7 +152,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestUISchema(BaseObjectSchema):
+            """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
         
         a = ma_fields.Nested(lambda: B())""",
@@ -188,7 +188,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestUISchema(BaseObjectSchema):
+            """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
     
         a = ma_fields.Nested(lambda: B())""",
@@ -229,7 +229,7 @@ def test_use_nested_schema_same_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestUISchema(BaseObjectSchema):
+            """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
         
         a = ma_fields.Nested(lambda: B())""",
@@ -260,7 +260,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
         data = f.read()
     assert re.sub(r"\s", "", "from c import B") in re.sub(r"\s", "", data)
     assert (
-        'classTestUISchema(BaseObjectSchema):"""TestUISchemaschema."""a=ma_fields.Nested(lambda:B())'
+        'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.Nested(lambda:B())'
         in re.sub(r"\s", "", data)
     )
 
@@ -289,7 +289,7 @@ def test_generate_nested_schema_array(fulltext_builder):
         data = f.read()
     assert B_SCHEMA in re.sub(r"\s", "", data)
     assert (
-        'classTestUISchema(BaseObjectSchema):"""TestUISchemaschema."""a=ma_fields.List(ma_fields.Nested(lambda:B()))'
+        'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.List(ma_fields.Nested(lambda:B()))'
         in re.sub(r"\s", "", data)
     )
 
@@ -307,7 +307,7 @@ from invenio_records_resources.services.records.schema import BaseRecordSchema a
 import marshmallow as ma
 import marshmallow.fields as ma_fields
 import marshmallow.validate as ma_valid
-class TestUISchema(BaseObjectSchema):
+class TestUISchema(ma.Schema):
     """TestUISchema schema."""
     a = ma_fields.String()'''
         )
@@ -346,7 +346,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestUISchema(BaseObjectSchema):
+            """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
     
         a = ma_fields.Nested(lambda:B())""",
@@ -390,7 +390,7 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestUISchema(BaseObjectSchema):
+            """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
 
         a = ma_fields.Nested(lambda:B())""",
@@ -426,7 +426,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class TestUISchema(BaseObjectSchema):
+            """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
 
         a = ma_fields.Nested(lambda: B())""",
