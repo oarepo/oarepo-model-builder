@@ -58,6 +58,11 @@ class DataType:
             ret = copy.deepcopy(ui.get("marshmallow", {}))
         else:
             ret = copy.deepcopy(self.definition.get("marshmallow", {}))
+            # do not reuse schema class for UI (it would be in a bad package, name clash, ...)
+            schema_class = ret.pop("schema-class", None)
+            if schema_class:
+                # keep the previous name in a different package
+                ret["schema-class"] = schema_class.split(".")[-1] + "UISchema"
         if self.ui_marshmallow_field:
             ret.setdefault("field-class", self.ui_marshmallow_field)
         elif self.marshmallow_field:

@@ -29,6 +29,7 @@ from oarepo_model_builder.schema import ModelSchema
 
 OAREPO_MARSHMALLOW = "marshmallow"
 B_SCHEMA = 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()'
+BUI_SCHEMA = 'classBUISchema(ma.Schema):"""BUISchemaschema."""b=ma_fields.String()'
 
 
 def get_test_schema(**props):
@@ -141,8 +142,8 @@ def test_generate_nested_schema_same_file(fulltext_builder):
         re.sub(
             r"\s",
             "",
-            """class B(ma.Schema):
-        \"""B schema.\"""
+            """class BUISchema(ma.Schema):
+        \"""BUISchema schema.\"""
         
         b = ma_fields.String()""",
         )
@@ -155,7 +156,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
             """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
         
-        a = ma_fields.Nested(lambda: B())""",
+        a = ma_fields.Nested(lambda: BUISchema())""",
         )
         in re.sub(r"\s", "", data)
     )
@@ -191,18 +192,10 @@ def test_generate_nested_schema_different_file(fulltext_builder):
             """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
     
-        a = ma_fields.Nested(lambda: B())""",
+        a = ma_fields.Nested(lambda: BUISchema())""",
         )
         in re.sub(r"\s", "", data)
     )
-
-    assert "from test.services.schema2 import B" in data
-
-    with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "schema2.py")  # NOSONAR
-    ) as f:
-        data = f.read()
-    assert B_SCHEMA in re.sub(r"\s", "", data)
 
 
 def test_use_nested_schema_same_file(fulltext_builder):
@@ -232,11 +225,11 @@ def test_use_nested_schema_same_file(fulltext_builder):
             """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
         
-        a = ma_fields.Nested(lambda: B())""",
+        a = ma_fields.Nested(lambda: BUISchema())""",
         )
         in re.sub(r"\s", "", data)
     )
-    assert "classB(ma.Schema)" not in re.sub(r"\s", "", data)
+    assert "classBUISchema(ma.Schema)" not in re.sub(r"\s", "", data)
 
 
 def test_use_nested_schema_different_file(fulltext_builder):
@@ -258,9 +251,10 @@ def test_use_nested_schema_different_file(fulltext_builder):
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert re.sub(r"\s", "", "from c import B") in re.sub(r"\s", "", data)
+    # BUISchema will be undefined, definitely not in this schema
+    assert re.sub(r"\s", "", "from c import BUISchema") not in re.sub(r"\s", "", data)
     assert (
-        'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.Nested(lambda:B())'
+        'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.Nested(lambda:BUISchema())'
         in re.sub(r"\s", "", data)
     )
 
@@ -287,9 +281,9 @@ def test_generate_nested_schema_array(fulltext_builder):
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert B_SCHEMA in re.sub(r"\s", "", data)
+    assert BUI_SCHEMA in re.sub(r"\s", "", data)
     assert (
-        'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.List(ma_fields.Nested(lambda:B()))'
+        'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.List(ma_fields.Nested(lambda:BUISchema()))'
         in re.sub(r"\s", "", data)
     )
 
@@ -349,18 +343,13 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
             """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
     
-        a = ma_fields.Nested(lambda:B())""",
+        a = ma_fields.Nested(lambda:BUISchema())""",
         )
         in re.sub(r"\s", "", data)
     )
 
-    assert "from test.services.records.schema2 import B" in data
-
-    with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "records", "schema2.py")  # NOSONAR
-    ) as f:
-        data = f.read()
-    assert B_SCHEMA in re.sub(r"\s", "", data)
+    assert "from test.services.records.schema2 import BUISchema" not in data
+    assert BUI_SCHEMA in re.sub(r"\s", "", data)
 
 
 def test_generate_nested_schema_relative_same_file(fulltext_builder):
@@ -393,7 +382,7 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
             """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
 
-        a = ma_fields.Nested(lambda:B())""",
+        a = ma_fields.Nested(lambda:BUISchema())""",
         )
         in re.sub(r"\s", "", data)
     )
@@ -429,18 +418,13 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
             """class TestUISchema(ma.Schema):
         \"""TestUISchema schema.\"""
 
-        a = ma_fields.Nested(lambda: B())""",
+        a = ma_fields.Nested(lambda: BUISchema())""",
         )
         in re.sub(r"\s", "", data)
     )
 
-    assert "from test.services.schema2 import B" in data
-
-    with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "schema2.py")  # NOSONAR
-    ) as f:
-        data = f.read()
-    assert B_SCHEMA in re.sub(r"\s", "", data)
+    assert "from test.services.schema2 import BUISchema" not in data
+    assert BUI_SCHEMA in re.sub(r"\s", "", data)
 
 
 def test_generate_json_serializer(fulltext_builder):

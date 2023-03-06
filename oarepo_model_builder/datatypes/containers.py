@@ -27,7 +27,8 @@ class ObjectDataType(DataType):
     def marshmallow(self, **extras):
         marshmallow_definition = super().marshmallow(**extras)
         self._extend_marshmallow(
-            marshmallow_definition, record_schema_class=self.model.record_schema_class
+            marshmallow_definition,
+            record_schema_class=self.model.record_schema_class,
         )
         return marshmallow_definition
 
@@ -41,7 +42,10 @@ class ObjectDataType(DataType):
         return marshmallow_definition
 
     def _extend_marshmallow(
-        self, marshmallow_definition, record_schema_class=None, suffix="Schema"
+        self,
+        marshmallow_definition,
+        record_schema_class=None,
+        suffix="Schema",
     ):
         schema_class = marshmallow_definition.get("schema-class", None)
         if not schema_class:
@@ -55,11 +59,17 @@ class ObjectDataType(DataType):
 
         schema_class = self._get_class_name(package_name, schema_class)
 
-        fingerprint = sha256(
-            json.dumps(
-                self.definition, sort_keys=True, default=lambda x: repr(x)
-            ).encode("utf-8")
-        ).hexdigest()
+        # add suffix to fingerprint so that ui and normal marshmallow classes
+        # are separate even though they share the same definition
+        fingerprint = (
+            suffix
+            + "-"
+            + sha256(
+                json.dumps(
+                    self.definition, sort_keys=True, default=lambda x: repr(x)
+                ).encode("utf-8")
+            ).hexdigest()
+        )
 
         if "known-classes" not in self.model:
             self.model.known_classes = {}

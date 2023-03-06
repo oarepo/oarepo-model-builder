@@ -289,6 +289,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
 
     def begin(self, schema, settings):
         super().begin(schema, settings)
+
         stack = ModelBuilderStack()
         stack.push("model", schema.current_model)
 
