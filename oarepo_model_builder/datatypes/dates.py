@@ -7,6 +7,18 @@ from .datatypes import DataType, Import
 class BaseDateDataType(DataType):
     marshmallow_field = "ma_fields.String"
 
+    def get_facet(self, stack, parent_path):
+        key, field = facet_definiton(self)
+        path = parent_path
+        if len(parent_path) > 0 and self.key:
+            path = parent_path + "." + self.key
+        elif self.key:
+            path = self.key
+        if field:
+            return field, facet_name(path)
+        else:
+            return f'TermsFacet(field="{path}")', facet_name(path)
+
 
 class DateDataType(BaseDateDataType):
     schema_type = "string"
@@ -30,18 +42,6 @@ class DateDataType(BaseDateDataType):
             Import(import_path="oarepo_runtime.validation.validate_date", alias=None),
             Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
         )
-
-    def get_facet(self, stack, parent_path):
-        key, field = facet_definiton(self)
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
-        if field:
-            return field, facet_name(path)
-        else:
-            return f'TermsFacet(field="{path}")', facet_name(path)
 
 
 class TimeDataType(BaseDateDataType):
@@ -106,7 +106,7 @@ class EDTFDataType(BaseDateDataType):
     def imports(self, *_extra) -> List[Import]:
         return super().imports(
             Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
-            Import(name="edtf.Date", alias="EDTFDate"),
+            Import(import_path="edtf.Date", alias="EDTFDate"),
         )
 
 
@@ -128,7 +128,7 @@ class EDTFIntervalType(BaseDateDataType):
 
     def imports(self, *extra):
         return super().imports(
-            Import(name="edtf.Interval", alias="EDTFInterval"),
+            Import(import_path="edtf.Interval", alias="EDTFInterval"),
             Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
             *extra,
         )

@@ -72,11 +72,8 @@ class StringDataType(DataType):
     def ui_marshmallow(self, **extras):
         ret = super().ui_marshmallow(**extras)
         if "enum" in self.definition:
-            gettext_prefix = (
-                self.definition.get("ui", {}).get("i18n-prefix")
-                or self.model.get("i18n-prefix")
-                or self.model.get("package")
-            )
+            # TODO: allow for custom prefix
+            gettext_prefix = self.model.get("package")
             ret.setdefault("arguments", []).extend(
                 [
                     f'value_prefix="{gettext_prefix}"',
@@ -132,3 +129,8 @@ class FulltextKeywordDataType(StringDataType):
             return field, facet_name(path)
         else:
             return f'TermsFacet(field="{path}")', facet_name(path)
+
+
+class URLDataType(StringDataType):
+    mapping_type = "keyword"
+    model_type = "url"

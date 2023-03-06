@@ -51,6 +51,8 @@ class Property(ExtendablePartSchema):
     )
     ui = fields.Nested(lambda: model_validator.validator_class("property-ui")())
 
+    description = fields.String(required=False)
+
 
 class ObjectProperty(ExtendablePartSchema):
     required = fields.Boolean(required=False)

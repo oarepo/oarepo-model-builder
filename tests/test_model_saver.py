@@ -146,13 +146,7 @@ def test_model_saver():
                 },
                 "properties": {},
                 "type": "object",
-                "ui": {
-                    "marshmallow": {
-                        "base-classes": ["ma.Schema"],
-                        "generate": True,
-                        "schema-class": "test.services.records.ui_schema.TestMetadataUISchema",
-                    }
-                },
+                "ui": {},
             },
         },
         "proxies-current-resource": "test.proxies.current_resource",
@@ -203,6 +197,7 @@ def test_model_saver():
             }
         },
     }
+
     assert data[1].strip() == ""
     assert (
         data[2].strip()
