@@ -30,15 +30,20 @@ from .dates import (
     EDTFIntervalType,
     TimeDataType,
 )
-from .primitive_types import NumberDataType  # noqa
+from .primitive_types import NumberDataType  # noqa , just for export
 from .primitive_types import (
     BooleanDataType,
     DoubleDataType,
     FloatDataType,
     IntegerDataType,
 )
-from .strings import StringDataType  # noqa
-from .strings import FulltextDataType, FulltextKeywordDataType, KeywordDataType
+from .strings import StringDataType  # noqa , just for export
+from .strings import (
+    FulltextDataType,
+    FulltextKeywordDataType,
+    KeywordDataType,
+    URLDataType,
+)
 
 DEFAULT_DATATYPES = [
     IntegerDataType,
@@ -57,4 +62,5 @@ DEFAULT_DATATYPES = [
     NestedDataType,
     FlattenDataType,
     ArrayDataType,
+    URLDataType,
 ]

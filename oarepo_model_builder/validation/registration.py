@@ -15,7 +15,6 @@ from .property_sample_data import ModelSampleConfiguration, PropertySampleData
 from .property_sortable import PropertySortable
 from .root import RootSchema
 from .settings import SettingsOpenSearchSchema, SettingsPythonSchema, SettingsSchema
-from .ui import ModelUISchema, PropertyUISchema
 
 #
 # Validators is a dictionary of "points" in model schema mapped to a single ma.Schema class
@@ -55,8 +54,9 @@ validators = {
     # You mostly do not want to extend this
     "model-opensearch": ModelOpenSearchSchema,
     #
-    # /model/ui: extensibility point for defining ui props on the model level
-    "model-ui": [ModelUISchema, ModelMarshmallowSchema],
+    # /model/ui extensibility point
+    #
+    "model-ui": [],
     #
     # /model/marshmallow: defines marshmallow on the model-level
     "property-marshmallow-model": ModelMarshmallowSchema.ObjectOnlyMarshmallowProps,
@@ -78,6 +78,10 @@ validators = {
     # Register schema here to add type-independent extensions
     "property": [Property],
     #
+    # <property>/ui extensibility point
+    #
+    "property-ui": [],
+    #
     # This is the base schema for properties/aaa
     # Register schema here to add type-independent extensions that are used only on object members
     "object-property": [ObjectProperty],
@@ -85,6 +89,10 @@ validators = {
     # This is the base schema for ...aaa[type=array]/items
     # Register schema here to add type-independent extensions that are used only on array items
     "array-item": [],
+    #
+    # <items>/ui extensibility point
+    #
+    "array-item-ui": [],
     #
     # An extension point for properties/aaa/facets
     "property-facets": PropertyFacets,
@@ -103,9 +111,6 @@ validators = {
     #
     # An extension point for properties/aaa/sortable
     "property-sortable": PropertySortable,
-    #
-    # An extension point for properties/aaa/ui
-    "property-ui": PropertyUISchema,
     #
     # property-by-type-xxx defines an extension point for schemas
     # that are dependent on property type. The schema is taken automatically

@@ -1,8 +1,11 @@
+from collections import defaultdict
 from functools import cached_property
 
 import importlib_metadata
 import marshmallow as ma
 from marshmallow.exceptions import ValidationError
+
+from oarepo_model_builder.validation.utils import PermissiveSchema
 
 PROPERTY_BY_TYPE_PREFIX = "property-by-type-"
 ARRAY_ITEM_BY_TYPE_PREFIX = "array-item-by-type-"
@@ -37,7 +40,7 @@ class ModelValidator:
             )
 
         if not validators:
-            raise ValidationError(f'Do not have validators for "{section}"')
+            return PermissiveSchema
 
         # if any of the validators is extremely permissive, do not add strict meta
         parent_meta_classes = set()
@@ -51,8 +54,42 @@ class ModelValidator:
         if strict:
             meta_options["unknown"] = ma.RAISE
 
+        # join fields
+        fields = defaultdict(list)
+        for cls in validators:
+            for fld_key, fld in cls._declared_fields.items():
+                fields[fld_key].append(fld)
+        redefined_fields = {}
+        for fld_key, flds in fields.items():
+            if len(flds) > 1:
+                redefined = self._merge_fields(flds)
+                if redefined:
+                    redefined_fields[fld_key] = redefined
+
         meta_class = type("Meta", tuple(parent_meta_classes), meta_options)
-        return type(f"{section.title()}Validator", validators, {"Meta": meta_class})
+        return type(
+            f"{section.title()}Validator",
+            validators,
+            {"Meta": meta_class, **redefined_fields},
+        )
+
+    def _merge_fields(self, flds):
+        if isinstance(flds[0], ma.fields.Nested):
+            schemas = [x.schema for x in flds]
+            combined_schema = type(
+                "_".join(type(x).__name__ for x in schemas),
+                tuple(type(x) for x in schemas),
+                {},
+            )
+            return ma.fields.Nested(
+                combined_schema,
+                data_key=flds[0].data_key,
+                many=flds[0].many,
+                attribute=flds[0].attribute,
+                allow_none=flds[0].allow_none,
+            )
+        else:
+            return None
 
     def get_property_validator_class(self, section):
         datatype_name = section[len(PROPERTY_BY_TYPE_PREFIX) :]
@@ -68,6 +105,7 @@ class ModelValidator:
         self, section, datatype_name, extra_validation_key
     ):
         from oarepo_model_builder.datatypes import datatypes
+        from oarepo_model_builder.datatypes import ObjectDataType
 
         validators = self.validator_map.get(section, ())
 
