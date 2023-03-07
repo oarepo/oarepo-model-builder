@@ -1,4 +1,3 @@
-from ..datatypes import Import
 from .invenio_record_schema import InvenioRecordSchemaBuilder
 
 

@@ -29,6 +29,10 @@ class ModelValidator:
                     ret[validator_type].append(validator)
         return ret
 
+    def clear_cache(self):
+        if "validator_map" in self.__dict__:
+            del self.__dict__["validator_map"]
+
     def validator_class(self, section="root", strict=True):
         if section.startswith(PROPERTY_BY_TYPE_PREFIX):
             validators = self.get_property_validator_class(section)
@@ -105,7 +109,6 @@ class ModelValidator:
         self, section, datatype_name, extra_validation_key
     ):
         from oarepo_model_builder.datatypes import datatypes
-        from oarepo_model_builder.datatypes import ObjectDataType
 
         validators = self.validator_map.get(section, ())
 

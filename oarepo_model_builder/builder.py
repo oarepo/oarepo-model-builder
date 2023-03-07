@@ -1,3 +1,4 @@
+import copy
 import importlib
 from pathlib import Path
 from typing import Dict, List, Type, Union
@@ -151,6 +152,9 @@ class ModelBuilder:
         :param output_dir:  output directory where to put generated files
         :return:            the outputs (self.outputs)
         """
+
+        # deep copy so that the passed model will not be influenced by preprocessors etc.
+        model = copy.deepcopy(model)
         if self.overwrite:
             if not hasattr(self.filesystem, "overwrite"):
                 raise AttributeError(
@@ -168,7 +172,6 @@ class ModelBuilder:
         self._validate_model(model)
 
         self._run_model_preprocessors(model)
-
         self._validate_model(model)
 
         # noinspection PyTypeChecker

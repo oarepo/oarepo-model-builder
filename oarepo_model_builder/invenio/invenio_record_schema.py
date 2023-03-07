@@ -94,9 +94,8 @@ class MarshmallowNode:
             Import(k["import"], k.get("alias")) for k in self.imports
         ] + generated_field_imports
 
-    def prepare(self, package_name: str, _context: Dict[str, Any]):
-        if self.field_class:
-            self.field_class = self._get_class_name(package_name, self.field_class)
+    def prepare(self, package_name: str):
+        pass
 
     @property
     def field(self):
@@ -119,19 +118,6 @@ class MarshmallowNode:
                 f"{self.field_class}"
                 + f"({', '.join(self.field_arguments + rw_arguments)})"
             )
-
-    def _get_class_name(self, package_name: str, class_name: str):
-        if "." not in class_name:
-            return f"{package_name}.{class_name}"
-        if class_name.startswith("."):
-            package_path = package_name.split(".")
-            while class_name.startswith("."):
-                if package_path:
-                    package_path = package_path[:-1]
-                class_name = class_name[1:]
-            if package_path:
-                class_name = f"{'.'.join(package_path)}.{class_name}"
-        return class_name
 
     def mark_used(self):
         if self.read or self.write:
@@ -178,6 +164,10 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
+        assert definition.get("schema-class"), (
+            f"Marshmallow schema class should be prepared by now, "
+            + f"do you have datatypes model preprocessor configured? Definition: {stack.path}: {definition}: {stack.top.data}"
+        )
         return {
             "generate": definition.get("generate", True),
             "schema_class": definition.get("schema-class", None),
@@ -186,8 +176,8 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
             **super()._kwargs(definition, schema, stack),
         }
 
-    def prepare(self, package_name: str, context: Dict[str, Any]):
-        super().prepare(package_name, context)
+    def prepare(self, package_name: str):
+        super().prepare(package_name)
 
         if self.exact_field:
             return
@@ -315,17 +305,12 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         if model_node.generate:
             model_node.used = True
 
-        context = {}
         known_classes = set()
         for fld in model_node.walk():
-            fld.prepare(package_name, context)
+            fld.prepare(package_name)
             if hasattr(fld, "generate_schema_class"):
                 package, class_name, generated_class = fld.generate_schema_class()
-                if (package_name, class_name) in known_classes:
-                    log.info(
-                        f"Class renaming: have {package_name}.{class_name} twice, will use the first definition"
-                    )
-                else:
+                if (package_name, class_name) not in known_classes:
                     known_classes.add((package_name, class_name))
                     if class_name:
                         imports = generated_imports[package]

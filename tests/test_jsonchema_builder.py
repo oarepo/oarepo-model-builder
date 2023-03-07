@@ -5,6 +5,9 @@ from oarepo_model_builder.builders import OutputBuilderComponent
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.datatypes import datatypes
 from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.model_preprocessors.datatype_default import (
+    DatatypeDefaultModelPreprocessor,
+)
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
@@ -59,7 +62,9 @@ def test_required_inside_metadata():
                         }
                     }
                 }
-            }
+            },
+            "record-schema-class": "a.BlahSchema",
+            "record-ui-schema-class": "a.BlahUISchema",
         }
     )
 
@@ -129,7 +134,10 @@ def build(model, output_builder_components=None, property_preprocessors=None):
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
-        model_preprocessors=[DefaultValuesModelPreprocessor],
+        model_preprocessors=[
+            DefaultValuesModelPreprocessor,
+            DatatypeDefaultModelPreprocessor,
+        ],
         output_builder_components=output_builder_components,
         filesystem=InMemoryFileSystem(),
         property_preprocessors=property_preprocessors,

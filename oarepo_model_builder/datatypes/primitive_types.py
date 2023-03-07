@@ -1,9 +1,8 @@
-from typing import List
 
 from marshmallow import fields
 
 from ..utils.facet_helpers import facet_definiton, facet_name
-from .datatypes import DataType, Import
+from .datatypes import DataType
 
 
 class NumberDataType(DataType):

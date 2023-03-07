@@ -4,7 +4,7 @@ from hashlib import sha256
 
 from marshmallow import fields
 
-from oarepo_model_builder.utils.jinja import split_package_name
+from oarepo_model_builder.utils.jinja import split_package_base_name, split_package_name
 from oarepo_model_builder.utils.python_name import convert_name_to_python_class
 from oarepo_model_builder.validation import InvalidModelException, model_validator
 
@@ -17,6 +17,7 @@ class ObjectDataType(DataType):
     schema_type = "object"
     mapping_type = "object"
     marshmallow_field = "ma_fields.Nested"
+    ui_marshmallow_field = "ma_fields.Nested"
     model_type = "object"
 
     class ModelSchema(DataType.ModelSchema):
@@ -24,30 +25,34 @@ class ObjectDataType(DataType):
             lambda: model_validator.validator_class("properties", strict=False)()
         )
 
-    def marshmallow(self, **extras):
-        marshmallow_definition = super().marshmallow(**extras)
-        self._extend_marshmallow(
-            marshmallow_definition,
-            record_schema_class=self.model.record_schema_class,
+    def prepare(self, context):
+        super().prepare(context)
+        self._prepare_schema_class(
+            self.definition.setdefault("marshmallow", {}),
+            split_package_name(self.model.record_schema_class),
+            context,
         )
-        return marshmallow_definition
-
-    def ui_marshmallow(self, **extras):
-        marshmallow_definition = super().ui_marshmallow(**extras)
-        self._extend_marshmallow(
-            marshmallow_definition,
-            record_schema_class=self.model.record_ui_schema_class,
+        ui = self.definition.setdefault("ui", {})
+        self._prepare_schema_class(
+            ui.setdefault("marshmallow", {}),
+            split_package_name(self.model.record_ui_schema_class),
+            context,
             suffix="UISchema",
         )
-        return marshmallow_definition
 
-    def _extend_marshmallow(
+    def _prepare_schema_class(
         self,
         marshmallow_definition,
-        record_schema_class=None,
+        package_name,
+        context,
         suffix="Schema",
     ):
         schema_class = marshmallow_definition.get("schema-class", None)
+        if schema_class:
+            absolute_class_name = self._get_class_name(package_name, schema_class)
+            marshmallow_definition["schema-class"] = absolute_class_name
+            return
+
         if not schema_class:
             if self.stack.top.schema_element_type == "items":
                 schema_class_base = self.stack[-2].key + "Item"
@@ -55,91 +60,68 @@ class ObjectDataType(DataType):
                 schema_class_base = self.key
             schema_class = convert_name_to_python_class(schema_class_base) + suffix
 
-        package_name = split_package_name(record_schema_class)
-
         schema_class = self._get_class_name(package_name, schema_class)
 
-        # add suffix to fingerprint so that ui and normal marshmallow classes
-        # are separate even though they share the same definition
-        fingerprint = (
-            suffix
-            + "-"
-            + sha256(
-                json.dumps(
-                    self.definition, sort_keys=True, default=lambda x: repr(x)
-                ).encode("utf-8")
-            ).hexdigest()
-        )
+        fingerprint = sha256(
+            json.dumps(
+                self.definition, sort_keys=True, default=lambda x: repr(x)
+            ).encode("utf-8")
+        ).hexdigest()
 
-        if "known-classes" not in self.model:
-            self.model.known_classes = {}
+        # separate ui and normal marshmallow classes
+        class_cache = context.setdefault(f"marshmallow-class-cache-{suffix}", {})
 
         schema_class = self._find_unique_schema_class(
-            self.model.known_classes, schema_class, fingerprint
+            class_cache, schema_class, fingerprint
         )
         log.debug(
             "%s: fp %s, schema class %s", self.stack.path, fingerprint, schema_class
         )
 
-        self.model.known_classes[schema_class] = fingerprint
+        class_cache[schema_class] = fingerprint
 
         marshmallow_definition["schema-class"] = schema_class
 
         return marshmallow_definition
 
     def _find_unique_schema_class(self, known_classes, schema_class, fingerprint):
-        if schema_class in known_classes:
-            # reuse class with the same fingerprint
-            if fingerprint != known_classes[schema_class]:
-                path = []
-                for pth in reversed(self.stack.stack[:-1]):
-                    if pth.schema_element_type == "property":
-                        path.insert(0, pth.key)
-                        candidate = self._get_schema_class_candidate(
-                            schema_class,
-                            fingerprint,
-                            prefix="".join(x.title() for x in path),
-                            known_classes=known_classes,
-                        )
-                        if candidate:
-                            return candidate
-                for i in range(1, 100):
-                    candidate = self._get_schema_class_candidate(
-                        schema_class,
-                        fingerprint,
-                        suffix=f"_{i}",
-                        known_classes=known_classes,
-                    )
-                    if candidate:
-                        return candidate
+        parent = self.stack[:-1]
+        package_name, class_name = split_package_base_name(schema_class)
+        orig_schema_class = schema_class
 
-                raise InvalidModelException(
-                    f"Too many marshmallow classes with name {schema_class}. Please specify your own class names"
-                )
+        # generate unique class name (if duplicates are found) by using more and more from the path
+        while True:
+            if schema_class not in known_classes:
+                # first occurrence, just return
+                return schema_class
+            if known_classes[schema_class] == fingerprint:
+                # same name and fingerprint, just return
+                return schema_class
+            if not parent:
+                # could not resolve parent
+                break
+            top = parent[-1]
+            parent = parent[:-1]
+            # if top is not property, can't add to name, so continue with its parent
+            if top.schema_element_type != "property":
+                continue
+            class_name = convert_name_to_python_class(top.key) + class_name
+            schema_class = f"{package_name}.{class_name}"
 
-        return schema_class
+        # generate unique class name (if duplicates are found) by appending a number
+        package_name, class_name = split_package_base_name(orig_schema_class)
+        for i in range(1, 100):
+            schema_class = f"{package_name}.{class_name}{i}"
+            if schema_class not in known_classes:
+                # first occurrence, just return
+                return schema_class
+            if known_classes[schema_class] == fingerprint:
+                # same name and fingerprint, just return
+                return schema_class
 
-    def _get_schema_class_candidate(
-        self, schema_class, fingerprint, suffix="", prefix="", known_classes=None
-    ):
-        print(" ... trying", schema_class, prefix, suffix)
-        pkg_clz = schema_class.rsplit(".", maxsplit=1)
-        if len(pkg_clz) > 1:
-            pkg, clz = f"{pkg_clz[0]}.", pkg_clz[1]
-        else:
-            pkg = ""
-            clz = pkg_clz[0]
-
-        candidate = f"{pkg}{prefix}{clz}{suffix}".rsplit(".", maxsplit=1)
-        if len(candidate) > 1:
-            candidate = candidate[0] + "." + convert_name_to_python_class(candidate[1])
-        else:
-            candidate = convert_name_to_python_class(candidate[0])
-        if candidate not in known_classes:
-            return candidate
-        if fingerprint == known_classes[candidate]:
-            return candidate
-        return None
+        raise InvalidModelException(
+            f"Too many marshmallow classes with name {schema_class}. Please specify your own class names"
+        )
 
     def _get_class_name(self, package_name: str, class_name: str):
         if "." not in class_name:
@@ -169,6 +151,7 @@ class NestedDataType(ObjectDataType):
     schema_type = "object"
     mapping_type = "nested"
     marshmallow_field = "ma_fields.Nested"
+    ui_marshmallow_field = "ma_fields.Nested"
     model_type = "nested"
 
     def get_facet(self, stack, parent_path):
@@ -187,6 +170,7 @@ class FlattenDataType(DataType):
     schema_type = "object"
     mapping_type = "flatten"
     marshmallow_field = "ma_fields.Raw"
+    ui_marshmallow_field = "ma_fields.Raw"
     model_type = "flatten"
 
     def get_facet(self, stack, parent_path):
@@ -197,6 +181,7 @@ class ArrayDataType(DataType):
     schema_type = "array"
     mapping_type = None
     marshmallow_field = "ma_fields.List"
+    ui_marshmallow_field = "ma_fields.List"
     model_type = "array"
 
     class ModelSchema(DataType.ModelSchema):
