@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import functools
 import inspect
 import sys
@@ -88,7 +87,6 @@ class OutputBuilder:
 
     def build_node(self, key, data):
         try:
-            data = copy.deepcopy(data)
             self.stack.push(key, data)
 
             try:

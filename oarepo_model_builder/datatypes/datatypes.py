@@ -33,6 +33,25 @@ class DataType:
                 ret[k] = v
         return ret
 
+    def prepare(self, context):
+        """Called at the beginning in model-preprocessing phase,
+        should prepare self.definition (add defaults etc).
+        Might use the provided context to store cross-node information.
+
+        This call should always be deterministic.
+        """
+        definition = self.definition.setdefault("marshmallow", {})
+        if self.marshmallow_field:
+            definition.setdefault("field-class", self.marshmallow_field)
+        definition.setdefault("validators", []).extend(self.marshmallow_validators())
+
+        ui = self.definition.setdefault("ui", {})
+        definition = ui.setdefault("marshmallow", {})
+        if self.ui_marshmallow_field:
+            definition.setdefault("field-class", self.ui_marshmallow_field)
+        elif self.marshmallow_field:
+            definition.setdefault("field-class", self.marshmallow_field)
+
     def model_schema(self, **_extras):
         return None
 
@@ -43,31 +62,14 @@ class DataType:
         return self._copy_definition(type=self.mapping_type, **extras)
 
     def marshmallow(self, **extras):
-        ret = copy.deepcopy(self.definition.get("marshmallow", {}))
-        if self.marshmallow_field:
-            ret.setdefault("field-class", self.marshmallow_field)
-        ret.setdefault("validators", []).extend(self.marshmallow_validators())
+        ret = self.definition.get("marshmallow", {})
         for k, v in extras.items():
             if v is not None:
                 ret[k] = v
         return ret
 
     def ui_marshmallow(self, **extras):
-        ui = self.definition.get("ui", {})
-        if "marshmallow" in ui:
-            ret = copy.deepcopy(ui.get("marshmallow", {}))
-        else:
-            ret = copy.deepcopy(self.definition.get("marshmallow", {}))
-            # do not reuse schema class for UI (it would be in a bad package, name clash, ...)
-            schema_class = ret.pop("schema-class", None)
-            if schema_class:
-                # keep the previous name in a different package
-                ret["schema-class"] = schema_class.split(".")[-1] + "UISchema"
-        if self.ui_marshmallow_field:
-            ret.setdefault("field-class", self.ui_marshmallow_field)
-        elif self.marshmallow_field:
-            ret.setdefault("field-class", self.marshmallow_field)
-        # no validators for ui, as it is dump only
+        ret = self.definition["ui"]["marshmallow"]
         for k, v in extras.items():
             if v is not None:
                 ret[k] = v
@@ -108,6 +110,9 @@ class DataTypes:
     def facet(self, stack):
         facet, path = stack[0].get_facet(stack[1:], "")
         return facet, path
+
+    def clear_cache(self):
+        self.datatype_map = {}
 
 
 datatypes = DataTypes()

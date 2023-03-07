@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 import pytest
 
@@ -13,6 +14,9 @@ from oarepo_model_builder.invenio.invenio_record_ui_schema import (
 )
 from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
     InvenioRecordUISerializerBuilder,
+)
+from oarepo_model_builder.model_preprocessors.datatype_default import (
+    DatatypeDefaultModelPreprocessor,
 )
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
@@ -57,6 +61,7 @@ def fulltext_builder():
             DefaultValuesModelPreprocessor,
             OpensearchModelPreprocessor,
             InvenioModelPreprocessor,
+            DatatypeDefaultModelPreprocessor,
         ],
         property_preprocessors=[DataTypePreprocessor],
     )
@@ -99,6 +104,7 @@ def test_simple_array(fulltext_builder):
 
 
 def test_array_of_objects(fulltext_builder):
+    print("starting test ...", file=sys.stderr)
     schema = get_test_schema(
         a={
             "type": "array",
@@ -124,6 +130,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": True},
+            "ui": {OAREPO_MARSHMALLOW: {"schema-class": "BUISchema", "generate": True}},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -170,6 +177,12 @@ def test_generate_nested_schema_different_file(fulltext_builder):
                 "schema-class": "test.services.schema2.B",
                 "generate": True,
             },
+            "ui": {
+                OAREPO_MARSHMALLOW: {
+                    "schema-class": "test.services.schema2.BUISchema",
+                    "generate": True,
+                }
+            },
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -203,6 +216,9 @@ def test_use_nested_schema_same_file(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": False},
+            "ui": {
+                OAREPO_MARSHMALLOW: {"schema-class": "BUISchema", "generate": False}
+            },
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -237,6 +253,9 @@ def test_use_nested_schema_different_file(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {"schema-class": "c.B", "generate": False},
+            "ui": {
+                OAREPO_MARSHMALLOW: {"schema-class": "c.BUISchema", "generate": False}
+            },
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -251,8 +270,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    # BUISchema will be undefined, definitely not in this schema
-    assert re.sub(r"\s", "", "from c import BUISchema") not in re.sub(r"\s", "", data)
+    assert re.sub(r"\s", "", "from c import BUISchema") in re.sub(r"\s", "", data)
     assert (
         'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.Nested(lambda:BUISchema())'
         in re.sub(r"\s", "", data)
@@ -266,6 +284,9 @@ def test_generate_nested_schema_array(fulltext_builder):
             "items": {
                 "type": "object",
                 OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": True},
+                "ui": {
+                    OAREPO_MARSHMALLOW: {"schema-class": "BUISchema", "generate": True}
+                },
                 "properties": {
                     "b": {
                         "type": "keyword",
@@ -321,6 +342,12 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
                 "schema-class": ".schema2.B",
                 "generate": True,
             },
+            "ui": {
+                OAREPO_MARSHMALLOW: {
+                    "schema-class": ".ui_schema2.BUISchema",
+                    "generate": True,
+                }
+            },
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -348,7 +375,11 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         in re.sub(r"\s", "", data)
     )
 
-    assert "from test.services.records.schema2 import BUISchema" not in data
+    assert "from test.services.records.ui_schema2 import BUISchema" in data
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "ui_schema2.py")
+    ) as f:
+        data = f.read()
     assert BUI_SCHEMA in re.sub(r"\s", "", data)
 
 
@@ -359,6 +390,12 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
             OAREPO_MARSHMALLOW: {
                 "schema-class": ".B",
                 "generate": True,
+            },
+            "ui": {
+                OAREPO_MARSHMALLOW: {
+                    "schema-class": ".BUISchema",
+                    "generate": True,
+                }
             },
             "properties": {
                 "b": {
@@ -396,6 +433,12 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
                 "schema-class": "..schema2.B",
                 "generate": True,
             },
+            "ui": {
+                OAREPO_MARSHMALLOW: {
+                    "schema-class": "..schema2.BUISchema",
+                    "generate": True,
+                }
+            },
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -423,8 +466,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         in re.sub(r"\s", "", data)
     )
 
-    assert "from test.services.schema2 import BUISchema" not in data
-    assert BUI_SCHEMA in re.sub(r"\s", "", data)
+    assert "from test.services.schema2 import BUISchema" in data
 
 
 def test_generate_json_serializer(fulltext_builder):
