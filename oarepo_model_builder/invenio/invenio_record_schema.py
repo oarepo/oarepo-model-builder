@@ -54,7 +54,12 @@ class MarshmallowNode:
         datatype = datatypes.get_datatype(
             stack.top.data, stack.top.key, schema.model, schema, stack
         )
-        definition = getattr(datatype, marshmallow_field)()
+        try:
+            definition = getattr(datatype, marshmallow_field)()
+        except Exception as e:
+            raise InvalidModelException(
+                f"Error getting marshmallow definition at path {stack.path}: top is {stack.top.data}"
+            ) from e
         imports = datatype.imports()
         field_arguments = copy.copy(definition.get("arguments", []))
         validators = definition.get("validators", [])

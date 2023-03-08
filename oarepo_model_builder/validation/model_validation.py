@@ -46,23 +46,20 @@ class ModelValidator:
         if not validators:
             return PermissiveSchema
 
-        # if any of the validators is extremely permissive, do not add strict meta
-        parent_meta_classes = set()
-        for v in validators:
-            if hasattr(v, "Meta"):
-                parent_meta_classes.add(v.Meta)
-                if getattr(v.Meta, "unknown", None) == ma.INCLUDE:
-                    strict = False
-                    break
-        meta_options = {}
-        if strict:
-            meta_options["unknown"] = ma.RAISE
-
         # join fields
+        if len(validators) > 1:
+            merged_schema = self._merge_schemas(validators, strict)
+        else:
+            merged_schema = validators[0]
+
+        return merged_schema
+
+    def _merge_schemas(self, schemas, strict=False):
         fields = defaultdict(list)
-        for cls in validators:
+        for cls in schemas:
             for fld_key, fld in cls._declared_fields.items():
                 fields[fld_key].append(fld)
+
         redefined_fields = {}
         for fld_key, flds in fields.items():
             if len(flds) > 1:
@@ -70,21 +67,41 @@ class ModelValidator:
                 if redefined:
                     redefined_fields[fld_key] = redefined
 
+        # if any of the validators is extremely permissive, do not add strict meta
+        parent_meta_classes = set()
+        for v in schemas:
+            for vv in v.mro():
+                meta_class = getattr(vv, "Meta", None)
+                if meta_class and meta_class not in parent_meta_classes:
+                    parent_meta_classes.add(meta_class)
+                    if getattr(meta_class, "unknown", None) == ma.INCLUDE:
+                        strict = False
+        meta_options = {}
+        if strict:
+            meta_options["unknown"] = ma.RAISE
+
+        parent_meta_classes = self._clear_mro(parent_meta_classes)
         meta_class = type("Meta", tuple(parent_meta_classes), meta_options)
+
+        # remove items that are in mro of other items
+        schemas = self._clear_mro(schemas)
         return type(
-            f"{section.title()}Validator",
-            validators,
+            f"{'_'.join(type(x).__name__ for x in schemas)}Validator",
+            tuple(schemas),
             {"Meta": meta_class, **redefined_fields},
         )
 
+    def _clear_mro(self, types):
+        return [
+            s
+            for s in types
+            if not any(other != s and s in other.mro() for other in types)
+        ]
+
     def _merge_fields(self, flds):
         if isinstance(flds[0], ma.fields.Nested):
-            schemas = [x.schema for x in flds]
-            combined_schema = type(
-                "_".join(type(x).__name__ for x in schemas),
-                tuple(type(x) for x in schemas),
-                {},
-            )
+            schemas = [type(x.schema) for x in flds]
+            combined_schema = self._merge_schemas(schemas)
             return ma.fields.Nested(
                 combined_schema,
                 data_key=flds[0].data_key,
