@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Union
 
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.builders.python import PythonBuilder
-from oarepo_model_builder.datatypes import Import, datatypes
+from oarepo_model_builder.datatypes import Import, datatypes, ObjectDataType
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.jinja import (
@@ -354,14 +354,22 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
         schema_element_type = self.stack.top.schema_element_type
 
         if schema_element_type in ("property", "items"):
+            datatype = datatypes.get_datatype(
+                self.stack.top.data,
+                self.stack.top.key,
+                self.schema.model,
+                self.schema,
+                self.stack,
+            )
             json_schema_type = self.stack.top.json_schema_type
-            if json_schema_type in ("object", "nested"):
+            if isinstance(datatype, ObjectDataType):
                 node_class = ObjectMarshmallowNode
             elif json_schema_type == "array":
                 node_class = ArrayMarshmallowNode
             else:
                 # primitive value
                 node_class = MarshmallowNode
+
             fld = node_class.from_stack(
                 self.schema,
                 self.stack,
