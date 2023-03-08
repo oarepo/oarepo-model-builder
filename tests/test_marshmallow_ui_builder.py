@@ -567,3 +567,17 @@ def test_localized_date(fulltext_builder):
     ) as f:
         data = f.read()
     assert "a = l10n.LocalizedDate()" in data
+
+
+def test_metadata(fulltext_builder):
+    schema = get_test_schema(
+        metadata={"type": "object", "properties": {"a": {"type": "keyword"}}}
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(schema, output_dir="")
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "ui_schema.py")
+    ) as f:
+        data = f.read()
+    assert "metadata = ma_fields.Nested(lambda: TestMetadataUISchema())" in data

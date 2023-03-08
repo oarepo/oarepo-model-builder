@@ -15,6 +15,7 @@ from .property_sample_data import ModelSampleConfiguration, PropertySampleData
 from .property_sortable import PropertySortable
 from .root import RootSchema
 from .settings import SettingsOpenSearchSchema, SettingsPythonSchema, SettingsSchema
+from .ui import UIPropertyValidator, ObjectPropertyUISchema, ObjectUIPropertyValidator
 
 #
 # Validators is a dictionary of "points" in model schema mapped to a single ma.Schema class
@@ -56,7 +57,7 @@ validators = {
     #
     # /model/ui extensibility point
     #
-    "model-ui": [],
+    "model-ui": [UIPropertyValidator, ObjectUIPropertyValidator],
     #
     # /model/marshmallow: defines marshmallow on the model-level
     "property-marshmallow-model": ModelMarshmallowSchema.ObjectOnlyMarshmallowProps,
@@ -80,7 +81,11 @@ validators = {
     #
     # <property>/ui extensibility point
     #
-    "property-ui": [],
+    "property-ui": [UIPropertyValidator],
+    #
+    # <property>[/type=object]/ui extensibility point
+    #
+    "object-property-ui": [ObjectUIPropertyValidator],
     #
     # This is the base schema for properties/aaa
     # Register schema here to add type-independent extensions that are used only on object members
@@ -121,8 +126,14 @@ validators = {
     # just a single data type, add it to this group of extensions
     #
     # This defines extra marshmallow fields for object/nested containers (schema-class, generate, ...)
-    "property-by-type-object": [ObjectPropertyMarshmallowSchema],
-    "property-by-type-nested": [ObjectPropertyMarshmallowSchema],
+    "property-by-type-object": [
+        ObjectPropertyMarshmallowSchema,
+        ObjectPropertyUISchema,
+    ],
+    "property-by-type-nested": [
+        ObjectPropertyMarshmallowSchema,
+        ObjectPropertyUISchema,
+    ],
     #
     # An extension point for properties/aaa/marshmallow
     "property-marshmallow-object": ObjectPropertyMarshmallowSchema.ObjectMarshmallowProps,
