@@ -16,6 +16,7 @@ from .property_sortable import PropertySortable
 from .root import RootSchema
 from .settings import SettingsOpenSearchSchema, SettingsPythonSchema, SettingsSchema
 from .ui import UIPropertyValidator, ObjectPropertyUISchema, ObjectUIPropertyValidator
+from .object import ObjectDynamicSchema
 
 #
 # Validators is a dictionary of "points" in model schema mapped to a single ma.Schema class
@@ -129,10 +130,12 @@ validators = {
     "property-by-type-object": [
         ObjectPropertyMarshmallowSchema,
         ObjectPropertyUISchema,
+        ObjectDynamicSchema,
     ],
     "property-by-type-nested": [
         ObjectPropertyMarshmallowSchema,
         ObjectPropertyUISchema,
+        ObjectDynamicSchema,
     ],
     #
     # An extension point for properties/aaa/marshmallow
