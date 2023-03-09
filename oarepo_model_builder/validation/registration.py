@@ -1,6 +1,7 @@
 from .model import ModelOpenSearchSchema, ModelSchema
 from .model_defaults import ModelDefaults
 from .model_plugins import PluginConfigSchema, PluginsSchema
+from .object import ObjectDynamicSchema
 from .properties import ArrayItemsSchema, ObjectFieldSchema, PropertiesSchema
 from .property import ObjectProperty, Property
 from .property_facets import PropertyFacets
@@ -15,8 +16,7 @@ from .property_sample_data import ModelSampleConfiguration, PropertySampleData
 from .property_sortable import PropertySortable
 from .root import RootSchema
 from .settings import SettingsOpenSearchSchema, SettingsPythonSchema, SettingsSchema
-from .ui import UIPropertyValidator, ObjectPropertyUISchema, ObjectUIPropertyValidator
-from .object import ObjectDynamicSchema
+from .ui import ObjectPropertyUISchema, ObjectUIPropertyValidator, UIPropertyValidator
 
 #
 # Validators is a dictionary of "points" in model schema mapped to a single ma.Schema class

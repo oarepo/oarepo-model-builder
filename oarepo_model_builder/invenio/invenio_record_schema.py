@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Union
 
 from oarepo_model_builder.builders import process
 from oarepo_model_builder.builders.python import PythonBuilder
-from oarepo_model_builder.datatypes import Import, datatypes, ObjectDataType
+from oarepo_model_builder.datatypes import Import, ObjectDataType, datatypes
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.jinja import (

@@ -1,4 +1,3 @@
-
 from marshmallow import fields
 
 from ..utils.facet_helpers import facet_definiton, facet_name

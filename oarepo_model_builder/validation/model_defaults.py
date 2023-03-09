@@ -3,6 +3,8 @@ import pathlib
 import marshmallow as ma
 from marshmallow import fields
 
+from oarepo_model_builder.validation.property_marshmallow import ImportSchema
+
 
 class PathOrString(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
@@ -260,3 +262,30 @@ class ModelDefaults(ma.Schema):
     mapping = fields.Nested(ma.Schema())
 
     permissions = fields.Nested(ModelPermissionsSchema(), required=False)
+
+    record_resource_parent_class = fields.String(
+        data_key="record-resource-parent-class", required=False
+    )
+    record_resource_config_parent_class = fields.String(
+        data_key="record-resource-config-parent-class", required=False
+    )
+    record_service_parent_class = fields.String(
+        data_key="record-service-parent-class", required=False
+    )
+    record_service_config_parent_class = fields.String(
+        data_key="record-service-config-parent-class", required=False
+    )
+    record_parent_class = fields.String(data_key="record-parent-class", required=False)
+    record_metadata_parent_class = fields.String(
+        data_key="record-metadata-parent-class", required=False
+    )
+
+    pid_field_cls = fields.String(data_key="pid-field-cls", required=False)
+    pid_field_provider = fields.String(data_key="pid-field-provider", required=False)
+    pid_field_context = fields.String(data_key="pid-field-context", required=False)
+    pid_field_args = fields.List(
+        fields.String(), data_key="pid-field-args", required=False
+    )
+    pid_field_imports = fields.List(
+        fields.Nested(ImportSchema), data_key="pid-field-imports", required=False
+    )

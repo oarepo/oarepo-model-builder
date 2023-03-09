@@ -31,7 +31,6 @@ class {{ current_model.record_service_config_class|base_name }}({% if current_mo
     search = {{ current_model.record_search_options_class|base_name }}
     {% endif %}
     record_cls = {{ current_model.record_class|base_name }}
-    # todo should i leave this here?
     service_id = "{{ current_model.service_id }}"
 
     {% if current_model.record_service_config_bases %}
