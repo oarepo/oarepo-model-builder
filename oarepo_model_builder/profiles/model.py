@@ -39,27 +39,19 @@ class ModelProfile(Profile):
             3. the resulting model will be merged as if use: was used
         """
 
-        extended_schema = extended_schema.split("#", maxsplit=1)
-        schema_location = extended_schema[0]
-        if len(extended_schema) == 1:
-            model_field = "model"
-        else:
-            model_field = extended_schema[1]
-            if model_field.startswith("/"):
-                model_field = model_field[1:]
-            if "/" in model_field:
-                raise ValueError("Can not currently process nested models")
+        loaded_schema = {"model": {"use": [extended_schema]}}
 
         extended_model = load_model(
-            schema_location,
+            extended_schema.split("#", maxsplit=1)[0],
             package=None,
             configs=[],
             black=False,
             isort=False,
             sets=[],
             extra_included=model.included_schemas,
+            model_content=loaded_schema,
         )
-        extended_model.model_field = model_field
+        extended_model.model_field = "model"
 
         fs = InMemoryFileSystem()
         builder = create_builder_from_entrypoints(

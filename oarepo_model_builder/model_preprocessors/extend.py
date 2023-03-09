@@ -8,7 +8,7 @@ class BaseClassesModelPreprocessor(ModelPreprocessor):
     TYPE = "extend-base-classes"
 
     def transform(self, schema: ModelSchema, settings: Dict):
-        model = schema.model
+        model = schema.current_model
         marshmallow = model.pop("marshmallow")
         for k in list(model.keys()):
             if k.endswith("-class"):
