@@ -9,7 +9,7 @@ from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 from {{ current_model.record_class|package_name }} import {{ current_model.record_class|base_name }}
 from {{ current_model.record_permissions_class|package_name }} import {{ current_model.record_permissions_class|base_name }}
-from {{ current_model.record_schema_class|package_name }} import {{ current_model.record_schema_class|base_name }}
+from {{ record_schema_class|package_name }} import {{ record_schema_class|base_name }}
 {% if  current_model.record_search_options_class %}
 from {{ current_model.record_search_options_class|package_name }} import {{ current_model.record_search_options_class|base_name }}
 {% endif %}
@@ -26,7 +26,7 @@ class {{ current_model.record_service_config_class|base_name }}({% if current_mo
     {% else %}
     PERMISSIONS_PRESETS = [{% for p in current_model.permissions.presets %}"{{ p }}"{{ ", " if not loop.last else "" }} {% endfor %}]
     {% endif %}
-    schema = {{ current_model.record_schema_class|base_name }}
+    schema = {{ record_schema_class|base_name }}
     {% if current_model.record_search_options_class %}
     search = {{ current_model.record_search_options_class|base_name }}
     {% endif %}
