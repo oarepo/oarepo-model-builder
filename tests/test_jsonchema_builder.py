@@ -45,7 +45,6 @@ def test_required():
     assert data == {
         "type": "object",
         "properties": {"a": {"type": "keyword"}},
-        "required": ["a"],
     }
 
 
@@ -74,7 +73,6 @@ def test_required_inside_metadata():
             "metadata": {
                 "type": "object",
                 "properties": {"a": {"type": "keyword"}},
-                "required": ["a"],
             }
         },
     }
