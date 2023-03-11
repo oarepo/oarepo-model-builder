@@ -20,11 +20,6 @@ class JSONSchemaBuilder(JSONBaseBuilder):
             return
         self.model_element_enter()
         self.build_children()
-        if (
-            self.stack.top.schema_element_type == "items"
-            or self.stack.top.schema_element_type == "property"
-        ):
-            self.check_and_output_required()
         self.merge_jsonschema(self.stack.top.data)
         self.model_element_leave()
 
@@ -36,11 +31,6 @@ class JSONSchemaBuilder(JSONBaseBuilder):
             jsonschema.pop("generate", None)
             self.output.merge_jsonschema(jsonschema)
 
-    def check_and_output_required(self):
-        top_data = self.stack.top.data
-        if isinstance(top_data, dict) and "properties" in top_data:
-            self.output.collect_required()
-
     def on_enter_model(self, output_name):
         self.output.primitive("type", "object")
         self.merge_jsonschema(self.stack.top.data)
@@ -48,5 +38,5 @@ class JSONSchemaBuilder(JSONBaseBuilder):
             self.builder, Path(output_name), ends_at=self.parent_module_root_name
         )
 
-    def on_leave_model(self):
-        self.check_and_output_required()
+    # def on_leave_model(self):
+    #     self.check_and_output_required()
