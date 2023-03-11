@@ -27,7 +27,7 @@ class EnumPreprocessor(PropertyPreprocessor):
 
         deepmerge(
             data.setdefault("marshmallow", {}),
-            {"validators": [f'ma_valid.OneOf([{", ".join(alternatives)}])']},
+            {"validators": [f'ma_validate.OneOf([{", ".join(alternatives)}])']},
         )
         return data
 
