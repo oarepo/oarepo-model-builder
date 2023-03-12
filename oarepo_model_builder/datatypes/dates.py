@@ -108,7 +108,7 @@ class EDTFDataType(BaseDateDataType):
 
     def marshmallow_validators(self):
         return super().marshmallow_validators() + [
-            "mu_fields_edtf.EDTFValidator(types=EDTFDate)"
+            "mu_fields_edtf.EDTFValidator(types=(EDTFDate,))"
         ]
 
     def imports(self, *_extra) -> List[Import]:
@@ -135,7 +135,7 @@ class EDTFIntervalType(BaseDateDataType):
 
     def marshmallow_validators(self):
         return super().marshmallow_validators() + [
-            "mu_fields_edtf.EDTFValidator(types=EDTFInterval)"
+            "mu_fields_edtf.EDTFValidator(types=(EDTFInterval,))"
         ]
 
     def imports(self, *extra):
