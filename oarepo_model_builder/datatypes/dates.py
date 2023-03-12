@@ -71,7 +71,7 @@ class TimeDataType(BaseDateDataType):
 class DateTimeDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
-    marshmallow_field = "mu_fields.ISODateString"
+    marshmallow_field = "ma_fields.String"
     model_type = "datetime"
     ui_marshmallow_field = "l10n.LocalizedDateTime"
 
@@ -81,8 +81,16 @@ class DateTimeDataType(BaseDateDataType):
     def json_schema(self, **extras):
         return super().json_schema(format="date-time", **extras)
 
+    def marshmallow_validators(self) -> List[str]:
+        return super().marshmallow_validators() + [
+            "validate_datetime",
+        ]
+
     def imports(self, *extra) -> List[Import]:
         return super().imports(
+            Import(
+                import_path="oarepo_runtime.validation.validate_datetime", alias=None
+            ),
             Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
         )
 
