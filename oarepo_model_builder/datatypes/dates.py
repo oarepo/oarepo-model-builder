@@ -1,6 +1,6 @@
 from typing import List
 
-from ..utils.facet_helpers import facet_definiton, facet_name
+from ..utils.facet_helpers import facet_definition, facet_name
 from .datatypes import DataType, Import
 
 
@@ -8,16 +8,16 @@ class BaseDateDataType(DataType):
     marshmallow_field = "ma_fields.String"
 
     def get_facet(self, stack, parent_path):
-        key, field = facet_definiton(self)
+        key, field = facet_definition(self)
         path = parent_path
         if len(parent_path) > 0 and self.key:
             path = parent_path + "." + self.key
         elif self.key:
             path = self.key
         if field:
-            return field, facet_name(path)
+            return [{"facet":field, "path":  facet_name(path)}]
         else:
-            return f'TermsFacet(field="{path}")', facet_name(path)
+            return [{"facet" : f'TermsFacet(field="{path}")', "path" : facet_name(path)}]
 
 
 class DateDataType(BaseDateDataType):

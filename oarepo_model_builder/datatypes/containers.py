@@ -41,11 +41,11 @@ class ObjectDataType(DataType):
         )
 
     def _prepare_schema_class(
-        self,
-        marshmallow_definition,
-        package_name,
-        context,
-        suffix="Schema",
+            self,
+            marshmallow_definition,
+            package_name,
+            context,
+            suffix="Schema",
     ):
         schema_class = marshmallow_definition.get("schema-class", None)
         if schema_class:
@@ -162,8 +162,13 @@ class NestedDataType(ObjectDataType):
             path = parent_path + "." + self.key
         elif self.key:
             path = self.key
-        nested, ch_path = stack[0].get_facet(stack[1:], path)
-        return f'NestedLabeledFacet(path ="{path}", nested_facet = {nested})', ch_path
+        facet_obj = stack[0].get_facet(stack[1:], path)
+
+        nested_arr = []
+        for f in facet_obj:
+            nested_arr.append(
+                {"facet": f'NestedLabeledFacet(path ="{path}", nested_facet = {f["facet"]})', "path": f["path"]})
+        return nested_arr
 
 
 class FlattenDataType(DataType):

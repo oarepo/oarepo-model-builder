@@ -108,8 +108,8 @@ class DataTypes:
         return self.datatype_map.get(datatype_type)
 
     def facet(self, stack):
-        facet, path = stack[0].get_facet(stack[1:], "")
-        return facet, path
+
+        return stack[0].get_facet(stack[1:], "")
 
     def clear_cache(self):
         self.datatype_map = {}

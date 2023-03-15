@@ -1,7 +1,7 @@
 from .python_name import convert_name_to_python
 
 
-def facet_definiton(obj):
+def facet_definition(obj):
     key = None
     field = None
     if "facets" in obj.definition:
