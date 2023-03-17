@@ -41,11 +41,11 @@ class ObjectDataType(DataType):
         )
 
     def _prepare_schema_class(
-            self,
-            marshmallow_definition,
-            package_name,
-            context,
-            suffix="Schema",
+        self,
+        marshmallow_definition,
+        package_name,
+        context,
+        suffix="Schema",
     ):
         schema_class = marshmallow_definition.get("schema-class", None)
         if schema_class:
@@ -167,19 +167,29 @@ class NestedDataType(ObjectDataType):
         nested_arr = []
         for f in facet_obj:
             nested_arr.append(
-                {"facet": f'NestedLabeledFacet(path ="{path}", nested_facet = {f["facet"]})', "path": f["path"]})
+                {
+                    "facet": f'NestedLabeledFacet(path ="{path}", nested_facet = {f["facet"]})',
+                    "path": f["path"],
+                }
+            )
         return nested_arr
 
 
 class FlattenDataType(DataType):
     schema_type = "object"
-    mapping_type = "flattened"
+    mapping_type = "object"
     marshmallow_field = "ma_fields.Raw"
     ui_marshmallow_field = "ma_fields.Raw"
     model_type = "flattened"
 
     def get_facet(self, stack, parent_path):
         pass
+
+    def prepare(self, context):
+        # not indexing for now as
+        mapping = self.definition.setdefault("mapping", {})
+        mapping.setdefault("enabled", False)
+        super().prepare(context)
 
 
 class ArrayDataType(DataType):
