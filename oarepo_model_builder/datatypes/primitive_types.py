@@ -1,4 +1,3 @@
-
 from marshmallow import fields
 
 from ..utils.facet_helpers import facet_definition, facet_name
@@ -32,9 +31,9 @@ class NumberDataType(DataType):
         elif self.key:
             path = self.key
         if field:
-            return [{"facet":field, "path":  facet_name(path)}]
+            return [{"facet": field, "path": facet_name(path)}]
         else:
-            return [{"facet" : f'TermsFacet(field="{path}")', "path" : facet_name(path)}]
+            return [{"facet": f'TermsFacet(field="{path}")', "path": facet_name(path)}]
 
 
 class IntegerDataType(NumberDataType):
@@ -81,13 +80,13 @@ class BooleanDataType(DataType):
     model_type = "boolean"
 
     def get_facet(self, stack, parent_path):
-        key, field = facet_definiton(self)
+        key, field = facet_definition(self)
         path = parent_path
         if len(parent_path) > 0 and self.key:
             path = parent_path + "." + self.key
         elif self.key:
             path = self.key
         if field:
-            return [{"facet":field, "path":  facet_name(path)}]
+            return [{"facet": field, "path": facet_name(path)}]
         else:
-            return [{"facet" : f'TermsFacet(field="{path}")', "path" : facet_name(path)}]
+            return [{"facet": f'TermsFacet(field="{path}")', "path": facet_name(path)}]
