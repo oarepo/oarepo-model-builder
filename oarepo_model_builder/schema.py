@@ -188,7 +188,7 @@ class ModelSchema:
                         f"Included file {file_id} not found in includes"
                     )
 
-                ret = self.included_schemas[file_id](self)
+                ret = self._fetch_included(file_id)
 
         if json_pointer_or_id:
             if json_pointer_or_id.startswith("/"):
