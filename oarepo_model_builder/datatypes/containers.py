@@ -173,10 +173,10 @@ class NestedDataType(ObjectDataType):
 
 class FlattenDataType(DataType):
     schema_type = "object"
-    mapping_type = "flatten"
+    mapping_type = "flattened"
     marshmallow_field = "ma_fields.Raw"
     ui_marshmallow_field = "ma_fields.Raw"
-    model_type = "flatten"
+    model_type = "flattened"
 
     def get_facet(self, stack, parent_path):
         pass
