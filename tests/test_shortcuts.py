@@ -82,7 +82,6 @@ class TestSchema(InvenioBaseRecordSchema):
             "id": {"type": "string"},
             "updated": {"format": "date", "type": "string"},
         },
-        "required": ["a"],
         "type": "object",
     }
 

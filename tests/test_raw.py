@@ -11,7 +11,7 @@ def test_raw_type():
         "test.yaml",
         "test",
         model_content={
-            "model": {"use": "invenio", "properties": {"a": {"type": "flatten"}}},
+            "model": {"use": "invenio", "properties": {"a": {"type": "flattened"}}},
         },
         isort=False,
         black=False,
@@ -55,7 +55,7 @@ class TestSchema(InvenioBaseRecordSchema):
     assert data == {
         "mappings": {
             "properties": {
-                "a": {"type": "flatten"},
+                "a": {"type": "object", "enabled": False},
                 "id": {"type": "keyword"},
                 "created": {"type": "date"},
                 "updated": {"type": "date"},

@@ -13,3 +13,12 @@ class RootSchema(ExtendablePartSchema):
     defs = fields.Nested(
         lambda: model_validator.validator_class("properties")(), data_key="$defs"
     )
+    runtime_dependencies = fields.Dict(
+        fields.String(),
+        fields.String(),
+        required=False,
+        data_key="runtime-dependencies",
+    )
+    dev_dependencies = fields.Dict(
+        fields.String(), fields.String(), required=False, data_key="dev-dependencies"
+    )

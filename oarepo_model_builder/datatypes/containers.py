@@ -162,19 +162,34 @@ class NestedDataType(ObjectDataType):
             path = parent_path + "." + self.key
         elif self.key:
             path = self.key
-        nested, ch_path = stack[0].get_facet(stack[1:], path)
-        return f'NestedLabeledFacet(path ="{path}", nested_facet = {nested})', ch_path
+        facet_obj = stack[0].get_facet(stack[1:], path)
+
+        nested_arr = []
+        for f in facet_obj:
+            nested_arr.append(
+                {
+                    "facet": f'NestedLabeledFacet(path ="{path}", nested_facet = {f["facet"]})',
+                    "path": f["path"],
+                }
+            )
+        return nested_arr
 
 
 class FlattenDataType(DataType):
     schema_type = "object"
-    mapping_type = "flatten"
+    mapping_type = "object"
     marshmallow_field = "ma_fields.Raw"
     ui_marshmallow_field = "ma_fields.Raw"
-    model_type = "flatten"
+    model_type = "flattened"
 
     def get_facet(self, stack, parent_path):
         pass
+
+    def prepare(self, context):
+        # not indexing for now as
+        mapping = self.definition.setdefault("mapping", {})
+        mapping.setdefault("enabled", False)
+        super().prepare(context)
 
 
 class ArrayDataType(DataType):
