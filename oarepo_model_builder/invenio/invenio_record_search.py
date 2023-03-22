@@ -133,10 +133,14 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                                 break
 
                 if not skip:
-                    facet, path = datatypes.facet(stack_data)
-                    self.search_options_data.append({path: facet})
-                    search_ops_name = "facets." + path
-                    self.facets_definition.append({path: search_ops_name})
+                    # facet, path = datatypes.facet(stack_data)
+                    facet_obj = datatypes.facet(stack_data)
+                    for f in facet_obj:
+                        facet = f['facet']
+                        path = f['path']
+                        self.search_options_data.append({path: facet})
+                        search_ops_name = "facets." + path
+                        self.facets_definition.append({path: search_ops_name})
 
     def process_name(self, path, type):
         path_array = (path.split("/"))[2:]

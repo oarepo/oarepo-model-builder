@@ -348,7 +348,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
         # default import prefixes
         _prefixes = settings.python.setdefault("always-defined-import-prefixes", [])
-        for _prefix in ["ma", "ma_fields", "ma_valid"]:
+        for _prefix in ["ma", "ma_fields", "ma_validate"]:
             if _prefix not in _prefixes:
                 _prefixes.append(_prefix)
 

@@ -39,7 +39,9 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     def check_and_output_required(self):
         top_data = self.stack.top.data
         if isinstance(top_data, dict) and "properties" in top_data:
-            self.output.collect_required()
+            # removing required as invenio record service creates at first an empty record
+            # which fails if required fields are present (schema gets checked)
+            self.output.remove_required()
 
     def on_enter_model(self, output_name):
         self.output.primitive("type", "object")
