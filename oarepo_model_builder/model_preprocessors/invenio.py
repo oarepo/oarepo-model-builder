@@ -356,3 +356,20 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(model, "service-id", lambda: model.flask_extension_name)
 
         model.setdefault("permissions", {"presets": []})
+
+        model.setdefault("pid-field-cls", "PIDField")
+        model.setdefault("pid-field-provider", "RecordIdProviderV2")
+        model.setdefault("pid-field-context", "PIDFieldContext")
+        model.setdefault("pid-field-args", ["create=True"])
+        model.setdefault(
+            "pid-field-imports",
+            [
+                {
+                    "import": "invenio_records_resources.records.systemfields.pid.PIDField"
+                },
+                {
+                    "import": "invenio_records_resources.records.systemfields.pid.PIDFieldContext"
+                },
+                {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
+            ],
+        )
