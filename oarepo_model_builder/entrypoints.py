@@ -102,6 +102,7 @@ def load_model(
     configs=(),
     black=True,
     isort=True,
+    autoflake=True,
     sets=(),
     model_content=None,
     extra_included=None,
@@ -130,6 +131,7 @@ def load_model(
         schema.settings.python = HyphenMunch()
     schema.settings.python.use_isort = isort
     schema.settings.python.use_black = black
+    schema.settings.python.use_autoflake = autoflake
     return schema
 
 
