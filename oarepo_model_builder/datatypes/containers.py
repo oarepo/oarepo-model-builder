@@ -47,6 +47,8 @@ class ObjectDataType(DataType):
         context,
         suffix="Schema",
     ):
+        if 'schema-class' in marshmallow_definition and marshmallow_definition['schema-class'] is None:
+            return
         schema_class = marshmallow_definition.get("schema-class", None)
         if schema_class:
             absolute_class_name = self._get_class_name(package_name, schema_class)

@@ -169,7 +169,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
 
     @classmethod
     def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
-        assert definition.get("schema-class"), (
+        assert "schema-class" in definition, (
             f"Marshmallow schema class should be prepared by now, "
             + f"do you have datatypes model preprocessor configured? Definition: {stack.path}: {definition}: {stack.top.data}"
         )
@@ -254,7 +254,7 @@ class ArrayMarshmallowNode(CompositeMarshmallowNode):
             rw_arguments = ", " + ", ".join(rw_arguments)
         else:
             rw_arguments = ""
-        return f"ma_fields.List({ret}{rw_arguments})"
+        return f"{self.field_class}({ret}{rw_arguments})"
 
     @property
     def field_imports(self) -> List[Import]:
