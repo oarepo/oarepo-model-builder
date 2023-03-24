@@ -1,0 +1,6 @@
+{% for b in current_model.record_pid_provider_bases %}
+from {{ b|package_name }} import {{ b|base_name }}
+{% endfor %}
+
+class {{ current_model.record_pid_provider_class|base_name }}({% for b in current_model.record_pid_provider_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
+    pid_type = "{{ current_model.pid_type }}"

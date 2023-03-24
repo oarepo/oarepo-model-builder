@@ -1,3 +1,4 @@
+import copy
 import datetime
 import json
 import logging
@@ -234,7 +235,7 @@ def run_internal(
             raise AttributeError(f"No profile handler for {profile} registered")
 
         # and call it
-        profile_handler.build(model, output_directory, builder)
+        profile_handler.build(copy.deepcopy(model), output_directory, builder)
     log.leave("Done")
     print(f"Log saved to {Path(output_directory) / 'installation.log'}")
 

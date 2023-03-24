@@ -25,7 +25,7 @@ class {{ current_model.record_class|base_name }}({% for b in current_model.recor
 {% endif %}
 {% if current_model.generate_record_pid_field %}
     pid = {{ current_model.pid_field_cls }}(
-        provider={{ current_model.pid_field_provider }},
+        provider={{ current_model.record_pid_provider_class|base_name }},
         context_cls={{ current_model.pid_field_context }}{% if current_model.pid_field_args %},
         {% for arg in current_model.pid_field_args %}{{ arg }}{{ ", " if not loop.last else "" }}{% endfor %}
     {% endif %}

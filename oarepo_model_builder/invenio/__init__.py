@@ -20,4 +20,5 @@ TEMPLATES = {
     "imports": "templates/imports.py.jinja2",
     # cli
     "cli": "templates/invenio_cli.py.jinja2",
+    "record-pid-provider": "templates/invenio_record_pid_provider.py.jinja2",
 }
