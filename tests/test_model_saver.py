@@ -440,18 +440,12 @@ def test_model_saver_invenio():
         "package-path": "test",
         "ui": {
             "marshmallow": {
-<<<<<<< Updated upstream
-                "generate": True,
-                "schema-class": "test.services.records.ui_schema.TestUISchema",
-                "base-classes": ["ma.Schema"],
-=======
                 "base-classes": ["InvenioUISchema"],
                 "imports": [
                     {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
                 ],
                 "schema-class": "test.services.records.ui_schema.TestUISchema",
                 "generate": True,
->>>>>>> Stashed changes
             }
         },
         "invenio-record-extra-code": "",

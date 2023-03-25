@@ -54,6 +54,13 @@ class TestSchema(InvenioBaseRecordSchema):
     """,
     )
 
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "ui_schema.py")
+    ).read()
+    print(data)
+    assert "from oarepo_runtime.ui.marshmallow import InvenioUISchema" in data
+    assert "class TestUISchema(InvenioUISchema)" in data
+
     data = builder.filesystem.read(
         os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
     )
