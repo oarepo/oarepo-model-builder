@@ -1,8 +1,16 @@
 {
   "marshmallow": {
-    "base-classes": [
-      "InvenioBaseRecordSchema"
-    ]
+    "base-classes": ["InvenioBaseRecordSchema"]
+  },
+  "ui": {
+    "marshmallow": {
+      "base-classes": ["InvenioUISchema"],
+      "imports": [
+        {
+          "import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"
+        }
+      ]
+    }
   },
   "properties": {
     "id": {
@@ -14,7 +22,7 @@
         "read": false,
         "write": false
       },
-      "facets" : {
+      "facets": {
         "searchable": true
       }
     },
@@ -25,9 +33,9 @@
       },
       "marshmallow": {
         "write": false,
-        "read": true
+        "read": false
       },
-      "facets" : {
+      "facets": {
         "searchable": true
       }
     },
@@ -38,9 +46,9 @@
       },
       "marshmallow": {
         "write": false,
-        "read": true
+        "read": false
       },
-      "facets" : {
+      "facets": {
         "searchable": true
       }
     },
@@ -53,7 +61,7 @@
       "sample": {
         "skip": true
       },
-      "facets" : {
+      "facets": {
         "searchable": true
       }
     }
