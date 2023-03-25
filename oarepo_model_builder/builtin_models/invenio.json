@@ -33,7 +33,7 @@
       },
       "marshmallow": {
         "write": false,
-        "read": true
+        "read": false
       },
       "facets": {
         "searchable": true
@@ -46,7 +46,7 @@
       },
       "marshmallow": {
         "write": false,
-        "read": true
+        "read": false
       },
       "facets": {
         "searchable": true

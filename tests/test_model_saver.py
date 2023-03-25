@@ -328,7 +328,7 @@ def test_model_saver_invenio():
             },
             "created": {
                 "marshmallow": {
-                    "read": True,
+                    "read": False,
                     "write": False,
                     "field-class": "ma_fields.String",
                     "validators": ["validate_date('%Y-%m-%d')"],
@@ -344,7 +344,7 @@ def test_model_saver_invenio():
             },
             "updated": {
                 "marshmallow": {
-                    "read": True,
+                    "read": False,
                     "write": False,
                     "field-class": "ma_fields.String",
                     "validators": ["validate_date('%Y-%m-%d')"],
