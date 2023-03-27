@@ -62,7 +62,7 @@ def test_model_saver():
         "record-ui-schema-metadata-class": "test.services.records.ui_schema.TestMetadataUISchema",
         "pid-field-cls": "PIDField",
         "invenio-record-schema-extra-code": "",
-        "schema-server": "http://localhost/schemas/",
+        "schema-server": "local://",
         "invenio-record-resource-extra-code": "",
         "config-resource-class-key": "TEST_RESOURCE_CLASS_TEST",
         "extension-suffix": "test",
@@ -309,7 +309,7 @@ def test_model_saver_invenio():
         "record-ui-schema-metadata-class": "test.services.records.ui_schema.TestMetadataUISchema",
         "proxies-current-service": "test.proxies.current_service",
         "extension-suffix": "test",
-        "schema-server": "http://localhost/schemas/",
+        "schema-server": "local://",
         "schema-name": "test-1.0.0.json",
         "invenio-record-facets-extra-code": "",
         "properties": {
