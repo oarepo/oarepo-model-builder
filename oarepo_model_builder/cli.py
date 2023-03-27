@@ -75,6 +75,9 @@ from oarepo_model_builder.utils.verbose import log
     "--black/--skip-black", default=True, help="Call black on generated sources"
 )
 @click.option(
+    "--autoflake/--skip-autoflake", default=True, help="Call autoflake on generated sources"
+)
+@click.option(
     "--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"])
 )
 @click.option(
@@ -103,6 +106,7 @@ def run(
     verbosity,
     isort,
     black,
+    autoflake,
     resolve_conflicts,
     save_model,
     overwrite,
@@ -123,6 +127,7 @@ def run(
             sets,
             black,
             isort,
+            autoflake,
             verbosity,
             save_model,
             overwrite,
@@ -151,6 +156,7 @@ def run_internal(
     sets,
     black,
     isort,
+    autoflake,
     verbosity,
     save_model,
     overwrite,
@@ -201,6 +207,7 @@ def run_internal(
         configs,
         black,
         isort,
+        autoflake,
         sets,
         merged_models=included_models,
         extra_included=includes,
