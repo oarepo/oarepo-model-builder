@@ -383,6 +383,5 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 pid_base = pid_base[:3] + pid_base[len(pid_base) - 3:]
             return pid_base
         model.setdefault("record-pid-provider-class", f"{model.record_records_package}.api.{record_prefix}IdProvider")
-        # todo - does it make sense to have different provider for files etc.?; if, then it should use smth different
         model.setdefault("pid-type", process_pid_type(model.model_name))
 
