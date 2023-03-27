@@ -328,7 +328,7 @@ def test_model_saver_invenio():
             },
             "created": {
                 "marshmallow": {
-                    "read": True,
+                    "read": False,
                     "write": False,
                     "field-class": "ma_fields.String",
                     "validators": ["validate_date('%Y-%m-%d')"],
@@ -344,7 +344,7 @@ def test_model_saver_invenio():
             },
             "updated": {
                 "marshmallow": {
-                    "read": True,
+                    "read": False,
                     "write": False,
                     "field-class": "ma_fields.String",
                     "validators": ["validate_date('%Y-%m-%d')"],
@@ -440,9 +440,12 @@ def test_model_saver_invenio():
         "package-path": "test",
         "ui": {
             "marshmallow": {
-                "generate": True,
+                "base-classes": ["InvenioUISchema"],
+                "imports": [
+                    {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
+                ],
                 "schema-class": "test.services.records.ui_schema.TestUISchema",
-                "base-classes": ["ma.Schema"],
+                "generate": True,
             }
         },
         "invenio-record-extra-code": "",

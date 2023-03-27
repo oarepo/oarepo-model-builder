@@ -49,10 +49,15 @@ from oarepo_runtime.ui import marshmallow as l10n
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
     a = ma_fields.String()
-    created = ma_fields.String(validate=[validate_date('%Y-%m-%d')], dump_only=True)
-    updated = ma_fields.String(validate=[validate_date('%Y-%m-%d')], dump_only=True)
     """,
     )
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "ui_schema.py")
+    ).read()
+    print(data)
+    assert "from oarepo_runtime.ui.marshmallow import InvenioUISchema" in data
+    assert "class TestUISchema(InvenioUISchema)" in data
 
     data = builder.filesystem.read(
         os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")

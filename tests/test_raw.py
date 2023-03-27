@@ -42,8 +42,6 @@ from oarepo_runtime.validation import validate_date
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
     a = ma_fields.Raw()
-    created = ma_fields.String(validate=[validate_date('%Y-%m-%d')], dump_only=True)
-    updated = ma_fields.String(validate=[validate_date('%Y-%m-%d')], dump_only=True)
     """,
     )
 
