@@ -83,7 +83,7 @@ class DefaultValuesModelPreprocessor(ModelPreprocessor):
             ),
         )
 
-        self.set(model, "schema-server", lambda: "http://localhost/schemas/")
+        self.set(model, "schema-server", lambda: "local://")
 
         self.set(
             model,
