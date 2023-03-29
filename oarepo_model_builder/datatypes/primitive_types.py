@@ -33,7 +33,7 @@ class NumberDataType(DataType):
         if field:
             return [{"facet": field, "path": facet_name(path)}]
         else:
-            return [{"facet": f'TermsFacet(field="{path}")', "path": facet_name(path)}]
+            return [{"facet": f'TermsFacet(field="{path}", label=_("{path}.label") )', "path": facet_name(path)}]
 
 
 class IntegerDataType(NumberDataType):
@@ -89,4 +89,4 @@ class BooleanDataType(DataType):
         if field:
             return [{"facet": field, "path": facet_name(path)}]
         else:
-            return [{"facet": f'TermsFacet(field="{path}")', "path": facet_name(path)}]
+            return [{"facet": f'TermsFacet(field="{path}", label=_("{path}.label") )', "path": facet_name(path)}]
