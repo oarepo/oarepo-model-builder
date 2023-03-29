@@ -44,7 +44,6 @@ def test_include_invenio():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -56,10 +55,13 @@ from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
-jej_c = NestedLabeledFacet(path ="jej", nested_facet=TermsFacet(field = "cosi"))
 
 
-a_keyword = TermsFacet(field = "a.keyword")
+jej_c = NestedLabeledFacet(path ="jej", nested_facet = TermsFacet(field="cosi"))
+
+
+
+a_keyword = TermsFacet(field="a.keyword", label=_("a.keyword.label") )
 
 
 
@@ -67,19 +69,21 @@ b = TermsFacet(field="cosi")
 
 
 
-_id = TermsFacet(field = "id")
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field = "created")
+created = TermsFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field = "updated")
+updated = TermsFacet(field="updated", label=_("updated.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
+
+
     """,
     )
 
@@ -120,6 +124,7 @@ def test_nested():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
+    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -133,32 +138,31 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
-b_c = NestedLabeledFacet(path =" b", nested_facet = TermsFacet(field = "b.c"))
+b_c = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.c", label=_("b.c.label") ))
 
 
 
-b_d_keyword = NestedLabeledFacet(path =" b", nested_facet=TermsFacet(field = "b.d.keyword"))
+b_d_keyword = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.d.keyword", label=_("b.d.keyword.label") ))
 
 
 
-
-b_f_g = NestedLabeledFacet(path =" b", nested_facet=NestedLabeledFacet(path =" b.f", nested_facet=TermsFacet(field = "b.f.g")))
-
-
-
-_id = TermsFacet(field = "id")
+b_f_g = NestedLabeledFacet(path ="b", nested_facet = NestedLabeledFacet(path ="b.f", nested_facet = TermsFacet(field="b.f.g", label=_("b.f.g.label") )))
 
 
 
-created = TermsFacet(field = "created")
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-updated = TermsFacet(field = "updated")
+created = TermsFacet(field="created", label=_("created.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+updated = TermsFacet(field="updated", label=_("updated.label") )
+
+
+
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
 """,
     )
@@ -201,7 +205,6 @@ def test_object():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -215,31 +218,31 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
-b_c = TermsFacet(field = "b.c")
+b_c = TermsFacet(field="b.c", label=_("b.c.label") )
 
 
 
-b_d_keyword = TermsFacet(field = "b.d.keyword")
+b_d_keyword = TermsFacet(field="b.d.keyword", label=_("b.d.keyword.label") )
 
 
 
-b_f_g = TermsFacet(field = "b.f.g")
+b_f_g = TermsFacet(field="b.f.g", label=_("b.f.g.label") )
 
 
 
-_id = TermsFacet(field = "id")
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field = "created")
+created = TermsFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field = "updated")
+updated = TermsFacet(field="updated", label=_("updated.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 """,
     )
 
@@ -306,43 +309,43 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
-b_nes_c = NestedLabeledFacet(path ="b_nes", nested_facet=TermsFacet(field = "b_nes.c"))
+b_nes_c = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.c", label=_("b_nes.c.label") ))
 
 
 
-b_nes_d_keyword = NestedLabeledFacet(path ="b_nes", nested_facet=TermsFacet(field = "b_nes.d.keyword"))
+b_nes_d_keyword = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.d.keyword", label=_("b_nes.d.keyword.label") ))
 
 
 
-b_nes_f_g = NestedLabeledFacet(path ="b_nes", nested_facet=TermsFacet(field = "b_nes.f.g"))
+b_nes_f_g = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.f.g", label=_("b_nes.f.g.label") ))
 
 
 
-b_obj_c = TermsFacet(field = "b_obj.c")
+b_obj_c = TermsFacet(field="b_obj.c", label=_("b_obj.c.label") )
 
 
 
-b_obj_d_keyword = TermsFacet(field = "b_obj.d.keyword")
+b_obj_d_keyword = TermsFacet(field="b_obj.d.keyword", label=_("b_obj.d.keyword.label") )
 
 
 
-b_obj_f_g = NestedLabeledFacet(path ="b_obj.f", nested_facet=TermsFacet(field = "b_obj.f.g"))
+b_obj_f_g = NestedLabeledFacet(path ="b_obj.f", nested_facet = TermsFacet(field="b_obj.f.g", label=_("b_obj.f.g.label") ))
 
 
 
-_id = TermsFacet(field = "id")
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field = "created")
+created = TermsFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field = "updated")
+updated = TermsFacet(field="updated", label=_("updated.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 """,
     )
 
@@ -387,65 +390,31 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
-a = TermsFacet(field = "a")
+a = TermsFacet(field="a", label=_("a.label") )
 
 
 
-c_keyword = TermsFacet(field = "c.keyword")
-
-
-_id = TermsFacet(field = "id")
+c_keyword = TermsFacet(field="c.keyword", label=_("c.keyword.label") )
 
 
 
-created = TermsFacet(field = "created")
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-updated = TermsFacet(field = "updated")
+created = TermsFacet(field="created", label=_("created.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+updated = TermsFacet(field="updated", label=_("updated.label") )
+
+
+
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 """,
     )
 
 
-def test_array_obj2():
-    schema = load_model(
-        DUMMY_YAML,
-        "test",
-        model_content={
-            "model": {
-                "use": "invenio",
-                "properties": {
-                    "internal_array_ref_array": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "keyword",
-                                },
-                                "title": {"type": "fulltext+keyword"},
-                            },
-                        },
-                    }
-                },
-            },
-        },
-        isort=False,
-        black=False,
-    )
-    filesystem = InMemoryFileSystem()
-    builder = create_builder_from_entrypoints(filesystem=filesystem)
-
-    builder.build(schema, "")
-
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
-    print(data)
 
 
 def test_array_object():
@@ -502,32 +471,40 @@ def test_array_object():
         r"\s",
         "",
         """
-        \"""Facet definitions.\"""
+ \"""Facet definitions.\"""
 
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
-arr_a_c = TermsFacet(field = "arr.a.c")
 
-test = TermsFacet(field = "test")
 
-test2_g = NestedLabeledFacet(path =" test2", nested_facet=TermsFacet(field = "test2.g"))
-
-_id = TermsFacet(field = "id")
+arr_a_c = TermsFacet(field="arr.a.c", label=_("arr.a.c.label") )
 
 
 
-created = TermsFacet(field = "created")
+test = TermsFacet(field="test", label=_("test.label") )
 
 
 
-updated = TermsFacet(field = "updated")
+test2_g = NestedLabeledFacet(path ="test2", nested_facet = TermsFacet(field="test2.g", label=_("test2.g.label") ))
 
 
 
-_schema = TermsFacet(field = "$schema")
+_id = TermsFacet(field="id", label=_("id.label") )
+
+
+
+created = TermsFacet(field="created", label=_("created.label") )
+
+
+
+updated = TermsFacet(field="updated", label=_("updated.label") )
+
+
+
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 """,
     )
 
@@ -576,7 +553,6 @@ def test_array_nested():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -588,24 +564,29 @@ from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
-obj_arr_d_keyword = NestedLabeledFacet(path ="obj.arr", nested_facet=TermsFacet(field = "obj.arr.d.keyword"))
-
-obj_arr_e_f = NestedLabeledFacet(path ="obj.arr", nested_facet=TermsFacet(field = "obj.arr.e.f"))
 
 
-_id = TermsFacet(field = "id")
+obj_arr_d_keyword = NestedLabeledFacet(path ="obj.arr", nested_facet = TermsFacet(field="obj.arr.d.keyword", label=_("obj.arr.d.keyword.label") ))
 
 
 
-created = TermsFacet(field = "created")
+obj_arr_e_f = NestedLabeledFacet(path ="obj.arr", nested_facet = TermsFacet(field="obj.arr.e.f", label=_("obj.arr.e.f.label") ))
 
 
 
-updated = TermsFacet(field = "updated")
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+created = TermsFacet(field="created", label=_("created.label") )
+
+
+
+updated = TermsFacet(field="updated", label=_("updated.label") )
+
+
+
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 """,
     )
 
@@ -655,7 +636,7 @@ def test_not_searchable():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
+
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -669,28 +650,27 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
-
-
 b = TermsFacet(field="cosi")
 
 
-arr_e_f = NestedLabeledFacet(path ="arr", nested_facet=TermsFacet(field = "arr.e.f"))
+
+arr_e_f = NestedLabeledFacet(path ="arr", nested_facet = TermsFacet(field="arr.e.f", label=_("arr.e.f.label") ))
 
 
 
-_id = TermsFacet(field = "id")
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field = "created")
+created = TermsFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field = "updated")
+updated = TermsFacet(field="updated", label=_("updated.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
     """,
     )
@@ -742,7 +722,7 @@ def test_top_facets():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
+
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -755,30 +735,36 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
-a_keyword = TermsFacet(field = "a.keyword")
+
+a_keyword = TermsFacet(field="a.keyword", label=_("a.keyword.label") )
+
 
 
 b = TermsFacet(field="cosi")
 
 
-arr_d = NestedLabeledFacet(path ="arr", nested_facet=TermsFacet(field = "arr.d"))
 
-arr_e_f = NestedLabeledFacet(path ="arr", nested_facet=TermsFacet(field = "arr.e.f"))
-
-
-_id = TermsFacet(field = "id")
+arr_d = NestedLabeledFacet(path ="arr", nested_facet = TermsFacet(field="arr.d", label=_("arr.d.label") ))
 
 
 
-created = TermsFacet(field = "created")
+arr_e_f = NestedLabeledFacet(path ="arr", nested_facet = TermsFacet(field="arr.e.f", label=_("arr.e.f.label") ))
 
 
 
-updated = TermsFacet(field = "updated")
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+created = TermsFacet(field="created", label=_("created.label") )
+
+
+
+updated = TermsFacet(field="updated", label=_("updated.label") )
+
+
+
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
     """,
     )
@@ -816,7 +802,7 @@ def test_searchable_true():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")
     ).read()
-    print(data)
+
 
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -834,19 +820,20 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 b = TermsFacet(field="cosi")
 
 
-_id = TermsFacet(field = "id")
+
+_id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field = "created")
+created = TermsFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field = "updated")
+updated = TermsFacet(field="updated", label=_("updated.label") )
 
 
 
-_schema = TermsFacet(field = "$schema")
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
     """,
     )

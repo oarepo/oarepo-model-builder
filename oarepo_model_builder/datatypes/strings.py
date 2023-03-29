@@ -61,7 +61,7 @@ class StringDataType(DataType):
         if field:
             return [{"facet":field, "path":  facet_name(path)}]
         else:
-            return [{"facet" : f'TermsFacet(field="{path}")', "path" : facet_name(path)}]
+            return [{"facet" : f'TermsFacet(field="{path}", label=_("{path}.label") )', "path" : facet_name(path)}]
 
     @property
     def ui_marshmallow_field(self):
@@ -128,7 +128,7 @@ class FulltextKeywordDataType(StringDataType):
         if field:
             return [{"facet":field, "path":  facet_name(path)}]
         else:
-            return [{"facet" : f'TermsFacet(field="{path}")', "path" : facet_name(path)}]
+            return [{"facet" : f'TermsFacet(field="{path}", label=_("{path}.label") )', "path" : facet_name(path)}]
 
 
 class URLDataType(StringDataType):
