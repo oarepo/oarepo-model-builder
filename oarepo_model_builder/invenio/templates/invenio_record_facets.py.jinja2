@@ -3,7 +3,7 @@
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
-
+from flask_babelex import lazy_gettext as _
 
 {% for dict in search_options_data %}
 {% for key, value in dict.items()%}
