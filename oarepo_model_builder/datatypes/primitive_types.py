@@ -33,7 +33,15 @@ class NumberDataType(DataType):
         if field:
             return [{"facet": field, "path": facet_name(path)}]
         else:
-            return [{"facet": f'TermsFacet(field="{path}", label=_("{path}.label") )', "path": facet_name(path)}]
+            # TODO: we should use label from field's ui spec here
+            # ? why there is no label spec in self.definition["ui"]
+            label = path.replace(".", "/") + ".label"
+            return [
+                {
+                    "facet": f'TermsFacet(field="{path}", label=_("{label}") )',
+                    "path": facet_name(path),
+                }
+            ]
 
 
 class IntegerDataType(NumberDataType):
@@ -89,4 +97,12 @@ class BooleanDataType(DataType):
         if field:
             return [{"facet": field, "path": facet_name(path)}]
         else:
-            return [{"facet": f'TermsFacet(field="{path}", label=_("{path}.label") )', "path": facet_name(path)}]
+            # TODO: we should use label from field's ui spec here
+            # ? why there is no label spec in self.definition["ui"]
+            label = path.replace(".", "/") + ".label"
+            return [
+                {
+                    "facet": f'TermsFacet(field="{path}", label=_("{label}") )',
+                    "path": facet_name(path),
+                }
+            ]
