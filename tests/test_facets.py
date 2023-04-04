@@ -134,11 +134,12 @@ def test_nested():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
 
-b_c = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.c", label=_("b/c/label") ))
+b_c = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.c", label=_("b/c.label") ))
 
 
 
@@ -214,11 +215,12 @@ def test_object():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
 
-b_c = TermsFacet(field="b.c", label=_("b/c/label") )
+b_c = TermsFacet(field="b.c", label=_("b/c.label") )
 
 
 
@@ -305,6 +307,7 @@ def test_nest_obj():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
@@ -313,7 +316,7 @@ b_nes_c = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_n
 
 
 
-b_nes_d_keyword = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.d.keyword", label=_("b_nes/d.keyword.label") ))
+b_nes_d_keyword = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.d.keyword", label=_("b_nes/d/keyword.label") ))
 
 
 
@@ -325,7 +328,7 @@ b_obj_c = TermsFacet(field="b_obj.c", label=_("b_obj/c.label") )
 
 
 
-b_obj_d_keyword = TermsFacet(field="b_obj.d.keyword", label=_("b_obj/d.keyword.label") )
+b_obj_d_keyword = TermsFacet(field="b_obj.d.keyword", label=_("b_obj/d/keyword.label") )
 
 
 
@@ -386,6 +389,7 @@ def test_array():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
@@ -474,11 +478,12 @@ def test_array_object():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
 
-arr_a_c = TermsFacet(field="arr.a.c", label=_("arr.a.c.label") )
+arr_a_c = TermsFacet(field="arr.a.c", label=_("arr/a/c.label") )
 
 
 
@@ -486,7 +491,7 @@ test = TermsFacet(field="test", label=_("test.label") )
 
 
 
-test2_g = NestedLabeledFacet(path ="test2", nested_facet = TermsFacet(field="test2.g", label=_("test2.g.label") ))
+test2_g = NestedLabeledFacet(path ="test2", nested_facet = TermsFacet(field="test2.g", label=_("test2/g.label") ))
 
 
 
@@ -560,6 +565,7 @@ def test_array_nested():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
@@ -644,6 +650,7 @@ def test_not_searchable():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
@@ -730,11 +737,12 @@ def test_top_facets():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
 
-a_keyword = TermsFacet(field="a.keyword", label=_("a.keyword.label") )
+a_keyword = TermsFacet(field="a.keyword", label=_("a/keyword.label") )
 
 
 
@@ -810,6 +818,7 @@ def test_searchable_true():
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from flask_babelex import lazy_gettext as _
 
 
 
