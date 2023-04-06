@@ -54,6 +54,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -73,11 +74,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -135,6 +136,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -155,11 +157,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -216,6 +218,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -236,11 +239,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -308,6 +311,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -340,11 +344,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -390,6 +394,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -406,11 +411,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -479,6 +484,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -499,11 +505,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -566,6 +572,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -582,11 +589,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -651,6 +658,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -667,11 +675,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -738,6 +746,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -762,11 +771,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 
@@ -819,6 +828,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -831,11 +841,11 @@ _id = TermsFacet(field="id", label=_("id.label") )
 
 
 
-created = TermsFacet(field="created", label=_("created.label") )
+created = DateTimeFacet(field="created", label=_("created.label") )
 
 
 
-updated = TermsFacet(field="updated", label=_("updated.label") )
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
 
 

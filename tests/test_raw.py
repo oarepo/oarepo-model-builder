@@ -38,7 +38,7 @@ from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
 from oarepo_runtime.ui import marshmallow as l10n
-from oarepo_runtime.validation import validate_date
+from oarepo_runtime.validation import validate_datetime
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
     a = ma_fields.Raw()
@@ -71,8 +71,8 @@ class TestSchema(InvenioBaseRecordSchema):
         "properties": {
             "a": {"type": "object"},
             "id": {"type": "string"},
-            "created": {"type": "string", "format": "date"},
-            "updated": {"type": "string", "format": "date"},
+            "created": {"type": "string", "format": "date-time"},
+            "updated": {"type": "string", "format": "date-time"},
             "$schema": {"type": "string"},
         },
         "type": "object",

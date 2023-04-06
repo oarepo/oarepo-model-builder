@@ -27,7 +27,7 @@
       }
     },
     "created": {
-      "type": "date",
+      "type": "datetime",
       "sample": {
         "skip": true
       },
@@ -40,7 +40,7 @@
       }
     },
     "updated": {
-      "type": "date",
+      "type": "datetime",
       "sample": {
         "skip": true
       },
