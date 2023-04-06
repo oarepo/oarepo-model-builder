@@ -4,6 +4,8 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+
 
 {% for dict in search_options_data %}
 {% for key, value in dict.items()%}

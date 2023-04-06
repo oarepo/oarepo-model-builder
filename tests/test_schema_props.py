@@ -42,7 +42,7 @@ from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
 
 from oarepo_runtime.ui import marshmallow as l10n
-from oarepo_runtime.validation import validate_date
+from oarepo_runtime.validation import validate_datetime
 
 class TestSchema(InvenioBaseRecordSchema):
     \"""TestSchema schema.\"""
@@ -60,9 +60,9 @@ class TestSchema(InvenioBaseRecordSchema):
         "properties": {
             "$schema": {"type": "string"},
             "a": {"type": "string", "enum": ["a", "b", "c"]},
-            "created": {"format": "date", "type": "string"},
+            "created": {"format": "date-time", "type": "string"},
             "id": {"type": "string"},
-            "updated": {"format": "date", "type": "string"},
+            "updated": {"format": "date-time", "type": "string"},
         },
         "type": "object",
     }

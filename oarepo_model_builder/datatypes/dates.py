@@ -6,6 +6,7 @@ from .datatypes import DataType, Import
 
 class BaseDateDataType(DataType):
     marshmallow_field = "ma_fields.String"
+    facet_class = None
 
     def get_facet(self, stack, parent_path):
         key, field = facet_definition(self)
@@ -22,7 +23,7 @@ class BaseDateDataType(DataType):
             label = path.replace(".", "/") + ".label"
             return [
                 {
-                    "facet": f'TermsFacet(field="{path}", label=_("{label}"))',
+                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}"))',
                     "path": facet_name(path),
                 }
             ]
@@ -33,6 +34,7 @@ class DateDataType(BaseDateDataType):
     mapping_type = "date"
     ui_marshmallow_field = "l10n.LocalizedDate"
     model_type = "date"
+    facet_class = "DateFacet"
 
     def mapping(self, **extras):
         return super().mapping(format="strict_date", **extras)
@@ -57,6 +59,7 @@ class TimeDataType(BaseDateDataType):
     mapping_type = "date"
     model_type = "time"
     ui_marshmallow_field = "l10n.LocalizedTime"
+    facet_class = "TimeFacet"
 
     def mapping(self, **extras):
         return super().mapping(format="strict_time||strict_time_no_millis")
@@ -82,6 +85,7 @@ class DateTimeDataType(BaseDateDataType):
     marshmallow_field = "ma_fields.String"
     model_type = "datetime"
     ui_marshmallow_field = "l10n.LocalizedDateTime"
+    facet_class = "DateTimeFacet"
 
     def mapping(self, **extras):
         return super().mapping(format="strict_date_time||strict_date_time_no_millis")
@@ -108,6 +112,7 @@ class EDTFDataType(BaseDateDataType):
     mapping_type = "date"
     model_type = "edtf"
     ui_marshmallow_field = "l10n.LocalizedEDTF"
+    facet_class = "EDTFFacet"
 
     def mapping(self, **extras):
         return super().mapping(
@@ -135,6 +140,7 @@ class EDTFIntervalType(BaseDateDataType):
     mapping_type = "date_range"
     model_type = "edtf-interval"
     ui_marshmallow_field = "l10n.LocalizedEDTFInterval"
+    facet_class = "EDTFIntervalFacet"
 
     def mapping(self, **extras):
         return super().mapping(
