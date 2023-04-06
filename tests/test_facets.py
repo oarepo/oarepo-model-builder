@@ -54,7 +54,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -136,7 +136,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -218,7 +218,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -311,7 +311,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -394,7 +394,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -484,7 +484,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -572,7 +572,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -658,7 +658,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -746,7 +746,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
@@ -828,7 +828,7 @@ from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
 from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.i18n.facets import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
 
 
