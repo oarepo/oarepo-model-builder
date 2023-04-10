@@ -16,7 +16,7 @@ from oarepo_model_builder.utils.deepmerge import deepmerge
 @click.command()
 @click.argument("source", type=click.Path(file_okay=True, dir_okay=True, exists=True))
 @click.argument(
-    "destination", type=click.Path(file_okay=True, dir_okay=True, exists=True)
+    "destination", type=click.Path(file_okay=True, dir_okay=True, exists=False)
 )
 @click.option(
     "--result",
