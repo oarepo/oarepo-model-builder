@@ -66,7 +66,7 @@ class StringDataType(DataType):
             label = path.replace(".", "/") + ".label"
             return [
                 {
-                    "facet": f'TermsFacet(field="{path}", label=_("{label}") )',
+                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}") )',
                     "path": facet_name(path),
                 }
             ]
@@ -114,6 +114,18 @@ class KeywordDataType(StringDataType):
     mapping_type = "keyword"
     model_type = "keyword"
 
+    @property
+    def facet_class(self):
+        if self.definition.get("enum"):
+            return "EnumTermsFacet"
+        return super().facet_class
+
+    @property
+    def facet_imports(self):
+        if self.definition.get("enum"):
+            return [{"import": "oarepo_runtime.facets.enum.EnumTermsFacet"}]
+        return super().facet_imports
+
 
 class FulltextKeywordDataType(StringDataType):
     mapping_type = "text"
@@ -141,7 +153,7 @@ class FulltextKeywordDataType(StringDataType):
             label = path.replace(".", "/") + ".label"
             return [
                 {
-                    "facet": f'TermsFacet(field="{path}", label=_("{label}") )',
+                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}") )',
                     "path": facet_name(path),
                 }
             ]

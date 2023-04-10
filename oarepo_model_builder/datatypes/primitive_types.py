@@ -38,7 +38,7 @@ class NumberDataType(DataType):
             label = path.replace(".", "/") + ".label"
             return [
                 {
-                    "facet": f'TermsFacet(field="{path}", label=_("{label}") )',
+                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}") )',
                     "path": facet_name(path),
                 }
             ]
@@ -102,7 +102,7 @@ class BooleanDataType(DataType):
             label = path.replace(".", "/") + ".label"
             return [
                 {
-                    "facet": f'TermsFacet(field="{path}", label=_("{label}") )',
+                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}") )',
                     "path": facet_name(path),
                 }
             ]

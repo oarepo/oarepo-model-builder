@@ -15,6 +15,10 @@ class DataType:
     ui_marshmallow_field = None
     schema_type = None
     mapping_type = None
+    facet_class = "TermsFacet"
+    facet_imports = [
+        {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
+    ]
 
     class ModelSchema(ma.Schema):
         type = fields.String(required=True)
@@ -108,7 +112,6 @@ class DataTypes:
         return self.datatype_map.get(datatype_type)
 
     def facet(self, stack):
-
         return stack[0].get_facet(stack[1:], "")
 
     def clear_cache(self):

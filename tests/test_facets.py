@@ -50,11 +50,12 @@ def test_include_invenio():
         """
 \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
+
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
@@ -132,12 +133,12 @@ def test_nested():
         """
 \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
@@ -214,12 +215,11 @@ def test_object():
         """
         \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
 
 
 
@@ -307,12 +307,12 @@ def test_nest_obj():
         """
         \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
@@ -390,12 +390,11 @@ def test_array():
         """
         \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
 
 
 
@@ -480,12 +479,12 @@ def test_array_object():
         """
  \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
@@ -568,12 +567,12 @@ def test_array_nested():
         """
         \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
@@ -654,12 +653,12 @@ def test_not_searchable():
         """
 \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
@@ -742,12 +741,12 @@ def test_top_facets():
         """
 \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 
 
 
@@ -824,17 +823,82 @@ def test_searchable_true():
         """
 \"""Facet definitions.\"""
 
-from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_search.engine import dsl
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 from flask_babelex import lazy_gettext as _
-from oarepo_runtime.facets.date import DateFacet, TimeFacet, DateTimeFacet, EDTFFacet, EDTFIntervalFacet
 
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
 
 
 
 b = TermsFacet(field="cosi")
 
+
+
+_id = TermsFacet(field="id", label=_("id.label") )
+
+
+
+created = DateTimeFacet(field="created", label=_("created.label") )
+
+
+
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
+
+
+
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
+
+    """,
+    )
+
+
+def test_enum():
+    schema = load_model(
+        DUMMY_YAML,
+        "test",
+        model_content={
+            "model": {
+                "use": "invenio",
+                "properties": {
+                    "a": {"type": "keyword", "enum": ["a", "b"]},
+                    "b": {
+                        "type": "keyword",
+                    },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+\"""Facet definitions.\"""
+
+from invenio_search.engine import dsl
+from flask_babelex import lazy_gettext as _
+
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.facets.enum import EnumTermsFacet
+
+
+a = EnumTermsFacet(field="a", label=_("a.label") )
+
+
+
+b = TermsFacet(field="b", label=_("b.label") )
 
 
 _id = TermsFacet(field="id", label=_("id.label") )
