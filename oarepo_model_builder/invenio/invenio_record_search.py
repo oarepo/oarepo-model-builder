@@ -27,6 +27,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             self.process_top_sortable(schema.schema["sortable"])
         self.facet_switch = self.schema.model.get("searchable", True)
         self.facet_stack = []
+        self.imports = set()
 
     def finish(self, **extra_kwargs):
         super().finish(
@@ -40,6 +41,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             "record-facets",
             current_package_name=package_name(self.current_model.record_facets_class),
             search_options_data=self.search_options_data,
+            imports=list(sorted(self.imports)),
             **extra_kwargs,
         )
 
@@ -79,6 +81,11 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 self.schema,
                 self.stack,
             )
+            for _imp in d_type.facet_imports:
+                import_path = _imp.get("import")
+                import_alias = _imp.get("alias")
+                if import_path:
+                    self.imports.add((import_path, import_alias))
 
             if d_type.get_facet(None, ""):
                 stack_data = []
@@ -136,8 +143,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                     # facet, path = datatypes.facet(stack_data)
                     facet_obj = datatypes.facet(stack_data)
                     for f in facet_obj:
-                        facet = f['facet']
-                        path = f['path']
+                        facet = f["facet"]
+                        path = f["path"]
                         self.search_options_data.append({path: facet})
                         search_ops_name = "facets." + path
                         self.facets_definition.append({path: search_ops_name})

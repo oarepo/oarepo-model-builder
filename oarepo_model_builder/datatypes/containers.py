@@ -47,7 +47,10 @@ class ObjectDataType(DataType):
         context,
         suffix="Schema",
     ):
-        if 'schema-class' in marshmallow_definition and marshmallow_definition['schema-class'] is None:
+        if (
+            "schema-class" in marshmallow_definition
+            and marshmallow_definition["schema-class"] is None
+        ):
             return
         schema_class = marshmallow_definition.get("schema-class", None)
         if schema_class:
@@ -155,6 +158,10 @@ class NestedDataType(ObjectDataType):
     marshmallow_field = "ma_fields.Nested"
     ui_marshmallow_field = "ma_fields.Nested"
     model_type = "nested"
+    facet_class = "NestedLabeledFacet"
+    facet_imports = [
+        {"import": "oarepo_runtime.facets.nested_facet.NestedLabeledFacet"}
+    ]
 
     def get_facet(self, stack, parent_path):
         if not stack:
@@ -170,7 +177,7 @@ class NestedDataType(ObjectDataType):
         for f in facet_obj:
             nested_arr.append(
                 {
-                    "facet": f'NestedLabeledFacet(path ="{path}", nested_facet = {f["facet"]})',
+                    "facet": f'{self.facet_class}(path ="{path}", nested_facet = {f["facet"]})',
                     "path": f["path"],
                 }
             )
