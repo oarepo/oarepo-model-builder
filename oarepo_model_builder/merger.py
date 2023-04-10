@@ -36,7 +36,7 @@ def merger(source, destination, result, destination_first, overwrite):
     destination = Path(destination)
 
     if source.is_file():
-        if not destination.is_file():
+        if destination.exists() and not destination.is_file():
             click.echo(
                 "If source is a file, destination must be a file as well", err=True
             )
