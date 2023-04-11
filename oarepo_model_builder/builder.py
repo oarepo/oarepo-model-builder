@@ -144,6 +144,7 @@ class ModelBuilder:
         self,
         model: ModelSchema,
         output_dir: Union[str, Path],
+        disable_validation: bool = False,
     ):
         """
         compile the schema to output directory
@@ -169,10 +170,13 @@ class ModelBuilder:
         self.output_dir = Path(output_dir).absolute()  # noqa
         self.outputs = {}
 
-        self._validate_model(model)
+        if not disable_validation:
+            self._validate_model(model)
 
         self._run_model_preprocessors(model)
-        self._validate_model(model)
+
+        if not disable_validation:
+            self._validate_model(model)
 
         # noinspection PyTypeChecker
         property_preprocessors: List[PropertyPreprocessor] = [

@@ -9,13 +9,14 @@ class DisableMarshmallowPreprocessor(PropertyPreprocessor):
     @process(
         model_builder=ExtendBuilder,
         path="/properties/**",
-        condition=lambda current, stack: stack.top.schema_element_type == "property",
+        condition=lambda current, stack: stack.top.schema_valid,
     )
     def modify_marshmallow(self, data, stack: ModelBuilderStack, **kwargs):
-        self._process_marshmallow_def(data.setdefault("marshmallow", {}))
-        self._process_marshmallow_def(
-            data.setdefault("ui", {}).setdefault("marshmallow", {})
-        )
+        if stack.top.schema_element_type in ("property", "items"):
+            self._process_marshmallow_def(data.setdefault("marshmallow", {}))
+            self._process_marshmallow_def(
+                data.setdefault("ui", {}).setdefault("marshmallow", {})
+            )
 
     def _process_marshmallow_def(self, marshmallow):
         if not marshmallow:
