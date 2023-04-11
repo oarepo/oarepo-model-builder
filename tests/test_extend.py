@@ -35,7 +35,9 @@ def test_extend_property_preprocessor():
         filesystem=fs,
     )
 
-    model = ModelSchema("/tmp/test.json", content=nr_documents_model)
+    model = ModelSchema(
+        "/tmp/test.json", content=nr_documents_model
+    )  # NOSONAR - this is fake path on memory filesystem
     ExtendProfile().build(model, "", builder, disable_validation=True)
     loaded_model = json5.loads(fs.read("model.json5"))
     # assert that no class is generated in loaded_model
