@@ -18,11 +18,12 @@ class ModelProfile(Profile):
         model: ModelSchema,
         output_directory: Union[str, Path],
         builder: ModelBuilder,
+        **kwargs
     ):
         # at first handle "extend"
         if "extend" in model.current_model:
             self.handle_extend(model.current_model.extend, model, builder)
-        return super().build(model, output_directory, builder)
+        return super().build(model, output_directory, builder, **kwargs)
 
     def handle_extend(
         self, extended_schema: str, model: ModelSchema, builder: ModelBuilder
