@@ -141,15 +141,15 @@ class ObjectDataType(DataType):
                 class_name = f"{'.'.join(package_path)}.{class_name}"
         return class_name
 
-    def get_facet(self, stack, parent_path):
+    def get_facet(self, stack, parent_path, path_suffix=None):
         if not stack:
             return None
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
-        return stack[0].get_facet(stack[1:], path)
+        return super().get_facet(stack, parent_path, path_suffix)
+
+    def _get_facet_definition(
+        self, stack, facet_class, facet_name, path, path_suffix, label, serialized_args
+    ):
+        return stack[0].get_facet(stack[1:], f"{path}{path_suffix}")
 
 
 class NestedDataType(ObjectDataType):
@@ -158,26 +158,26 @@ class NestedDataType(ObjectDataType):
     marshmallow_field = "ma_fields.Nested"
     ui_marshmallow_field = "ma_fields.Nested"
     model_type = "nested"
-    facet_class = "NestedLabeledFacet"
-    facet_imports = [
+    default_facet_class = "NestedLabeledFacet"
+    default_facet_imports = [
         {"import": "oarepo_runtime.facets.nested_facet.NestedLabeledFacet"}
     ]
 
-    def get_facet(self, stack, parent_path):
+    def get_facet(self, stack, parent_path, path_suffix=None):
         if not stack:
             return None
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
+        return super().get_facet(stack, parent_path, path_suffix)
+
+    def _get_facet_definition(
+        self, stack, facet_class, facet_name, path, path_suffix, label, serialized_args
+    ):
+        nested_arr = []
         facet_obj = stack[0].get_facet(stack[1:], path)
 
-        nested_arr = []
         for f in facet_obj:
             nested_arr.append(
                 {
-                    "facet": f'{self.facet_class}(path ="{path}", nested_facet = {f["facet"]})',
+                    "facet": f'{facet_class}(path="{path}{path_suffix}", nested_facet = {f["facet"]}{serialized_args})',
                     "path": f["path"],
                 }
             )
@@ -191,8 +191,8 @@ class FlattenDataType(DataType):
     ui_marshmallow_field = "ma_fields.Raw"
     model_type = "flattened"
 
-    def get_facet(self, stack, parent_path):
-        pass
+    def get_facet(self, stack, parent_path, path_suffix=None):
+        return []
 
     def prepare(self, context):
         # not indexing for now as
@@ -216,12 +216,12 @@ class ArrayDataType(DataType):
         minItems = fields.Integer(required=False)
         maxItems = fields.Integer(required=False)
 
-    def get_facet(self, stack, parent_path):
+    def get_facet(self, stack, parent_path, path_suffix=None):
         if not stack:
             return None
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
-        return stack[0].get_facet(stack[1:], path)
+        return super().get_facet(stack, parent_path, path_suffix)
+
+    def _get_facet_definition(
+        self, stack, facet_class, facet_name, path, path_suffix, label, serialized_args
+    ):
+        return stack[0].get_facet(stack[1:], f"{path}{path_suffix}")

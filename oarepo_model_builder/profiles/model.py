@@ -18,7 +18,7 @@ class ModelProfile(Profile):
         model: ModelSchema,
         output_directory: Union[str, Path],
         builder: ModelBuilder,
-        **kwargs
+        **kwargs,
     ):
         # at first handle "extend"
         if "extend" in model.current_model:

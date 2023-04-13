@@ -4,7 +4,6 @@ from typing import List
 from marshmallow import fields
 from marshmallow.exceptions import ValidationError
 
-from ..utils.facet_helpers import facet_definition, facet_name
 from .datatypes import DataType, Import
 
 
@@ -51,26 +50,6 @@ class StringDataType(DataType):
 
         return validators
 
-    def get_facet(self, stack, parent_path):
-        key, field = facet_definition(self)
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
-        if field:
-            return [{"facet": field, "path": facet_name(path)}]
-        else:
-            # TODO: we should use label from field's ui spec here
-            # ? why there is no label spec in self.definition["ui"]
-            label = path.replace(".", "/") + ".label"
-            return [
-                {
-                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}") )',
-                    "path": facet_name(path),
-                }
-            ]
-
     @property
     def ui_marshmallow_field(self):
         if "enum" in self.definition:
@@ -106,8 +85,9 @@ class FulltextDataType(StringDataType):
     mapping_type = "text"
     model_type = "fulltext"
 
-    def get_facet(self, stack, parent_path):
-        pass
+    def get_facet(self, stack, parent_path, path_suffix=None):
+        "fulltext can not have facet"
+        return []
 
 
 class KeywordDataType(StringDataType):
@@ -137,26 +117,8 @@ class FulltextKeywordDataType(StringDataType):
         mapping_el.setdefault("fields", {}).setdefault("keyword", {"type": "keyword"})
         return ret
 
-    def get_facet(self, stack, parent_path):
-        key, field = facet_definition(self)
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
-        path = path + ".keyword"
-        if field:
-            return [{"facet": field, "path": facet_name(path)}]
-        else:
-            # TODO: we should use label from field's ui spec here
-            # ? why there is no label spec in self.definition["ui"]
-            label = path.replace(".", "/") + ".label"
-            return [
-                {
-                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}") )',
-                    "path": facet_name(path),
-                }
-            ]
+    def get_facet(self, stack, parent_path, path_suffix=None):
+        return super().get_facet(stack, parent_path, (path_suffix or "") + ".keyword")
 
 
 class URLDataType(StringDataType):

@@ -1,6 +1,5 @@
 from marshmallow import fields
 
-from ..utils.facet_helpers import facet_definition, facet_name
 from .datatypes import DataType
 
 
@@ -22,26 +21,6 @@ class NumberDataType(DataType):
             validators.append(f"ma_validate.Range({params})")
 
         return validators
-
-    def get_facet(self, stack, parent_path):
-        key, field = facet_definition(self)
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
-        if field:
-            return [{"facet": field, "path": facet_name(path)}]
-        else:
-            # TODO: we should use label from field's ui spec here
-            # ? why there is no label spec in self.definition["ui"]
-            label = path.replace(".", "/") + ".label"
-            return [
-                {
-                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}") )',
-                    "path": facet_name(path),
-                }
-            ]
 
 
 class IntegerDataType(NumberDataType):
@@ -86,23 +65,3 @@ class DoubleDataType(NumberDataType):
 class BooleanDataType(DataType):
     marshmallow_field = "ma_fields.Boolean"
     model_type = "boolean"
-
-    def get_facet(self, stack, parent_path):
-        key, field = facet_definition(self)
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
-        if field:
-            return [{"facet": field, "path": facet_name(path)}]
-        else:
-            # TODO: we should use label from field's ui spec here
-            # ? why there is no label spec in self.definition["ui"]
-            label = path.replace(".", "/") + ".label"
-            return [
-                {
-                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}") )',
-                    "path": facet_name(path),
-                }
-            ]

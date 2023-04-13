@@ -32,7 +32,9 @@ class ModelMarshmallowSchema(ma.Schema):
             fields.Nested(ImportSchema), required=False
         )  # imports must be here as well as it is used on model's root (without field)
         generate = fields.Boolean(required=False)
-        schema_class = fields.String(data_key="schema-class", required=False,allow_none=True)
+        schema_class = fields.String(
+            data_key="schema-class", required=False, allow_none=True
+        )
         base_classes = fields.List(
             fields.String(), data_key="base-classes", required=False
         )
