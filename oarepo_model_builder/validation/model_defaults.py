@@ -289,3 +289,9 @@ class ModelDefaults(ma.Schema):
     pid_field_imports = fields.List(
         fields.Nested(ImportSchema), data_key="pid-field-imports", required=False
     )
+
+    record_pid_provider_class = fields.String(data_key="record-pid-provider-class", required=False)
+    pid_type = fields.Str(data_key="pid-type", required=False)
+    record_pid_provider_bases = fields.List(
+        fields.String(), data_key="record-pid-provider-bases", required=False
+    )

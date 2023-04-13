@@ -50,6 +50,10 @@ class PythonOutput(OutputBase):
                 import subprocess
 
                 subprocess.call(["black", "-q", "--preview", str(self.path)])
+            if self.builder.schema.settings.python.use_autoflake:
+                import subprocess
+
+                subprocess.call(["autoflake", "--in-place", "--remove-all-unused-imports", str(self.path)])
 
     def merge(self, template_name, context, filters=None):
         # template is a loadable resource

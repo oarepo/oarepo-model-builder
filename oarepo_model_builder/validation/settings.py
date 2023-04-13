@@ -19,6 +19,7 @@ class SettingsOpenSearchSchema(ExtendablePartSchema):
 class SettingsPythonSchema(ExtendablePartSchema):
     use_black = fields.Boolean(data_key="use-black", dump_default=True)
     use_isort = fields.Boolean(data_key="use-isort", dump_default=True)
+    use_autoflake = fields.Boolean(data_key="use-autoflake", dump_default=True)
     always_defined_import_prefixes = fields.List(
         fields.String(), data_key="always-defined-import-prefixes", required=False
     )

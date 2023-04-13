@@ -224,6 +224,8 @@ def test_model_saver():
         "invenio-proxies-extra-code": "",
         "invenio-config-extra-code": "",
         "record-schema-metadata-class": "test.services.records.schema.TestMetadataSchema",
+        "record-pid-provider-class": "test.records.api.TestIdProvider",
+        "pid-type": "test",
     }
 
     assert data[1].strip() == ""
@@ -465,4 +467,6 @@ def test_model_saver_invenio():
         "invenio-record-object-schema-extra-code": "",
         "schema-version": "1.0.0",
         "schema-file": "test/records/jsonschemas/test-1.0.0.json",
+        "record-pid-provider-class": "test.records.api.TestIdProvider",
+        "pid-type": "test",
     }

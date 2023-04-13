@@ -1,6 +1,9 @@
 from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.systemfields import IndexField,
 
+{% if current_model.record_pid_provider_class|package_name != current_model.record_class|package_name %}
+from {{ current_model.record_pid_provider_class|package_name }} import {{ current_model.record_pid_provider_class|base_name }}
+{% endif %}
 {% for import in current_model.pid_field_imports %}
     {% if import.alias %}
 from {{ import.import|package_name }} import {{ import.import|base_name }} as {{ import.alias }}
@@ -25,7 +28,7 @@ class {{ current_model.record_class|base_name }}({% for b in current_model.recor
 {% endif %}
 {% if current_model.generate_record_pid_field %}
     pid = {{ current_model.pid_field_cls }}(
-        provider={{ current_model.pid_field_provider }},
+        provider={{ current_model.record_pid_provider_class|base_name }},
         context_cls={{ current_model.pid_field_context }}{% if current_model.pid_field_args %},
         {% for arg in current_model.pid_field_args %}{{ arg }}{{ ", " if not loop.last else "" }}{% endfor %}
     {% endif %}
