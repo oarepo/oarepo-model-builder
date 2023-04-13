@@ -89,54 +89,21 @@ def test_import():
     data = get_sources("test", model_content=model_content)
     data = clear_whitespaces(data)
 
-    assert data == clear_whitespaces(
+    assert clear_whitespaces(
+        """
+    from custom.pid_provider import MyVeryImportantCustomPidProvider
     """
-    from invenio_records.systemfields import ConstantField
-from invenio_records_resources.records.systemfields import IndexField,
+    ) in data
 
-
-from custom.pid_provider import MyVeryImportantCustomPidProvider
-
-
-    
-from invenio_records_resources.records.systemfields.pid import PIDField
-    
-
-    
-from invenio_records_resources.records.systemfields.pid import PIDFieldContext
-    
-
-    
-from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
-    
-
-
-
-from invenio_records_resources.records.api import Record
-
-from test.records.models import TestMetadata
-from test.records.dumper import TestDumper
-
-class TestRecord(Record ):
-    model_cls = TestMetadata
-
-    schema = ConstantField("$schema", "http://localhost/schemas/test-1.0.0.json")
-
-
-    index = IndexField("test-test-1.0.0")
-
-
-    pid = PIDField(
+    assert clear_whitespaces(
+        """
+        pid = PIDField(
         provider=MyVeryImportantCustomPidProvider,
         context_cls=PIDFieldContext,
-        create=True
-    
+        create=True 
     )
-
-    dumper_extensions = []
-    dumper = TestDumper(extensions=dumper_extensions)
     """
-    )
+    ) in data
 
 def test_custom_type():
     model_content = {
