@@ -1,31 +1,10 @@
 from typing import List
 
-from ..utils.facet_helpers import facet_definition, facet_name
 from .datatypes import DataType, Import
 
 
 class BaseDateDataType(DataType):
     marshmallow_field = "ma_fields.String"
-
-    def get_facet(self, stack, parent_path):
-        key, field = facet_definition(self)
-        path = parent_path
-        if len(parent_path) > 0 and self.key:
-            path = parent_path + "." + self.key
-        elif self.key:
-            path = self.key
-        if field:
-            return [{"facet": field, "path": facet_name(path)}]
-        else:
-            # TODO: we should use label from field's ui spec here
-            # ? why there is no label spec in self.definition["ui"]
-            label = path.replace(".", "/") + ".label"
-            return [
-                {
-                    "facet": f'{self.facet_class}(field="{path}", label=_("{label}"))',
-                    "path": facet_name(path),
-                }
-            ]
 
 
 class DateDataType(BaseDateDataType):
@@ -33,8 +12,8 @@ class DateDataType(BaseDateDataType):
     mapping_type = "date"
     ui_marshmallow_field = "l10n.LocalizedDate"
     model_type = "date"
-    facet_class = "DateFacet"
-    facet_imports = [{"import": "oarepo_runtime.facets.date.DateFacet"}]
+    default_facet_class = "DateFacet"
+    default_facet_imports = [{"import": "oarepo_runtime.facets.date.DateFacet"}]
 
     def mapping(self, **extras):
         return super().mapping(format="strict_date", **extras)
@@ -59,8 +38,8 @@ class TimeDataType(BaseDateDataType):
     mapping_type = "date"
     model_type = "time"
     ui_marshmallow_field = "l10n.LocalizedTime"
-    facet_class = "TimeFacet"
-    facet_imports = [{"import": "oarepo_runtime.facets.date.TimeFacet"}]
+    default_facet_class = "TimeFacet"
+    default_facet_imports = [{"import": "oarepo_runtime.facets.date.TimeFacet"}]
 
     def mapping(self, **extras):
         return super().mapping(format="strict_time||strict_time_no_millis")
@@ -86,8 +65,8 @@ class DateTimeDataType(BaseDateDataType):
     marshmallow_field = "ma_fields.String"
     model_type = "datetime"
     ui_marshmallow_field = "l10n.LocalizedDateTime"
-    facet_class = "DateTimeFacet"
-    facet_imports = [{"import": "oarepo_runtime.facets.date.DateTimeFacet"}]
+    default_facet_class = "DateTimeFacet"
+    default_facet_imports = [{"import": "oarepo_runtime.facets.date.DateTimeFacet"}]
 
     def mapping(self, **extras):
         return super().mapping(format="strict_date_time||strict_date_time_no_millis")
@@ -114,8 +93,8 @@ class EDTFDataType(BaseDateDataType):
     mapping_type = "date"
     model_type = "edtf"
     ui_marshmallow_field = "l10n.LocalizedEDTF"
-    facet_class = "EDTFFacet"
-    facet_imports = [{"import": "oarepo_runtime.facets.date.EDTFFacet"}]
+    default_facet_class = "EDTFFacet"
+    default_facet_imports = [{"import": "oarepo_runtime.facets.date.EDTFFacet"}]
 
     def mapping(self, **extras):
         return super().mapping(
@@ -143,8 +122,8 @@ class EDTFIntervalType(BaseDateDataType):
     mapping_type = "date_range"
     model_type = "edtf-interval"
     ui_marshmallow_field = "l10n.LocalizedEDTFInterval"
-    facet_class = "EDTFIntervalFacet"
-    facet_imports = [{"import": "oarepo_runtime.facets.date.EDTFIntervalFacet"}]
+    default_facet_class = "EDTFIntervalFacet"
+    default_facet_imports = [{"import": "oarepo_runtime.facets.date.EDTFIntervalFacet"}]
 
     def mapping(self, **extras):
         return super().mapping(

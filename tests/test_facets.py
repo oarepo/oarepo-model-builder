@@ -917,3 +917,139 @@ _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
     """,
     )
+
+
+def test_customizations_args_class():
+    schema = load_model(
+        DUMMY_YAML,
+        "test",
+        model_content={
+            "model": {
+                "use": "invenio",
+                "properties": {
+                    "a": {
+                        "type": "keyword",
+                        "facets": {
+                            "facet-class": "MyFacetClass",
+                            "args": ["blah=123"],
+                            "imports": [{"import": "blah.MyFacetClass"}],
+                        },
+                    },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data)
+
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+\"""Facet definitions.\"""
+
+from invenio_search.engine import dsl
+from flask_babelex import lazy_gettext as _
+
+from blah import MyFacetClass
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+
+
+a = MyFacetClass(field="a", label=_("a.label"), blah=123 )
+
+
+_id = TermsFacet(field="id", label=_("id.label") )
+
+
+
+created = DateTimeFacet(field="created", label=_("created.label") )
+
+
+
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
+
+
+
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
+
+    """,
+    )
+
+
+def test_customizations_field():
+    schema = load_model(
+        DUMMY_YAML,
+        "test",
+        model_content={
+            "model": {
+                "use": "invenio",
+                "properties": {
+                    "a": {
+                        "type": "keyword",
+                        "facets": {
+                            "facet-class": "MyFacetClass",
+                            "args": ["blah=123"],
+                            "path": "aaa",
+                            "imports": [{"import": "blah.MyFacetClass"}],
+                        },
+                    },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data)
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+\"""Facet definitions.\"""
+
+from invenio_search.engine import dsl
+from flask_babelex import lazy_gettext as _
+
+from blah import MyFacetClass
+
+from invenio_records_resources.services.records.facets import TermsFacet
+
+from oarepo_runtime.facets.date import DateTimeFacet
+
+
+a = MyFacetClass(field="a.aaa", label=_("a.label"), blah=123 )
+
+
+_id = TermsFacet(field="id", label=_("id.label") )
+
+
+
+created = DateTimeFacet(field="created", label=_("created.label") )
+
+
+
+updated = DateTimeFacet(field="updated", label=_("updated.label") )
+
+
+
+_schema = TermsFacet(field="$schema", label=_("$schema.label") )
+
+    """,
+    )
