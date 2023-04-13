@@ -11,6 +11,6 @@ class Profile:
         model: ModelSchema,
         output_directory: Union[str, Path],
         builder: ModelBuilder,
-        **kwargs
+        **kwargs,
     ):
         builder.build(model, output_directory, **kwargs)

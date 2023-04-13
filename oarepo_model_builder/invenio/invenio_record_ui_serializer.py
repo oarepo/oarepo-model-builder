@@ -7,7 +7,6 @@ class InvenioRecordUISerializerBuilder(InvenioBaseClassPythonBuilder):
     template = "record-ui-serializer"
 
     def finish(self, **extra_kwargs):
-
         ui_record_schema_class = (
             self.current_model.get("ui", {})
             .get("marshmallow", {})

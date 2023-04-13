@@ -1,5 +1,6 @@
-from .invenio_record_schema import InvenioRecordSchemaBuilder
 from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
+
+from .invenio_record_schema import InvenioRecordSchemaBuilder
 
 
 class InvenioRecordUISchemaBuilder(InvenioRecordSchemaBuilder):

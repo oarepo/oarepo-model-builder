@@ -1,7 +1,8 @@
 from marshmallow import fields
 
-from .utils import ExtendablePartSchema
 from oarepo_model_builder.validation.property_marshmallow import ImportSchema
+
+from .utils import ExtendablePartSchema
 
 
 class PropertyFacets(ExtendablePartSchema):

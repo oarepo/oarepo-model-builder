@@ -22,7 +22,7 @@ class InvenioRecordServiceConfigBuilder(InvenioBaseClassPythonBuilder):
             settings=self.settings,
             current_model=self.current_model,
             record_schema_class=record_schema_class,
-            **extra_kwargs
+            **extra_kwargs,
         )
         template = self.call_components(
             "invenio_before_python_template", template, context=context

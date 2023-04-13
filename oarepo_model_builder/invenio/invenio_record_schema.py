@@ -184,7 +184,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
     def prepare(self, package_name: str):
         super().prepare(package_name)
         if self.schema_class is None:
-            return 
+            return
         if self.exact_field:
             return
         self.field_arguments = [
