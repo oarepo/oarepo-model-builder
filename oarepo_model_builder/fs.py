@@ -1,4 +1,4 @@
-from io import StringIO
+from io import StringIO, BytesIO
 from pathlib import Path
 from typing import Dict
 
@@ -50,13 +50,15 @@ class InMemoryFileSystem(AbstractFileSystem):
 
     def open(self, path: str, mode: str = "r"):
         path = Path(path).absolute()
-        if mode == "r":
+        if "r" in mode:
             if path not in self.files:
                 raise FileNotFoundError(
                     f"File {path} not found. Known files {[f for f in self.files]}"
                 )
+            if "b" in mode:
+                return BytesIO(self.files[path].getvalue())
             return StringIO(self.files[path].getvalue())
-        self.files[path] = StringIO()
+        self.files[path] = BytesIO() if "b" in mode else StringIO()
         self.files[path].close = lambda: None
         return self.files[path]
 
