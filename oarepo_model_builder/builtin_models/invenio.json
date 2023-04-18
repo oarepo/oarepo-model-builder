@@ -24,6 +24,12 @@
       },
       "facets": {
         "searchable": true
+      },
+      "ui": {
+        "marshmallow": {
+          "read": false,
+          "write": false
+        }
       }
     },
     "created": {
@@ -37,6 +43,12 @@
       },
       "facets": {
         "searchable": true
+      },
+      "ui": {
+        "marshmallow": {
+          "read": false,
+          "write": false
+        }
       }
     },
     "updated": {
@@ -50,6 +62,12 @@
       },
       "facets": {
         "searchable": true
+      },
+      "ui": {
+        "marshmallow": {
+          "read": false,
+          "write": false
+        }
       }
     },
     "$schema": {
@@ -63,6 +81,12 @@
       },
       "facets": {
         "searchable": true
+      },
+      "ui": {
+        "marshmallow": {
+          "read": false,
+          "write": false
+        }
       }
     }
   }
