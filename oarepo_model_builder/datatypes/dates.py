@@ -103,7 +103,7 @@ class EDTFDataType(BaseDateDataType):
 
     def marshmallow_validators(self):
         return super().marshmallow_validators() + [
-            "mu_fields_edtf.EDTFValidator(types=(EDTFDate,))"
+            "CachedMultilayerEDTFValidator(types=(EDTFDate,))"
         ]
 
     def imports(self, *_extra) -> List[Import]:
@@ -111,8 +111,8 @@ class EDTFDataType(BaseDateDataType):
             Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
             Import(import_path="edtf.Date", alias="EDTFDate"),
             Import(
-                import_path="marshmallow_utils.fields.edtfdatestring",
-                alias="mu_fields_edtf",
+                import_path="oarepo_runtime.validation.CachedMultilayerEDTFValidator",
+                alias=None,
             ),
         )
 
@@ -132,7 +132,7 @@ class EDTFIntervalType(BaseDateDataType):
 
     def marshmallow_validators(self):
         return super().marshmallow_validators() + [
-            "mu_fields_edtf.EDTFValidator(types=(EDTFInterval,))"
+            "CachedMultilayerEDTFValidator(types=(EDTFInterval,))"
         ]
 
     def imports(self, *extra):
@@ -140,8 +140,8 @@ class EDTFIntervalType(BaseDateDataType):
             Import(import_path="edtf.Interval", alias="EDTFInterval"),
             Import(import_path="oarepo_runtime.ui.marshmallow", alias="l10n"),
             Import(
-                import_path="marshmallow_utils.fields.edtfdatestring",
-                alias="mu_fields_edtf",
+                import_path="oarepo_runtime.validation.CachedMultilayerEDTFValidator",
+                alias=None,
             ),
             *extra,
         )

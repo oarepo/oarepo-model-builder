@@ -184,6 +184,10 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             lambda: f"{model.record_services_package}.config.{record_prefix}ServiceConfig",
         )
 
+        model.setdefault("record-service-config-components", []).append(
+            "oarepo_runtime.relations.components.CachingRelationsComponent"
+        )
+
         model.setdefault("record-service-config-generate-links", True)
         #   - schema
         self.set(
@@ -378,10 +382,13 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
         def process_pid_type(pid_base):
             if len(pid_base) > 6:
-                pid_base = re.sub(r'[AEIOU]', '', pid_base, flags=re.IGNORECASE)
+                pid_base = re.sub(r"[AEIOU]", "", pid_base, flags=re.IGNORECASE)
             if len(pid_base) > 6:
-                pid_base = pid_base[:3] + pid_base[len(pid_base) - 3:]
+                pid_base = pid_base[:3] + pid_base[len(pid_base) - 3 :]
             return pid_base
-        model.setdefault("record-pid-provider-class", f"{model.record_records_package}.api.{record_prefix}IdProvider")
-        model.setdefault("pid-type", process_pid_type(model.model_name))
 
+        model.setdefault(
+            "record-pid-provider-class",
+            f"{model.record_records_package}.api.{record_prefix}IdProvider",
+        )
+        model.setdefault("pid-type", process_pid_type(model.model_name))
