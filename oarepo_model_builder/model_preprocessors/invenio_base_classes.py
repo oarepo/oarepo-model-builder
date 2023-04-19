@@ -63,7 +63,7 @@ class InvenioBaseClassesModelPreprocessor(ModelPreprocessor):
             "record-pid-provider-bases",
             [],
             schema.current_model.get(
-                "record-metadata-parent-class",
+                "record-pid-provider-parent-class",
                 "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2",
             ),
         )
