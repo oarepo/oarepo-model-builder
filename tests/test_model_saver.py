@@ -12,9 +12,6 @@ from oarepo_model_builder.entrypoints import (
     load_included_models_from_entry_points,
 )
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.model_preprocessors.datatype_default import (
-    DatatypeDefaultModelPreprocessor,
-)
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
@@ -248,7 +245,6 @@ def build(model, output_builder_components=None):
         model_preprocessors=[
             DefaultValuesModelPreprocessor,
             InvenioModelPreprocessor,
-            DatatypeDefaultModelPreprocessor,
         ],
         output_builder_components=output_builder_components,
         filesystem=InMemoryFileSystem(),

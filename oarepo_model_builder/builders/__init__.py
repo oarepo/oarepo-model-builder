@@ -56,7 +56,7 @@ class OutputBuilder:
         for child in parent_node.children.items():
             self.process_node(child)
 
-    def process_node(self, datatype: DataType):
+    def build_node(self, datatype: DataType):
         pass
 
 

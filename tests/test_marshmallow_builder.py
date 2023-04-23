@@ -8,9 +8,6 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.invenio.invenio_record_schema import (
     InvenioRecordSchemaBuilder,
 )
-from oarepo_model_builder.model_preprocessors.datatype_default import (
-    DatatypeDefaultModelPreprocessor,
-)
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
@@ -46,7 +43,6 @@ def fulltext_builder():
             DefaultValuesModelPreprocessor,
             OpensearchModelPreprocessor,
             InvenioModelPreprocessor,
-            DatatypeDefaultModelPreprocessor,
         ],
     )
 
