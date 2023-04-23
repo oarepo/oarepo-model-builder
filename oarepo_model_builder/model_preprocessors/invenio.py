@@ -12,16 +12,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
     def transform(self, schema, settings):
         model = schema.current_model
-        deepmerge(settings, {"python": {"templates": {}}})
-        deepmerge(
-            model,
-            {
-                # just make sure that the templates is always there
-                "marshmallow": {},
-            },
-        )
 
-        record_prefix = model.record_prefix
+        record_prefix = model["record-prefix"]
 
         extension_suffix = snake_case(record_prefix)
         extension_suffix_upper = extension_suffix.upper()
@@ -33,7 +25,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "record-prefix-snake",
-            lambda: snake_case(model.record_prefix),
+            lambda: snake_case(model["record-prefix"]),
         )
 
         # level-1 packages
@@ -41,60 +33,60 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "record-resources-package",
-            lambda: f"{model.package}.resources.{model.profile_package}",
+            lambda: f"{model['package']}.resources.{model['profile-package']}",
         )
 
         self.set(
             model,
             "record-services-package",
-            lambda: f"{model.package}.services.{model.profile_package}",
+            lambda: f"{model['package']}.services.{model['profile-package']}",
         )
 
         self.set(
             model,
             "record-records-package",
-            lambda: f"{model.package}.{model.profile_package}",
+            lambda: f"{model['package']}.{model['profile-package']}",
         )
 
         # config
-        self.set(model, "config-package", lambda: f"{model.package}.config")
+        self.set(model, "config-package", lambda: f"{model['package']}.config")
         self.set(
             model,
             "config-dummy-class",
-            lambda: f"{model.package}.config.DummyClass",
+            lambda: f"{model['package']}.config.DummyClass",
         )
         # todo "config prefix"
         self.set(
             model,
             "config-resource-config-key",
-            lambda: f"{model.package_base_upper}_RESOURCE_CONFIG_{extension_suffix_upper}",
+            lambda: f"{model['package-base-upper']}_RESOURCE_CONFIG_{extension_suffix_upper}",
         )
         self.set(
             model,
             "config-resource-class-key",
-            lambda: f"{model.package_base_upper}_RESOURCE_CLASS_{extension_suffix_upper}",
+            lambda: f"{model['package-base-upper']}_RESOURCE_CLASS_{extension_suffix_upper}",
         )
         self.set(
             model,
             "config-service-config-key",
-            lambda: f"{model.package_base_upper}_SERVICE_CONFIG_{extension_suffix_upper}",
+            lambda: f"{model['package-base-upper']}_SERVICE_CONFIG_{extension_suffix_upper}",
         )
         self.set(
             model,
             "config-service-class-key",
-            lambda: f"{model.package_base_upper}_SERVICE_CLASS_{extension_suffix_upper}",
+            lambda: f"{model['package-base-upper']}_SERVICE_CLASS_{extension_suffix_upper}",
         )
         self.set(
             model,
             "config-resource-register-blueprint-key",
-            lambda: f"{model.package_base_upper}_REGISTER_BLUEPRINT",
+            lambda: f"{model['package-base-upper']}_REGISTER_BLUEPRINT",
         )
 
         # ext
         self.set(
             model,
             "ext-class",
-            lambda: f"{model.package}.ext.{record_prefix}Ext",
+            lambda: f"{model['package']}.ext.{record_prefix}Ext",
         )
         self.set(model, "flask-extension-name", lambda: extension_suffix)
 
@@ -102,31 +94,31 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "cli-function",
-            lambda: f"{model.package}.cli.group",
+            lambda: f"{model['package']}.cli.group",
         )
 
         # proxies
         self.set(
             model,
             "proxies-current-resource",
-            lambda: f"{model.package}.proxies.current_resource",
+            lambda: f"{model['package']}.proxies.current_resource",
         )
         self.set(
             model,
             "proxies-current-service",
-            lambda: f"{model.package}.proxies.current_service",
+            lambda: f"{model['package']}.proxies.current_service",
         )
 
         # record
         self.set(
             model,
             "record-class",
-            lambda: f"{model.record_records_package}.api.{record_prefix}Record",
+            lambda: f"{model['record-records-package']}.api.{record_prefix}Record",
         )
         self.set(
             model,
             "record-metadata-class",
-            lambda: f"{model.record_records_package}.models.{record_prefix}Metadata",
+            lambda: f"{model['record-records-package']}.models.{record_prefix}Metadata",
         )
         self.set(
             model,
@@ -159,29 +151,29 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "record-resource-config-class",
-            lambda: f"{model.record_resources_package}.config.{record_prefix}ResourceConfig",
+            lambda: f"{model['record-resources-package']}.config.{record_prefix}ResourceConfig",
         )
         self.set(
             model,
             "record-resource-class",
-            lambda: f"{model.record_resources_package}.resource.{record_prefix}Resource",
+            lambda: f"{model['record-resources-package']}.resource.{record_prefix}Resource",
         )
         self.set(
             model,
             "record-permissions-class",
-            lambda: f"{model.record_services_package}.permissions.{record_prefix}PermissionPolicy",
+            lambda: f"{model['record-services-package']}.permissions.{record_prefix}PermissionPolicy",
         )
 
         # service
         self.set(
             model,
             "record-service-class",
-            lambda: f"{model.record_services_package}.service.{record_prefix}Service",
+            lambda: f"{model['record-services-package']}.service.{record_prefix}Service",
         )
         self.set(
             model,
             "record-service-config-class",
-            lambda: f"{model.record_services_package}.config.{record_prefix}ServiceConfig",
+            lambda: f"{model['record-services-package']}.config.{record_prefix}ServiceConfig",
         )
 
         model.setdefault("record-service-config-components", []).append(
@@ -193,47 +185,47 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "record-schema-class",
-            lambda: f"{model.record_services_package}.schema.{record_prefix}Schema",
+            lambda: f"{model['record-services-package']}.schema.{record_prefix}Schema",
         )
         self.set(
             model,
             "record-ui-schema-class",
-            lambda: f"{model.record_services_package}.ui_schema.{record_prefix}UISchema",
+            lambda: f"{model['record-services-package']}.ui_schema.{record_prefix}UISchema",
         )
         self.set(
             model,
             "record-ui-serializer-class",
-            lambda: f"{model.record_resources_package}.ui.{record_prefix}UIJSONSerializer",
+            lambda: f"{model['record-resources-package']}.ui.{record_prefix}UIJSONSerializer",
         )
         self.set(
             model,
             "record-schema-metadata-class",
-            lambda: f"{model.record_services_package}.schema.{record_prefix}MetadataSchema",
+            lambda: f"{model['record-services-package']}.schema.{record_prefix}MetadataSchema",
         )
         self.set(
             model,
             "record-ui-schema-metadata-class",
-            lambda: f"{model.record_services_package}.ui_schema.{record_prefix}MetadataUISchema",
+            lambda: f"{model['record-services-package']}.ui_schema.{record_prefix}MetadataUISchema",
         )
         #   - dumper
         self.set(
             model,
             "record-dumper-class",
-            lambda: f"{model.record_records_package}.dumper.{record_prefix}Dumper",
+            lambda: f"{model['record-records-package']}.dumper.{record_prefix}Dumper",
         )
         #   - search
 
         self.set(
             model,
             "record-search-options-class",
-            lambda: f"{model.record_services_package}.search.{record_prefix}SearchOptions",
+            lambda: f"{model['record-services-package']}.search.{record_prefix}SearchOptions",
         )
 
         #   - facets
         self.set(
             model,
             "record-facets-class",
-            lambda: f"{model.record_services_package}.facets.Test",
+            lambda: f"{model['record-services-package']}.facets.Test",
         )
 
         # alembic
@@ -258,7 +250,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "create-blueprint-from-app",
-            lambda: f"{model.package}.views.create_blueprint_from_app_{extension_suffix}",
+            lambda: f"{model['package']}.views.create_blueprint_from_app_{extension_suffix}",
         )
         model.setdefault("invenio-config-extra-code", "")
         model.setdefault("invenio-ext-extra-code", "")
@@ -280,17 +272,17 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
         if schema.model_field in schema.schema:
             current_model_field = schema.schema[schema.model_field]
-            schema_class = model.record_schema_class
-            schema_metadata_class = model.record_schema_metadata_class
+            schema_class = model["record-schema-class"]
+            schema_metadata_class = model["record-schema-metadata-class"]
             schema_class_base_classes = model.get(
-                "record_schema_metadata_bases", []
+                "record-schema-metadata-bases", []
             ) + [
                 MARSHMALLOW_SCHEMA_BASE_CLASS  # alias will be recognized automatically
             ]
 
             if (
                 "properties" in current_model_field
-                and "metadata" in current_model_field.properties
+                and "metadata" in current_model_field.get("properties", {})
             ):
                 if current_model_field.properties.metadata.get("type") == "object":
                     deepmerge(
@@ -305,7 +297,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                     )
 
                     # ui-level of metadata
-                    ui_schema_class = model.record_ui_schema_metadata_class
+                    ui_schema_class = model["record-ui-schema-metadata-class"]
                     deepmerge(
                         current_model_field.properties.metadata.setdefault(
                             "ui", {}
@@ -322,7 +314,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 and "base-schema" in schema.schema["marshmallow"]
             ):
                 schema_class_base_classes = model.get(
-                    "record_schema_metadata_bases", []
+                    "record-schema-metadata-bases", []
                 ) + [
                     schema.schema["marshmallow"][
                         "base_schema"
@@ -338,7 +330,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 },
             )
             # ui-level of current_model_field
-            ui_schema_class = model.record_ui_schema_class
+            ui_schema_class = model["record-ui-schema-class"]
             deepmerge(
                 current_model_field.setdefault("ui", {}).setdefault("marshmallow", {}),
                 {
@@ -352,14 +344,8 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         model.setdefault("generate-record-pid-field", True)
         model.setdefault("record-dumper-extensions", [])
 
-        # default import prefixes
-        _prefixes = settings.python.setdefault("always-defined-import-prefixes", [])
-        for _prefix in ["ma", "ma_fields", "ma_validate"]:
-            if _prefix not in _prefixes:
-                _prefixes.append(_prefix)
-
         model.setdefault("script-import-sample-data", "data/sample_data.yaml")
-        self.set(model, "service-id", lambda: model.flask_extension_name)
+        self.set(model, "service-id", lambda: model["flask-extension-name"])
 
         model.setdefault("permissions", {"presets": []})
 
@@ -389,6 +375,6 @@ class InvenioModelPreprocessor(ModelPreprocessor):
 
         model.setdefault(
             "record-pid-provider-class",
-            f"{model.record_records_package}.api.{record_prefix}IdProvider",
+            f"{model['record-records-package']}.api.{record_prefix}IdProvider",
         )
-        model.setdefault("pid-type", process_pid_type(model.model_name))
+        model.setdefault("pid-type", process_pid_type(model["model-name"]))

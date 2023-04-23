@@ -5,13 +5,22 @@ from oarepo_model_builder.validation.model_validation import model_validator
 
 
 def test_empty_model_validation():
-    model_validator.validate({})
-    model_validator.validate({"model": {}})
-    model_validator.validate({"model": {"type": "object"}})
-    with pytest.raises(ValidationError, match="Bad value.*'object' expected"):
+    assert model_validator.validate({}) == {
+        "version": "1.0.0",
+    }
+    assert model_validator.validate({"model": {}}) == {
+        "model": {"type": "model", "properties": {}},
+        "version": "1.0.0",
+    }
+    with pytest.raises(ValidationError, match="Must be equal to model"):
         model_validator.validate({"model": {"type": "blah"}})
-    model_validator.validate({"model": {"type": "object", "properties": {}}})
-    model_validator.validate({"model": {"type": "object", "properties": None}})
+    assert model_validator.validate({"model": {"properties": {}}}) == {
+        "model": {"type": "model", "properties": {}},
+        "version": "1.0.0",
+    }
+    assert model_validator.validate(
+        {"model": {"type": "model", "properties": None}}
+    ) == {"model": {"type": "model", "properties": {}}, "version": "1.0.0"}
 
 
 def test_unknown_on_top_validation():
@@ -20,7 +29,7 @@ def test_unknown_on_top_validation():
 
 
 def test_settings_on_model():
-    model_validator.validate(
+    validated = model_validator.validate(
         {
             "model": {
                 "profile-package": "test",
@@ -32,10 +41,23 @@ def test_settings_on_model():
             }
         }
     )
+    assert validated == {
+        "model": {
+            "type": "model",
+            "profile-package": "test",
+            "package-path": "test",
+            "jsonschemas-package": "test",
+            "mapping-file": "test",
+            "collection-url": "test",
+            "model-name": "test",
+            "properties": {},
+        },
+        "version": "1.0.0",
+    }
 
 
 def test_inline_props_on_model():
-    assert model_validator.validate(
+    validated = model_validator.validate(
         {
             "model": {
                 "properties": {
@@ -46,10 +68,11 @@ def test_inline_props_on_model():
                 }
             }
         }
-    ) == {
+    )
+    assert validated == {
         "version": "1.0.0",
         "model": {
-            "type": "object",
+            "type": "model",
             "properties": {
                 "a": {"type": "boolean"},
                 "b": {"type": "integer", "minimum": 1},
@@ -75,10 +98,21 @@ def test_validate_defs():
     assert validation_result == {
         "version": "1.0.0",
         "$defs": {
-            "a": {"type": "boolean"},
-            "b": {"minimum": 1, "type": "integer"},
-            "c": {"exclusiveMaximum": 1.0, "type": "float"},
-            "d": {"type": "double"},
+            "a": "boolean",
+            "b": "integer{minimum:1}",
+            "c": "float{exclusiveMaximum: 1.0}",
+            "d": "double",
         },
-        "model": {"properties": {}, "type": "object"},
+        "model": {"properties": {}, "type": "model"},
+    }
+
+
+def test_settings():
+    validation_result = model_validator.validate(
+        {"model": {}, "settings": {"python": {"use-black": True, "use-isort": True}}}
+    )
+    assert validation_result == {
+        "version": "1.0.0",
+        "settings": {"python": {"use-black": True, "use-isort": True}},
+        "model": {"properties": {}, "type": "model"},
     }

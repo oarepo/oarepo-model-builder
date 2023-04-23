@@ -22,9 +22,6 @@ from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreproc
 from oarepo_model_builder.outputs.cfg import CFGOutput
 from oarepo_model_builder.outputs.json import JSONOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
-    DataTypePreprocessor,
-)
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.validation.model_validation import model_validator
 from tests.multilang import MultilingualDataType, UIValidator
@@ -52,9 +49,6 @@ def test_model_saver():
                 "metadata": {"properties": {}},
             }
         },
-        property_preprocessors=[
-            DataTypePreprocessor,
-        ],
     )
     print(json.dumps(data[0], indent=4, sort_keys=True))
     assert data[0]["model"] == {
@@ -239,8 +233,8 @@ oarepo.models = test = test.models:model.json"""
     )
 
 
-def build(model, output_builder_components=None, property_preprocessors=None):
-    datatypes._prepare_datatypes()
+def build(model, output_builder_components=None):
+    datatypes._load_datatypes()
     if UIValidator not in model_validator.validator_map["property-ui"]:
         model_validator.validator_map["property-ui"].append(UIValidator)
     datatypes.datatype_map["multilingual"] = MultilingualDataType
@@ -258,7 +252,6 @@ def build(model, output_builder_components=None, property_preprocessors=None):
         ],
         output_builder_components=output_builder_components,
         filesystem=InMemoryFileSystem(),
-        property_preprocessors=property_preprocessors,
     )
     builder.build(
         model=ModelSchema(
@@ -293,9 +286,6 @@ def build(model, output_builder_components=None, property_preprocessors=None):
 def test_model_saver_invenio():
     data = build(
         {"use": "invenio", "properties": {}},
-        property_preprocessors=[
-            DataTypePreprocessor,
-        ],
     )
     print(json.dumps(data[0], indent=4))
     assert data[0]["model"] == {

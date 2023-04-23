@@ -4,7 +4,7 @@ from oarepo_model_builder.schema import ModelSchema
 
 
 def test_empty_builder():
-    builder = ModelBuilder(output_builders=[], outputs=[], property_preprocessors=[])
+    builder = ModelBuilder(output_builders=[], outputs=[])
     builder.skip_schema_validation = True
     outputs = builder.build(ModelSchema("", {"a": 1}), "/tmp/test")
     assert outputs == {}
@@ -21,7 +21,6 @@ def test_transformer():
     builder = ModelBuilder(
         output_builders=[],
         outputs=[],
-        property_preprocessors=[],
         model_preprocessors=[SampleModelPreprocessor],
     )
     builder.skip_schema_validation = True

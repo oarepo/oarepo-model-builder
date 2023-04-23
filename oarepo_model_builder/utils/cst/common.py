@@ -43,7 +43,6 @@ class PythonContextItem:
 @dataclass
 class PythonContext:
     cst: Module
-    conflict_resolver: ConflictResolver = None
     stack: List[PythonContextItem] = field(default_factory=list, init=False)
 
     REMOVED = object()
@@ -97,12 +96,6 @@ class PythonContext:
                 decision = ConflictResolution.KEEP_PREVIOUS
             else:
                 decision = ConflictResolution.KEEP_NEW
-
-            if self.conflict_resolver:
-                decision = self.conflict_resolver.resolve_conflict(
-                    self, existing_node, new_node, merged_node
-                )
-            decider_called = True
 
         logger.debug(
             "---> %s %s",

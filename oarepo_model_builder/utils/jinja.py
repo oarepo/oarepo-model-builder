@@ -6,6 +6,11 @@ def split_package_name(value):
     return package_name(value)
 
 
+def sorted_imports(imports):
+    imports = list(sorted(imports, key=lambda x: (x["import"], x.get("alias"))))
+    return imports
+
+
 def base_name(value):
     return value.rsplit(".", maxsplit=1)[-1]
 

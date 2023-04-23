@@ -18,3 +18,6 @@ class PythonBuilder(OutputBuilder):
 
     def class_to_path(self, class_name):
         return self.module_to_path(package_name(class_name))
+
+    def build_node(self, datatype):
+        pass

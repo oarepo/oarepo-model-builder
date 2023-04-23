@@ -5,6 +5,7 @@ from deepdiff import DeepDiff
 from ..utils.verbose import log
 from . import OutputBase
 from .json_stack import JSONStack
+from ..utils.deepmerge import deepmerge
 
 try:
     import json5
@@ -21,12 +22,13 @@ class JSONOutput(OutputBase):
         try:
             with self.builder.filesystem.open(self.path) as f:
                 self.original_data = json5.load(f)  # noqa
+                self.data = copy.deepcopy(self.original_data)
         except FileNotFoundError:
             self.original_data = None
+            self.data = {}
         except ValueError:
             self.original_data = None
-
-        self.stack = JSONStack()
+            self.data = {}
 
     @property
     def created(self):
@@ -36,25 +38,11 @@ class JSONOutput(OutputBase):
         self.original_data = None
 
     def finish(self):
-        data = self.stack.value
-        if DeepDiff(data, self.original_data):
+        if DeepDiff(self.data, self.original_data):
             self.builder.filesystem.mkdir(self.path.parent)
             log(2, "Saving %s", self.path)
             with self.builder.filesystem.open(self.path, mode="w") as f:
-                json.dump(data, f, ensure_ascii=False, indent=4)
-
-    def enter(self, key, el):
-        if key is not None:
-            self.stack.push(key, el)
-
-    def leave(self):
-        if not self.stack.empty:
-            self.stack.pop()
-
-    def primitive(self, key, value):
-        if key is not None:
-            self.stack.push(key, value)
-            self.stack.pop()
+                json.dump(self.data, f, ensure_ascii=False, indent=4)
 
     def merge(self, value):
-        self.stack.merge(value)
+        self.data = deepmerge(value, self.data)

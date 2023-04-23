@@ -57,7 +57,6 @@ class ModelProfile(Profile):
         fs = InMemoryFileSystem()
         builder = create_builder_from_entrypoints(
             profile="extend",
-            conflict_resolver=builder.conflict_resolver,
             overwrite=builder.overwrite,
             filesystem=fs,
         )

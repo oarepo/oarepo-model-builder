@@ -1,5 +1,4 @@
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 from .invenio_base import InvenioBaseClassPythonBuilder
 
@@ -14,17 +13,14 @@ class InvenioRecordServiceConfigBuilder(InvenioBaseClassPythonBuilder):
             self.create_parent_modules(python_path)
         output: PythonOutput = self.builder.get_output("python", python_path)
 
-        record_schema_class = self.current_model.get("marshmallow", {}).get(
-            "schema-class", self.current_model.record_schema_class
+        record_schema_class = self.current_model.definition.get("marshmallow", {}).get(
+            "schema-class", self.current_model.definition["record-schema-class"]
         )
 
-        context = HyphenMunch(
+        context = dict(
             settings=self.settings,
             current_model=self.current_model,
             record_schema_class=record_schema_class,
             **extra_kwargs,
-        )
-        template = self.call_components(
-            "invenio_before_python_template", template, context=context
         )
         output.merge(template, context)

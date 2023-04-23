@@ -10,6 +10,7 @@ from oarepo_model_builder.utils.jinja import (
     base_name,
     in_different_package,
     package_name,
+    sorted_imports,
     with_defined_prefix,
 )
 from oarepo_model_builder.utils.verbose import log
@@ -41,19 +42,26 @@ class PythonOutput(OutputBase):
             log(2, "Saving %s", self.path)
             with self.builder.filesystem.open(self.path, mode="w") as f:
                 f.write(code)
-            if self.builder.schema.settings.python.use_isort:
+            if self.builder.schema.settings["python"]["use-isort"]:
                 import isort
 
                 config = isort.settings.Config(verbose=False, quiet=True)
                 isort.file(self.path, config=config)
-            if self.builder.schema.settings.python.use_black:
+            if self.builder.schema.settings["python"]["use-black"]:
                 import subprocess
 
                 subprocess.call(["black", "-q", "--preview", str(self.path)])
-            if self.builder.schema.settings.python.use_autoflake:
+            if self.builder.schema.settings["python"]["use-autoflake"]:
                 import subprocess
 
-                subprocess.call(["autoflake", "--in-place", "--remove-all-unused-imports", str(self.path)])
+                subprocess.call(
+                    [
+                        "autoflake",
+                        "--in-place",
+                        "--remove-all-unused-imports",
+                        str(self.path),
+                    ]
+                )
 
     def merge(self, template_name, context, filters=None):
         # template is a loadable resource
@@ -83,30 +91,18 @@ class PythonOutput(OutputBase):
             print(rendered, file=sys.stderr)
             raise
         self.cst = merge(
-            PythonContext(
-                rendered_cst, conflict_resolver=self.builder.conflict_resolver
-            ),
+            PythonContext(rendered_cst),
             self.cst,
             rendered_cst,
         )
 
     @staticmethod
     def register_default_filters(env):
+        env.filters["sorted_imports"] = sorted_imports
         env.filters["package_name"] = package_name
-        env.filters["base_name"] = pass_context(
-            lambda context, value: base_name(value)
-            if not with_defined_prefix(
-                context["settings"].python.always_defined_import_prefixes, value
-            )
-            else value
-        )
+        env.filters["base_name"] = pass_context(lambda context, value: base_name(value))
         env.tests["in_different_package"] = pass_context(
             lambda context, value: in_different_package(
                 context["current_package_name"], value
-            )
-        )
-        env.tests["not_prefixed"] = pass_context(
-            lambda context, value: not with_defined_prefix(
-                context["settings"].python.always_defined_import_prefixes, value
             )
         )

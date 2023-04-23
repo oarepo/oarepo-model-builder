@@ -8,34 +8,22 @@ import importlib_metadata
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.schema import ModelSchema, remove_star_keys
-from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
 def create_builder_from_entrypoints(profile="model", **kwargs):
     # output classes do not depend on profile
     output_classes = load_entry_points_list("oarepo_model_builder.outputs", None)
     builder_classes = load_entry_points_list("oarepo_model_builder.builders", profile)
-    preprocess_classes = load_entry_points_list(
-        "oarepo_model_builder.property_preprocessors", profile
-    )
     model_preprocessor_classes = load_entry_points_list(
         "oarepo_model_builder.model_preprocessors", profile
     )
 
     builder_types = [x.TYPE for x in builder_classes]
-    output_builder_components = {
-        builder_type: load_entry_points_list(
-            f"oarepo_model_builder.builder_components.{builder_type}", profile
-        )
-        for builder_type in builder_types
-    }
 
     return ModelBuilder(
         output_builders=builder_classes,
         outputs=output_classes,
-        property_preprocessors=preprocess_classes,
         model_preprocessors=model_preprocessor_classes,
-        output_builder_components=output_builder_components,
         **kwargs,
     )
 
@@ -126,12 +114,12 @@ def load_model(
         schema.schema[k] = v
     check_plugin_packages(schema)
     if package and not schema.current_model.get("package"):
-        schema.current_model.package = package
+        schema.current_model["package"] = package
     if "python" not in schema.settings:
-        schema.settings.python = HyphenMunch()
-    schema.settings.python.use_isort = isort
-    schema.settings.python.use_black = black
-    schema.settings.python.use_autoflake = autoflake
+        schema.settings["python"] = {}
+    schema.settings["python"]["use-isort"] = isort
+    schema.settings["python"]["use-black"] = black
+    schema.settings["python"]["use-autoflake"] = autoflake
     return schema
 
 

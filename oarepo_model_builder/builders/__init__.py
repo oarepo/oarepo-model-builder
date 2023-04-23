@@ -5,169 +5,59 @@ import inspect
 import sys
 from typing import TYPE_CHECKING, List
 
-from oarepo_model_builder.property_preprocessors import PropertyPreprocessor
-from oarepo_model_builder.stack import ModelBuilderStack, ReplaceElement
 from oarepo_model_builder.utils.json_pathlib import JSONPaths
 from oarepo_model_builder.utils.verbose import log
 
 if TYPE_CHECKING:
     from oarepo_model_builder.builder import ModelBuilder
-
-
-def process(path, priority=0, condition=None):
-    def wrapper(f):
-        @functools.wraps(f)
-        def wrapped(*args, **kwargs):
-            return f(*args, **kwargs)
-
-        wrapped.model_builder_path = path
-        wrapped.model_builder_priority = priority
-        wrapped.model_builder_condition = condition
-        return wrapped
-
-    return wrapper
+    from oarepo_model_builder.datatypes.datatypes import DataType
 
 
 class OutputBuilder:
     TYPE = None
-    stack: ModelBuilderStack
 
-    def __init__(
-        self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]
-    ):
+    def __init__(self, builder: ModelBuilder):
         self.builder = builder
-        self.property_preprocessors = property_preprocessors
-        self.stack = None
+        self.datatype_stack = None
         self.silent_exceptions = False
-        # TODO: move this to metaclass and initialize only once per class
-        self.json_paths = JSONPaths()
-        arr = []
-        for name, method in inspect.getmembers(self, inspect.ismethod):
-            if not hasattr(method, "model_builder_priority"):
-                continue
-            arr.append(
-                (
-                    -method.model_builder_priority,
-                    -len(method.model_builder_path),
-                    method.model_builder_path,
-                    id(method),
-                    method.model_builder_condition,
-                    method,
-                )
-            )
-        arr.sort()
-        for _prior, _lpath, path, _mid, condition, method in arr:
-            self.json_paths.register(path, condition, method)
 
-    def begin(self, schema, settings):
-        self.schema = schema.schema
-        self.whole_schema = schema
-        self.current_model = schema.current_model
-        self.settings = settings
-        self.stack = ModelBuilderStack()
-        self.stack.push(None, schema.current_model)
+    def begin(self, current_model: DataType, schema):
+        self.schema = schema
+        self.current_model = current_model
+        self.settings = schema["settings"]
         log.enter(2, "Creating %s", self.TYPE)
         self.silent_exceptions = False
+        self.datatype_stack = []
 
     def finish(self):
         log.leave()
 
-    def build(self, schema):
-        self.begin(schema, schema.settings)
-
-        for proc in self.property_preprocessors:
-            proc.begin(schema, schema.settings)
-
-        self.build_children()
-
-        for proc in self.property_preprocessors:
-            proc.finish()
-
+    def build(self, current_model, schema):
+        self.begin(current_model, schema)
+        self.process_node(self.current_model)
         self.finish()
 
-    def build_node(self, key, data):
+    def process_node(self, node: DataType):
         try:
-            self.stack.push(key, data)
-
-            try:
-                for property_preprocessor in self.property_preprocessors:
-                    data = (
-                        property_preprocessor.process(self.TYPE, data, self.stack)
-                        or data
-                    )
-            except ReplaceElement as e:
-                data = e
-            if isinstance(data, ReplaceElement):
-                self.stack.pop()
-                if data.data is not None:
-                    if isinstance(data.data, dict):
-                        for k, v in data.data.items():
-                            self.build_node(k, v)
-                    elif isinstance(data.data, (list, tuple)):
-                        for k, v in enumerate(data.data):
-                            self.build_node(k, v)
-                    else:
-                        raise AttributeError(
-                            f"Do not know how to handle {type(data.data)} in ReplaceElement"
-                        )
-                return
-            self.stack.top.data = data
-            self.process_stack_top()
-            self.stack.pop()
+            self.datatype_stack.append(node)
+            self.build_node(node)
+            self.datatype_stack.pop()
         except Exception as e:
             if not self.silent_exceptions:
                 self.silent_exceptions = True
-                print(f"Error on handling path {self.stack.path}: {e}", file=sys.stderr)
+                print(
+                    f"Error on handling path {self.datatype_stack[-1].path}: {e}",
+                    file=sys.stderr,
+                )
             raise
 
     def build_children(self):
-        data = self.stack.top.data
-        if isinstance(data, (list, tuple)):
-            for k, v in enumerate(data):
-                self.build_node(k, v)
-        elif isinstance(data, dict):
-            children = list(data.items())
-            for k, v in children:
-                self.build_node(k, v)
+        parent_node = self.datatype_stack[-1]
+        for child in parent_node.children.items():
+            self.process_node(child)
 
-    def process_stack_top(self):
-        try:
-            self.call_components(
-                "before_process_element", value=self.stack.top.data, stack=self.stack
-            )
-            for method in self.json_paths.match(
-                self.stack.path, self.stack.top.data, extra_data={"stack": self.stack}
-            ):
-                return method()
-            # do not skip stack top
-            if self.stack.level <= 1:
-                self.build_children()
-        finally:
-            self.call_components(
-                "after_process_element", value=self.stack.top.data, stack=self.stack
-            )
-
-    @process("/model")
-    def enter_model(self):
-        self.build_children()
-
-    def call_components(self, method_name, value, **kwargs):
-        for component in self.builder.get_output_builder_components(self.TYPE):
-            if hasattr(component, method_name):
-                value = getattr(component, method_name)(self, value, **kwargs) or value
-        return value
-
-
-class OutputBuilderComponent:
-    def before_process_element(
-        self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs
-    ):
-        return value
-
-    def after_process_element(
-        self, builder: OutputBuilder, value, *, stack: ModelBuilderStack, **kwargs
-    ):
-        return value
+    def process_node(self, datatype: DataType):
+        pass
 
 
 TEMPLATES = {
@@ -175,9 +65,6 @@ TEMPLATES = {
 }
 
 __all__ = [
-    "process",
     "OutputBuilder",
-    "ModelBuilderStack",
-    "ReplaceElement",
     "TEMPLATES",
 ]

@@ -8,9 +8,12 @@ class InvenioRecordUISerializerBuilder(InvenioBaseClassPythonBuilder):
 
     def finish(self, **extra_kwargs):
         ui_record_schema_class = (
-            self.current_model.get("ui", {})
+            self.current_model.definition.get("ui", {})
             .get("marshmallow", {})
-            .get("schema-class", self.current_model.record_schema_class)
+            .get(
+                "schema-class",
+                self.current_model.definition.get("marshmallow")["schema-class"],
+            )
         )
 
         return super().finish(

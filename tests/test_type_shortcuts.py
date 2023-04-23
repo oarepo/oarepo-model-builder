@@ -73,7 +73,6 @@ def build_jsonschema(model):
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[DefaultValuesModelPreprocessor],
-        property_preprocessors=[],
         filesystem=InMemoryFileSystem(),
     )
     builder.build(

@@ -3,7 +3,7 @@ from pathlib import Path
 from oarepo_model_builder.datatypes import DataType, datatypes
 
 from ..outputs.cfg import CFGOutput
-from . import OutputBuilder, process
+from . import OutputBuilder
 from .json_base import JSONBaseBuilder
 from .utils import ensure_parent_modules
 
@@ -14,7 +14,7 @@ class ModelSaverBuilder(JSONBaseBuilder):
     output_file_name = "saved-model-file"
     parent_module_root_name = "models"
 
-    @process("**")
+    # @process("**")
     def model_element(self):
         self.model_element_enter()
         self.build_children()
@@ -62,7 +62,7 @@ class ModelSaverBuilder(JSONBaseBuilder):
     def begin(self, schema, settings):
         super().begin(schema, settings)
 
-        output_name = self.current_model[self.output_file_name]
+        output_name = self.current_model.definition[self.output_file_name]
         self.output = self.builder.get_output(self.output_file_type, output_name)
         self.output.enter(self.whole_schema.model_field, {"type": "object"})
         ensure_parent_modules(

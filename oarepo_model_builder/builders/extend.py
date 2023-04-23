@@ -1,4 +1,3 @@
-from . import process
 from .json_base import JSONBaseBuilder
 
 
@@ -6,7 +5,7 @@ class ExtendBuilder(JSONBaseBuilder):
     TYPE = "extend"
     output_file_type = "json"
 
-    @process("**")
+    # @process("**")
     def model_element(self):
         self.model_element_enter()
         self.build_children()

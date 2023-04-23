@@ -10,10 +10,6 @@ from pathlib import Path
 import click
 import yaml
 
-from oarepo_model_builder.conflict_resolvers import (
-    AutomaticResolver,
-    InteractiveResolver,
-)
 from oarepo_model_builder.entrypoints import (
     create_builder_from_entrypoints,
     load_entry_points_dict,
@@ -75,7 +71,9 @@ from oarepo_model_builder.utils.verbose import log
     "--black/--skip-black", default=True, help="Call black on generated sources"
 )
 @click.option(
-    "--autoflake/--skip-autoflake", default=True, help="Call autoflake on generated sources"
+    "--autoflake/--skip-autoflake",
+    default=True,
+    help="Call autoflake on generated sources",
 )
 @click.option(
     "--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"])
@@ -219,19 +217,11 @@ def run_internal(
     # set the output directory on the schema
     model.schema["output-directory"] = output_directory
 
-    # create conflict resolver
-    if not resolve_conflicts or resolve_conflicts == "debug":
-        resolver = InteractiveResolver(resolve_conflicts == "debug")
-    else:
-        resolver = AutomaticResolver(resolve_conflicts)
-
     # for each profile on the command line, render it
     profiles_to_render = [y.strip() for x in profiles for y in x.split(",")]
     for profile in profiles_to_render:
         # load the builder
-        builder = create_builder_from_entrypoints(
-            profile=profile, conflict_resolver=resolver, overwrite=overwrite
-        )
+        builder = create_builder_from_entrypoints(profile=profile, overwrite=overwrite)
 
         # load profile handler
         try:

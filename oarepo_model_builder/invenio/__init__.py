@@ -16,9 +16,7 @@ TEMPLATES = {
     "ext": "templates/invenio_ext.py.jinja2",
     "proxies": "templates/invenio_proxies.py.jinja2",
     "record-facets": "templates/invenio_record_facets.py.jinja2",
+    "record-pid-provider": "templates/invenio_record_pid_provider.py.jinja2",
     # utils and included
     "imports": "templates/imports.py.jinja2",
-    # cli
-    "cli": "templates/invenio_cli.py.jinja2",
-    "record-pid-provider": "templates/invenio_record_pid_provider.py.jinja2",
 }

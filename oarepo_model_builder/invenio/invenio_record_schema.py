@@ -4,11 +4,9 @@ import logging
 from collections import defaultdict
 from typing import Any, Dict, List, Union
 
-from oarepo_model_builder.builders import process
 from oarepo_model_builder.builders.python import PythonBuilder
 from oarepo_model_builder.datatypes import Import, ObjectDataType, datatypes
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.stack.stack import ModelBuilderStack
 from oarepo_model_builder.utils.jinja import (
     split_base_name,
     split_package_base_name,
@@ -34,7 +32,6 @@ BUILTIN_ALIASES = [
 class MarshmallowNode:
     schema: Dict
     parent: "MarshmallowNode"
-    stack: ModelBuilderStack
 
     read: bool
     write: bool
@@ -48,9 +45,7 @@ class MarshmallowNode:
     used: bool = False
 
     @classmethod
-    def from_stack(
-        cls, schema: ModelSchema, stack: ModelBuilderStack, marshmallow_field: str
-    ):
+    def from_stack(cls, schema: ModelSchema, marshmallow_field: str):
         datatype = datatypes.get_datatype(
             stack.top.data, stack.top.key, schema.model, schema, stack
         )
@@ -78,7 +73,7 @@ class MarshmallowNode:
         return cls(**constructor_arguments)
 
     @classmethod
-    def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
+    def _kwargs(cls, definition: Any, schema: ModelSchema):
         field_name = definition.get("field-name", stack.top.key)
         field_name = convert_name_to_python(field_name)
         return {
@@ -135,7 +130,7 @@ class CompositeMarshmallowNode(MarshmallowNode):
     fields: List["MarshmallowNode"] = dataclasses.field(default_factory=list)
 
     @classmethod
-    def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
+    def _kwargs(cls, definition: Any, schema: ModelSchema):
         return {"fields": [], **super()._kwargs(definition, schema, stack)}
 
     def add_field(self, field: "MarshmallowNode"):
@@ -168,7 +163,7 @@ class ObjectMarshmallowNode(CompositeMarshmallowNode):
     extra_fields: Union[List[Dict[str, str]], None] = None
 
     @classmethod
-    def _kwargs(cls, definition: Any, schema: ModelSchema, stack: ModelBuilderStack):
+    def _kwargs(cls, definition: Any, schema: ModelSchema):
         assert "schema-class" in definition, (
             f"Marshmallow schema class should be prepared by now, "
             + f"do you have datatypes model preprocessor configured? Definition: {stack.path}: {definition}: {stack.top.data}"
@@ -286,7 +281,6 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
     def begin(self, schema, settings):
         super().begin(schema, settings)
 
-        stack = ModelBuilderStack()
         stack.push("model", schema.current_model)
 
         self.marshmallow_stack = [
@@ -350,7 +344,7 @@ class InvenioRecordSchemaBuilder(InvenioBaseClassPythonBuilder):
             )
         # super.finish not called as it is handled in the for loop above
 
-    @process("**", condition=lambda current, stack: stack.schema_valid)
+    # @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
         schema_element_type = self.stack.top.schema_element_type
 

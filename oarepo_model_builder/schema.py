@@ -3,14 +3,12 @@ import pathlib
 from pathlib import Path
 from typing import Callable, Dict, List, Union
 
-import munch
 import yaml
 from jsonpointer import resolve_pointer
 from yaml import SafeDumper
 
 from .exceptions import IncludedFileNotFoundException
 from .utils.deepmerge import deepmerge
-from .utils.hyphen_munch import HyphenMunch
 
 
 class Key(str):
@@ -89,8 +87,6 @@ class ModelSchema:
         use_star_keys(self.schema)
 
         self.schema.setdefault("settings", {})
-        self.schema = munch.munchify(self.schema, factory=HyphenMunch)
-
         self.model_field = model_field
 
     def debug_print(self):
@@ -118,16 +114,14 @@ class ModelSchema:
 
     @property
     def settings(self):
-        return self.schema.settings
+        return self.schema.get("settings", {})
 
     @property
     def current_model(self):
         return self.schema.get(self.model_field, {})
 
     def merge(self, another):
-        self.schema = munch.munchify(
-            deepmerge(another, self.schema, []), factory=HyphenMunch
-        )
+        self.schema = deepmerge(another, self.schema, [])
 
     def _load(self, file_path, content=None):
         """

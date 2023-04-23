@@ -1,4 +1,5 @@
 from collections import defaultdict
+import re
 
 
 def assert_python_equals(actual, expected, msg=""):
@@ -34,3 +35,11 @@ def assert_python_equals(actual, expected, msg=""):
 def print_lines_around(lines, position):
     for p in range(max(0, position - 10), min(len(lines), position + 11)):
         print(f"{str(p + 1):5s} {lines[p]}")
+
+
+def strip_whitespaces(x):
+    x = re.sub(r"[ \t]+", " ", x)
+    x = re.sub(r"[ \t]+([^a-zA-Z0-9_])", r"\1", x)
+    x = re.sub(r"\s*\n[\s\n]*", "\n", x)
+    x = x.strip()
+    return x

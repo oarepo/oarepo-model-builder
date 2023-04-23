@@ -16,9 +16,6 @@ from oarepo_model_builder.model_preprocessors.opensearch import (
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
-    DataTypePreprocessor,
-)
 from oarepo_model_builder.schema import ModelSchema
 
 
@@ -43,7 +40,6 @@ def fulltext_builder():
             DefaultValuesModelPreprocessor,
             OpensearchModelPreprocessor,
         ],
-        property_preprocessors=[DataTypePreprocessor],
     )
 
 

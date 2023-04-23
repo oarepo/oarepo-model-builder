@@ -1,4 +1,3 @@
-from oarepo_model_builder.builders import process
 from oarepo_model_builder.utils.jinja import package_name
 
 from ..datatypes import datatypes
@@ -53,7 +52,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
                 fields_options = deepmerge(fields_options, {field: data[k][field]})
             self.sort_options_data.append({k: fields_options})
 
-    @process("**", condition=lambda current, stack: stack.schema_valid)
+    # @process("**", condition=lambda current, stack: stack.schema_valid)
     def enter_model_element(self):
         schema_element_type = self.stack.top.schema_element_type
         data = self.stack.top.data

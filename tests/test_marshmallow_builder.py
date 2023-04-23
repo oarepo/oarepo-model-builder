@@ -19,9 +19,6 @@ from oarepo_model_builder.model_preprocessors.opensearch import (
     OpensearchModelPreprocessor,
 )
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
-    DataTypePreprocessor,
-)
 from oarepo_model_builder.schema import ModelSchema
 
 OAREPO_MARSHMALLOW = "marshmallow"
@@ -51,7 +48,6 @@ def fulltext_builder():
             InvenioModelPreprocessor,
             DatatypeDefaultModelPreprocessor,
         ],
-        property_preprocessors=[DataTypePreprocessor],
     )
 
 

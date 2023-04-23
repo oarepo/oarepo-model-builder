@@ -35,4 +35,7 @@ def convert_name_to_python_class(name):
     class_name = re.sub(r"[^\w\s]", "", class_name)
     class_name = re.sub(r"\s+", "_", class_name)
 
+    if class_name[0].isdigit():
+        class_name = "_" + class_name
+
     return class_name

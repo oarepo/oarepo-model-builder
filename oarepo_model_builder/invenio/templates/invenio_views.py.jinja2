@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 def {{ current_model.create_blueprint_from_app|base_name }}(app):
-    """Create {{ current_model.package_name }} blueprint."""
+    """Create {{ current_model.package }} blueprint."""
     blueprint = app.extensions["{{ current_model.flask_extension_name }}"].resource.as_blueprint()
     blueprint.record_once(init_{{ current_model.create_blueprint_from_app|base_name }})
 
@@ -29,7 +29,7 @@ def init_{{ current_model.create_blueprint_from_app|base_name }}(state):
         iregistry.register(ext.service.indexer, indexer_id="{{ current_model.flask_extension_name }}")
 
 def {{ current_model.create_blueprint_from_app|base_name }}Ext(app):
-    """Create {{ current_model.package_name }}-ext blueprint."""
+    """Create {{ current_model.package }}-ext blueprint."""
     blueprint = Blueprint(
         '{{ current_model.flask_extension_name }}-ext',
         __name__,

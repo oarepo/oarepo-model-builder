@@ -17,8 +17,8 @@ from {{ current_model.record_search_options_class|package_name }} import {{ curr
 from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
 {% endif %}
 
-class {{ current_model.record_service_config_class|base_name }}({% if current_model.permissions.presets %} PermissionsPresetsConfigMixin, {% endif %}
-{% for b in current_model.record_service_config_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
+class {{ current_model.record_service_config_class|base_name }}({% if current_model.permissions.presets %} PermissionsPresetsConfigMixin, {% endif -%}
+{%- for b in current_model.record_service_config_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
     """{{ current_model.record_class|base_name }} service config."""
     url_prefix = "{{ current_model.collection_url }}"
     {% if not current_model.permissions.presets %}
