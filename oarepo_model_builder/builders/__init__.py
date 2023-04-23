@@ -18,7 +18,6 @@ class OutputBuilder:
 
     def __init__(self, builder: ModelBuilder):
         self.builder = builder
-        self.datatype_stack = None
         self.silent_exceptions = False
 
     def begin(self, current_model: DataType, schema):
@@ -27,34 +26,30 @@ class OutputBuilder:
         self.settings = schema["settings"]
         log.enter(2, "Creating %s", self.TYPE)
         self.silent_exceptions = False
-        self.datatype_stack = []
 
     def finish(self):
         log.leave()
 
     def build(self, current_model, schema):
         self.begin(current_model, schema)
-        self.process_node(self.current_model)
+        self._build_node_internal(self.current_model)
         self.finish()
 
-    def process_node(self, node: DataType):
+    def _build_node_internal(self, node):
         try:
-            self.datatype_stack.append(node)
             self.build_node(node)
-            self.datatype_stack.pop()
         except Exception as e:
             if not self.silent_exceptions:
                 self.silent_exceptions = True
                 print(
-                    f"Error on handling path {self.datatype_stack[-1].path}: {e}",
+                    f"Error on handling path {node.path}: {e}",
                     file=sys.stderr,
                 )
             raise
 
-    def build_children(self):
-        parent_node = self.datatype_stack[-1]
+    def build_children(self, parent_node):
         for child in parent_node.children.items():
-            self.process_node(child)
+            self._build_node_internal(child)
 
     def build_node(self, datatype: DataType):
         pass
