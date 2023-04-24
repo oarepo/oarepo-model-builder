@@ -15,21 +15,6 @@ from ..validation.utils import ImportSchema, PermissiveSchema, StrictSchema
 Import = namedtuple("Import", "import_path,alias")
 
 
-class PropertyMarshmallowSchema(StrictSchema):
-    read = fields.Boolean(required=False)
-    write = fields.Boolean(required=False)
-    imports = fields.List(fields.Nested(ImportSchema), required=False)
-    field_name = fields.String(data_key="field-name", required=False)
-    field = fields.String(required=False)
-    field_class = fields.String(data_key="field-class", required=False)
-    arguments = fields.List(fields.String(), required=False)
-    validators = fields.List(fields.String(), required=False)
-
-
-class PropertyUISchema(StrictSchema):
-    marshmallow = fields.Nested(PropertyMarshmallowSchema)
-
-
 @dataclasses.dataclass
 class Section:
     section: Dict[str, Any]
@@ -155,18 +140,6 @@ class DataType(AbstractDataType):
             PermissiveSchema,
             attribute="mapping",
             data_key="mapping",
-            required=False,
-        )
-
-        # marshmallow
-        marshmallow = ma.fields.Nested(
-            PropertyMarshmallowSchema,
-            required=False,
-        )
-
-        # ui
-        ui = ma.fields.Nested(
-            PropertyUISchema,
             required=False,
         )
 

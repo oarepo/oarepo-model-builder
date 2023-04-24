@@ -7,48 +7,9 @@ from marshmallow.exceptions import ValidationError
 from marshmallow_oneofschema import OneOfSchema
 
 from oarepo_model_builder.validation.utils import ImportSchema
-
-from ..datatypes import DataType, PropertyMarshmallowSchema, PropertyUISchema
+from ..datatypes import DataType
 
 log = logging.getLogger("datatypes")
-
-
-class ExtraField(ma.Schema):
-    name = fields.String(required=True)
-    value = fields.String(required=True)
-
-
-class ObjectMarshmallowExtraSchema(ma.Schema):
-    imports = fields.List(
-        fields.Nested(ImportSchema), required=False
-    )  # imports must be here as well as it is used on model's root (without field)
-    generate = fields.Boolean(required=False)
-    schema_class = fields.String(
-        data_key="schema-class",
-        attribute="schema-class",
-        required=False,
-        allow_none=True,
-    )
-    base_classes = fields.List(
-        fields.String(),
-        data_key="base-classes",
-        attribute="base-classes",
-        required=False,
-    )
-    extra_fields = fields.List(
-        fields.Nested(ExtraField),
-        required=False,
-        data_key="extra-fields",
-        attribute="extra-fields",
-    )
-
-
-class ObjectMarshmallowSchema(PropertyMarshmallowSchema, ObjectMarshmallowExtraSchema):
-    pass
-
-
-class ObjectUISchema(PropertyUISchema):
-    marshmallow = fields.Nested(ObjectMarshmallowSchema)
 
 
 class PropertySchemas:
@@ -169,10 +130,6 @@ class ObjectDataType(DataType):
 
     class ModelSchema(DataType.ModelSchema):
         properties = ObjectPropertiesField()
-
-        marshmallow = ma.fields.Nested(ObjectMarshmallowSchema)
-
-        ui = ma.fields.Nested(ObjectUISchema)
 
         @ma.decorators.pre_load()
         def before_load(self, value, **kwargs):

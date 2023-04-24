@@ -3,14 +3,7 @@ import marshmallow as ma
 from oarepo_model_builder.validation.utils import StrictSchema
 
 from .containers import ObjectDataType
-from .containers.object import ObjectMarshmallowExtraSchema
-from ..datatypes import Section
-
-ModelMarshmallowSchema = ObjectMarshmallowExtraSchema
-
-
-class ModelUISchema(StrictSchema):
-    marshmallow = ma.fields.Nested(ModelMarshmallowSchema)
+from ..datatypes import Section, datatypes
 
 
 class ModelDataType(ObjectDataType):
@@ -106,12 +99,6 @@ class ModelDataType(ObjectDataType):
             data_key="index-name", attribute="index-name", required=False
         )
 
-        # marshmallow
-        marshmallow = ma.fields.Nested(ModelMarshmallowSchema)
-
-        # ui
-        ui = ma.fields.Nested(ModelUISchema)
-
     def _process_mapping(self, section: Section, **kwargs):
         section.section = (
             {}
@@ -124,3 +111,12 @@ class ModelDataType(ObjectDataType):
     @property
     def section_global_mapping(self):
         return self.default_section_mapping
+
+    def prepare(self, context):
+        datatypes.call_components(
+            datatype=self, method="before_model_prepare", context=context
+        )
+        super().prepare(context)
+        datatypes.call_components(
+            datatype=self, method="after_model_prepare", context=context
+        )

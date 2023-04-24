@@ -5,8 +5,12 @@ from .model import (
     ResourceModelComponent,
     SampleModelComponent,
     SavedModelComponent,
+    MarshmallowModelComponent,
+    UIModelComponent,
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
+from .marshmallow import RegularMarshmallowComponent, ObjectMarshmallowComponent
+from .ui import RegularUIComponent, ObjectUIComponent
 
 DEFAULT_COMPONENTS = [
     ResourceModelComponent,
@@ -17,4 +21,10 @@ DEFAULT_COMPONENTS = [
     FacetsModelComponent,
     ArraySampleComponent,
     RegularSampleComponent,
+    MarshmallowModelComponent,
+    RegularMarshmallowComponent,
+    ObjectMarshmallowComponent,
+    RegularUIComponent,
+    ObjectUIComponent,
+    UIModelComponent,
 ]
