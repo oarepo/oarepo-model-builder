@@ -18,9 +18,6 @@ from marshmallow.exceptions import ValidationError
 from ..datatypes import DataType, PropertyMarshmallowSchema, PropertyUISchema
 import yaml
 
-
-from .utils import deep_searchable_enabled
-
 log = logging.getLogger("datatypes")
 
 
@@ -208,31 +205,6 @@ class ObjectDataType(DataType):
             v.prepare(context)
 
         super().prepare(context)
-
-    def _process_json_schema(self, section, **kwargs):
-        super()._process_json_schema(section, **kwargs)
-        properties = section.setdefault("properties", {})
-        for key, child in self.children.items():
-            child_jsonschema = child.json_schema
-            if key in properties:
-                deepmerge(properties[key], child_jsonschema)
-            else:
-                properties[key] = child_jsonschema
-
-    def _process_mapping(self, section, **kwargs):
-        super()._process_mapping(section, **kwargs)
-        if section.get("enabled", None) is False:
-            return
-        if len(self.stack) > 1 and not deep_searchable_enabled(self):
-            section.setdefault("enabled", False)
-            return
-        properties = section.setdefault("properties", {})
-        for key, child in self.children.items():
-            child_mapping = child.mapping
-            if key in properties:
-                deepmerge(properties[key], child_mapping)
-            else:
-                properties[key] = child_mapping
 
         # self._prepare_schema_class(
         #     self.definition.setdefault("marshmallow", {}),

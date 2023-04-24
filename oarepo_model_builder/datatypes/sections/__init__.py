@@ -9,7 +9,7 @@ from .model import (
 from .facets import RegularFacetsComponent
 from .sample import RegularSampleComponent, ArraySampleComponent
 
-DEFAULT_COMPONENTS = [
+DEFAULT_SECTIONS = [
     ResourceModelComponent,
     InvenioModelComponent,
     SavedModelComponent,

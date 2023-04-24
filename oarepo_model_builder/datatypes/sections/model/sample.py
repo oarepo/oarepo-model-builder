@@ -1,7 +1,7 @@
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
 import marshmallow as ma
 from ..sample import RegularSampleComponent
-from ...validation.utils import StrictSchema
+from oarepo_model_builder.validation.utils import StrictSchema
 
 
 class SampleSchema(ma.Schema):

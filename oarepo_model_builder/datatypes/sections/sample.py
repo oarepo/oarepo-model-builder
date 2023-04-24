@@ -10,8 +10,6 @@ class SampleSchema(StrictSchema):
 
 
 class RegularSampleComponent(DataTypeComponent):
-    eligible_datatypes = []
-
     class ModelSchema(ma.Schema):
         sample = ma.fields.Nested(
             SampleSchema,

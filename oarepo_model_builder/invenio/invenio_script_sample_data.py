@@ -9,7 +9,12 @@ from ..builder import ModelBuilder
 from ..builders.json_base import JSONBaseBuilder
 from ..entrypoints import load_entry_points_list
 
-from oarepo_model_builder.datatypes import DataType, ObjectDataType, ArrayDataType
+from oarepo_model_builder.datatypes import (
+    DataType,
+    ObjectDataType,
+    ArrayDataType,
+    Section,
+)
 
 
 class SampleDataGenerator(faker.Generator):
@@ -74,12 +79,12 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             "oarepo_model_builder.sample_data_providers", profile=None
         ) + [faker_provider]
 
-    def process_node(self, node: DataType):
+    def build_node(self, node: DataType):
         if not self.output.created:
             return
 
-        sample = node.sample
-        for __ in range(sample.get("count", 10)):
+        sample: Section = node.section_sample
+        for __ in range(sample.section.get("count", 10)):
             self.output.next_document()
             generated = self.generate_sample_for_node_and_children(node)
             self.output.merge(generated)
@@ -124,7 +129,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
 
 
 def get_oarepo_sample(node):
-    sample = node.sample
+    sample = node.section_sample.section
 
     if isinstance(sample, dict):
         return sample

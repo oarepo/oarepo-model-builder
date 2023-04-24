@@ -1,6 +1,7 @@
 import copy
 from collections import namedtuple
 from typing import List, Union, Any, Dict, Type
+import dataclasses
 
 import importlib_metadata
 import marshmallow as ma
@@ -29,6 +30,13 @@ class PropertyMarshmallowSchema(StrictSchema):
 
 class PropertyUISchema(StrictSchema):
     marshmallow = fields.Nested(PropertyMarshmallowSchema)
+
+
+@dataclasses.dataclass
+class Section:
+    section: Dict[str, Any]
+    children: List["AbstractDataType"]
+    item: "AbstractDataType"
 
 
 class AbstractDataType:
@@ -69,10 +77,14 @@ class AbstractDataType:
 
         At first _process_json_schema is called on the datatype, if it exists.
 
-        Before returning, process_json_schema method is called on all components
+        Before returning, process_json_schema method is called on all components (datatypes.sections)
         with datatype and section keyword arguments
         """
-        if name.startswith("_process_"):
+        if name.startswith("section_"):
+            name = name[len("section_") :]
+        elif name.startswith("default_section_"):
+            name = name[len("default_section_") :]
+        else:
             return object.__getattr__(self, name)
 
         # get the section
@@ -82,10 +94,9 @@ class AbstractDataType:
         section = self.definition.get(section_key, {})
         section = copy.deepcopy(section)
 
-        # call _process_ on self
-        process_method = f"_process_{name}"
-        if hasattr(self, process_method):
-            getattr(self, process_method)(section=section)
+        section = Section(
+            section, getattr(self, "children", None), getattr(self, "item", None)
+        )
 
         # call components
         datatypes.call_components(
@@ -207,7 +218,7 @@ class DataTypes:
     def components(self) -> List[DataTypeComponent]:
         c = []
         for entry in importlib_metadata.entry_points(
-            group="oarepo_model_builder.datatypes.components"
+            group="oarepo_model_builder.datatypes.sections"
         ):
             for component in entry.load():
                 c.append(component())

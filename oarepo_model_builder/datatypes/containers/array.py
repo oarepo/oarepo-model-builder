@@ -1,8 +1,6 @@
 from ..datatypes import DataType
 from marshmallow import fields
 from .object import FieldSchema
-from .utils import deep_searchable_enabled
-from ...utils.deepmerge import deepmerge
 
 
 class ArrayDataType(DataType):
@@ -24,25 +22,6 @@ class ArrayDataType(DataType):
         self.item = datatypes.get_datatype(self, items, None, self.model, self.schema)
         self.item.prepare(context)
         super().prepare(context)
-
-    def _process_json_schema(self, section, **kwargs):
-        section.setdefault("type", "array")
-        child_jsonschema = self.item.json_schema
-        if "items" in section:
-            deepmerge(section["items"], child_jsonschema)
-        else:
-            section["items"] = child_jsonschema
-
-    def _process_mapping(self, section, **kwargs):
-        super()._process_mapping(section, **kwargs)
-        section.pop("type")
-        if section.get("enabled", None) is False:
-            return
-        if not deep_searchable_enabled(self):
-            section.setdefault("enabled", False)
-            return
-        child_mapping = self.item.mapping
-        deepmerge(section, child_mapping)
 
     # def get_facet(self, stack, parent_path, path_suffix=None):
     #     if not stack:

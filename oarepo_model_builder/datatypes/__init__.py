@@ -28,7 +28,7 @@ from .containers import (
     ObjectDataType,
 )  # noqa
 from .model import ModelDataType  # noqa
-from .datatypes import DataType, Import, datatypes, DataTypeComponent  # noqa
+from .datatypes import DataType, Import, datatypes, DataTypeComponent, Section  # noqa
 from .dates import (
     DateDataType,
     DateTimeDataType,
