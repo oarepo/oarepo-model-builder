@@ -74,7 +74,7 @@ class AbstractDataType:
 
         At first _process_json_schema is called on the datatype, if it exists.
 
-        Before returning, process_json_schema method is called on all components (datatypes.sections)
+        Before returning, process_json_schema method is called on all components (datatypes.components)
         with datatype and section keyword arguments
         """
         if name.startswith("section_"):
@@ -228,7 +228,7 @@ class DataTypes:
     def components(self) -> List[DataTypeComponent]:
         c = []
         for entry in importlib_metadata.entry_points(
-            group="oarepo_model_builder.datatypes.sections"
+            group="oarepo_model_builder.datatypes.components"
         ):
             for component in entry.load():
                 c.append(component())
