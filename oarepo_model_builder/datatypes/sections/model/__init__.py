@@ -1,7 +1,7 @@
-from .resource import ResourceModelComponent
+from .facets import FacetsModelComponent
 from .invenio import InvenioModelComponent
 from .model_saver import SavedModelComponent
-from .facets import FacetsModelComponent
+from .resource import ResourceModelComponent
 from .sample import SampleModelComponent
 
 __all__ = [

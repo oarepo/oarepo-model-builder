@@ -1,4 +1,4 @@
-from io import StringIO, BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from typing import Dict
 

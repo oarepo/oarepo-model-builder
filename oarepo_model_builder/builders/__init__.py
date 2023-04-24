@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-import functools
-import inspect
 import sys
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
-from oarepo_model_builder.utils.json_pathlib import JSONPaths
 from oarepo_model_builder.utils.verbose import log
 
 if TYPE_CHECKING:

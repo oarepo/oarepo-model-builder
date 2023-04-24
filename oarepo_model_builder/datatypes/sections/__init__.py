@@ -1,13 +1,12 @@
-from .model import (
-    ResourceModelComponent,
-    InvenioModelComponent,
-    SavedModelComponent,
-    FacetsModelComponent,
-    SampleModelComponent,
-)
-
 from .facets import RegularFacetsComponent
-from .sample import RegularSampleComponent, ArraySampleComponent
+from .model import (
+    FacetsModelComponent,
+    InvenioModelComponent,
+    ResourceModelComponent,
+    SampleModelComponent,
+    SavedModelComponent,
+)
+from .sample import ArraySampleComponent, RegularSampleComponent
 
 DEFAULT_SECTIONS = [
     ResourceModelComponent,

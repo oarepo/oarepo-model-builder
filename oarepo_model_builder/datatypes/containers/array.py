@@ -1,5 +1,6 @@
-from ..datatypes import DataType
 from marshmallow import fields
+
+from ..datatypes import DataType
 from .object import FieldSchema
 
 

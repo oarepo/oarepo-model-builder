@@ -1,7 +1,9 @@
-from oarepo_model_builder.datatypes import ModelDataType, datatypes, DataType
-from .multilang import UIDataTypeComponent
-import pytest
 import marshmallow as ma
+import pytest
+
+from oarepo_model_builder.datatypes import DataType, ModelDataType, datatypes
+
+from .multilang import UIDataTypeComponent
 
 
 def test_empty():

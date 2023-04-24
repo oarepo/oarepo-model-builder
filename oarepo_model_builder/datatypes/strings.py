@@ -1,10 +1,9 @@
 import re
-from typing import List
 
 from marshmallow import fields
 from marshmallow.exceptions import ValidationError
 
-from .datatypes import DataType, Import
+from .datatypes import DataType
 
 
 def validate_regex(value):

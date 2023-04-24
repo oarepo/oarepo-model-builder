@@ -1,8 +1,9 @@
+from pathlib import Path
+
 from ..builders import OutputBuilder
 from ..builders.utils import ensure_parent_modules
 from ..outputs.cfg import CFGOutput
 from ..utils.verbose import log
-from pathlib import Path
 
 
 class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):

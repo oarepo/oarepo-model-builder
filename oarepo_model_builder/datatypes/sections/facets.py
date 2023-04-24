@@ -1,7 +1,6 @@
-from oarepo_model_builder.datatypes import (
-    DataTypeComponent,
-)
 import marshmallow as ma
+
+from oarepo_model_builder.datatypes import DataTypeComponent
 
 
 class FacetsSchema(ma.Schema):

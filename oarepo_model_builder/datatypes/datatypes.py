@@ -1,18 +1,16 @@
 import copy
-from collections import namedtuple
-from typing import List, Union, Any, Dict, Type
 import dataclasses
+from collections import namedtuple
+from functools import cached_property, lru_cache
+from typing import Any, Dict, List, Type, Union
 
 import importlib_metadata
 import marshmallow as ma
 from marshmallow import fields
 
-from ..utils.facet_helpers import facet_definition, facet_name
 from ..utils.import_class import import_class
-
-from functools import lru_cache, cached_property
 from ..utils.properties import class_property
-from ..validation.utils import PermissiveSchema, StrictSchema, ImportSchema
+from ..validation.utils import ImportSchema, PermissiveSchema, StrictSchema
 
 Import = namedtuple("Import", "import_path,alias")
 
@@ -68,7 +66,6 @@ class AbstractDataType:
         """
         Prepare the datatype. This might fill "children" property as well
         """
-        pass
 
     def __getattr__(self, name):
         """

@@ -10,12 +10,7 @@ from oarepo_model_builder.model_preprocessors.default_values import (
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.validation.model_validation import model_validator
-from tests.multilang import (
-    MultilangPreprocessor,
-    MultilingualDataType,
-    UIDataTypeComponent,
-)
+from tests.multilang import MultilingualDataType, UIDataTypeComponent
 
 try:
     import json5

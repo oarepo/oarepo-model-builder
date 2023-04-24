@@ -1,5 +1,7 @@
-from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
 import marshmallow as ma
+
+from oarepo_model_builder.datatypes import ModelDataType
+
 from ..facets import RegularFacetsComponent
 
 

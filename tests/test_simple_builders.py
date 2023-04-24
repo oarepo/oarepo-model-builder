@@ -1,12 +1,20 @@
+import os
+
+from oarepo_model_builder.builder import ModelBuilder
+from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.invenio.invenio_config import InvenioConfigBuilder
+from oarepo_model_builder.invenio.invenio_ext import InvenioExtBuilder
+from oarepo_model_builder.invenio.invenio_proxies import InvenioProxiesBuilder
 from oarepo_model_builder.invenio.invenio_record import InvenioRecordBuilder
+from oarepo_model_builder.invenio.invenio_record_dumper import (
+    InvenioRecordDumperBuilder,
+)
 from oarepo_model_builder.invenio.invenio_record_metadata import (
     InvenioRecordMetadataBuilder,
 )
-from oarepo_model_builder.invenio.invenio_ext import InvenioExtBuilder
-from oarepo_model_builder.invenio.invenio_proxies import InvenioProxiesBuilder
-from oarepo_model_builder.invenio.invenio_config import InvenioConfigBuilder
-from oarepo_model_builder.invenio.invenio_version import InvenioVersionBuilder
-from oarepo_model_builder.invenio.invenio_views import InvenioViewsBuilder
+from oarepo_model_builder.invenio.invenio_record_permissions import (
+    InvenioRecordPermissionsBuilder,
+)
 from oarepo_model_builder.invenio.invenio_record_pid_provider import (
     InvenioRecordPIDProviderBuilder,
 )
@@ -22,23 +30,11 @@ from oarepo_model_builder.invenio.invenio_record_service import (
 from oarepo_model_builder.invenio.invenio_record_service_config import (
     InvenioRecordServiceConfigBuilder,
 )
-from oarepo_model_builder.invenio.invenio_record_permissions import (
-    InvenioRecordPermissionsBuilder,
-)
-
-from oarepo_model_builder.invenio.invenio_record_dumper import (
-    InvenioRecordDumperBuilder,
-)
-
 from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
     InvenioRecordUISerializerBuilder,
 )
-
-
-import os
-
-from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.invenio.invenio_version import InvenioVersionBuilder
+from oarepo_model_builder.invenio.invenio_views import InvenioViewsBuilder
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )

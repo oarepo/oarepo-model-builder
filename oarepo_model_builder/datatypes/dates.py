@@ -1,6 +1,5 @@
-from typing import List
 
-from .datatypes import DataType, Import
+from .datatypes import DataType
 
 
 class BaseDateDataType(DataType):

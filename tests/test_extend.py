@@ -1,4 +1,3 @@
-
 import json5
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints

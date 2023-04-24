@@ -297,4 +297,6 @@ class ModelDefaults(ma.Schema):
     record_pid_provider_bases = fields.List(
         fields.String(), data_key="record-pid-provider-bases", required=False
     )
-    record_pid_provider_parent_class = fields.String(data_key="record-pid-provider-parent-class", required=False)
+    record_pid_provider_parent_class = fields.String(
+        data_key="record-pid-provider-parent-class", required=False
+    )

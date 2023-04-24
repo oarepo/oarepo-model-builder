@@ -1,6 +1,7 @@
-import marshmallow as ma
-import importlib_metadata
 import itertools
+
+import importlib_metadata
+import marshmallow as ma
 
 
 def ExtensibleSchema(extensibility_entry_point, *base_schemas):
@@ -16,7 +17,9 @@ def ExtensibleSchema(extensibility_entry_point, *base_schemas):
         name = "_".join(
             x.__name__ for x in itertools.chain(base_schemas, extra_validators)
         )
-        return type(name, tuple([*extra_validators, *base_schemas]), {})(*args, **kwargs)
+        return type(name, tuple([*extra_validators, *base_schemas]), {})(
+            *args, **kwargs
+        )
 
     creator.__name__ = (
         base_schemas[0].__name__

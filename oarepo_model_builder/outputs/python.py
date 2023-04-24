@@ -11,7 +11,6 @@ from oarepo_model_builder.utils.jinja import (
     in_different_package,
     package_name,
     sorted_imports,
-    with_defined_prefix,
 )
 from oarepo_model_builder.utils.verbose import log
 

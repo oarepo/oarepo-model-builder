@@ -1,5 +1,4 @@
 from oarepo_model_builder.builders import OutputBuilder
-from typing import Optional
 
 
 class JSONBaseBuilder(OutputBuilder):

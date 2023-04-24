@@ -1,11 +1,5 @@
-from collections import defaultdict
-from functools import cached_property
 
-import importlib_metadata
 import marshmallow as ma
-from marshmallow.exceptions import ValidationError
-
-from oarepo_model_builder.validation.utils import PermissiveSchema
 
 from .extensibility import ExtensibleSchema
 

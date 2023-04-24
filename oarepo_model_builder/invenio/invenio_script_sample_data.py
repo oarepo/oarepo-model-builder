@@ -1,20 +1,20 @@
 import json
-from typing import Callable, List
+from typing import Callable
 
 import faker
 import faker.providers
 from faker import Faker
 
+from oarepo_model_builder.datatypes import (
+    ArrayDataType,
+    DataType,
+    ObjectDataType,
+    Section,
+)
+
 from ..builder import ModelBuilder
 from ..builders.json_base import JSONBaseBuilder
 from ..entrypoints import load_entry_points_list
-
-from oarepo_model_builder.datatypes import (
-    DataType,
-    ObjectDataType,
-    ArrayDataType,
-    Section,
-)
 
 
 class SampleDataGenerator(faker.Generator):

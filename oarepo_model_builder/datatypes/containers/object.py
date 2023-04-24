@@ -1,22 +1,14 @@
-import json
 import logging
-from hashlib import sha256
-
-from marshmallow import fields
-
-from oarepo_model_builder.utils.jinja import split_package_base_name, split_package_name
-from oarepo_model_builder.utils.python_name import convert_name_to_python_class
-from oarepo_model_builder.validation.utils import StrictSchema, ImportSchema
-from oarepo_model_builder.validation import InvalidModelException
-
-from marshmallow_oneofschema import OneOfSchema
-
 
 import marshmallow as ma
+import yaml
+from marshmallow import fields
 from marshmallow.exceptions import ValidationError
+from marshmallow_oneofschema import OneOfSchema
+
+from oarepo_model_builder.validation.utils import ImportSchema
 
 from ..datatypes import DataType, PropertyMarshmallowSchema, PropertyUISchema
-import yaml
 
 log = logging.getLogger("datatypes")
 

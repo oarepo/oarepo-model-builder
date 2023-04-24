@@ -1,6 +1,8 @@
-from .containers import ObjectDataType
 import marshmallow as ma
+
 from oarepo_model_builder.validation.utils import StrictSchema
+
+from .containers import ObjectDataType
 from .containers.object import ObjectMarshmallowExtraSchema
 
 ModelMarshmallowSchema = ObjectMarshmallowExtraSchema

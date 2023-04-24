@@ -1,10 +1,10 @@
+from typing import Set
+
 from oarepo_model_builder.utils.jinja import package_name
 
 from ..datatypes import datatypes
-from ..outputs.json_stack import JSONStack
 from ..utils.deepmerge import deepmerge
 from .invenio_base import InvenioBaseClassPythonBuilder
-from typing import Set
 
 OAREPO_FACETS_PROPERTY = "facets"
 OAREPO_SORTABLE_PROPERTY = "sortable"

@@ -1,6 +1,7 @@
+from pathlib import Path
+
 from oarepo_model_builder.builders.python import PythonBuilder
 from oarepo_model_builder.outputs.python import PythonOutput
-from pathlib import Path
 
 
 class InvenioVersionBuilder(PythonBuilder):

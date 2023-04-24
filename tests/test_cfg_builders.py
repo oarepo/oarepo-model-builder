@@ -1,7 +1,24 @@
 import os
 
 from oarepo_model_builder.builder import ModelBuilder
+from oarepo_model_builder.builders.setup_cfg import SetupCfgBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.invenio.invenio_ext_setup_cfg import InvenioExtSetupCfgBuilder
+from oarepo_model_builder.invenio.invenio_record_jsonschemas_setup_cfg import (
+    InvenioRecordJSONSchemasSetupCfgBuilder,
+)
+from oarepo_model_builder.invenio.invenio_record_metadata_alembic_setup_cfg import (
+    InvenioRecordMetadataAlembicSetupCfgBuilder,
+)
+from oarepo_model_builder.invenio.invenio_record_metadata_models_setup_cfg import (
+    InvenioRecordMetadataModelsSetupCfgBuilder,
+)
+from oarepo_model_builder.invenio.invenio_record_resource_setup_cfg import (
+    InvenioRecordResourceSetupCfgBuilder,
+)
+from oarepo_model_builder.invenio.invenio_record_search_setup_cfg import (
+    InvenioRecordSearchSetupCfgBuilder,
+)
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
@@ -9,33 +26,11 @@ from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreproc
 from oarepo_model_builder.model_preprocessors.invenio_base_classes import (
     InvenioBaseClassesModelPreprocessor,
 )
-from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.outputs.cfg import CFGOutput
+from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 
 from .utils import strip_whitespaces
-
-
-from oarepo_model_builder.builders.setup_cfg import SetupCfgBuilder
-from oarepo_model_builder.invenio.invenio_ext_setup_cfg import InvenioExtSetupCfgBuilder
-from oarepo_model_builder.invenio.invenio_record_jsonschemas_setup_cfg import (
-    InvenioRecordJSONSchemasSetupCfgBuilder,
-)
-from oarepo_model_builder.invenio.invenio_record_metadata_models_setup_cfg import (
-    InvenioRecordMetadataModelsSetupCfgBuilder,
-)
-
-from oarepo_model_builder.invenio.invenio_record_metadata_alembic_setup_cfg import (
-    InvenioRecordMetadataAlembicSetupCfgBuilder,
-)
-
-from oarepo_model_builder.invenio.invenio_record_resource_setup_cfg import (
-    InvenioRecordResourceSetupCfgBuilder,
-)
-
-from oarepo_model_builder.invenio.invenio_record_search_setup_cfg import (
-    InvenioRecordSearchSetupCfgBuilder,
-)
 
 
 def build_python_model(model, output_builders, fn):

@@ -1,5 +1,6 @@
-from oarepo_model_builder.datatypes import DataTypeComponent, ArrayDataType
 import marshmallow as ma
+
+from oarepo_model_builder.datatypes import ArrayDataType, DataTypeComponent
 from oarepo_model_builder.validation.utils import StrictSchema
 
 

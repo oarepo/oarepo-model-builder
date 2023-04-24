@@ -1,5 +1,5 @@
-from collections import defaultdict
 import re
+from collections import defaultdict
 
 
 def assert_python_equals(actual, expected, msg=""):

@@ -1,8 +1,6 @@
-from pathlib import Path
 
-from .json_base import JSONBaseBuilder
-from .utils import ensure_parent_modules
 from ..datatypes import Section
+from .json_base import JSONBaseBuilder
 
 
 class JSONSchemaBuilder(JSONBaseBuilder):
