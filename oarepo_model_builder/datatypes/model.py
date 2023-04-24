@@ -4,6 +4,7 @@ from oarepo_model_builder.validation.utils import StrictSchema
 
 from .containers import ObjectDataType
 from .containers.object import ObjectMarshmallowExtraSchema
+from ..datatypes import Section
 
 ModelMarshmallowSchema = ObjectMarshmallowExtraSchema
 
@@ -111,10 +112,15 @@ class ModelDataType(ObjectDataType):
         # ui
         ui = ma.fields.Nested(ModelUISchema)
 
-    def _process_mapping(self, section, **kwargs):
-        section["enabled"] = True
-        super()._process_mapping(section, **kwargs)
-        section.pop("type")
-        section.pop("enabled")
-        mappings = {k: section.pop(k) for k in list(section)}
-        section["mappings"] = mappings
+    def _process_mapping(self, section: Section, **kwargs):
+        section.section = (
+            {}
+        )  # remove default stuff as mapping on model means not "properties"-level mapping, but root-level mapping
+        if self.definition.get("searchable") is False:
+            section.section["enabled"] = False
+        else:
+            section.section.setdefault("enabled", True)
+
+    @property
+    def section_global_mapping(self):
+        return self.default_section_mapping

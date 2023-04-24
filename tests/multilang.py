@@ -1,6 +1,6 @@
 import marshmallow as ma
 
-from oarepo_model_builder.datatypes import DataType, DataTypeComponent
+from oarepo_model_builder.datatypes import DataType, DataTypeComponent, Section
 from oarepo_model_builder.utils.deepmerge import deepmerge
 
 
@@ -66,8 +66,12 @@ class MultilingualDataType(DataType):
     model_type = "multilingual"
 
     @property
-    def json_schema(self):
-        return {
-            "properties": {"lang": {"type": "string"}, "value": {"type": "string"}},
-            "type": "object",
-        }
+    def section_json_schema(self):
+        return Section(
+            section={
+                "properties": {"lang": {"type": "string"}, "value": {"type": "string"}},
+                "type": "object",
+            },
+            children={},
+            item=None,
+        )

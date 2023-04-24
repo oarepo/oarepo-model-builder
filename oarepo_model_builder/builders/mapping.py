@@ -1,11 +1,11 @@
-
 from ..utils.deepmerge import deepmerge
 from .json_base import JSONBaseBuilder
+from ..datatypes import Section, ModelDataType
 
 
 def deep_searchable_enabled(dt):
     mapping = dt.section_mapping
-    if mapping.section.get("facets", {}).get("searchable", None) is False:
+    if mapping.section.get("enabled", None) is False:
         return False
     if mapping.item:
         return deep_searchable_enabled(mapping.item)
@@ -26,18 +26,23 @@ class MappingBuilder(JSONBaseBuilder):
         self.output.merge(generated)
 
     def generate_model(self, node):
-        generated = self.generate(node, Section({}, node.children, None))
-        return {**node.section_mapping.section, "mappings": generated}
+        generated = self.generate(node)
+        generated.pop("enabled", None)
+        generated.pop("type", None)
 
-    def generate(self, node, mapping: Section = None):
-        if not mapping:
-            mapping: Section = node.section_mapping
+        return {**node.section_global_mapping.section, "mappings": generated}
 
+    def generate(self, node):
+        mapping: Section = node.section_mapping
         ret = {**mapping.section}
 
-        if not deep_searchable_enabled(node):
-            ret.setdefault("enabled", False)
-            return ret
+        if not isinstance(node, ModelDataType):
+            if not deep_searchable_enabled(node):
+                ret.setdefault("enabled", False)
+                return ret
+
+            if ret.get("enabled") is False:
+                return ret
 
         if mapping.children:
             properties = ret.setdefault("properties", {})
@@ -49,5 +54,8 @@ class MappingBuilder(JSONBaseBuilder):
                     properties[k] = v
         if mapping.item:
             v = self.generate(mapping.item)
+            ret.pop("type", None)
             deepmerge(ret, v)
+        if ret.get("enabled") is True:  # keep only enabled: False there
+            ret.pop("enabled")
         return ret

@@ -33,8 +33,8 @@ class PropertyUISchema(StrictSchema):
 @dataclasses.dataclass
 class Section:
     section: Dict[str, Any]
-    children: List["AbstractDataType"]
-    item: "AbstractDataType"
+    children: Dict[str, "AbstractDataType"] = dataclasses.field(default_factory=dict)
+    item: "AbstractDataType" = None
 
 
 class AbstractDataType:
@@ -79,10 +79,16 @@ class AbstractDataType:
         """
         if name.startswith("section_"):
             name = name[len("section_") :]
+            run_processors = True
         elif name.startswith("default_section_"):
             name = name[len("default_section_") :]
+            run_processors = False
         else:
-            return object.__getattr__(self, name)
+            config_key = name.replace("_", "-")
+            if config_key in self.definition:
+                return self.definition[config_key]
+
+            return object.__getattribute__(self, name)
 
         # get the section
         section_key = name.replace("_", "-")
@@ -92,15 +98,19 @@ class AbstractDataType:
         section = copy.deepcopy(section)
 
         section = Section(
-            section, getattr(self, "children", None), getattr(self, "item", None)
+            section, getattr(self, "children", {}), getattr(self, "item", None)
         )
 
-        # call components
-        datatypes.call_components(
-            self,
-            f"process_{name}",
-            section=section,
-        )
+        if run_processors:
+            if hasattr(self, f"_process_{name}"):
+                getattr(self, f"_process_{name}")(section=section)
+
+            # call components
+            datatypes.call_components(
+                self,
+                f"process_{name}",
+                section=section,
+            )
         return section
 
     @cached_property
@@ -126,6 +136,7 @@ class AbstractDataType:
 class DataType(AbstractDataType):
     model_type = None
     schema_type = None
+    mapping_type = None
 
     class ModelSchema(ma.Schema):
         type = fields.String(required=True)
@@ -178,22 +189,24 @@ class DataType(AbstractDataType):
             {"Meta": Meta},
         )
 
-    def _process_json_schema(self, section, **kwargs):
-        section.setdefault("type", self.schema_type or self.definition["type"])
+    def _process_json_schema(self, section: Section, **kwargs):
+        section.section.setdefault("type", self.schema_type or self.definition["type"])
 
-    def _process_mapping(self, section, **kwargs):
-        stack = self.stack
-        searchable = stack[0].definition.get("searchable", True)
+    def _process_mapping(self, section: Section, **kwargs):
+        section.section.setdefault("type", self.mapping_type or self.definition["type"])
+        initial_enabled = section.section.get("enabled")
+        if initial_enabled is not False:
+            facets_section = self.section_facets
+            searchable = facets_section.section.get("searchable")
+            if searchable is False:
+                section.section.setdefault("enabled", False)
+            elif searchable is True:
+                section.section.setdefault("enabled", True)
 
-        for p in reversed(stack[1:]):
-            facets = p.facets
-            if "searchable" in facets:
-                searchable = facets["searchable"]
-                break
-
-        section.setdefault("type", self.mapping_type or self.definition["type"])
-        if not searchable:
-            section.setdefault("enabled", False)
+            if self.parent:
+                parent_mapping = self.parent.section_mapping
+                if parent_mapping.section.get("enabled") is False:
+                    section.section.setdefault("enabled", False)
 
 
 class DataTypeComponent:

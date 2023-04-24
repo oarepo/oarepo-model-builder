@@ -90,7 +90,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             self.output.merge(generated)
 
     def generate_sample_for_node_and_children(self, node):
-        sample = get_oarepo_sample(node)
+        sample_section, sample = get_oarepo_sample(node)
         if "sample" in sample:
             return sample["sample"]
         if sample.get("skip"):
@@ -98,7 +98,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
 
         if isinstance(node, ObjectDataType):
             ret = {}
-            for k, v in node.children.items():
+            for k, v in sample_section.children.items():
                 v = self.generate_sample_for_node_and_children(v)
                 if v is not SKIP:
                     ret[k] = v
@@ -108,7 +108,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
                 count = self.faker.random_int(1, 5)
             ret = {}
             for __ in range(count):
-                v = self.generate_sample_for_node_and_children(node.item)
+                v = self.generate_sample_for_node_and_children(sample_section.item)
                 if v is not SKIP:
                     ret[json.dumps(v, sort_keys=True)] = v
             ret = list(ret.values())
@@ -129,28 +129,32 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
 
 
 def get_oarepo_sample(node):
-    sample = node.section_sample.section
+    sample_section = node.section_sample
+    sample = sample_section.section
 
     if isinstance(sample, dict):
-        return sample
+        return sample_section, sample
     if isinstance(sample, str):
-        return {"faker": "constant", "params": {"value": sample}}
+        return sample_section, {"faker": "constant", "params": {"value": sample}}
     if isinstance(sample, (list, dict)):
         if not node.key:
             # array
-            return {
+            return sample_section, {
                 "faker": "random_elements",
                 "params": {"elements": sample, "unique": True},
             }
         else:
             # element
-            return {"faker": "random_element", "params": {"elements": sample}}
+            return sample_section, {
+                "faker": "random_element",
+                "params": {"elements": sample},
+            }
 
-    return {}
+    return sample_section, {}
 
 
 def faker_provider(faker, settings, node, params):
-    config = get_oarepo_sample(node)
+    __, config = get_oarepo_sample(node)
     method = config.get("faker")
     if not method:
         if node.key in faker.formatters:
