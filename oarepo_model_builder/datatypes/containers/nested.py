@@ -2,10 +2,10 @@ from .object import ObjectDataType
 
 
 class NestedDataType(ObjectDataType):
-    mapping_type = "nested"
-    # marshmallow_field = "ma_fields.Nested"
-    # ui_marshmallow_field = "ma_fields.Nested"
     model_type = "nested"
+
+    mapping = {"type": "nested"}
+
     # default_facet_class = "NestedLabeledFacet"
     # default_facet_imports = [
     #     {"import": "oarepo_runtime.facets.nested_facet.NestedLabeledFacet"}

@@ -284,9 +284,12 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                 "properties" in current_model_field
                 and "metadata" in current_model_field.get("properties", {})
             ):
-                if current_model_field.properties.metadata.get("type") == "object":
+                if (
+                    current_model_field["properties"]["metadata"].get("type")
+                    == "object"
+                ):
                     deepmerge(
-                        current_model_field.properties.metadata.setdefault(
+                        current_model_field["properties"]["metadata"].setdefault(
                             "marshmallow", {}
                         ),
                         {
@@ -299,9 +302,9 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                     # ui-level of metadata
                     ui_schema_class = model["record-ui-schema-metadata-class"]
                     deepmerge(
-                        current_model_field.properties.metadata.setdefault(
-                            "ui", {}
-                        ).setdefault("marshmallow", {}),
+                        current_model_field["properties"]["metadata"]
+                        .setdefault("ui", {})
+                        .setdefault("marshmallow", {}),
                         {
                             "schema-class": ui_schema_class,
                             "base-classes": [MARSHMALLOW_SCHEMA_BASE_CLASS],

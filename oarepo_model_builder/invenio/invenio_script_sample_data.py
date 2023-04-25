@@ -84,7 +84,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             return
 
         sample: Section = node.section_sample
-        for __ in range(sample.section.get("count", 10)):
+        for __ in range(sample.config.get("count", 10)):
             self.output.next_document()
             generated = self.generate_sample_for_node_and_children(node)
             self.output.merge(generated)
@@ -130,7 +130,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
 
 def get_oarepo_sample(node):
     sample_section = node.section_sample
-    sample = sample_section.section
+    sample = sample_section.config
 
     if isinstance(sample, dict):
         return sample_section, sample

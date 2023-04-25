@@ -1,14 +1,14 @@
 import marshmallow as ma
 
-from oarepo_model_builder.validation.utils import StrictSchema
-
-from .containers import ObjectDataType
 from ..datatypes import Section, datatypes
+from .containers import ObjectDataType
 
 
 class ModelDataType(ObjectDataType):
     model_type = "model"
-    schema_type = "object"
+    json_schema = {"type": "object"}
+
+    mapping = {}
 
     class ModelSchema(ObjectDataType.ModelSchema):
         type = ma.fields.Str(
@@ -100,13 +100,13 @@ class ModelDataType(ObjectDataType):
         )
 
     def _process_mapping(self, section: Section, **kwargs):
-        section.section = (
+        section.config = (
             {}
         )  # remove default stuff as mapping on model means not "properties"-level mapping, but root-level mapping
         if self.definition.get("searchable") is False:
-            section.section["enabled"] = False
+            section.config["enabled"] = False
         else:
-            section.section.setdefault("enabled", True)
+            section.config.setdefault("enabled", True)
 
     @property
     def section_global_mapping(self):

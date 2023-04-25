@@ -1,4 +1,3 @@
-
 from ..datatypes import Section
 from .json_base import JSONBaseBuilder
 
@@ -15,7 +14,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
 
     def generate(self, node):
         json_schema: Section = node.section_json_schema
-        ret = {**json_schema.section}
+        ret = {**json_schema.config}
 
         if json_schema.children:
             properties = ret.setdefault("properties", {})

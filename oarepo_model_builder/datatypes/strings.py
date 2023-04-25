@@ -18,8 +18,15 @@ def validate_regex(value):
 
 
 class StringDataType(DataType):
-    schema_type = "string"
-    # marshmallow_field = "ma_fields.String"
+    ui = {
+        "marshmallow": {
+            "field-class": "ma_fields.String",
+        }
+    }
+    marshmallow = {
+        "field-class": "ma_fields.String",
+    }
+    json_schema = {"type": "string"}
 
     class ModelSchema(DataType.ModelSchema):
         minLength = fields.Integer(required=False)
@@ -81,8 +88,8 @@ class StringDataType(DataType):
 
 
 class FulltextDataType(StringDataType):
-    mapping_type = "text"
     model_type = "fulltext"
+    mapping = {"type": "text"}
 
     # def get_facet(self, stack, parent_path, path_suffix=None):
     #     "fulltext can not have facet"
@@ -90,8 +97,8 @@ class FulltextDataType(StringDataType):
 
 
 class KeywordDataType(StringDataType):
-    mapping_type = "keyword"
     model_type = "keyword"
+    mapping = {"type": "keyword"}
 
     # @property
     # def facet_class(self):
@@ -107,19 +114,13 @@ class KeywordDataType(StringDataType):
 
 
 class FulltextKeywordDataType(StringDataType):
-    mapping_type = "text"
     model_type = "fulltext+keyword"
-
-    # def mapping(self):
-    #     ret = super().mapping()
-    #     mapping_el = ret.setdefault("mapping", {})
-    #     mapping_el.setdefault("fields", {}).setdefault("keyword", {"type": "keyword"})
-    #     return ret
+    mapping = {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
 
     # def get_facet(self, stack, parent_path, path_suffix=None):
     #     return super().get_facet(stack, parent_path, (path_suffix or "") + ".keyword")
 
 
 class URLDataType(StringDataType):
-    # mapping_type = "keyword"
     model_type = "url"
+    mapping = {"type": "keyword"}

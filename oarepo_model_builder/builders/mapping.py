@@ -1,11 +1,15 @@
+from ..datatypes import ModelDataType, Section
 from ..utils.deepmerge import deepmerge
 from .json_base import JSONBaseBuilder
-from ..datatypes import Section, ModelDataType
 
 
 def deep_searchable_enabled(dt):
     mapping = dt.section_mapping
-    if mapping.section.get("enabled", None) is False:
+    facets = dt.section_facets
+    if (
+        mapping.config.get("enabled", None) is False
+        or facets.config.get("searchable") is False
+    ):
         return False
     if mapping.item:
         return deep_searchable_enabled(mapping.item)
@@ -30,30 +34,41 @@ class MappingBuilder(JSONBaseBuilder):
         generated.pop("enabled", None)
         generated.pop("type", None)
 
-        return {**node.section_global_mapping.section, "mappings": generated}
+        return {**node.section_global_mapping.config, "mappings": generated}
 
-    def generate(self, node):
+    def generate(self, node, parent_enabled=True):
         mapping: Section = node.section_mapping
-        ret = {**mapping.section}
+        facets: Section = node.section_facets
+        ret = {**mapping.config}
 
+        searchable = facets.config.get("searchable")
+        if searchable is not None:
+            ret.setdefault("enabled", searchable)
+
+        this_node_enabled = True
         if not isinstance(node, ModelDataType):
             if not deep_searchable_enabled(node):
                 ret.setdefault("enabled", False)
                 return ret
 
+            if not parent_enabled:
+                ret.setdefault("enabled", False)
+
             if ret.get("enabled") is False:
                 return ret
+        else:
+            this_node_enabled = deep_searchable_enabled(node)
 
         if mapping.children:
             properties = ret.setdefault("properties", {})
             for k, v in mapping.children.items():
-                v = self.generate(v)
+                v = self.generate(v, this_node_enabled)
                 if k in properties:
                     deepmerge(properties[k], v)
                 else:
                     properties[k] = v
         if mapping.item:
-            v = self.generate(mapping.item)
+            v = self.generate(mapping.item, this_node_enabled)
             ret.pop("type", None)
             deepmerge(ret, v)
         if ret.get("enabled") is True:  # keep only enabled: False there

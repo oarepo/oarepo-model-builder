@@ -1,5 +1,6 @@
 import copy
 import dataclasses
+import json
 from collections import namedtuple
 from functools import cached_property, lru_cache
 from typing import Any, Dict, List, Type, Union
@@ -10,16 +11,38 @@ from marshmallow import fields
 
 from ..utils.import_class import import_class
 from ..utils.properties import class_property
-from ..validation.utils import ImportSchema, PermissiveSchema, StrictSchema
+from ..validation.utils import PermissiveSchema
+from ..utils.deepmerge import deepmerge
 
 Import = namedtuple("Import", "import_path,alias")
 
 
 @dataclasses.dataclass
 class Section:
-    section: Dict[str, Any]
+    section_name: str
+    config: Dict[str, Any]
     children: Dict[str, "AbstractDataType"] = dataclasses.field(default_factory=dict)
     item: "AbstractDataType" = None
+
+    @cached_property
+    def fingerprint(self):
+        f = [self.section_name, json.dumps(self.config, sort_keys=True, default=repr)]
+        for key, dt in self.children.items():
+            f.append(f"  @@@ {key} {type(dt).__name__}")
+            f.append(
+                "    "
+                + getattr(dt, "section_" + self.section_name).fingerprint.replace(
+                    "\n", "\n    "
+                )
+            )
+        if self.item:
+            f.append(f"### {type(self.item).__name__}")
+            f.append(
+                getattr(self.item, "section_" + self.section_name).fingerprint.replace(
+                    "\n", "\n  "
+                )
+            )
+        return "\n".join(f)
 
 
 class AbstractDataType:
@@ -79,11 +102,15 @@ class AbstractDataType:
         section_key = name.replace("_", "-")
         if section_key in self._sections:
             return self._sections[section_key]
-        section = self.definition.get(section_key, {})
-        section = copy.deepcopy(section)
+        config = self.definition.get(section_key, {})
+        config = copy.deepcopy(config)
+
+        # get the default from datatype
+        if hasattr(self, name):
+            deepmerge(config, getattr(self, name))
 
         section = Section(
-            section, getattr(self, "children", {}), getattr(self, "item", None)
+            name, config, getattr(self, "children", {}), getattr(self, "item", None)
         )
 
         if run_processors:
@@ -120,8 +147,6 @@ class AbstractDataType:
 
 class DataType(AbstractDataType):
     model_type = None
-    schema_type = None
-    mapping_type = None
 
     class ModelSchema(ma.Schema):
         type = fields.String(required=True)
@@ -156,30 +181,25 @@ class DataType(AbstractDataType):
         class Meta:
             unknown = ma.RAISE
 
-        return type(
+        ret = type(
             f"{clz.__name__}ModelValidator",
             (*validators, clz.ModelSchema),
             {"Meta": Meta},
         )
+        # print(clz)
+        # print([x.__qualname__ for x in ret.mro()])
+        # print([r for r in sorted(ret._declared_fields)])
+        # print()
+        return ret
+
+    def deep_iter(self):
+        yield self
 
     def _process_json_schema(self, section: Section, **kwargs):
-        section.section.setdefault("type", self.schema_type or self.definition["type"])
+        section.config.setdefault("type", self.definition["type"])
 
     def _process_mapping(self, section: Section, **kwargs):
-        section.section.setdefault("type", self.mapping_type or self.definition["type"])
-        initial_enabled = section.section.get("enabled")
-        if initial_enabled is not False:
-            facets_section = self.section_facets
-            searchable = facets_section.section.get("searchable")
-            if searchable is False:
-                section.section.setdefault("enabled", False)
-            elif searchable is True:
-                section.section.setdefault("enabled", True)
-
-            if self.parent:
-                parent_mapping = self.parent.section_mapping
-                if parent_mapping.section.get("enabled") is False:
-                    section.section.setdefault("enabled", False)
+        section.config.setdefault("type", self.definition["type"])
 
 
 class DataTypeComponent:
@@ -222,12 +242,12 @@ class DataTypes:
                         break
         # remove overridden components
         ret = []
+        non_leaf_components = set()
         for c in datatype_components:
-            # if c is a subclass of any other component, do not return it as it is overridden
-            for cc in datatype_components:
-                if cc != c and isinstance(cc, type(c)):
-                    break
-            else:
+            non_leaf_components.update(type(c).mro()[1:])
+
+        for c in datatype_components:
+            if type(c) not in non_leaf_components:
                 ret.append(c)
         return tuple(ret)
 

@@ -1,4 +1,3 @@
-
 import marshmallow as ma
 
 from .extensibility import ExtensibleSchema

@@ -1,19 +1,10 @@
 import marshmallow as ma
 from marshmallow import fields
 
-from oarepo_model_builder.datatypes import (
-    ArrayDataType,
-    DataTypeComponent,
-    ObjectDataType,
-)
-from oarepo_model_builder.validation.utils import (
-    StrictSchema,
-    ImportSchema,
-    PermissiveSchema,
-    StrictSchema,
-)
+from oarepo_model_builder.datatypes import DataTypeComponent, ObjectDataType
+from oarepo_model_builder.validation.utils import StrictSchema
 
-from .marshmallow import PropertyMarshmallowSchema, ObjectMarshmallowSchema
+from .marshmallow import ObjectMarshmallowSchema, PropertyMarshmallowSchema
 
 
 class PropertyUISchema(StrictSchema):
@@ -36,7 +27,7 @@ class ObjectUISchema(PropertyUISchema, ObjectUIExtraSchema):
     pass
 
 
-class ObjectUIComponent(DataTypeComponent):
+class ObjectUIComponent(RegularUIComponent):
     eligible_datatypes = [ObjectDataType]
 
     class MarshmallowSchema(ma.Schema):

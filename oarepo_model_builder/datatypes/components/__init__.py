@@ -1,16 +1,16 @@
 from .facets import RegularFacetsComponent
+from .marshmallow import ObjectMarshmallowComponent, RegularMarshmallowComponent
 from .model import (
     FacetsModelComponent,
     InvenioModelComponent,
+    MarshmallowModelComponent,
     ResourceModelComponent,
     SampleModelComponent,
     SavedModelComponent,
-    MarshmallowModelComponent,
     UIModelComponent,
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
-from .marshmallow import RegularMarshmallowComponent, ObjectMarshmallowComponent
-from .ui import RegularUIComponent, ObjectUIComponent
+from .ui import ObjectUIComponent, RegularUIComponent
 
 DEFAULT_COMPONENTS = [
     ResourceModelComponent,

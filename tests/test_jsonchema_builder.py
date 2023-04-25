@@ -7,6 +7,11 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
 )
+from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
+from oarepo_model_builder.model_preprocessors.invenio_base_classes import (
+    InvenioBaseClassesModelPreprocessor,
+)
+
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
@@ -48,13 +53,14 @@ def test_required_inside_metadata():
         {
             "properties": {
                 "metadata": {
+                    "marshmallow": {},  # just for debugging
                     "properties": {
                         "a": {
                             "type": "keyword",
                             "required": True,
                             "ui": {"class": "bolder"},
                         }
-                    }
+                    },
                 }
             },
         }
@@ -106,6 +112,8 @@ def build(model):
         outputs=[JSONSchemaOutput, PythonOutput],
         model_preprocessors=[
             DefaultValuesModelPreprocessor,
+            InvenioModelPreprocessor,
+            InvenioBaseClassesModelPreprocessor,
         ],
         filesystem=InMemoryFileSystem(),
     )

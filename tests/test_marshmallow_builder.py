@@ -5,8 +5,8 @@ import pytest
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.invenio.invenio_record_schema import (
-    InvenioRecordSchemaBuilder,
+from oarepo_model_builder.invenio.invenio_record_marshmallow import (
+    InvenioRecordMarshmallowBuilder,
 )
 from oarepo_model_builder.model_preprocessors.default_values import (
     DefaultValuesModelPreprocessor,
@@ -37,7 +37,7 @@ def get_test_schema(**props):
 @pytest.fixture
 def fulltext_builder():
     return ModelBuilder(
-        output_builders=[InvenioRecordSchemaBuilder],
+        output_builders=[InvenioRecordMarshmallowBuilder],
         outputs=[PythonOutput],
         model_preprocessors=[
             DefaultValuesModelPreprocessor,

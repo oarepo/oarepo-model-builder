@@ -5,10 +5,17 @@ from .object import FieldSchema
 
 
 class ArrayDataType(DataType):
-    schema_type = "array"
-    # marshmallow_field = "ma_fields.List"
-    # ui_marshmallow_field = "ma_fields.List"
     model_type = "array"
+
+    ui = {
+        "marshmallow": {
+            "field-class": "ma_fields.List",
+        }
+    }
+    marshmallow = {
+        "field-class": "ma_fields.List",
+    }
+    json_schema = {"type": "array"}
 
     class ModelSchema(DataType.ModelSchema):
         items = fields.Nested(FieldSchema)
@@ -23,6 +30,10 @@ class ArrayDataType(DataType):
         self.item = datatypes.get_datatype(self, items, None, self.model, self.schema)
         self.item.prepare(context)
         super().prepare(context)
+
+    def deep_iter(self):
+        yield from super().deep_iter()
+        yield from self.item.deep_iter()
 
     # def get_facet(self, stack, parent_path, path_suffix=None):
     #     if not stack:

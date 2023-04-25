@@ -2,11 +2,9 @@ import logging
 
 import marshmallow as ma
 import yaml
-from marshmallow import fields
 from marshmallow.exceptions import ValidationError
 from marshmallow_oneofschema import OneOfSchema
 
-from oarepo_model_builder.validation.utils import ImportSchema
 from ..datatypes import DataType
 
 log = logging.getLogger("datatypes")
@@ -122,11 +120,18 @@ class ObjectPropertiesField(ma.fields.Dict):
 
 
 class ObjectDataType(DataType):
-    schema_type = "object"
-    mapping_type = "object"
-    # marshmallow_field = "ma_fields.Nested"
-    # ui_marshmallow_field = "ma_fields.Nested"
     model_type = "object"
+
+    ui = {
+        "marshmallow": {
+            "field-class": "ma_fields.Nested",
+        }
+    }
+    marshmallow = {
+        "field-class": "ma_fields.Nested",
+    }
+    json_schema = {"type": "object"}
+    mapping = {"type": "object"}
 
     class ModelSchema(DataType.ModelSchema):
         properties = ObjectPropertiesField()
@@ -154,6 +159,11 @@ class ObjectDataType(DataType):
             v.prepare(context)
 
         super().prepare(context)
+
+    def deep_iter(self):
+        yield from super().deep_iter()
+        for c in self.children.values():
+            yield from c.deep_iter()
 
         # self._prepare_schema_class(
         #     self.definition.setdefault("marshmallow", {}),

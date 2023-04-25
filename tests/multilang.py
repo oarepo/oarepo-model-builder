@@ -68,7 +68,8 @@ class MultilingualDataType(DataType):
     @property
     def section_json_schema(self):
         return Section(
-            section={
+            "json_schema",
+            config={
                 "properties": {"lang": {"type": "string"}, "value": {"type": "string"}},
                 "type": "object",
             },

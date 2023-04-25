@@ -1,4 +1,3 @@
-
 import faker.config
 
 from oarepo_model_builder.builder import ModelBuilder

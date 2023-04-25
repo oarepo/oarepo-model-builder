@@ -1,9 +1,9 @@
 from .facets import FacetsModelComponent
 from .invenio import InvenioModelComponent
+from .marshmallow import MarshmallowModelComponent
 from .model_saver import SavedModelComponent
 from .resource import ResourceModelComponent
 from .sample import SampleModelComponent
-from .marshmallow import MarshmallowModelComponent
 from .ui import UIModelComponent
 
 __all__ = [
