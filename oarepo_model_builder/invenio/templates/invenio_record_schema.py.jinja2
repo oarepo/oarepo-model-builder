@@ -15,5 +15,12 @@ from {{imp.import_path|package_name}} import {{imp.import_path|base_name}}
 {% endfor %}
 
 {% for cls in generated_classes %}
-{{cls}}
+class {{cls.class_name|base_name}}({% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{% endfor %}):
+{% if cls.strict %}
+    class Meta:
+        unknown = ma.RAISE
+{% endif %}
+{% for fld in cls.fields %}
+    {{fld.key}} = {{fld.full_definition}}
+{% endfor %}
 {% endfor %}

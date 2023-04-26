@@ -8,13 +8,8 @@ from oarepo_model_builder.datatypes import DataTypeComponent
 from oarepo_model_builder.validation.utils import ImportSchema, StrictSchema
 
 from ...datatypes import DataType, Import
-
-
-@dataclasses.dataclass
-class MarshmallowField:
-    key: str
-    definition: str
-    imports: List[Import] = dataclasses.field(default_factory=list)
+import copy
+from .graph import MarshmallowField
 
 
 class PropertyMarshmallowSchema(StrictSchema):
@@ -39,27 +34,34 @@ class RegularMarshmallowComponent(DataTypeComponent):
             required=False,
         )
 
-    def marshmallow_field(self, datatype: DataType, **kwargs):
+    def marshmallow_field(
+        self, datatype: DataType, *, fields: List[MarshmallowField], **kwargs
+    ):
         marshmallow = datatype.section_marshmallow.config
-        imports = [
-            Import(x.get("import"), x.get("alias"))
-            for x in marshmallow.get("imports", [])
-        ]
+        imports = Import.from_config(marshmallow.get("imports", []))
         field = marshmallow.get("field", None)
         if not field:
-            field_class = marshmallow.get("field-class", datatype.marshmallow_field)
+            field_class = marshmallow.get("field-class")
+            if not field_class:
+                return
             field_decl = [
                 field_class,
                 "(",
-                ", ".join(self._marshmallow_field_arguments(datatype, marshmallow)),
+                ", ".join(
+                    self._marshmallow_field_arguments(
+                        datatype, datatype.section_marshmallow, marshmallow, **kwargs
+                    )
+                ),
                 ")",
             ]
             field = "".join(field_decl)
-        return MarshmallowField(
-            marshmallow.get("field-name", datatype.key), field, imports
+        fields.append(
+            MarshmallowField(
+                marshmallow.get("field-name", datatype.key), field, imports
+            )
         )
 
-    def _marshmallow_field_arguments(self, datatype, marshmallow):
+    def _marshmallow_field_arguments(self, datatype, section, marshmallow):
         arguments = copy.copy(marshmallow.get("arguments", []))
         read = marshmallow.get("read", True)
         write = marshmallow.get("write", True)
@@ -75,7 +77,7 @@ class RegularMarshmallowComponent(DataTypeComponent):
             arguments.append(f'data_key="{key}"')
             arguments.append(f'attribute="{key}"')
 
-        validators = definition.get("validators", [])
+        validators = marshmallow.get("validators", [])
         if validators:
             arguments.append(f"validate=[{', '.join(validators)}]")
 

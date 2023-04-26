@@ -1,12 +1,20 @@
 import marshmallow as ma
 from marshmallow import fields
+import dataclasses
+from typing import List
 
-from oarepo_model_builder.datatypes import ObjectDataType
+from oarepo_model_builder.datatypes import ObjectDataType, datatypes
 from oarepo_model_builder.utils.absolute_class import convert_to_absolute_class_name
 from oarepo_model_builder.utils.python_name import convert_name_to_python_class
 from oarepo_model_builder.validation import InvalidModelException
 from oarepo_model_builder.validation.utils import ImportSchema
-from .field import PropertyMarshmallowSchema, RegularMarshmallowComponent
+from .field import (
+    PropertyMarshmallowSchema,
+    RegularMarshmallowComponent,
+    MarshmallowField,
+    Import,
+)
+from .graph import MarshmallowClass
 
 
 class ExtraField(ma.Schema):
@@ -116,6 +124,24 @@ class ObjectMarshmallowMixin:
             "Please specify your own class name for marshmallow at this path"
         )
 
+    def _build_class(self, datatype, marshmallow, children, field_generator, classes):
+        fields = []
+        for _, c in sorted(children.items()):
+            datatypes.call_components(c, field_generator, fields=fields)
+        extra_fields = [
+            MarshmallowField(f["name"], f["value"])
+            for f in marshmallow.get("extra-fields", [])
+        ]
+        classes.append(
+            MarshmallowClass(
+                class_name=marshmallow["schema-class"],
+                base_classes=marshmallow.get("base-classes", []),
+                imports=Import.from_config(marshmallow.get("imports", [])),
+                fields=[*fields, *extra_fields],
+                strict=True,
+            )
+        )
+
 
 class ObjectMarshmallowComponent(ObjectMarshmallowMixin, RegularMarshmallowComponent):
     eligible_datatypes = [ObjectDataType]
@@ -140,4 +166,13 @@ class ObjectMarshmallowComponent(ObjectMarshmallowMixin, RegularMarshmallowCompo
             marshmallow_package,
             datatype.section_marshmallow.fingerprint,
             "Schema",
+        )
+
+    def marshmallow_build_class(self, *, datatype, classes, **kwargs):
+        self._build_class(
+            datatype,
+            datatype.section_marshmallow.config,
+            datatype.section_marshmallow.children,
+            "marshmallow_field",
+            classes,
         )

@@ -1,12 +1,86 @@
-from oarepo_model_builder.datatypes import DataType
+from oarepo_model_builder.datatypes import DataType, datatypes
 
 from .invenio_base import InvenioBaseClassPythonBuilder
+from oarepo_model_builder.datatypes.components.marshmallow.object import (
+    MarshmallowClass,
+)
+from typing import List
+from collections import defaultdict
+from oarepo_model_builder.utils.jinja import package_name
+from oarepo_model_builder.datatypes.components.marshmallow.graph import (
+    sort_by_reference_count,
+    collect_imports,
+)
 
 
 class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_schema"
     class_config = "record-schema-class"
     template = "record-schema"
+    extra_imports = []
 
     def build_node(self, node: DataType):
-        print(node.section_marshmallow.fingerprint)
+        # everything is done in finish
+        pass
+
+    def finish(self, **extra_kwargs):
+        classes: List[MarshmallowClass] = self._generate_classes(self.current_model)
+        classes.sort(
+            key=lambda x: (
+                "Metadata" in x.class_name,
+                "Record" in x.class_name,
+                x.class_name,
+            )
+        )
+        classes_by_packages = defaultdict(list)
+        for cls in classes:
+            classes_by_packages[package_name(cls.class_name)].append(cls)
+        for single_package_classes in classes_by_packages.values():
+            sort_by_reference_count(single_package_classes)
+        if len(classes_by_packages.keys()) > 1:
+            raise Exception("Classes in multiple packages are not handled yet")
+
+        for pn, single_package_classes in classes_by_packages.items():
+            collect_imports(pn, single_package_classes)
+            # generate and merge python source
+            self.generate_package(pn, single_package_classes)
+        # files were generated, so we are not calling super().finish() here
+
+    def _generate_classes(self, node: DataType):
+        classes = []
+        to_process = [node]
+        while to_process:
+            n = to_process.pop(0)
+
+            marshmallow_section = n.section_marshmallow
+            if marshmallow_section.config.get(
+                "schema-class"
+            ) and marshmallow_section.config.get("generate", True):
+                datatypes.call_components(
+                    n,
+                    "marshmallow_build_class",
+                    classes=classes,
+                )
+            to_process.extend(marshmallow_section.children.values())
+            if marshmallow_section.item:
+                to_process.append(marshmallow_section.item)
+        return classes
+
+    def generate_package(self, package_name, package_classes: List[MarshmallowClass]):
+        python_path = self.class_to_path(f"{package_name}.Dummy")
+
+        imports = [*self.extra_imports]
+
+        for cls in package_classes:
+            for fld in cls.fields:
+                imports.extend(fld.imports)
+
+        imports = list(sorted(set(imports), key=lambda x: (x.import_path, x.alias)))
+
+        self.process_template(
+            python_path,
+            self.template,
+            current_package_name=package_name,
+            imports=imports,
+            generated_classes=package_classes,
+        )

@@ -14,7 +14,24 @@ from ..utils.properties import class_property
 from ..validation.utils import PermissiveSchema
 from ..utils.deepmerge import deepmerge
 
-Import = namedtuple("Import", "import_path,alias")
+
+@dataclasses.dataclass
+class Import:
+    import_path: str
+    alias: str
+
+    @staticmethod
+    def from_config(d):
+        if isinstance(d, dict):
+            return Import(d["import"], d.get("alias"))
+        elif isinstance(d, (tuple, list)):
+            return [Import.from_config(x) for x in d]
+
+    def __hash__(self):
+        return hash(self.import_path) ^ hash(self.alias)
+
+    def __eq__(self, o):
+        return self.import_path == o.import_path and self.alias == o.alias
 
 
 @dataclasses.dataclass

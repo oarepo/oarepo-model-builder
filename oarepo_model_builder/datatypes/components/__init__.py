@@ -1,5 +1,9 @@
 from .facets import RegularFacetsComponent
-from .marshmallow import ObjectMarshmallowComponent, RegularMarshmallowComponent
+from .marshmallow import (
+    ObjectMarshmallowComponent,
+    RegularMarshmallowComponent,
+    ArrayMarshmallowComponent,
+)
 from .model import (
     FacetsModelComponent,
     InvenioModelComponent,
@@ -27,4 +31,5 @@ DEFAULT_COMPONENTS = [
     RegularUIComponent,
     ObjectUIComponent,
     UIModelComponent,
+    ArrayMarshmallowComponent,
 ]

@@ -10,6 +10,7 @@ from .object import (
     ObjectMarshmallowMixin,
     ObjectMarshmallowSchema,
 )
+from .array import ArrayMarshmallowComponent
 
 __all__ = [
     "RegularMarshmallowComponent",
@@ -20,4 +21,5 @@ __all__ = [
     "ObjectMarshmallowExtraSchema",
     "ObjectMarshmallowMixin",
     "ObjectMarshmallowSchema",
+    "ArrayMarshmallowComponent",
 ]
