@@ -21,7 +21,6 @@ from oarepo_model_builder.schema import ModelSchema
 from .utils import strip_whitespaces
 
 OAREPO_MARSHMALLOW = "marshmallow"
-B_SCHEMA = 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()'
 
 
 def get_test_schema(**props):
@@ -238,17 +237,19 @@ def test_use_nested_schema_same_file(fulltext_builder):
         data = f.read()
         print(data)
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema):
-        \"""TestSchema schema.\"""
-        
-        a = ma_fields.Nested(lambda: B())""",
+        strip_whitespaces(
+            """
+class TestRecordSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.Nested(lambda: B())"""
         )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
-    assert "classB(ma.Schema)" not in re.sub(r"\s", "", data)
+    assert strip_whitespaces("class B") not in strip_whitespaces(data)
 
 
 def test_use_nested_schema_different_file(fulltext_builder):
@@ -270,10 +271,19 @@ def test_use_nested_schema_different_file(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
-    assert re.sub(r"\s", "", "from c import B") in re.sub(r"\s", "", data)
+    assert strip_whitespaces("from c import B") in strip_whitespaces(data)
     assert (
-        'classTestSchema(ma.Schema):"""TestSchemaschema."""a=ma_fields.Nested(lambda:B())'
-        in re.sub(r"\s", "", data)
+        strip_whitespaces(
+            """
+class TestRecordSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.Nested(lambda: B())"""
+        )
+        in strip_whitespaces(data)
     )
 
 
@@ -299,14 +309,33 @@ def test_generate_nested_schema_array(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
-    assert B_SCHEMA in re.sub(r"\s", "", data)
     assert (
-        'classTestSchema(ma.Schema):"""TestSchemaschema."""a=ma_fields.List(ma_fields.Nested(lambda:B()))'
-        in re.sub(r"\s", "", data)
+        strip_whitespaces(
+            """
+class TestRecordSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.List(ma_fields.Nested(lambda: BSchema()))
+
+
+class BSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    b = ma_fields.String()
+        """
+        )
+        in strip_whitespaces(data)
     )
 
 
 def test_extend_existing(fulltext_builder):
+    "Test that if there is a marshmallow file present on the filesystem it gets extended"
     schema = get_test_schema(a={"type": "keyword"}, b={"type": "keyword"})
     fulltext_builder.filesystem = InMemoryFileSystem()
 
@@ -336,7 +365,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {
-                "schema-class": ".schema2.B",
+                "schema-class": "..schema2.B",
                 "generate": True,
             },
             "properties": {
@@ -355,24 +384,41 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         data = f.read()
 
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema):
-        \"""TestSchema schema.\"""
-    
-        a = ma_fields.Nested(lambda:B())""",
-        )
-        in re.sub(r"\s", "", data)
-    )
+        strip_whitespaces(
+            """
 
-    assert "from test.services.records.schema2 import B" in data
+from test.services.records.schema2 import BSchema
+
+class TestRecordSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.Nested(lambda: BSchema())        
+        """
+        )
+        in strip_whitespaces(data)
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema2.py")
     ) as f:
         data = f.read()
-    assert B_SCHEMA in re.sub(r"\s", "", data)
+    assert (
+        strip_whitespaces(
+            """
+class BSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    b = ma_fields.String()        
+        """
+        )
+        in strip_whitespaces(data)
+    )
 
 
 def test_generate_nested_schema_relative_same_file(fulltext_builder):
@@ -399,15 +445,27 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
         data = f.read()
 
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema):
-        \"""TestSchema schema.\"""
+        strip_whitespaces(
+            """
+class TestRecordSchema(ma.Schema):
 
-        a = ma_fields.Nested(lambda:B())""",
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.Nested(lambda: BSchema())
+
+
+class BSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    b = ma_fields.String()
+            """
         )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
 
 
@@ -416,7 +474,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {
-                "schema-class": "..schema2.B",
+                "schema-class": "...schema2.B",
                 "generate": True,
             },
             "properties": {
@@ -435,21 +493,33 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         data = f.read()
 
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema):
-        \"""TestSchema schema.\"""
+        strip_whitespaces(
+            """
+from test.services.schema2 import BSchema
+class TestRecordSchema(ma.Schema):
+    class Meta:
+        unknown = ma.RAISE
 
-        a = ma_fields.Nested(lambda: B())""",
+    a = ma_fields.Nested(lambda: BSchema())
+        """
         )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
-
-    assert "from test.services.schema2 import B" in data
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "schema2.py")
     ) as f:
         data = f.read()
-    assert B_SCHEMA in re.sub(r"\s", "", data)
+    assert (
+        strip_whitespaces(
+            """
+class BSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+    b = ma_fields.String()
+        """
+        )
+        in strip_whitespaces(data)
+    )

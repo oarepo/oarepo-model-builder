@@ -67,6 +67,10 @@ def qualified_name(package_name: str, class_name: str):
     if "." not in class_name:
         return f"{package_name}.{class_name}"
     if class_name.startswith("."):
+        # package_name: aaa.bbb, class name .C => aaa.bbb.C
+        # package_name: aaa.bbb, class name ..C => aaa.C
+        # package_name: aaa.bbb, class name ...C => C
+        class_name = class_name[1:]
         package_path = package_name.split(".")
         while class_name.startswith("."):
             if package_path:

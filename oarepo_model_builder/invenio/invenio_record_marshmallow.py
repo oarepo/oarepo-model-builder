@@ -74,6 +74,7 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
         imports = [*self.extra_imports]
 
         for cls in package_classes:
+            imports.extend(cls.imports)
             for fld in cls.fields:
                 imports.extend(fld.imports)
 

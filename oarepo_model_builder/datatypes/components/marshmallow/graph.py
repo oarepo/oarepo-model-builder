@@ -102,7 +102,7 @@ def collect_imports(current_package_name, classes_list: List[MarshmallowClass]):
                 continue
             # if from different package,
             if package_name(fld.reference.reference) != current_package_name:
-                cls.imports.append(Import(import_path=fld.reference))
+                fld.imports.append(Import(import_path=fld.reference.reference))
 
 
 @dataclasses.dataclass
@@ -164,4 +164,3 @@ def set_package_dependencies(classes_by_package):
                     fld.imports.append(Import(fld.reference.reference))
                 elif reference_package_name in p.accessor_dependencies:
                     fld.reference.accessor = f"get{base_name(fld.reference.reference)}"
-
