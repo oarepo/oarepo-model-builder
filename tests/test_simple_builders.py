@@ -411,7 +411,7 @@ from invenio_records_resources.services import RecordServiceConfig
 from oarepo_runtime.relations.components import CachingRelationsComponent
 from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
-from test.services.records.schema import TestSchema
+from test.services.records.schema import TestRecordSchema
 from test.services.records.search import TestSearchOptions
 
 class TestServiceConfig(RecordServiceConfig):
@@ -420,7 +420,7 @@ class TestServiceConfig(RecordServiceConfig):
     
     permission_policy_cls = TestPermissionPolicy
     
-    schema = TestSchema
+    schema = TestRecordSchema
     
     search = TestSearchOptions
     
