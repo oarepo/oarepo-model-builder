@@ -1,7 +1,8 @@
 import dataclasses
-from typing import List, Dict, Optional
+from typing import List, Optional
+
+from ....utils.python_name import base_name, package_name
 from ...datatypes import Import
-from ....utils.jinja import base_name
 
 
 @dataclasses.dataclass
@@ -21,7 +22,6 @@ class MarshmallowField:
 
 @dataclasses.dataclass
 class MarshmallowReference:
-    owner: "MarshmallowClass"
     reference: str
     referenced_class: "MarshmallowClass" = None
     accessor: Optional[str] = None
@@ -99,7 +99,6 @@ def collect_imports(current_package_name, classes_list: List[MarshmallowClass]):
             if fld.reference.accessor:
                 # local accessor handles its own imports inside the accessor
                 continue
-            # if from different package, 
-            if package_name(fld.reference) != current_package_name:
+            # if from different package,
+            if package_name(fld.reference.reference) != current_package_name:
                 cls.imports.append(Import(import_path=fld.reference))
-    

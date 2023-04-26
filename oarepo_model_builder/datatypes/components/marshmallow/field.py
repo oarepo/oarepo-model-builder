@@ -1,4 +1,4 @@
-import dataclasses
+import copy
 from typing import List
 
 import marshmallow as ma
@@ -8,7 +8,6 @@ from oarepo_model_builder.datatypes import DataTypeComponent
 from oarepo_model_builder.validation.utils import ImportSchema, StrictSchema
 
 from ...datatypes import DataType, Import
-import copy
 from .graph import MarshmallowField
 
 

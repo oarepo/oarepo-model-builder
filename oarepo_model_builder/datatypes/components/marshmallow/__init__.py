@@ -1,16 +1,16 @@
+from .array import ArrayMarshmallowComponent
 from .field import (
-    RegularMarshmallowComponent,
     MarshmallowField,
     PropertyMarshmallowSchema,
+    RegularMarshmallowComponent,
 )
 from .object import (
-    ObjectMarshmallowComponent,
     ExtraField,
+    ObjectMarshmallowComponent,
     ObjectMarshmallowExtraSchema,
     ObjectMarshmallowMixin,
     ObjectMarshmallowSchema,
 )
-from .array import ArrayMarshmallowComponent
 
 __all__ = [
     "RegularMarshmallowComponent",

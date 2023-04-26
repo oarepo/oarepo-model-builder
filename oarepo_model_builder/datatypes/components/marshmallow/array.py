@@ -1,9 +1,9 @@
+from typing import List
+
+from ...containers.array import ArrayDataType
+from ...datatypes import DataType, Section, datatypes
 from .field import RegularMarshmallowComponent
 from .graph import MarshmallowField
-from ...containers.array import ArrayDataType
-from ...datatypes import Section, datatypes, DataType
-
-from typing import List
 
 
 class ArrayMarshmallowComponent(RegularMarshmallowComponent):
@@ -29,7 +29,7 @@ class ArrayMarshmallowComponent(RegularMarshmallowComponent):
         section: Section,
         marshmallow,
         *,
-        item_field: MarshmallowField = None
+        item_field: MarshmallowField = None,
     ):
         args = [item_field.full_definition]
         args.extend(

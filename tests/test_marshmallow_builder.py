@@ -18,6 +18,8 @@ from oarepo_model_builder.model_preprocessors.opensearch import (
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 
+from .utils import strip_whitespaces
+
 OAREPO_MARSHMALLOW = "marshmallow"
 B_SCHEMA = 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()'
 
@@ -98,10 +100,21 @@ def test_array_of_objects(fulltext_builder):
     ) as f:
         data = f.read()
     assert (
-        'class AItemSchema(ma.Schema):\n    """AItemSchema schema."""\n    b = ma_fields.Integer()'
-        in data
+        strip_whitespaces(
+            """
+class TestRecordSchema(ma.Schema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))
+
+class AItemSchema(ma.Schema):
+    class Meta:
+        unknown = ma.RAISE
+    b = ma_fields.Integer()
+"""
+        )
+        in strip_whitespaces(data)
     )
-    assert "a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))" in data
 
 
 def test_generate_nested_schema_same_file(fulltext_builder):

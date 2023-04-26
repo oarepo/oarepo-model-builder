@@ -1,7 +1,6 @@
 import copy
 import dataclasses
 import json
-from collections import namedtuple
 from functools import cached_property, lru_cache
 from typing import Any, Dict, List, Type, Union
 
@@ -9,10 +8,10 @@ import importlib_metadata
 import marshmallow as ma
 from marshmallow import fields
 
+from ..utils.deepmerge import deepmerge
 from ..utils.import_class import import_class
 from ..utils.properties import class_property
 from ..validation.utils import PermissiveSchema
-from ..utils.deepmerge import deepmerge
 
 
 @dataclasses.dataclass

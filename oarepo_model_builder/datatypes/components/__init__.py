@@ -1,8 +1,8 @@
 from .facets import RegularFacetsComponent
 from .marshmallow import (
+    ArrayMarshmallowComponent,
     ObjectMarshmallowComponent,
     RegularMarshmallowComponent,
-    ArrayMarshmallowComponent,
 )
 from .model import (
     FacetsModelComponent,

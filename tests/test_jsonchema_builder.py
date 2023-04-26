@@ -11,7 +11,6 @@ from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreproc
 from oarepo_model_builder.model_preprocessors.invenio_base_classes import (
     InvenioBaseClassesModelPreprocessor,
 )
-
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema

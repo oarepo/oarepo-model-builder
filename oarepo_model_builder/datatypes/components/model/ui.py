@@ -1,8 +1,8 @@
 import marshmallow as ma
 
-from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.datatypes import ModelDataType
 
-from ..ui import ObjectUIExtraSchema, ObjectUIComponent
+from ..ui import ObjectUIComponent, ObjectUIExtraSchema
 
 ModelUISchema = ObjectUIExtraSchema
 

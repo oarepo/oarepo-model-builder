@@ -1,16 +1,17 @@
-from oarepo_model_builder.datatypes import DataType, datatypes
+from collections import defaultdict
+from typing import List
 
-from .invenio_base import InvenioBaseClassPythonBuilder
+from oarepo_model_builder.datatypes import DataType, datatypes
+from oarepo_model_builder.datatypes.components.marshmallow.graph import (
+    collect_imports,
+    sort_by_reference_count,
+)
 from oarepo_model_builder.datatypes.components.marshmallow.object import (
     MarshmallowClass,
 )
-from typing import List
-from collections import defaultdict
 from oarepo_model_builder.utils.jinja import package_name
-from oarepo_model_builder.datatypes.components.marshmallow.graph import (
-    sort_by_reference_count,
-    collect_imports,
-)
+
+from .invenio_base import InvenioBaseClassPythonBuilder
 
 
 class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):

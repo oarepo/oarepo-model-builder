@@ -185,12 +185,12 @@ class InvenioModelPreprocessor(ModelPreprocessor):
         self.set(
             model,
             "record-schema-class",
-            lambda: f"{model['record-services-package']}.schema.{record_prefix}Schema",
+            lambda: f"{model['record-services-package']}.schema.{record_prefix}RecordSchema",
         )
         self.set(
             model,
             "record-ui-schema-class",
-            lambda: f"{model['record-services-package']}.ui_schema.{record_prefix}UISchema",
+            lambda: f"{model['record-services-package']}.ui_schema.{record_prefix}RecordUISchema",
         )
         self.set(
             model,

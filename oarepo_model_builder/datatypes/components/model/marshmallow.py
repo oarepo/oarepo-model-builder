@@ -30,7 +30,14 @@ class MarshmallowModelMixin:
         for node in datatype.deep_iter():
             datatypes.call_components(
                 node,
-                self.build_class_names_method,
+                self.build_class_names_existing_method,
+                classes=classes,
+                marshmallow_package=marshmallow_package,
+            )
+        for node in datatype.deep_iter():
+            datatypes.call_components(
+                node,
+                self.build_class_names_new_method,
                 classes=classes,
                 marshmallow_package=marshmallow_package,
             )
@@ -40,8 +47,9 @@ class MarshmallowModelComponent(MarshmallowModelMixin, ObjectMarshmallowComponen
     eligible_datatypes = [ModelDataType]
     model_marshmallow_class_name = "record-schema-class"
     context_registered_classes_name = "marshmallow-classes"
-    build_class_names_method = "marshmallow_build_class_name"
     register_class_names_method = "marshmallow_register_class_name"
+    build_class_names_existing_method = "marshmallow_build_class_name_existing"
+    build_class_names_new_method = "marshmallow_build_class_name_new"
 
     class ModelSchema(ma.Schema):
         marshmallow = ma.fields.Nested(ModelMarshmallowSchema)
