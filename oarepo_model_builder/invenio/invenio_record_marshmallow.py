@@ -20,6 +20,7 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
     class_config = "record-schema-class"
     template = "record-schema"
     extra_imports = []
+    build_class_method = "marshmallow_build_class"
 
     def build_node(self, node: DataType):
         # everything is done in finish
@@ -60,7 +61,7 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
             ) and marshmallow_section.config.get("generate", True):
                 datatypes.call_components(
                     n,
-                    "marshmallow_build_class",
+                    self.build_class_method,
                     classes=classes,
                 )
             to_process.extend(marshmallow_section.children.values())

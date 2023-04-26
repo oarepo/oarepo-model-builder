@@ -12,7 +12,7 @@ class PropertyUISchema(StrictSchema):
 
 
 class RegularUIComponent(DataTypeComponent):
-    class MarshmallowSchema(ma.Schema):
+    class ModelSchema(ma.Schema):
         marshmallow = ma.fields.Nested(
             PropertyUISchema,
             required=False,
@@ -23,12 +23,12 @@ class ObjectUIExtraSchema(ma.Schema):
     marshmallow = fields.Nested(ObjectMarshmallowSchema)
 
 
-class ObjectUISchema(PropertyUISchema, ObjectUIExtraSchema):
+class ObjectUISchema(ObjectUIExtraSchema, PropertyUISchema):
     pass
 
 
 class ObjectUIComponent(RegularUIComponent):
     eligible_datatypes = [ObjectDataType]
 
-    class MarshmallowSchema(ma.Schema):
+    class ModelSchema(ma.Schema):
         ui = ma.fields.Nested(ObjectUISchema)

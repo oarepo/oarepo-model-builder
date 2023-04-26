@@ -7,7 +7,7 @@ from .object import (
 from ... import ObjectDataType, DataType
 import marshmallow as ma
 from typing import List
-from .graph import MarshmallowField
+from .graph import MarshmallowField, MarshmallowReference
 
 
 class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponent):
