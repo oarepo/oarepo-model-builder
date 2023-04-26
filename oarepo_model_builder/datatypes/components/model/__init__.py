@@ -5,6 +5,7 @@ from .model_saver import SavedModelComponent
 from .resource import ResourceModelComponent
 from .sample import SampleModelComponent
 from .ui import UIModelComponent
+from .ui_marshmallow import UIMarshmallowModelComponent
 
 __all__ = [
     "ResourceModelComponent",
@@ -14,4 +15,5 @@ __all__ = [
     "SampleModelComponent",
     "MarshmallowModelComponent",
     "UIModelComponent",
+    "UIMarshmallowModelComponent",
 ]

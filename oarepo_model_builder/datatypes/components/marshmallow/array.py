@@ -2,22 +2,25 @@ from typing import List
 
 from ...containers.array import ArrayDataType
 from ...datatypes import DataType, Section, datatypes
-from .field import RegularMarshmallowComponent
+from .field import RegularMarshmallowComponent, RegularMarshmallowComponentMixin
 from .graph import MarshmallowField
 
 
-class ArrayMarshmallowComponent(RegularMarshmallowComponent):
-    eligible_datatypes = [ArrayDataType]
-
-    def marshmallow_field(
-        self, datatype: DataType, *, fields: List[MarshmallowField], **kwargs
+class ArrayMarshmallowComponentMixin(RegularMarshmallowComponentMixin):
+    def _create_marshmallow_field(
+        self, datatype, section, marshmallow, fields, field_accessor=None, **kwargs
     ):
         f = []
-        section = datatype.section_marshmallow
-        datatypes.call_components(section.item, "marshmallow_field", fields=f)
+        datatypes.call_components(section.item, field_accessor, fields=f)
         item_field: MarshmallowField = f[0]
         f = []
-        super().marshmallow_field(datatype, fields=f, item_field=item_field)
+        super()._create_marshmallow_field(
+            datatype=datatype,
+            section=section,
+            marshmallow=marshmallow,
+            fields=f,
+            item_field=item_field,
+        )
         fld: MarshmallowField = f[0]
         fld.imports.extend(item_field.imports)
         fld.reference = item_field.reference
@@ -36,3 +39,22 @@ class ArrayMarshmallowComponent(RegularMarshmallowComponent):
             super()._marshmallow_field_arguments(datatype, section, marshmallow)
         )
         return args
+
+
+class ArrayMarshmallowComponent(
+    ArrayMarshmallowComponentMixin, RegularMarshmallowComponent
+):
+    eligible_datatypes = [ArrayDataType]
+
+    def marshmallow_field(
+        self, datatype: DataType, *, fields: List[MarshmallowField], **kwargs
+    ):
+        section = datatype.section_marshmallow
+        self._create_marshmallow_field(
+            datatype,
+            section,
+            section.config,
+            fields,
+            field_accessor="marshmallow_field",
+            **kwargs,
+        )

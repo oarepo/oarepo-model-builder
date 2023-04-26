@@ -12,6 +12,10 @@ from .object import (
     ObjectMarshmallowSchema,
 )
 
+from .ui_field import UIMarshmallowComponent
+from .ui_object import UIObjectMarshmallowComponent
+from .ui_array import UIArrayMarshmallowComponent
+
 __all__ = [
     "RegularMarshmallowComponent",
     "MarshmallowField",
@@ -22,4 +26,7 @@ __all__ = [
     "ObjectMarshmallowMixin",
     "ObjectMarshmallowSchema",
     "ArrayMarshmallowComponent",
+    "UIMarshmallowComponent",
+    "UIObjectMarshmallowComponent",
+    "UIArrayMarshmallowComponent",
 ]

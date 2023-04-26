@@ -28,7 +28,11 @@ def get_test_schema(**props):
         "",
         {
             "settings": {
-                "python": {"use-isort": False, "use-black": False},
+                "python": {
+                    "use-isort": False,
+                    "use-black": False,
+                    "use-autoflake": False,
+                },
             },
             "model": {"package": "test", "properties": props},
         },

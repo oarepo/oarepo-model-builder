@@ -26,17 +26,10 @@ class PropertyMarshmallowSchema(StrictSchema):
     validators = fields.List(fields.String(), required=False)
 
 
-class RegularMarshmallowComponent(DataTypeComponent):
-    class ModelSchema(ma.Schema):
-        marshmallow = ma.fields.Nested(
-            PropertyMarshmallowSchema,
-            required=False,
-        )
-
-    def marshmallow_field(
-        self, datatype: DataType, *, fields: List[MarshmallowField], **kwargs
+class RegularMarshmallowComponentMixin:
+    def _create_marshmallow_field(
+        self, datatype, section, marshmallow, fields, **kwargs
     ):
-        marshmallow = datatype.section_marshmallow.config
         imports = Import.from_config(marshmallow.get("imports", []))
         field = marshmallow.get("field", None)
         if not field:
@@ -48,7 +41,7 @@ class RegularMarshmallowComponent(DataTypeComponent):
                 "(",
                 ", ".join(
                     self._marshmallow_field_arguments(
-                        datatype, datatype.section_marshmallow, marshmallow, **kwargs
+                        datatype, section, marshmallow, **kwargs
                     )
                 ),
                 ")",
@@ -81,3 +74,19 @@ class RegularMarshmallowComponent(DataTypeComponent):
             arguments.append(f"validate=[{', '.join(validators)}]")
 
         return arguments
+
+
+class RegularMarshmallowComponent(RegularMarshmallowComponentMixin, DataTypeComponent):
+    class ModelSchema(ma.Schema):
+        marshmallow = ma.fields.Nested(
+            PropertyMarshmallowSchema,
+            required=False,
+        )
+
+    def marshmallow_field(
+        self, datatype: DataType, *, fields: List[MarshmallowField], **kwargs
+    ):
+        marshmallow = datatype.section_marshmallow
+        self._create_marshmallow_field(
+            datatype, marshmallow, marshmallow.config, fields, **kwargs
+        )
