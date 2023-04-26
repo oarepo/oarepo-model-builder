@@ -9,6 +9,7 @@ from oarepo_model_builder.utils.python_name import (
     base_name,
     convert_name_to_python_class,
     package_name,
+    qualified_name,
 )
 from oarepo_model_builder.validation import InvalidModelException
 from oarepo_model_builder.validation.utils import ImportSchema
@@ -82,6 +83,11 @@ class ObjectMarshmallowMixin:
         generate = marshmallow_config.get("generate", True)
 
         if schema_class:
+            qualified_schema_class = qualified_name(marshmallow_package, schema_class)
+            if qualified_schema_class != schema_class:
+                marshmallow_config["schema-class"] = qualified_schema_class
+                definition_marshmallow["schema-class"] = qualified_schema_class
+                schema_class = qualified_schema_class
             if not generate:
                 if fingerprint not in classes:
                     classes[fingerprint] = schema_class
@@ -122,7 +128,8 @@ class ObjectMarshmallowMixin:
             marshmallow_package = (
                 package_name(original_schema_class) or marshmallow_package
             )
-            suffix = ""
+            if original_schema_class.endswith(suffix):
+                suffix = ""
 
         while datatype:
             if not datatype.key:

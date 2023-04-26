@@ -17,7 +17,7 @@ from ..validation.utils import PermissiveSchema
 @dataclasses.dataclass
 class Import:
     import_path: str
-    alias: str
+    alias: str = None
 
     @staticmethod
     def from_config(d):

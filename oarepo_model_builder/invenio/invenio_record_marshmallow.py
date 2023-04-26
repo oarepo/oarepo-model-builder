@@ -5,6 +5,7 @@ from oarepo_model_builder.datatypes import DataType, datatypes
 from oarepo_model_builder.datatypes.components.marshmallow.graph import (
     collect_imports,
     sort_by_reference_count,
+    set_package_dependencies,
 )
 from oarepo_model_builder.datatypes.components.marshmallow.object import (
     MarshmallowClass,
@@ -39,7 +40,7 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
         for single_package_classes in classes_by_packages.values():
             sort_by_reference_count(single_package_classes)
         if len(classes_by_packages.keys()) > 1:
-            raise Exception("Classes in multiple packages are not handled yet")
+            set_package_dependencies(classes_by_packages)
 
         for pn, single_package_classes in classes_by_packages.items():
             collect_imports(pn, single_package_classes)

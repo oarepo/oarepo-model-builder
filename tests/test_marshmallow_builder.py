@@ -137,26 +137,27 @@ def test_generate_nested_schema_same_file(fulltext_builder):
     ) as f:
         data = f.read()
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class B(ma.Schema):
-        \"""B schema.\"""
-        
-        b = ma_fields.String()""",
+        strip_whitespaces(
+            """
+class TestRecordSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.Nested(lambda: BSchema())
+
+
+class BSchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    b = ma_fields.String()        
+        """
         )
-        in re.sub(r"\s", "", data)
-    )
-    assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema):
-        \"""TestSchema schema.\"""
-        
-        a = ma_fields.Nested(lambda: B())""",
-        )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
 
 
@@ -184,24 +185,36 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         data = f.read()
 
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestSchema(ma.Schema):
-        \"""TestSchema schema.\"""
-    
-        a = ma_fields.Nested(lambda: B())""",
-        )
-        in re.sub(r"\s", "", data)
-    )
+        strip_whitespaces(
+            """
+from test.services.schema2 import BSchema
 
-    assert "from test.services.schema2 import B" in data
+class TestRecordSchema(ma.Schema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.Nested(lambda: BSchema())        
+        """
+        )
+        in strip_whitespaces(data)
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "schema2.py")
     ) as f:
         data = f.read()
-    assert B_SCHEMA in re.sub(r"\s", "", data)
+
+    assert (
+        strip_whitespaces(
+            """
+class BSchema(ma.Schema):
+    class Meta:
+        unknown = ma.RAISE
+
+    b = ma_fields.String()       
+        """
+        )
+        in strip_whitespaces(data)
+    )
 
 
 def test_use_nested_schema_same_file(fulltext_builder):

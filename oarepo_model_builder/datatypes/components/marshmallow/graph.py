@@ -1,5 +1,6 @@
 import dataclasses
-from typing import List, Optional
+from typing import List, Optional, Set
+from collections import defaultdict
 
 from ....utils.python_name import base_name, package_name
 from ...datatypes import Import
@@ -102,3 +103,65 @@ def collect_imports(current_package_name, classes_list: List[MarshmallowClass]):
             # if from different package,
             if package_name(fld.reference.reference) != current_package_name:
                 cls.imports.append(Import(import_path=fld.reference))
+
+
+@dataclasses.dataclass
+class PackageWithDependencies:
+    package: str
+    direct_dependencies: Set[str] = dataclasses.field(default_factory=set)
+    accessor_dependencies: Set[str] = dataclasses.field(default_factory=set)
+    dependencies: Set[str] = dataclasses.field(default_factory=set)
+
+    def add_dependency(self, dependency: str):
+        self.dependencies.add(dependency)
+
+    def remove_dependencies(self, dependencies):
+        for dep in dependencies:
+            if dep in self.dependencies:
+                self.direct_dependencies.add(dep)
+                self.dependencies.remove(dep)
+
+    def break_dependencies(self):
+        self.accessor_dependencies.update(self.dependencies)
+        self.dependencies.clear()
+
+
+def set_package_dependencies(classes_by_package):
+    package_dependencies: List[PackageWithDependencies] = []
+    for p in classes_by_package:
+        pd = PackageWithDependencies(p)
+        package_dependencies.append(pd)
+        for pc in classes_by_package[p]:
+            for fld in pc.fields:
+                if not fld.reference:
+                    continue
+                referenced_package = package_name(fld.reference.reference)
+                if referenced_package in classes_by_package:
+                    pd.add_dependency(referenced_package)
+    to_process = list(package_dependencies)
+    processed_dependencies = set()
+    while to_process:
+        for_another_round = []
+        for c in to_process:
+            if c.dependencies:
+                for_another_round.append(c)
+            else:
+                processed_dependencies.add(c.package)
+        if len(for_another_round) == len(to_process):
+            raise Exception("Cycle found in packages, code missing")
+        else:
+            for c in for_another_round:
+                c.remove_dependencies(processed_dependencies)
+        to_process = for_another_round
+
+    for p in package_dependencies:
+        for cls in classes_by_package[p.package]:
+            for fld in cls.fields:
+                if not fld.reference:
+                    continue
+                reference_package_name = package_name(fld.reference.reference)
+                if reference_package_name in p.direct_dependencies:
+                    fld.imports.append(Import(fld.reference.reference))
+                elif reference_package_name in p.accessor_dependencies:
+                    fld.reference.accessor = f"get{base_name(fld.reference.reference)}"
+
