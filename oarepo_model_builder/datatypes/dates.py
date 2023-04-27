@@ -21,9 +21,6 @@ class DateDataType(BaseDateDataType):
     mapping = {"type": "date", "format": "strict_date"}
     json_schema = {"type": "string", "format": "date"}
 
-    # default_facet_class = "DateFacet"
-    # default_facet_imports = [{"import": "oarepo_runtime.facets.date.DateFacet"}]
-
 
 class TimeDataType(BaseDateDataType):
     model_type = "time"
@@ -42,12 +39,8 @@ class TimeDataType(BaseDateDataType):
     mapping = {"type": "date", "format": "strict_time||strict_time_no_millis"}
     json_schema = {"type": "string", "format": "time"}
 
-    # default_facet_class = "TimeFacet"
-    # default_facet_imports = [{"import": "oarepo_runtime.facets.date.TimeFacet"}]
-
 
 class DateTimeDataType(BaseDateDataType):
-    # marshmallow_field = "ma_fields.String"
     model_type = "datetime"
 
     ui = {
@@ -63,9 +56,6 @@ class DateTimeDataType(BaseDateDataType):
     }
     mapping = {"type": "date", "format": "strict_date_time||strict_date_time_no_millis"}
     json_schema = {"type": "string", "format": "date-time"}
-
-    # default_facet_class = "DateTimeFacet"
-    # default_facet_imports = [{"import": "oarepo_runtime.facets.date.DateTimeFacet"}]
 
 
 class EDTFDataType(BaseDateDataType):
@@ -91,9 +81,6 @@ class EDTFDataType(BaseDateDataType):
     }
     json_schema = {"type": "string", "format": "date-time"}
 
-    # default_facet_class = "EDTFFacet"
-    # default_facet_imports = [{"import": "oarepo_runtime.facets.date.EDTFFacet"}]
-
 
 class EDTFIntervalType(BaseDateDataType):
     model_type = "edtf-interval"
@@ -117,6 +104,3 @@ class EDTFIntervalType(BaseDateDataType):
         "format": "strict_date_time||strict_date_time_no_millis||strict_date||yyyy-MM||yyyy",
     }
     json_schema = {"type": "string", "format": "date-time"}
-
-    # default_facet_class = "EDTFIntervalFacet"
-    # default_facet_imports = [{"import": "oarepo_runtime.facets.date.EDTFIntervalFacet"}]

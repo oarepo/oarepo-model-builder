@@ -14,6 +14,3 @@ class FlattenDataType(DataType):
     }
     json_schema = {"type": "object"}
     mapping = {"enabled": False, "type": "object"}
-
-    # def get_facet(self, stack, parent_path, path_suffix=None):
-    #     return []
