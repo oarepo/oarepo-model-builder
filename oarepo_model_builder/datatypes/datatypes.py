@@ -123,7 +123,7 @@ class AbstractDataType:
 
         # get the default from datatype
         if hasattr(self, name):
-            deepmerge(config, getattr(self, name))
+            deepmerge(config, copy.deepcopy(getattr(self, name)))
 
         section = Section(
             name, config, getattr(self, "children", {}), getattr(self, "item", None)

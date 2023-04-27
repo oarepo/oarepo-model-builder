@@ -33,23 +33,21 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
                 datatype.definition.setdefault("ui", {}).setdefault("marshmallow", {}),
                 classes,
                 marshmallow_package,
-                datatype.section_marshmallow.fingerprint,
+                datatype.section_ui.fingerprint,
                 "UISchema",
             )
 
     def ui_marshmallow_build_class_name_new(
         self, *, datatype, classes, marshmallow_package, **kwargs
     ):
-        if not datatype.section_marshmallow.config.get("marshmallow", {}).get(
-            "schema-class"
-        ):
+        if not datatype.section_ui.config.get("marshmallow", {}).get("schema-class"):
             self._build_class_name(
                 datatype,
                 datatype.section_ui.config.setdefault("marshmallow", {}),
                 datatype.definition.setdefault("ui", {}).setdefault("marshmallow", {}),
                 classes,
                 marshmallow_package,
-                datatype.section_marshmallow.fingerprint,
+                datatype.section_ui.fingerprint,
                 "UISchema",
             )
 
