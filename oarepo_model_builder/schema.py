@@ -201,6 +201,8 @@ class ModelSchema:
         return ret
 
     def _resolve_file_path(self, file_id, source_locations):
+        if file_id in self.included_schemas:
+            return file_id
         for location in source_locations:
             pth = Path(location).parent / file_id
             if pth.exists():
