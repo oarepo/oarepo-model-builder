@@ -3,6 +3,7 @@ from pathlib import Path
 from ..outputs.cfg import CFGOutput
 from . import OutputBuilder
 from .json_base import JSONBaseBuilder
+from .utils import ensure_parent_modules
 
 
 class ModelSaverBuilder(JSONBaseBuilder):
@@ -13,7 +14,7 @@ class ModelSaverBuilder(JSONBaseBuilder):
 
     def build_node(self, node):
         generated = self.generate(node)
-        self.output.merge(generated)
+        self.output.merge({"model": generated})
 
     def generate(self, node):
         section: Section = node.section_model_saver
@@ -30,6 +31,15 @@ class ModelSaverBuilder(JSONBaseBuilder):
         if section.item:
             ret["items"] = self.generate(section.item)
         return ret
+
+    def begin(self, schema, settings):
+        super().begin(schema, settings)
+
+        output_name = self.current_model.definition[self.output_file_name]
+        self.output = self.builder.get_output(self.output_file_type, output_name)
+        ensure_parent_modules(
+            self.builder, Path(output_name), ends_at=self.parent_module_root_name
+        )
 
 
 class ModelRegistrationBuilder(OutputBuilder):
