@@ -31,6 +31,11 @@ class RegularMarshmallowComponentMixin:
     def _create_marshmallow_field(
         self, datatype, section, marshmallow, fields, **kwargs
     ):
+        read = marshmallow.get("read", True)
+        write = marshmallow.get("write", True)
+        if not read and not write:
+            return
+
         imports = Import.from_config(marshmallow.get("imports", []))
         field = marshmallow.get("field", None)
 

@@ -35,6 +35,7 @@ def test_enum():
         },
         isort=False,
         black=False,
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -61,16 +62,13 @@ def test_enum():
     assert (
         strip_whitespaces(
             """
-from oarepo_runtime.validation import validate_datetime
-
 class TestRecordSchema(InvenioBaseRecordSchema):
+
     class Meta:
         unknown = ma.RAISE
-    _id = ma_fields.String(data_key="id", attribute="id")
-    _schema = ma_fields.String(data_key="$schema", attribute="$schema")
+
+
     a = ma_fields.String(validate=[ma_validate.OneOf(['a', 'b', 'c'])])
-    created = ma_fields.String(validate=[validate_datetime])
-    updated = ma_fields.String(validate=[validate_datetime])    
     """
         )
         in strip_whitespaces(data)

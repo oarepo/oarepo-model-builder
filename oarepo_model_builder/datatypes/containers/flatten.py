@@ -13,7 +13,7 @@ class FlattenDataType(DataType):
         "field-class": "ma_fields.Raw",
     }
     json_schema = {"type": "object"}
-    mapping = {"enabled": False}
+    mapping = {"enabled": False, "type": "object"}
 
     # def get_facet(self, stack, parent_path, path_suffix=None):
     #     return []
