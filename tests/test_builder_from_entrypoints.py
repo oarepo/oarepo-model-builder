@@ -1,12 +1,12 @@
 import json
 import os
-import re
 import sys
 from pathlib import Path
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
+
 from .utils import strip_whitespaces
 
 OAREPO_USE = "use"

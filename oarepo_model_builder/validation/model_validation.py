@@ -51,7 +51,6 @@ class ModelFileSchema(ma.Schema):
 
 
 class ModelValidator:
-
     def validate(self, data):
         validator = ModelFileSchema()
         return validator.load(data)

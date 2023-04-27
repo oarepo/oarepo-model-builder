@@ -1,3 +1,4 @@
+import copy
 import json
 
 from deepdiff import DeepDiff
@@ -6,7 +7,6 @@ from ..utils.deepmerge import deepmerge
 from ..utils.verbose import log
 from . import OutputBase
 from .json_stack import JSONStack
-import copy
 
 try:
     import json5
