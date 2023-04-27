@@ -271,7 +271,10 @@ class DataTypes:
         datatype_class = self.get_datatype_class(data.get("type", None))
         if datatype_class:
             return datatype_class(parent, data, key, model, schema)
-        return None
+        raise KeyError(
+            f"Do not have datatype for the following data at path {parent.path}:\n"
+            f"{json.dumps(data, indent=4, ensure_ascii=False)}"
+        )
 
     def get_datatype_class(self, datatype_type):
         return self.datatype_map.get(datatype_type)

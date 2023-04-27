@@ -427,7 +427,7 @@ nr_documents_model = {
                                         "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}, 'hierarchy']",  # NOSONAR
                                         "pid_field": 'Vocabulary.pid.with_type_ctx("institutions")',
                                     },
-                                    "type": "relation",
+                                    "type": "object",
                                 },
                                 "ui": {
                                     "marshmallow": {"field-class": "ma_fields.List"}
@@ -571,7 +571,7 @@ nr_documents_model = {
                                         },
                                     },
                                     "sample": {"skip": False},
-                                    "type": "i18nStr",
+                                    "type": "object",
                                     "required": True,
                                 },
                                 "titleType": {
@@ -971,7 +971,7 @@ nr_documents_model = {
                                             "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}, 'hierarchy']",
                                             "pid_field": 'Vocabulary.pid.with_type_ctx("institutions")',
                                         },
-                                        "type": "relation",
+                                        "type": "object",
                                     },
                                     "ui": {
                                         "marshmallow": {"field-class": "ma_fields.List"}
@@ -1319,7 +1319,7 @@ nr_documents_model = {
                                         "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",  # NOSONAR
                                         "pid_field": 'Vocabulary.pid.with_type_ctx("contributor-roles")',
                                     },
-                                    "type": "relation",
+                                    "type": "object",
                                 },
                                 "affiliations": {
                                     "marshmallow": {
@@ -1652,7 +1652,7 @@ nr_documents_model = {
                                             "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}, 'hierarchy']",
                                             "pid_field": 'Vocabulary.pid.with_type_ctx("institutions")',
                                         },
-                                        "type": "relation",
+                                        "type": "object",
                                     },
                                     "ui": {
                                         "marshmallow": {"field-class": "ma_fields.List"}
@@ -1966,7 +1966,7 @@ nr_documents_model = {
                             "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                             "pid_field": 'Vocabulary.pid.with_type_ctx("resource-types")',
                         },
-                        "type": "relation",
+                        "type": "object",
                         "required": True,
                     },
                     "dateAvailable": {
@@ -2133,7 +2133,7 @@ nr_documents_model = {
                                             },
                                         },
                                         "sample": {"skip": False},
-                                        "type": "i18nStr",
+                                        "type": "object",
                                     },
                                     "ui": {
                                         "detail": "string",
@@ -2380,7 +2380,7 @@ nr_documents_model = {
                                 "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                                 "pid_field": 'Vocabulary.pid.with_type_ctx("subject-categories")',
                             },
-                            "type": "relation",
+                            "type": "object",
                         },
                         "ui": {"marshmallow": {"field-class": "ma_fields.List"}},
                         "label.en": "Subject categories",
@@ -2535,7 +2535,7 @@ nr_documents_model = {
                                 "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                                 "pid_field": 'Vocabulary.pid.with_type_ctx("languages")',
                             },
-                            "type": "relation",
+                            "type": "object",
                         },
                         "ui": {"marshmallow": {"field-class": "ma_fields.List"}},
                         "label.en": "Language",
@@ -2629,7 +2629,7 @@ nr_documents_model = {
                                 },
                             },
                             "sample": {"skip": False},
-                            "type": "i18nStr",
+                            "type": "object",
                         },
                         "ui": {
                             "detail": "multilingual",
@@ -2709,7 +2709,7 @@ nr_documents_model = {
                                 },
                             },
                             "sample": {"skip": False},
-                            "type": "i18nStr",
+                            "type": "object",
                         },
                         "ui": {
                             "detail": "multilingual",
@@ -2789,7 +2789,7 @@ nr_documents_model = {
                                 },
                             },
                             "sample": {"skip": False},
-                            "type": "i18nStr",
+                            "type": "object",
                         },
                         "ui": {
                             "detail": "multilingual",
@@ -2953,7 +2953,7 @@ nr_documents_model = {
                                 "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                                 "pid_field": 'Vocabulary.pid.with_type_ctx("licenses")',
                             },
-                            "type": "relation",
+                            "type": "object",
                         },
                         "ui": {"marshmallow": {"field-class": "ma_fields.List"}},
                         "label.en": "Authors",
@@ -3095,7 +3095,7 @@ nr_documents_model = {
                             "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                             "pid_field": 'Vocabulary.pid.with_type_ctx("access-rights")',
                         },
-                        "type": "relation",
+                        "type": "object",
                     },
                     "relatedItems": {
                         "marshmallow": {
@@ -3498,7 +3498,7 @@ nr_documents_model = {
                                                         "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}, 'hierarchy']",
                                                         "pid_field": 'Vocabulary.pid.with_type_ctx("institutions")',
                                                     },
-                                                    "type": "relation",
+                                                    "type": "object",
                                                 },
                                                 "ui": {
                                                     "marshmallow": {
@@ -3863,7 +3863,7 @@ nr_documents_model = {
                                                     "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                                                     "pid_field": 'Vocabulary.pid.with_type_ctx("contributor-roles")',
                                                 },
-                                                "type": "relation",
+                                                "type": "object",
                                             },
                                             "affiliations": {
                                                 "marshmallow": {
@@ -4210,7 +4210,7 @@ nr_documents_model = {
                                                         "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}, 'hierarchy']",
                                                         "pid_field": 'Vocabulary.pid.with_type_ctx("institutions")',
                                                     },
-                                                    "type": "relation",
+                                                    "type": "object",
                                                 },
                                                 "ui": {
                                                     "marshmallow": {
@@ -4752,7 +4752,7 @@ nr_documents_model = {
                                         "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                                         "pid_field": 'Vocabulary.pid.with_type_ctx("item-relation-types")',
                                     },
-                                    "type": "relation",
+                                    "type": "object",
                                 },
                                 "itemResourceType": {
                                     "marshmallow": {
@@ -4903,7 +4903,7 @@ nr_documents_model = {
                                         "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                                         "pid_field": 'Vocabulary.pid.with_type_ctx("resource-types")',
                                     },
-                                    "type": "relation",
+                                    "type": "object",
                                 },
                             },
                             "description": "linkdata, propojení přidružených dokumentů a datasetů.",
@@ -5141,7 +5141,7 @@ nr_documents_model = {
                                         "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                                         "pid_field": 'Vocabulary.pid.with_type_ctx("funders")',
                                     },
-                                    "type": "relation",
+                                    "type": "object",
                                 },
                             },
                             "ui": {
@@ -5363,7 +5363,7 @@ nr_documents_model = {
                                 },
                             },
                             "sample": {"skip": False},
-                            "type": "i18nStr",
+                            "type": "object",
                         },
                         "ui": {
                             "detail": "string",
@@ -5995,7 +5995,7 @@ nr_documents_model = {
                                                 "keys": "['id', 'title', {'key': 'type.id', 'target': 'type'}]",
                                                 "pid_field": 'Vocabulary.pid.with_type_ctx("countries")',
                                             },
-                                            "type": "relation",
+                                            "type": "object",
                                         },
                                     },
                                     "ui": {
