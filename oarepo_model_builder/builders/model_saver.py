@@ -1,11 +1,8 @@
 from pathlib import Path
 
-from oarepo_model_builder.datatypes import DataType, datatypes
-
 from ..outputs.cfg import CFGOutput
 from . import OutputBuilder
 from .json_base import JSONBaseBuilder
-from .utils import ensure_parent_modules
 
 
 class ModelSaverBuilder(JSONBaseBuilder):

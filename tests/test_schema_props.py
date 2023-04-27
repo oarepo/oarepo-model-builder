@@ -1,6 +1,5 @@
 import json
 import os
-import re
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
@@ -20,6 +19,7 @@ from oarepo_model_builder.model_preprocessors.opensearch import (
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
+
 from .utils import strip_whitespaces
 
 

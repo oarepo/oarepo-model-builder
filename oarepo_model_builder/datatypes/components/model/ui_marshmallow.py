@@ -1,5 +1,3 @@
-
-
 from oarepo_model_builder.datatypes import ModelDataType
 
 from ..marshmallow import ObjectMarshmallowExtraSchema, UIObjectMarshmallowComponent
