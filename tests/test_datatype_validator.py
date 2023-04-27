@@ -88,6 +88,11 @@ def test_array_of_objects():
 
 
 def test_ui():
+    # remove ui component as we are providing our own
+    for ci, c in reversed(list(enumerate(datatypes.components))):
+        if "UI" in type(c).__name__:
+            del datatypes.components[ci]
+
     datatypes.components.append(UIDataTypeComponent())
     assert UIDataTypeComponent.ModelSchema in datatypes.get_class_components(
         DataType, "ModelSchema"
@@ -98,6 +103,11 @@ def test_ui():
 
 
 def test_clear_cache():
+    # remove ui component as we are providing our own
+    for ci, c in reversed(list(enumerate(datatypes.components))):
+        if "UI" in type(c).__name__:
+            del datatypes.components[ci]
+
     list(datatypes.components)
     datatypes.components.append(UIDataTypeComponent())
     datatypes.call_class_components(DataType, "test")
