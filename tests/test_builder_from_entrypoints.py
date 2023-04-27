@@ -7,6 +7,7 @@ from pathlib import Path
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
+from .utils import strip_whitespaces
 
 OAREPO_USE = "use"
 
@@ -21,6 +22,7 @@ def test_include_invenio():
         },
         isort=False,
         black=False,
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -31,11 +33,9 @@ def test_include_invenio():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
     ).read()
-    print(data)
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
-        """
+    assert (
+        strip_whitespaces(
+            """
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
 from marshmallow import ValidationError
 from marshmallow import validate as ma_validate
@@ -43,21 +43,37 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
-from oarepo_runtime.ui import marshmallow as l10n
- from oarepo_runtime.validation import validate_datetime
 
-class TestSchema(InvenioBaseRecordSchema):
-    \"""TestSchema schema.\"""
+
+
+
+class TestRecordSchema(InvenioBaseRecordSchema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
     a = ma_fields.String()
-    """,
+    """
+        )
+        == strip_whitespaces(data)
     )
 
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ).read()
     print(data)
-    assert "from oarepo_runtime.ui.marshmallow import InvenioUISchema" in data
-    assert "class TestUISchema(InvenioUISchema)" in data
+    assert (
+        strip_whitespaces(
+            """
+from oarepo_runtime.ui.marshmallow import InvenioUISchema
+class TestRecordUISchema(InvenioUISchema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.String()    """
+        )
+        in strip_whitespaces(data)
+    )
 
     data = builder.filesystem.read(
         os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
@@ -68,9 +84,15 @@ class TestSchema(InvenioBaseRecordSchema):
             "properties": {
                 "$schema": {"type": "keyword"},
                 "a": {"type": "keyword"},
-                "created": {"type": "date"},
+                "created": {
+                    "type": "date",
+                    "format": "strict_date_time||strict_date_time_no_millis",
+                },
                 "id": {"type": "keyword"},
-                "updated": {"type": "date"},
+                "updated": {
+                    "type": "date",
+                    "format": "strict_date_time||strict_date_time_no_millis",
+                },
             },
         }
     }
@@ -88,6 +110,7 @@ def test_generate_multiple_times():
         },
         isort=False,
         black=False,
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -133,6 +156,7 @@ def test_incremental_builder():
         },
         isort=False,
         black=False,
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
