@@ -105,6 +105,12 @@ def test_jsonschema_preprocessor():
 
 def build(model):
     datatypes.datatype_map["multilingual"] = MultilingualDataType
+
+    # remove ui component as we are providing our own
+    for ci, c in reversed(list(enumerate(datatypes.components))):
+        if "UI" in type(c).__name__:
+            del datatypes.components[ci]
+
     datatypes.components.append(UIDataTypeComponent())
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],

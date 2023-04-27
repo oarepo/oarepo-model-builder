@@ -31,12 +31,15 @@ class ArrayMarshmallowComponentMixin(RegularMarshmallowComponentMixin):
         datatype,
         section: Section,
         marshmallow,
+        field_name,
         *,
         item_field: MarshmallowField = None,
     ):
         args = [item_field.full_definition]
         args.extend(
-            super()._marshmallow_field_arguments(datatype, section, marshmallow)
+            super()._marshmallow_field_arguments(
+                datatype, section, marshmallow, field_name
+            )
         )
         return args
 

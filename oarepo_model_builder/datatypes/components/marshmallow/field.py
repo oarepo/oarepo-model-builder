@@ -5,6 +5,7 @@ import marshmallow as ma
 from marshmallow import fields
 
 from oarepo_model_builder.datatypes import DataTypeComponent
+from oarepo_model_builder.utils.python_name import convert_name_to_python
 from oarepo_model_builder.validation.utils import ImportSchema, StrictSchema
 
 from ...datatypes import DataType, Import
@@ -32,6 +33,16 @@ class RegularMarshmallowComponentMixin:
     ):
         imports = Import.from_config(marshmallow.get("imports", []))
         field = marshmallow.get("field", None)
+
+        key = datatype.key
+        if key:
+            field_name = marshmallow.get("field-name")
+            if not field_name:
+                field_name = convert_name_to_python(datatype.key)
+                marshmallow["field-name"] = field_name
+        else:
+            field_name = None
+
         if not field:
             field_class = marshmallow.get("field-class")
             if not field_class:
@@ -41,19 +52,16 @@ class RegularMarshmallowComponentMixin:
                 "(",
                 ", ".join(
                     self._marshmallow_field_arguments(
-                        datatype, section, marshmallow, **kwargs
+                        datatype, section, marshmallow, field_name, **kwargs
                     )
                 ),
                 ")",
             ]
             field = "".join(field_decl)
-        fields.append(
-            MarshmallowField(
-                marshmallow.get("field-name", datatype.key), field, imports
-            )
-        )
 
-    def _marshmallow_field_arguments(self, datatype, section, marshmallow):
+        fields.append(MarshmallowField(field_name, field, imports))
+
+    def _marshmallow_field_arguments(self, datatype, section, marshmallow, field_name):
         arguments = copy.copy(marshmallow.get("arguments", []))
         read = marshmallow.get("read", True)
         write = marshmallow.get("write", True)
@@ -63,7 +71,6 @@ class RegularMarshmallowComponentMixin:
             arguments.append("load_only=True")
 
         key = datatype.key
-        field_name = marshmallow.get("field-name", datatype.key)
 
         if key != field_name:
             arguments.append(f'data_key="{key}"')

@@ -1,6 +1,5 @@
 import dataclasses
 from typing import List, Optional, Set
-from collections import defaultdict
 
 from ....utils.python_name import base_name, package_name
 from ...datatypes import Import

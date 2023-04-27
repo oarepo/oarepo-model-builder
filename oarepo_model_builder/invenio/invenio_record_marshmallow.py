@@ -4,8 +4,8 @@ from typing import List
 from oarepo_model_builder.datatypes import DataType, datatypes
 from oarepo_model_builder.datatypes.components.marshmallow.graph import (
     collect_imports,
-    sort_by_reference_count,
     set_package_dependencies,
+    sort_by_reference_count,
 )
 from oarepo_model_builder.datatypes.components.marshmallow.object import (
     MarshmallowClass,

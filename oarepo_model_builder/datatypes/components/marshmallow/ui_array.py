@@ -1,14 +1,10 @@
-from .ui_field import (
-    UIMarshmallowComponent,
-)
-from .array import ArrayMarshmallowComponentMixin
-from ...datatypes import DataTypeComponent, DataType
-from ... import ArrayDataType
-import marshmallow as ma
-from marshmallow import fields
-from oarepo_model_builder.validation.utils import StrictSchema
 from typing import List
+
+from ... import ArrayDataType
+from ...datatypes import DataType
+from .array import ArrayMarshmallowComponentMixin
 from .graph import MarshmallowField
+from .ui_field import UIMarshmallowComponent
 
 
 class UIArrayMarshmallowComponent(

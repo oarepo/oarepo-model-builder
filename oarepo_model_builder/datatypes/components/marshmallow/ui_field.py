@@ -1,13 +1,7 @@
-from .field import (
-    RegularMarshmallowComponent,
-    RegularMarshmallowComponentMixin,
-    PropertyMarshmallowSchema,
-)
-from ...datatypes import DataTypeComponent, DataType
-import marshmallow as ma
-from marshmallow import fields
-from oarepo_model_builder.validation.utils import StrictSchema
 from typing import List
+
+from ...datatypes import DataType, DataTypeComponent
+from .field import RegularMarshmallowComponentMixin
 from .graph import MarshmallowField
 
 
@@ -21,5 +15,5 @@ class UIMarshmallowComponent(RegularMarshmallowComponentMixin, DataTypeComponent
             marshmallow,
             marshmallow.config.setdefault("marshmallow", {}),
             fields,
-            **kwargs
+            **kwargs,
         )

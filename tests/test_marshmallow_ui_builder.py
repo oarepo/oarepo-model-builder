@@ -1,6 +1,5 @@
 import os
 import re
-import sys
 
 import pytest
 
@@ -24,6 +23,7 @@ from oarepo_model_builder.model_preprocessors.opensearch import (
 )
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
+
 from .utils import strip_whitespaces
 
 

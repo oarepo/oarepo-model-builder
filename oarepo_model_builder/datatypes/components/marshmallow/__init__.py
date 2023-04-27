@@ -11,10 +11,9 @@ from .object import (
     ObjectMarshmallowMixin,
     ObjectMarshmallowSchema,
 )
-
+from .ui_array import UIArrayMarshmallowComponent
 from .ui_field import UIMarshmallowComponent
 from .ui_object import UIObjectMarshmallowComponent
-from .ui_array import UIArrayMarshmallowComponent
 
 __all__ = [
     "RegularMarshmallowComponent",

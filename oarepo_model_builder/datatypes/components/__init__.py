@@ -1,11 +1,12 @@
+from .enum import EnumComponent
 from .facets import RegularFacetsComponent
 from .marshmallow import (
     ArrayMarshmallowComponent,
     ObjectMarshmallowComponent,
     RegularMarshmallowComponent,
+    UIArrayMarshmallowComponent,
     UIMarshmallowComponent,
     UIObjectMarshmallowComponent,
-    UIArrayMarshmallowComponent,
 )
 from .model import (
     FacetsModelComponent,
@@ -14,12 +15,11 @@ from .model import (
     ResourceModelComponent,
     SampleModelComponent,
     SavedModelComponent,
-    UIModelComponent,
     UIMarshmallowModelComponent,
+    UIModelComponent,
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
 from .ui import ObjectUIComponent, RegularUIComponent
-
 
 DEFAULT_COMPONENTS = [
     ResourceModelComponent,
@@ -41,4 +41,5 @@ DEFAULT_COMPONENTS = [
     UIObjectMarshmallowComponent,
     UIArrayMarshmallowComponent,
     UIMarshmallowModelComponent,
+    EnumComponent,
 ]

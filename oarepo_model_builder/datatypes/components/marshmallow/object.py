@@ -171,12 +171,14 @@ class ObjectMarshmallowMixin:
             MarshmallowField(f["name"], f["value"])
             for f in marshmallow.get("extra-fields", [])
         ]
+        fields = [*fields, *extra_fields]
+        fields.sort(key=lambda x: (not x.key.startswith("_"), x.key))
         classes.append(
             MarshmallowClass(
                 class_name=marshmallow["schema-class"],
                 base_classes=marshmallow.get("base-classes", []) or ["ma.Schema"],
                 imports=Import.from_config(marshmallow.get("imports", [])),
-                fields=[*fields, *extra_fields],
+                fields=fields,
                 strict=True,
             )
         )
@@ -242,8 +244,10 @@ class ObjectMarshmallowComponent(ObjectMarshmallowMixin, RegularMarshmallowCompo
         fld.reference = MarshmallowReference(reference=section.config["schema-class"])
         fields.append(fld)
 
-    def _marshmallow_field_arguments(self, datatype, section, marshmallow):
+    def _marshmallow_field_arguments(self, datatype, section, marshmallow, field_name):
         return [
             "__reference__",
-            *super()._marshmallow_field_arguments(datatype, section, marshmallow),
+            *super()._marshmallow_field_arguments(
+                datatype, section, marshmallow, field_name
+            ),
         ]

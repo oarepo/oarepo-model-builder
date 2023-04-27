@@ -1,13 +1,9 @@
-from .ui_field import UIMarshmallowComponent
-from .object import (
-    ObjectMarshmallowMixin,
-    PropertyMarshmallowSchema,
-    ObjectMarshmallowSchema,
-)
-from ... import ObjectDataType, DataType
-import marshmallow as ma
 from typing import List
+
+from ... import DataType, ObjectDataType
 from .graph import MarshmallowField, MarshmallowReference
+from .object import ObjectMarshmallowMixin
+from .ui_field import UIMarshmallowComponent
 
 
 class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponent):
@@ -72,8 +68,10 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
         )
         fields.append(fld)
 
-    def _marshmallow_field_arguments(self, datatype, section, marshmallow):
+    def _marshmallow_field_arguments(self, datatype, section, marshmallow, field_name):
         return [
             "__reference__",
-            *super()._marshmallow_field_arguments(datatype, section, marshmallow),
+            *super()._marshmallow_field_arguments(
+                datatype, section, marshmallow, field_name
+            ),
         ]

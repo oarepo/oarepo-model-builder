@@ -1,11 +1,8 @@
-from collections import defaultdict
 
-import marshmallow as ma
 
-from oarepo_model_builder.datatypes import ModelDataType, datatypes
+from oarepo_model_builder.datatypes import ModelDataType
 
 from ..marshmallow import ObjectMarshmallowExtraSchema, UIObjectMarshmallowComponent
-
 from .marshmallow import MarshmallowModelMixin
 
 ModelMarshmallowSchema = ObjectMarshmallowExtraSchema

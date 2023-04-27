@@ -13,7 +13,7 @@ class PropertyUISchema(StrictSchema):
 
 class RegularUIComponent(DataTypeComponent):
     class ModelSchema(ma.Schema):
-        marshmallow = ma.fields.Nested(
+        ui = ma.fields.Nested(
             PropertyUISchema,
             required=False,
         )

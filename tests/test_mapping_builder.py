@@ -64,7 +64,11 @@ def build_model(model):
             "",
             {
                 "settings": {
-                    "python": {"use-isort": False, "use-black": False},
+                    "python": {
+                        "use-isort": False,
+                        "use-black": False,
+                        "use-autoflake": False,
+                    },
                     "opensearch": {"version": "os-v2"},
                 },
                 "model": {"package": "test", **model},
