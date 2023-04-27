@@ -1,5 +1,1 @@
-invenio_record_schema.py
 invenio_record_search.py
-invenio_record_ui_schema.py
-invenio_record_ui_serializer.py
-invenio_script_sample_data.py

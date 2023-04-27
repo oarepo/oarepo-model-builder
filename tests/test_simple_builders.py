@@ -553,14 +553,26 @@ def test_ui_serializer_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
         [InvenioRecordUISerializerBuilder],
-        os.path.join("test", "records", "dumper.py"),
+        os.path.join("test", "resources", "records", "ui.py"),
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from invenio_records.dumpers import SearchDumper
+from flask_resources import BaseListSchema, MarshmallowSerializer
+from flask_resources.serializers import JSONSerializer
 
-class TestDumper(SearchDumper):
-    """TestRecord opensearch dumper."""
+from test.services.records.ui_schema import TestRecordUISchema
+
+class TestUIJSONSerializer(MarshmallowSerializer):
+    """UI JSON serializer."""
+
+    def __init__(self):
+        """Initialise Serializer."""
+        super().__init__(
+            format_serializer_cls=JSONSerializer,
+            object_schema_cls=TestRecordUISchema,
+            list_schema_cls=BaseListSchema,
+            schema_context={"object_key": "ui"},
+        )
 '''
     )
