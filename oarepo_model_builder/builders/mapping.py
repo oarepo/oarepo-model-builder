@@ -24,6 +24,7 @@ class MappingBuilder(JSONBaseBuilder):
     output_file_type = "mapping"
     output_file_name = "mapping-file"
     parent_module_root_name = "mappings"
+    create_parent_packages = True
 
     def build_node(self, node):
         generated = self.generate_model(node)

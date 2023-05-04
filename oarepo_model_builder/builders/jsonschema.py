@@ -7,6 +7,7 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     output_file_type = "jsonschema"
     output_file_name = "schema-file"
     parent_module_root_name = "jsonschemas"
+    create_parent_packages = True
 
     def build_node(self, node):
         generated = self.generate(node)
