@@ -342,7 +342,7 @@ class InvenioModelPreprocessor(ModelPreprocessor):
                     "generate": True,
                 },
             )
-            current_model_field.setdefault("type", "object")
+            current_model_field.setdefault("type", "model")
 
         model.setdefault("generate-record-pid-field", True)
         model.setdefault("record-dumper-extensions", [])

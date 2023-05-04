@@ -48,11 +48,15 @@ class ModelFileSchema(ma.Schema):
     model = ma.fields.Nested(get_model_schema)
     defs = ma.fields.Nested(DefsSchema, attribute="$defs", data_key="$defs")
     settings = ma.fields.Nested(ExtensibleSchema("settings", SettingsSchema))
+    output_directory = ma.fields.String(
+        attribute="output-directory", data_key="output-directory"
+    )
 
 
 class ModelValidator:
     def validate(self, data):
-        validator = ModelFileSchema()
+        complete_model_schema = ExtensibleSchema("model_file", ModelFileSchema)
+        validator = complete_model_schema()
         return validator.load(data)
 
 
