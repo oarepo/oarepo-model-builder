@@ -1,5 +1,11 @@
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
-from invenio_records_resources.services import RecordLink, pagination_links
+{% for imp in link_imports %}
+{% if imp.alias %}
+from {{imp.import_path|package_name}} import {{imp.import_path|base_name}} as {{imp.alias}}
+{%- else %}
+from {{imp.import_path|package_name}} import {{imp.import_path|base_name}}
+{%- endif -%}
+{%- endfor %}
 
 {% for b in current_model.record_service_config_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
@@ -46,12 +52,18 @@ class {{ current_model.record_service_config_class|base_name }}({% if current_mo
     @property
     def links_item(self):
         return {
-            "self": RecordLink("{self.url_prefix}{id}"),
+            {% for link in links.item %}
+            {% if link.name -%} "{{link.name}}": {%- else -%}**{%-endif-%}{{link.link_class}}({{link.link_args_str}}),
+            {% endfor %}
         }
 
     @property
     def links_search(self):
-        return pagination_links("{self.url_prefix}{?args*}")
-    {% endif %}
+        return {
+            {% for link in links.search %}
+            {% if link.name -%} "{{link.name}}": {%- else -%}**{%-endif-%}{{link.link_class}}({{link.link_args_str}}),
+            {% endfor %}
+        }
+{% endif %}
 
 {{ current_model.invenio_record_service_config_extra_code }}

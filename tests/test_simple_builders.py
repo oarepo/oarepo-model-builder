@@ -406,7 +406,8 @@ def test_service_config():
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
-from invenio_records_resources.services import RecordLink, pagination_links
+from invenio_records_resources.services import RecordLink
+from invenio_records_resources.services import pagination_links
 from invenio_records_resources.services import RecordServiceConfig
 from oarepo_runtime.relations.components import CachingRelationsComponent
 from test.records.api import TestRecord
@@ -434,12 +435,14 @@ class TestServiceConfig(RecordServiceConfig):
     @property
     def links_item(self):
         return {
-            "self": RecordLink("{self.url_prefix}{id}"),
+            "self":RecordLink("{self.url_prefix}{id}"),
         }
 
     @property
     def links_search(self):
-        return pagination_links("{self.url_prefix}{?args*}")
+        return {
+            **pagination_links("{self.url_prefix}{?args*}"),
+        }
 
 '''
     )

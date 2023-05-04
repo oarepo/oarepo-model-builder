@@ -1,7 +1,21 @@
 import marshmallow as ma
 
-from ..datatypes import Section, datatypes
+from ..datatypes import Section, datatypes, Import
 from .containers import ObjectDataType
+import dataclasses
+from typing import List
+
+
+@dataclasses.dataclass
+class Link:
+    name: str
+    link_class: str = "RecordLink"
+    link_args: List[str] = dataclasses.field(default_factory=list)
+    imports: List[Import] = dataclasses.field(default_factory=list)
+
+    @property
+    def link_args_str(self):
+        return ", ".join(x for x in self.link_args)
 
 
 class ModelDataType(ObjectDataType):
@@ -111,6 +125,29 @@ class ModelDataType(ObjectDataType):
     @property
     def section_global_mapping(self):
         return self.default_section_mapping
+
+    @property
+    def links(self):
+        return {
+            "item": [
+                Link(
+                    name="self",
+                    link_class="RecordLink",
+                    link_args=['"{self.url_prefix}{id}"'],
+                    imports=[Import("invenio_records_resources.services.RecordLink")],
+                ),
+            ],
+            "search": [
+                Link(
+                    name=None,
+                    link_class="pagination_links",
+                    link_args=['"{self.url_prefix}{?args*}"'],
+                    imports=[
+                        Import("invenio_records_resources.services.pagination_links")
+                    ],
+                ),
+            ],
+        }
 
     def prepare(self, context):
         datatypes.call_components(
