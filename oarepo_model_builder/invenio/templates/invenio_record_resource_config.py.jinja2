@@ -1,28 +1,28 @@
 import importlib_metadata
 from flask_resources import ResponseHandler
 
-from {{current_model.record_ui_serializer_class|package_name}} import {{current_model.record_ui_serializer_class|base_name}}
+from {{vars.record_ui_serializer_class|package_name}} import {{vars.record_ui_serializer_class|base_name}}
 
-{% for b in current_model.record_resource_config_bases %}
+{% for b in vars.record_resource_config_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
-class {{ current_model.record_resource_config_class|base_name }}({% for b in current_model.record_resource_config_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
-    """{{ current_model.record_class|base_name }} resource config."""
+class {{ vars.record_resource_config_class|base_name }}({% for b in vars.record_resource_config_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
+    """{{ vars.record_class|base_name }} resource config."""
 
-    blueprint_name = '{{ current_model.record_resource_blueprint_name }}'
-    url_prefix = '{{ current_model.collection_url }}'
+    blueprint_name = '{{ vars.record_resource_blueprint_name }}'
+    url_prefix = '{{ vars.collection_url }}'
 
     @property
     def response_handlers(self):
         entrypoint_response_handlers = {}
-        for x in importlib_metadata.entry_points(group='invenio.{{ current_model.package }}.response_handlers'):
+        for x in importlib_metadata.entry_points(group='invenio.{{ vars.package }}.response_handlers'):
             entrypoint_response_handlers.update(x.load())
         return {
-            "application/vnd.inveniordm.v1+json": ResponseHandler({{current_model.record_ui_serializer_class|base_name}}()),
+            "application/vnd.inveniordm.v1+json": ResponseHandler({{vars.record_ui_serializer_class|base_name}}()),
             **super().response_handlers,
             **entrypoint_response_handlers
         }
 
 
-{{ current_model.invenio_record_resource_config_extra_code }}
+{{ vars.invenio_record_resource_config_extra_code }}

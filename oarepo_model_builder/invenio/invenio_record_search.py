@@ -3,6 +3,7 @@ from typing import Set
 from oarepo_model_builder.utils.jinja import package_name
 
 from ..datatypes import datatypes
+from ..datatypes.datatypes import MergedAttrDict
 from ..utils.deepmerge import deepmerge
 from .invenio_base import InvenioBaseClassPythonBuilder
 
@@ -34,12 +35,19 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
             sort_definition=self.sort_options_data,
         )
         python_path = self.class_to_path(self.current_model.record_facets_class)
+        section = getattr(
+            self.current_model,
+            f"section_override_{self.TYPE.replace('-', '_')}",
+        )
+        merged = MergedAttrDict(section.config, self.current_model.definition)
+
         self.process_template(
             python_path,
             "record-facets",
             current_package_name=package_name(self.current_model.record_facets_class),
             search_options_data=self.search_options_data,
             imports=list(sorted(self.imports)),
+            vars=merged,
             **extra_kwargs,
         )
 

@@ -1,9 +1,10 @@
-import marshmallow as ma
-
-from ..datatypes import Section, datatypes, Import
-from .containers import ObjectDataType
 import dataclasses
 from typing import List
+
+import marshmallow as ma
+
+from ..datatypes import Import, Section, datatypes
+from .containers import ObjectDataType
 
 
 @dataclasses.dataclass

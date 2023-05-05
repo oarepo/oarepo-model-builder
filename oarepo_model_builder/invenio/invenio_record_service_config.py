@@ -1,4 +1,5 @@
 from oarepo_model_builder.outputs.python import PythonOutput
+
 from ..datatypes import Section
 from ..datatypes.model import Link
 from .invenio_base import InvenioBaseClassPythonBuilder

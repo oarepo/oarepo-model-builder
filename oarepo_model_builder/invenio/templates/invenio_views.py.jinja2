@@ -1,48 +1,48 @@
 from flask import Blueprint
 
-def {{ current_model.create_blueprint_from_app|base_name }}(app):
-    """Create {{ current_model.package }} blueprint."""
-    blueprint = app.extensions["{{ current_model.flask_extension_name }}"].resource.as_blueprint()
-    blueprint.record_once(init_{{ current_model.create_blueprint_from_app|base_name }})
+def {{ vars.create_blueprint_from_app|base_name }}(app):
+    """Create {{ vars.package }} blueprint."""
+    blueprint = app.extensions["{{ vars.flask_extension_name }}"].resource.as_blueprint()
+    blueprint.record_once(init_{{ vars.create_blueprint_from_app|base_name }})
 
     #calls record_once for all other functions starting with "init_addons_"
     #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
     funcs = globals()
-    funcs = [v for k, v in funcs.items() if k.startswith("init_addons_{{ current_model.extension_suffix }}") and callable(v)]
+    funcs = [v for k, v in funcs.items() if k.startswith("init_addons_{{ vars.extension_suffix }}") and callable(v)]
     for func in funcs:
         blueprint.record_once(func)
 
     return blueprint
 
-def init_{{ current_model.create_blueprint_from_app|base_name }}(state):
+def init_{{ vars.create_blueprint_from_app|base_name }}(state):
     """Init app."""
     app = state.app
-    ext = app.extensions["{{ current_model.flask_extension_name }}"]
+    ext = app.extensions["{{ vars.flask_extension_name }}"]
 
     # register service
     sregistry = app.extensions["invenio-records-resources"].registry
-    sregistry.register(ext.service, service_id="{{ current_model.service_id }}")
+    sregistry.register(ext.service, service_id="{{ vars.service_id }}")
 
     # Register indexer
     if hasattr(ext.service, "indexer"):
         iregistry = app.extensions["invenio-indexer"].registry
-        iregistry.register(ext.service.indexer, indexer_id="{{ current_model.flask_extension_name }}")
+        iregistry.register(ext.service.indexer, indexer_id="{{ vars.flask_extension_name }}")
 
-def {{ current_model.create_blueprint_from_app|base_name }}Ext(app):
-    """Create {{ current_model.package }}-ext blueprint."""
+def {{ vars.create_blueprint_from_app|base_name }}Ext(app):
+    """Create {{ vars.package }}-ext blueprint."""
     blueprint = Blueprint(
-        '{{ current_model.flask_extension_name }}-ext',
+        '{{ vars.flask_extension_name }}-ext',
         __name__,
-        url_prefix='{{ current_model.flask_extension_name }}')
-    blueprint.record_once(init_{{ current_model.create_blueprint_from_app|base_name }})
+        url_prefix='{{ vars.flask_extension_name }}')
+    blueprint.record_once(init_{{ vars.create_blueprint_from_app|base_name }})
 
     #calls record_once for all other functions starting with "init_app_addons_"
     #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
     funcs = globals()
-    funcs = [v for k, v in funcs.items() if k.startswith("init_app_addons_{{ current_model.extension_suffix }}") and callable(v)]
+    funcs = [v for k, v in funcs.items() if k.startswith("init_app_addons_{{ vars.extension_suffix }}") and callable(v)]
     for func in funcs:
         blueprint.record_once(func)
 
     return blueprint
 
-{{ current_model.invenio_views_extra_code }}
+{{ vars.invenio_views_extra_code }}

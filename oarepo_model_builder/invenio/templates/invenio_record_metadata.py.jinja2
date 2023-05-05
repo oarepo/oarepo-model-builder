@@ -1,15 +1,15 @@
 from invenio_db import db
 
-{% for b in current_model.record_metadata_bases %}
+{% for b in vars.record_metadata_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
-class {{ current_model.record_metadata_class|base_name }}(db.Model, {% for b in current_model.record_metadata_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
-    """Model for {{ current_model.record_class|base_name }} metadata."""
+class {{ vars.record_metadata_class|base_name }}(db.Model, {% for b in vars.record_metadata_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
+    """Model for {{ vars.record_class|base_name }} metadata."""
 
-    __tablename__ = "{{ current_model.record_metadata_table_name }}"
+    __tablename__ = "{{ vars.record_metadata_table_name }}"
 
     # Enables SQLAlchemy-Continuum versioning
     __versioned__ = {}
 
-{{ current_model.invenio_record_metadata_extra_code }}
+{{ vars.invenio_record_metadata_extra_code }}

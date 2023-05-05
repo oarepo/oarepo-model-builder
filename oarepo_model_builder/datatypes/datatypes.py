@@ -1,6 +1,7 @@
 import copy
 import dataclasses
 import json
+from collections.abc import Mapping
 from functools import cached_property, lru_cache
 from typing import Any, Dict, List, Type, Union
 
@@ -12,7 +13,6 @@ from ..utils.deepmerge import deepmerge
 from ..utils.import_class import import_class
 from ..utils.properties import class_property
 from ..validation.utils import PermissiveSchema
-from collections import Mapping
 
 
 @dataclasses.dataclass
@@ -77,7 +77,7 @@ class MergedAttrDict(Mapping):
 
     def __getattr__(self, key):
         try:
-            return self[key]
+            return self[key.replace("_", "-")]
         except KeyError:
             raise AttributeError(f"Attribute {key} not found")
 

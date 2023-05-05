@@ -1,10 +1,10 @@
 from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.systemfields import IndexField
 
-{% if current_model.record_pid_provider_class|package_name != current_model.record_class|package_name %}
-from {{ current_model.record_pid_provider_class|package_name }} import {{ current_model.record_pid_provider_class|base_name }}
+{% if vars.record_pid_provider_class|package_name != vars.record_class|package_name %}
+from {{ vars.record_pid_provider_class|package_name }} import {{ vars.record_pid_provider_class|base_name }}
 {% endif %}
-{% for import in current_model.pid_field_imports|sorted_imports %}
+{% for import in vars.pid_field_imports|sorted_imports %}
 {% if import.alias %}
 from {{ import.import|package_name }} import {{ import.import|base_name }} as {{ import.alias }}
     {% else %}
@@ -12,31 +12,31 @@ from {{ import.import|package_name }} import {{ import.import|base_name }}
     {% endif %}
 {% endfor %}
 
-{% for b in current_model.record_bases %}
+{% for b in vars.record_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
-from {{ current_model.record_metadata_class|package_name }} import {{ current_model.record_metadata_class|base_name }}
-from {{ current_model.record_dumper_class|package_name }} import {{ current_model.record_dumper_class|base_name }}
+from {{ vars.record_metadata_class|package_name }} import {{ vars.record_metadata_class|base_name }}
+from {{ vars.record_dumper_class|package_name }} import {{ vars.record_dumper_class|base_name }}
 
-class {{ current_model.record_class|base_name }}({% for b in current_model.record_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
-    model_cls = {{ current_model.record_metadata_class|base_name }}
-{% if current_model.schema_name %}
-    schema = ConstantField("$schema", "{{ current_model.schema_server }}{{ current_model.schema_name }}")
+class {{ vars.record_class|base_name }}({% for b in vars.record_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
+    model_cls = {{ vars.record_metadata_class|base_name }}
+{% if vars.schema_name %}
+    schema = ConstantField("$schema", "{{ vars.schema_server }}{{ vars.schema_name }}")
 {% endif %}
-{% if current_model.mapping_file %}
-    index = IndexField("{{ current_model.index_name }}")
+{% if vars.mapping_file %}
+    index = IndexField("{{ vars.index_name }}")
 {% endif %}
-{% if current_model.generate_record_pid_field %}
-    pid = {{ current_model.pid_field_cls }}(
-        provider={{ current_model.record_pid_provider_class|base_name }},
-        context_cls={{ current_model.pid_field_context }}{% if current_model.pid_field_args %},
-        {% for arg in current_model.pid_field_args %}{{ arg }}{{ ", " if not loop.last else "" }}{% endfor %}
+{% if vars.generate_record_pid_field %}
+    pid = {{ vars.pid_field_cls }}(
+        provider={{ vars.record_pid_provider_class|base_name }},
+        context_cls={{ vars.pid_field_context }}{% if vars.pid_field_args %},
+        {% for arg in vars.pid_field_args %}{{ arg }}{{ ", " if not loop.last else "" }}{% endfor %}
     {% endif %}
     )
 {% endif %}
     dumper_extensions = [
-        {%- for ext in current_model.record_dumper_extensions %}{{ ext }}{% if not loop.last %}, {% endif %}{% endfor -%}
+        {%- for ext in vars.record_dumper_extensions %}{{ ext }}{% if not loop.last %}, {% endif %}{% endfor -%}
     ]
-    dumper = {{ current_model.record_dumper_class|base_name }}(extensions=dumper_extensions)
+    dumper = {{ vars.record_dumper_class|base_name }}(extensions=dumper_extensions)
 
-{{ current_model.invenio_record_extra_code }}
+{{ vars.invenio_record_extra_code }}

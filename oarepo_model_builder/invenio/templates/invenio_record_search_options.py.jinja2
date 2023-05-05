@@ -2,12 +2,12 @@ from invenio_records_resources.services import SearchOptions as InvenioSearchOpt
 from flask_babelex import lazy_gettext as _
 from . import facets
 
-{% for b in current_model.record_search_options_bases %}
+{% for b in vars.record_search_options_bases %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
-class {{ current_model.record_search_options_class|base_name }}({% for b in current_model.record_search_options_bases %}{{ b|base_name }}, {% endfor %}InvenioSearchOptions):
-    """{{ current_model.record_class|base_name }} search options."""
+class {{ vars.record_search_options_class|base_name }}({% for b in vars.record_search_options_bases %}{{ b|base_name }}, {% endfor %}InvenioSearchOptions):
+    """{{ vars.record_class|base_name }} search options."""
 
     facets = {
 {% for dict in facets_definition %}
@@ -17,8 +17,8 @@ class {{ current_model.record_search_options_class|base_name }}({% for b in curr
 {% endfor %}
     }
     sort_options = {
-        {% if current_model.record_search_options_bases %}
-        **{{ current_model.record_search_options_bases[0]|base_name }}.sort_options,
+        {% if vars.record_search_options_bases %}
+        **{{ vars.record_search_options_bases[0]|base_name }}.sort_options,
         {% else %}
         **InvenioSearchOptions.sort_options,
         {% endif %}
@@ -30,4 +30,4 @@ class {{ current_model.record_search_options_class|base_name }}({% for b in curr
     }
 
 
-{{ current_model.invenio_record_search_options_extra_code }}
+{{ vars.invenio_record_search_options_extra_code }}

@@ -1,17 +1,17 @@
 import re
-from {{ current_model['config-package']|package_name }} import {{ current_model['config-package']|base_name }} as config
-{% for b in current_model['ext-bases'] %}
+from {{ vars['config-package']|package_name }} import {{ vars['config-package']|base_name }} as config
+{% for b in vars['ext-bases'] %}
 from {{ b|package_name }} import {{ b|base_name }}
 {% endfor %}
 
-class {{ current_model['ext-class']|base_name }}({% for b in current_model['ext-bases'] %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
-    """{{ current_model['package'] }} extension."""
+class {{ vars['ext-class']|base_name }}({% for b in vars['ext-bases'] %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
+    """{{ vars['package'] }} extension."""
 
     def __init__(self, app=None):
         """Extension initialization."""
         self.resource = None
         self.service = None
-        {% if current_model['ext-bases'] %}
+        {% if vars['ext-bases'] %}
         super().__init__(None)
         {% endif %}
         if app:
@@ -19,7 +19,7 @@ class {{ current_model['ext-class']|base_name }}({% for b in current_model['ext-
 
     def init_app(self, app):
         """Flask application initialization."""
-        {% if current_model['ext-bases'] %}
+        {% if vars['ext-bases'] %}
         super().init_app(app=app)
         {% endif %}
         self.init_config(app)
@@ -28,19 +28,19 @@ class {{ current_model['ext-class']|base_name }}({% for b in current_model['ext-
             self.register_flask_extension(app)
 
     def register_flask_extension(self, app):
-        {% if current_model['ext-bases'] %}
+        {% if vars['ext-bases'] %}
         super().register_extension()
         {% endif %}
-        app.extensions["{{ current_model['flask-extension-name'] }}"] = self
+        app.extensions["{{ vars['flask-extension-name'] }}"] = self
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        self.service = app.config["{{ current_model['config-service-class-key'] }}"](
-            config=app.config["{{current_model["config-service-config-key"]}}"](),
+        self.service = app.config["{{ vars['config-service-class-key'] }}"](
+            config=app.config["{{vars["config-service-config-key"]}}"](),
         )
-        self.resource = app.config["{{ current_model["config-resource-class-key"] }}"](
+        self.resource = app.config["{{ vars["config-resource-class-key"] }}"](
             service=self.service,
-            config=app.config["{{current_model["config-resource-config-key"]}}"](),
+            config=app.config["{{vars["config-resource-config-key"]}}"](),
         )
 
     def init_config(self, app):
@@ -63,4 +63,4 @@ class {{ current_model['ext-class']|base_name }}({% for b in current_model['ext-
                 return True
         return False
 
-{{ current_model["invenio-ext-extra-code"] }}
+{{ vars["invenio-ext-extra-code"] }}
