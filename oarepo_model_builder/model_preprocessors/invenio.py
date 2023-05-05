@@ -369,15 +369,16 @@ class InvenioModelPreprocessor(ModelPreprocessor):
             ],
         )
 
-        def process_pid_type(pid_base):
-            if len(pid_base) > 6:
-                pid_base = re.sub(r"[AEIOU]", "", pid_base, flags=re.IGNORECASE)
-            if len(pid_base) > 6:
-                pid_base = pid_base[:3] + pid_base[len(pid_base) - 3 :]
-            return pid_base
-
         model.setdefault(
             "record-pid-provider-class",
             f"{model['record-records-package']}.api.{record_prefix}IdProvider",
         )
         model.setdefault("pid-type", process_pid_type(model["model-name"]))
+
+
+def process_pid_type(pid_base):
+    if len(pid_base) > 6:
+        pid_base = re.sub(r"[AEIOU]", "", pid_base, flags=re.IGNORECASE)
+    if len(pid_base) > 6:
+        pid_base = pid_base[:3] + pid_base[len(pid_base) - 3 :]
+    return pid_base

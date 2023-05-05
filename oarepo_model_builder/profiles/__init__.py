@@ -13,4 +13,5 @@ class Profile:
         builder: ModelBuilder,
         **kwargs,
     ):
+        model.current_profile = self
         builder.build(model, output_directory, **kwargs)

@@ -12,6 +12,7 @@ from ..utils.deepmerge import deepmerge
 from ..utils.import_class import import_class
 from ..utils.properties import class_property
 from ..validation.utils import PermissiveSchema
+from collections import Mapping
 
 
 @dataclasses.dataclass
@@ -59,6 +60,32 @@ class Section:
                 )
             )
         return "\n".join(f)
+
+
+class MergedAttrDict(Mapping):
+    def __init__(self, source, fallback):
+        self._source = source
+        self._fallback = fallback
+
+    def __iter__(self):
+        return iter(self.keys())
+
+    def __getitem__(self, key):
+        if key in self._source:
+            return self._source[key]
+        return self._fallback[key]
+
+    def __getattr__(self, key):
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(f"Attribute {key} not found")
+
+    def __len__(self):
+        return len(self.keys())
+
+    def keys(self):
+        return set(self._source.keys()).union(self._fallback.keys())
 
 
 class AbstractDataType:

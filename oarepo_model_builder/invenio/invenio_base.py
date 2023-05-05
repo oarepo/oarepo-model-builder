@@ -1,6 +1,7 @@
 from oarepo_model_builder.builders.python import PythonBuilder
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.utils.jinja import package_name
+from oarepo_model_builder.datatypes.datatypes import MergedAttrDict
 
 
 class InvenioBaseClassPythonBuilder(PythonBuilder):
@@ -13,12 +14,17 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
         python_path = self.class_to_path(
             self.current_model.definition[self.class_config]
         )
+        section = getattr(
+            self.current_model, f"section_{self.class_config.replace('-', '_')}"
+        )
+        merged = MergedAttrDict(section.config, self.current_model.definition)
         self.process_template(
             python_path,
             self.template,
             current_package_name=package_name(
                 self.current_model.definition[self.class_config]
             ),
+            vars=merged,
             **extra_kwargs,
         )
 

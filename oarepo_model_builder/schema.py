@@ -88,6 +88,7 @@ class ModelSchema:
 
         self.schema.setdefault("settings", {})
         self.model_field = model_field
+        self.current_profile = None
 
     def debug_print(self):
         def _print(data, prefix):
