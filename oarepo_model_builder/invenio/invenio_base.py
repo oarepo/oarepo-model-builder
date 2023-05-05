@@ -16,7 +16,7 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
         )
         section = getattr(
             self.current_model,
-            f"section_override_{self.TYPE.replace('-', '_')}",
+            f"section_mb_{self.TYPE.replace('-', '_')}",
         )
         merged = MergedAttrDict(section.config, self.current_model.definition)
         self.process_template(
