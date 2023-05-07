@@ -1,8 +1,13 @@
+import re
+
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.utils.python_name import parent_module
 from oarepo_model_builder.validation.utils import ImportSchema
 
+from .defaults import DefaultsModelComponent
+from .record import RecordModelComponent
 from .utils import set_default
 
 
@@ -54,22 +59,26 @@ class PIDSchema(ma.Schema):
 
 class PIDModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent, RecordModelComponent]
 
     class ModelSchema(ma.Schema):
         pid = ma.fields.Nested(PIDSchema, metadata={"doc": "PID settings"})
 
-    def before_model_prepare(self, datatype, **kwargs):
-        module = datatype.definition["module"]
-        profile_module = datatype.definition["profile-module"]
-        record_prefix = datatype.definition["record-prefix"]
+    def before_model_prepare(self, datatype, *, context, **kwargs):
+        prefix = datatype.definition["module"]["prefix"]
+        record_module = parent_module(datatype.definition["record"]["module"])
 
         pid = set_default(datatype, "pid", {})
         pid.setdefault("generate", True)
-        pid.setdefault("type", process_pid_type(model["model-name"]))
+        pid.setdefault("type", process_pid_type(datatype.definition["model-name"]))
 
+        pid_module = pid.setdefault(
+            "module",
+            f"{record_module}.api",
+        )
         pid.setdefault(
             "provider-class",
-            f"{model['record-records-module']}.api.{record_prefix}IdProvider",
+            f"{pid_module}.{prefix}IdProvider",
         )
         pid.setdefault("provider-base-classes", ["RecordIdProviderV2"])
 
@@ -91,6 +100,7 @@ class PIDModelComponent(DataTypeComponent):
 
 
 def process_pid_type(pid_base):
+    pid_base = re.sub(r"[\s_-]", "", pid_base).lower()
     if len(pid_base) > 6:
         pid_base = re.sub(r"[AEIOU]", "", pid_base, flags=re.IGNORECASE)
     if len(pid_base) > 6:

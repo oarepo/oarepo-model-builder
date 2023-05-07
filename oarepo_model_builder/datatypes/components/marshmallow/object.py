@@ -42,8 +42,8 @@ class ObjectMarshmallowExtraSchema(ma.Schema):
         metadata={"doc": "Generate the marshmallow class (default is true)"},
     )
     schema_class = fields.String(
-        data_key="schema-class",
-        attribute="schema-class",
+        data_key="class",
+        attribute="class",
         required=False,
         allow_none=True,
         metadata={"doc": "The name of the marshmallow class"},
@@ -70,13 +70,13 @@ class ObjectMarshmallowSchema(PropertyMarshmallowSchema, ObjectMarshmallowExtraS
 
 class ObjectMarshmallowMixin:
     def _register_class_name(
-        self, datatype, marshmallow_config, classes, marshmallow_package
+        self, datatype, marshmallow_config, classes, marshmallow_module
     ):
-        schema_class = marshmallow_config.get("schema-class")
+        schema_class = marshmallow_config.get("class")
         if not schema_class:
             return
         raise Exception("module")
-        schema_class = convert_to_absolute_class_name(schema_class, marshmallow_package)
+        schema_class = convert_to_absolute_class_name(schema_class, marshmallow_module)
         classes[schema_class].append(
             (datatype, marshmallow_config.get("generate", True))
         )
@@ -87,18 +87,18 @@ class ObjectMarshmallowMixin:
         marshmallow_config,
         definition_marshmallow,
         classes,
-        marshmallow_package,
+        marshmallow_module,
         fingerprint,
         suffix,
     ):
-        schema_class = marshmallow_config.get("schema-class")
+        schema_class = marshmallow_config.get("class")
         generate = marshmallow_config.get("generate", True)
 
         if schema_class:
-            qualified_schema_class = qualified_name(marshmallow_package, schema_class)
+            qualified_schema_class = qualified_name(marshmallow_module, schema_class)
             if qualified_schema_class != schema_class:
-                marshmallow_config["schema-class"] = qualified_schema_class
-                definition_marshmallow["schema-class"] = qualified_schema_class
+                marshmallow_config["class"] = qualified_schema_class
+                definition_marshmallow["class"] = qualified_schema_class
                 schema_class = qualified_schema_class
             if not generate:
                 if fingerprint not in classes:
@@ -113,19 +113,19 @@ class ObjectMarshmallowMixin:
             definition_marshmallow["generate"] = False
         else:
             schema_class = self._find_unique_schema_class(
-                schema_class, datatype, classes, marshmallow_package, suffix
+                schema_class, datatype, classes, marshmallow_module, suffix
             )
             marshmallow_config["generate"] = True
             definition_marshmallow["generate"] = True
             classes[fingerprint] = schema_class
 
-        marshmallow_config["schema-class"] = schema_class
-        definition_marshmallow["schema-class"] = schema_class
+        marshmallow_config["class"] = schema_class
+        definition_marshmallow["class"] = schema_class
 
         classes[schema_class].append((datatype, marshmallow_config["generate"]))
 
     def _find_unique_schema_class(
-        self, original_schema_class, datatype, classes, marshmallow_package, suffix
+        self, original_schema_class, datatype, classes, marshmallow_module, suffix
     ):
         schema_class_list = []
         if original_schema_class:
@@ -137,8 +137,8 @@ class ObjectMarshmallowMixin:
                 model=datatype.model,
                 schema=datatype.schema,
             )
-            marshmallow_package = (
-                package_name(original_schema_class) or marshmallow_package
+            marshmallow_module = (
+                package_name(original_schema_class) or marshmallow_module
             )
             if original_schema_class.endswith(suffix):
                 suffix = ""
@@ -156,7 +156,7 @@ class ObjectMarshmallowMixin:
                 + suffix
             )
             schema_class = convert_to_absolute_class_name(
-                schema_class, marshmallow_package
+                schema_class, marshmallow_module
             )
             if schema_class not in classes:
                 return schema_class
@@ -187,7 +187,7 @@ class ObjectMarshmallowMixin:
         fields.sort(key=lambda x: (not x.key.startswith("_"), x.key))
         classes.append(
             MarshmallowClass(
-                class_name=marshmallow["schema-class"],
+                class_name=marshmallow["class"],
                 base_classes=marshmallow.get("base-classes", []) or ["ma.Schema"],
                 imports=Import.from_config(marshmallow.get("imports", [])),
                 fields=fields,
@@ -203,36 +203,36 @@ class ObjectMarshmallowComponent(ObjectMarshmallowMixin, RegularMarshmallowCompo
         marshmallow = ma.fields.Nested(ObjectMarshmallowSchema)
 
     def marshmallow_register_class_names(
-        self, *, datatype, classes, marshmallow_package, **kwargs
+        self, *, datatype, classes, marshmallow_module, **kwargs
     ):
         self._register_class_name(
-            datatype, datatype.section_marshmallow.config, classes, marshmallow_package
+            datatype, datatype.section_marshmallow.config, classes, marshmallow_module
         )
 
     def marshmallow_build_class_name_existing(
-        self, *, datatype, classes, marshmallow_package, **kwargs
+        self, *, datatype, classes, marshmallow_module, **kwargs
     ):
-        if datatype.section_marshmallow.config.get("schema-class"):
+        if datatype.section_marshmallow.config.get("class"):
             self._build_class_name(
                 datatype,
                 datatype.section_marshmallow.config,
                 datatype.definition.setdefault("marshmallow", {}),
                 classes,
-                marshmallow_package,
+                marshmallow_module,
                 datatype.section_marshmallow.fingerprint,
                 "Schema",
             )
 
     def marshmallow_build_class_name_new(
-        self, *, datatype, classes, marshmallow_package, **kwargs
+        self, *, datatype, classes, marshmallow_module, **kwargs
     ):
-        if not datatype.section_marshmallow.config.get("schema-class"):
+        if not datatype.section_marshmallow.config.get("class"):
             self._build_class_name(
                 datatype,
                 datatype.section_marshmallow.config,
                 datatype.definition.setdefault("marshmallow", {}),
                 classes,
-                marshmallow_package,
+                marshmallow_module,
                 datatype.section_marshmallow.fingerprint,
                 "Schema",
             )
@@ -253,7 +253,7 @@ class ObjectMarshmallowComponent(ObjectMarshmallowMixin, RegularMarshmallowCompo
         f = []
         super().marshmallow_field(datatype, fields=f)
         fld: MarshmallowField = f[0]
-        fld.reference = MarshmallowReference(reference=section.config["schema-class"])
+        fld.reference = MarshmallowReference(reference=section.config["class"])
         fields.append(fld)
 
     def _marshmallow_field_arguments(self, datatype, section, marshmallow, field_name):

@@ -4,10 +4,12 @@ from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
 from oarepo_model_builder.utils.python_name import convert_config_to_qualified_name
 from oarepo_model_builder.validation.utils import ImportSchema
 
+from .defaults import DefaultsModelComponent
 from .utils import set_default
 
 
 class BlueprintSchema(ma.Schema):
+    generate = ma.fields.Bool(metadata={"doc": "Generate blueprint, defaults to true"})
     alias = ma.fields.Str(
         metadata={
             "doc": "Alias under which the blueprint will be registered in the setup.cfg"
@@ -28,6 +30,7 @@ class BlueprintSchema(ma.Schema):
 
 class BlueprintsModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent]
 
     class ModelSchema(ma.Schema):
         ui_blueprint = ma.fields.Nested(
@@ -43,13 +46,14 @@ class BlueprintsModelComponent(DataTypeComponent):
             metadata={"doc": "API blueprint details"},
         )
 
-    def before_model_prepare(self, datatype, **kwargs):
-        extension_suffix = datatype.definition["extension-suffix"]
-        module = datatype.definition["module"]
-        profile = datatype.current_model.profile
+    def before_model_prepare(self, datatype, *, context, **kwargs):
+        alias = datatype.definition["module"]["alias"]
+        module = datatype.definition["module"]["qualified"]
+        profile = context["profile_module"]
 
         api = set_default(datatype, "api-blueprint", {})
-        api.setdefault("alias", extension_suffix)
+        api.setdefault("generate", True)
+        api.setdefault("alias", alias)
         api.setdefault("extra_code", "")
         api_module = api.setdefault(
             "module",
@@ -63,9 +67,10 @@ class BlueprintsModelComponent(DataTypeComponent):
         convert_config_to_qualified_name(api, name_field="function")
 
         ui = set_default(datatype, "ui-blueprint", {})
-        ui.setdefault("alias", extension_suffix)
+        ui.setdefault("generate", True)
+        ui.setdefault("alias", alias)
         ui.setdefault("extra_code", "")
-        ui_module = api.setdefault(
+        ui_module = ui.setdefault(
             "module",
             f"{module}.views.{profile}.ui",
         )

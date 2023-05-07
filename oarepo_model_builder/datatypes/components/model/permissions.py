@@ -1,8 +1,11 @@
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.utils.python_name import parent_module
 from oarepo_model_builder.validation.utils import ImportSchema
 
+from .defaults import DefaultsModelComponent
+from .service import ServiceModelComponent
 from .utils import set_default
 
 
@@ -45,6 +48,7 @@ class ModelPermissionsSchema(ma.Schema):
 
 class PermissionsModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent, ServiceModelComponent]
 
     class ModelSchema(ma.Schema):
         permissions = ma.fields.Nested(
@@ -53,22 +57,27 @@ class PermissionsModelComponent(DataTypeComponent):
             metadata={"doc": "Permissions settings"},
         )
 
-    def before_model_prepare(self, datatype, **kwargs):
-        module = datatype.definition["module"]
-        profile_module = datatype.definition["profile-module"]
-        record_prefix = datatype.definition["record-prefix"]
-        record_services_module = datatype.definition["record-services-module"]
+    def before_model_prepare(self, datatype, *, context, **kwargs):
+        prefix = datatype.definition["module"]["prefix"]
+        record_services_module = parent_module(datatype.definition["service"]["module"])
 
-        permissions = set_default(dataset, "permissions", {})
+        permissions = set_default(datatype, "permissions", {})
         permissions.setdefault("generate", False)
         permissions.setdefault("presets", [])
         permissions.setdefault("extra-code", "")
-        if permissions["generate"]:
-            permissions.setdefault(
-                "class",
-                f"{record_services_module}.permissions.{record_prefix}PermissionPolicy",
-            )
-            permissions.setdefault(
-                "base-classes",
-                [],
-            )
+        permissions_module = permissions.setdefault(
+            "module",
+            f"{record_services_module}.permissions",
+        )
+        permissions.setdefault(
+            "class",
+            f"{permissions_module}.{prefix}PermissionPolicy",
+        )
+        permissions.setdefault(
+            "base-classes",
+            ["RecordPermissionPolicy"],
+        )
+        permissions.setdefault(
+            "imports",
+            [{"import": "invenio_records_permissions.RecordPermissionPolicy"}],
+        )

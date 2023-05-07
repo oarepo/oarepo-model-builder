@@ -1,12 +1,22 @@
+from typing import Dict
+
 from oarepo_model_builder.datatypes import ModelDataType
+from oarepo_model_builder.utils.python_name import (
+    convert_config_to_qualified_name,
+    parent_module,
+)
 
 from ..marshmallow import UIObjectMarshmallowComponent
+from .defaults import DefaultsModelComponent
 from .marshmallow import MarshmallowModelMixin
+from .service import ServiceModelComponent
+from .utils import set_default
 
 
 class UIMarshmallowModelComponent(MarshmallowModelMixin, UIObjectMarshmallowComponent):
     eligible_datatypes = [ModelDataType]
-    model_marshmallow_class_name = "record-ui-schema-class"
+    depends_on = [DefaultsModelComponent, ServiceModelComponent]
+    model_marshmallow_section = ["ui", "marshmallow"]
     context_registered_classes_name = "ui-marshmallow-classes"
     register_class_names_method = "ui_marshmallow_register_class_name"
     build_class_names_existing_method = "ui_marshmallow_build_class_name_existing"
@@ -18,38 +28,31 @@ class UIMarshmallowModelComponent(MarshmallowModelMixin, UIObjectMarshmallowComp
         )
 
     def before_model_prepare(self, datatype, **kwargs):
-        record_prefix = datatype.definition["record-prefix"]
-        services_module = datatype.definition["record-services-module"]
+        prefix = datatype.definition["module"]["prefix"]
+        services_module = parent_module(datatype.definition["service"]["module"])
 
-        default_schema_class = f"{services_module}.schema.{record_prefix}RecordUISchema"
-
-        deepmerge(
-            set_default(datatype, "marshmallow", "ui", {}),
-            {"schema-class": default_schema_class, "generate": True, "extra-code": ""},
+        marshmallow: Dict = set_default(datatype, "ui", "marshmallow", {})
+        marshmallow.setdefault("generate", True)
+        module = marshmallow.setdefault("module", f"{services_module}.schema")
+        marshmallow.setdefault("class", f"{module}.{prefix}UISchema")
+        marshmallow.setdefault("extra-code", "")
+        marshmallow.setdefault("base-classes", ["InvenioUISchema"])
+        marshmallow.setdefault(
+            "imports", [{"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}]
         )
-        set_default(datatype, "marshmallow", "base-classes", ["InvenioUISchema"]),
+        convert_config_to_qualified_name(marshmallow)
 
         if "properties" in datatype.definition and "metadata" in (
             datatype.definition["properties"] or {}
         ):
-            default_metadata_class = (
-                f"{services_module}.schema.{record_prefix}MetadataSchema"
+            metadata_marshmallow = set_default(
+                datatype, "properties", "metadata", "ui", "marshmallow", {}
             )
-            deepmerge(
-                set_default(
-                    datatype, "properties", "metadata", "ui", "marshmallow", {}
-                ),
-                {
-                    "schema-class": default_metadata_class,
-                    "generate": True,
-                },
+            metadata_marshmallow.setdefault("generate", True)
+            metadata_module = metadata_marshmallow.setdefault("module", module)
+            metadata_marshmallow.setdefault(
+                "class", f"{metadata_module}.{prefix}MetadataUISchema"
             )
-            set_default(
-                datatype,
-                "properties",
-                "metadata",
-                "ui",
-                "marshmallow",
-                "base-classes",
-                ["ma.Schema"],
-            ),
+            metadata_marshmallow.setdefault("extra-code", "")
+            metadata_marshmallow.setdefault("base-classes", ["ma.Schema"])
+            convert_config_to_qualified_name(metadata_marshmallow)

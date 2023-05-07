@@ -1,8 +1,10 @@
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.utils.python_name import convert_config_to_qualified_name
 from oarepo_model_builder.validation.utils import ImportSchema
 
+from .defaults import DefaultsModelComponent
 from .utils import set_default
 
 
@@ -81,6 +83,7 @@ class ResourceConfigClassSchema(ma.Schema):
 
 class ResourceModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent]
 
     class ModelSchema(ma.Schema):
         resource = ma.fields.Nested(
@@ -93,53 +96,58 @@ class ResourceModelComponent(DataTypeComponent):
             metadata={"doc": "Resource config class settings"},
         )
 
-    def before_model_prepare(self, datatype, **kwargs):
+    def before_model_prepare(self, datatype, *, context, **kwargs):
         module_container = datatype.definition["module"]
+        profile_package = context["profile_module"]
 
-        resource_module = (
-            f"{module_container['module']}.resources.{datatype.definition['profile']}"
+        resource_package = (
+            f"{module_container['qualified']}.resources.{profile_package}"
         )
 
         resource = set_default(datatype, "resource", {})
         resource.setdefault("generate", True)
         resource.setdefault(
             "config-key",
-            f"{module_container['base-upper']}_RESOURCE_CLASS_{module_container['suffix-upper']}",
+            f"{module_container['base-upper']}_{context['profile_upper']}_RESOURCE_CLASS",
         )
+        resource_module = resource.setdefault("module", f"{resource_package}.resource")
         resource.setdefault(
             "class",
             f"{resource_module}.{module_container['prefix']}Resource",
         )
         resource.setdefault(
             "proxy",
-            f"{module_container['module']}.proxies.current_resource",
-        )
-        resource.setdefault(
-            "proxy",
-            f"{module_container['module']}.proxies.current_resource",
+            f"{module_container['qualified']}.proxies.current_resource",
         )
         resource.setdefault("extra-code", "")
         resource.setdefault(
             "base-classes", ["invenio_records_resources.resources.RecordResource"]
         )
+        resource.setdefault(
+            "imports",
+            [{"import": "invenio_records_resources.resources.RecordResource"}],
+        )
+        convert_config_to_qualified_name(resource)
 
-        config = set_default("datatype", "resource-config", {})
+        config = set_default(datatype, "resource-config", {})
         config.setdefault("generate", True)
-        config.setdefault("base-url", f"/{module_container['kebap-module']}/")
+        config.setdefault("base-url", f"/{module_container['kebab-module']}/")
         config.setdefault(
             "config-key",
-            f"{module_container['base-upper']}_RESOURCE_CONFIG_{module_container['suffix-upper']}",
+            f"{module_container['base-upper']}_{context['profile_upper']}_RESOURCE_CONFIG",
         )
+        config_module = config.setdefault("module", f"{resource_package}.config")
         config.setdefault(
             "class",
-            f"{resource_module}.{module_container['prefix']}ResourceConfig",
-        )
-        config.setdefault(
-            "proxy",
-            f"{module_container['module']}.proxies.current_resource",
+            f"{config_module}.{module_container['prefix']}ResourceConfig",
         )
         config.setdefault("extra-code", "")
 
-        resource.setdefault(
+        config.setdefault(
             "base-classes", ["invenio_records_resources.resources.RecordResourceConfig"]
         )
+        config.setdefault(
+            "imports",
+            [{"import": "invenio_records_resources.resources.RecordResourceConfig"}],
+        )
+        convert_config_to_qualified_name(config)

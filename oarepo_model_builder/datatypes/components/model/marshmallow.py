@@ -1,10 +1,18 @@
 from collections import defaultdict
+from typing import Dict
 
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import ModelDataType, datatypes
+from oarepo_model_builder.utils.dict import dict_get
+from oarepo_model_builder.utils.python_name import (
+    convert_config_to_qualified_name,
+    parent_module,
+)
 
 from ..marshmallow import ObjectMarshmallowComponent, ObjectMarshmallowExtraSchema
+from .defaults import DefaultsModelComponent
+from .service import ServiceModelComponent
 from .utils import set_default
 
 
@@ -17,16 +25,16 @@ class ModelMarshmallowSchema(ObjectMarshmallowExtraSchema):
 
 
 class MarshmallowModelMixin:
-    model_marshmallow_class_name = None
+    model_marshmallow_section = None
     context_registered_classes_name = None
     register_class_names_method = None
     build_class_names_method = None
 
     def after_model_prepare(self, *, datatype, context, **kwargs):
         classes = defaultdict(list)
-        marshmallow_module = datatype.definition[
-            self.model_marshmallow_class_name
-        ].rsplit(".", maxsplit=1)[0]
+        marshmallow_def = dict_get(datatype.definition, self.model_marshmallow_section)
+        marshmallow_module = marshmallow_def["module"]
+
         for node in datatype.deep_iter():
             datatypes.call_components(
                 node,
@@ -52,7 +60,9 @@ class MarshmallowModelMixin:
 
 class MarshmallowModelComponent(MarshmallowModelMixin, ObjectMarshmallowComponent):
     eligible_datatypes = [ModelDataType]
-    model_marshmallow_class_name = "record-schema-class"
+    depends_on = [DefaultsModelComponent, ServiceModelComponent]
+
+    model_marshmallow_section = ["marshmallow"]
     context_registered_classes_name = "marshmallow-classes"
     register_class_names_method = "marshmallow_register_class_name"
     build_class_names_existing_method = "marshmallow_build_class_name_existing"
@@ -62,44 +72,32 @@ class MarshmallowModelComponent(MarshmallowModelMixin, ObjectMarshmallowComponen
         marshmallow = ma.fields.Nested(ModelMarshmallowSchema)
 
     def marshmallow_register_class_names(self, *, datatype, classes, **kwargs):
-        classes[datatype.definition[self.model_marshmallow_class_name]].append(
-            (True, datatype)
-        )
+        marshmallow_def = dict_get(datatype.definition, self.model_marshmallow_section)
+        classes[marshmallow_def["class"]].append((True, datatype))
 
     def before_model_prepare(self, datatype, **kwargs):
-        record_prefix = datatype.definition["record-prefix"]
-        services_module = datatype.definition["record-services-module"]
+        prefix = datatype.definition["module"]["prefix"]
+        services_module = parent_module(datatype.definition["service"]["module"])
 
-        default_schema_class = f"{services_module}.schema.{record_prefix}RecordSchema"
-
-        deepmerge(
-            set_default(datatype, "marshmallow", {}),
-            {
-                "schema-class": default_schema_class,
-                "generate": True,
-            },
-        )
-        set_default(datatype, "marshmallow", "base-classes", ["ma.Schema"]),
+        marshmallow: Dict = set_default(datatype, "marshmallow", {})
+        marshmallow.setdefault("generate", True)
+        module = marshmallow.setdefault("module", f"{services_module}.schema")
+        marshmallow.setdefault("class", f"{module}.{prefix}Schema")
+        marshmallow.setdefault("extra-code", "")
+        marshmallow.setdefault("base-classes", ["ma.Schema"])
+        convert_config_to_qualified_name(marshmallow)
 
         if "properties" in datatype.definition and "metadata" in (
             datatype.definition["properties"] or {}
         ):
-            default_metadata_class = (
-                f"{services_module}.schema.{record_prefix}MetadataSchema"
+            metadata_marshmallow = set_default(
+                datatype, "properties", "metadata", "marshmallow", {}
             )
-            deepmerge(
-                set_default(datatype, "properties", "metadata", "marshmallow", {}),
-                {
-                    "schema-class": default_metadata_class,
-                    "generate": True,
-                    "extra-code": "",
-                },
+            metadata_module = metadata_marshmallow.setdefault("module", module)
+            metadata_marshmallow.setdefault("generate", True)
+            metadata_marshmallow.setdefault(
+                "class", f"{metadata_module}.{prefix}MetadataSchema"
             )
-            set_default(
-                datatype,
-                "properties",
-                "metadata",
-                "marshmallow",
-                "base-classes",
-                ["ma.Schema"],
-            ),
+            metadata_marshmallow.setdefault("extra-code", "")
+            metadata_marshmallow.setdefault("base-classes", ["ma.Schema"])
+            convert_config_to_qualified_name(metadata_marshmallow)

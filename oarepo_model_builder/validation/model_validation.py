@@ -58,11 +58,6 @@ class ModelFileSchema(ma.Schema):
         ExtensibleSchema("settings", SettingsSchema),
         metadata={"doc": "General settings, applies to all generated sources"},
     )
-    output_directory = ma.fields.String(
-        attribute="output-directory",
-        data_key="output-directory",
-        metadata={"doc": "Directory where sources will be generated to"},
-    )
 
 
 class ModelValidator:

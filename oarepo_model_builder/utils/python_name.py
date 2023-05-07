@@ -1,4 +1,5 @@
 import keyword
+import os
 import re
 
 
@@ -89,3 +90,11 @@ def convert_config_to_qualified_name(
     qualified = qualified_name(module, class_name)
     if qualified != class_name:
         config_section[name_field] = qualified
+
+
+def module_to_path(module):
+    return os.path.join(*module.split("."))
+
+
+def parent_module(module):
+    return ".".join(module.split(".")[:-1])

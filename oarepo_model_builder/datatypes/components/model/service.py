@@ -1,8 +1,11 @@
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.utils.python_name import convert_config_to_qualified_name
 from oarepo_model_builder.validation.utils import ImportSchema
 
+from .app import AppModelComponent
+from .defaults import DefaultsModelComponent
 from .utils import set_default
 
 
@@ -84,6 +87,7 @@ class ServiceConfigClassSchema(ma.Schema):
 
 class ServiceModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent, AppModelComponent]
 
     class ModelSchema(ma.Schema):
         service = ma.fields.Nested(
@@ -96,45 +100,54 @@ class ServiceModelComponent(DataTypeComponent):
             metadata={"doc": "Service config settings"},
         )
 
-    def before_model_prepare(self, datatype, **kwargs):
-        profile_module = datatype.definition["profile-module"]
-        module = datatype.definition["module"]
-        module_base_upper = datatype.definition["module-base-upper"]
-        record_prefix = datatype.definition["record-prefix"]
-        extension_suffix_upper = datatype.definition["extension-suffix-upper"]
-        flask_extension_name = datatype.definition["flask-extension-name"]
+    def before_model_prepare(self, datatype, *, context, **kwargs):
+        profile_module = context["profile_module"]
+        module = datatype.definition["module"]["qualified"]
+        module_base_upper = datatype.definition["module"]["base-upper"]
+        record_prefix = datatype.definition["module"]["prefix"]
+        flask_extension_name = datatype.definition["ext"]["alias"]
 
-        service = set_default(datatype, "service", {})
+        service_package = f"{module}.services.{profile_module}"
+
         config = set_default(datatype, "service-config", {})
-
-        record_services_module = f"{module}.services.{profile_module}"
 
         config.setdefault("generate", True)
         config.setdefault(
             "config-key",
-            f"{module_base_upper}_SERVICE_CONFIG_{extension_suffix_upper}",
+            f"{module_base_upper}_{context['profile_upper']}_SERVICE_CONFIG",
+        )
+        config_module = config.setdefault(
+            "module",
+            f"{service_package}.config",
         )
         config.setdefault(
             "class",
-            f"{record_services_module}.config.{record_prefix}ServiceConfig",
+            f"{config_module}.{record_prefix}ServiceConfig",
         )
         config.setdefault("generate-links", True)
         config.setdefault("extra-code", "")
         config.setdefault("service-id", flask_extension_name)
-        config.setdefault(
-            "base-classes", ["invenio_records_resources.services.RecordServiceConfig"]
-        )
+        config.setdefault("base-classes", ["RecordServiceConfig"])
         config.setdefault("components", [])
+        config.setdefault(
+            "imports",
+            [{"import": "invenio_records_resources.services.RecordServiceConfig"}],
+        )
+        convert_config_to_qualified_name(config)
+
+        service = set_default(datatype, "service", {})
 
         service.setdefault("generate", True)
         service.setdefault(
-            "config-key", f"{module_base_upper}_SERVICE_CLASS_{extension_suffix_upper}"
+            "config-key",
+            f"{module_base_upper}_{context['profile_upper']}_SERVICE_CLASS",
         )
         service.setdefault("proxy", f"{module}.proxies.current_service")
-        service.setdefault(
-            "class", f"{record_services_module}.service.{record_prefix}Service"
-        )
+        service_module = service.setdefault("module", f"{service_package}.service")
+        service.setdefault("class", f"{service_module}.{record_prefix}Service")
         service.setdefault("extra-code", "")
+        service.setdefault("base-classes", ["RecordService"])
         service.setdefault(
-            "base-classes", ["invenio_records_resources.services.RecordService"]
+            "imports", [{"import": "invenio_records_resources.services.RecordService"}]
         )
+        convert_config_to_qualified_name(service)

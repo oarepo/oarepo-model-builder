@@ -8,19 +8,19 @@ def test_empty_model_validation():
     assert model_validator.validate({}) == {
         "version": "1.0.0",
     }
-    assert model_validator.validate({"model": {}}) == {
-        "model": {"type": "model", "properties": {}},
+    assert model_validator.validate({"record": {}}) == {
+        "record": {"type": "model", "properties": {}},
         "version": "1.0.0",
     }
     with pytest.raises(ValidationError, match="Must be equal to model"):
-        model_validator.validate({"model": {"type": "blah"}})
-    assert model_validator.validate({"model": {"properties": {}}}) == {
-        "model": {"type": "model", "properties": {}},
+        model_validator.validate({"record": {"type": "blah"}})
+    assert model_validator.validate({"record": {"properties": {}}}) == {
+        "record": {"type": "model", "properties": {}},
         "version": "1.0.0",
     }
     assert model_validator.validate(
-        {"model": {"type": "model", "properties": None}}
-    ) == {"model": {"type": "model", "properties": {}}, "version": "1.0.0"}
+        {"record": {"type": "model", "properties": None}}
+    ) == {"record": {"type": "model", "properties": {}}, "version": "1.0.0"}
 
 
 def test_unknown_on_top_validation():
@@ -31,10 +31,9 @@ def test_unknown_on_top_validation():
 def test_settings_on_model():
     validated = model_validator.validate(
         {
-            "model": {
-                "profile-package": "test",
-                "package-path": "test",
-                "jsonschemas-package": "test",
+            "record": {
+                "module": {"qualified": "test"},
+                "json-schema": {"file": "test"},
                 "mapping": {"file": "test"},
                 "model-name": "test",
                 "resource-config": {"base-url": "test"},
@@ -42,15 +41,14 @@ def test_settings_on_model():
         }
     )
     assert validated == {
-        "model": {
-            "type": "model",
-            "profile-package": "test",
-            "package-path": "test",
-            "jsonschemas-package": "test",
-            "mapping-file": "test",
-            "collection-url": "test",
+        "record": {
+            "json-schema": {"file": "test"},
+            "mapping": {"file": "test"},
             "model-name": "test",
+            "module": {"qualified": "test"},
             "properties": {},
+            "resource-config": {"base-url": "test"},
+            "type": "model",
         },
         "version": "1.0.0",
     }
@@ -59,7 +57,7 @@ def test_settings_on_model():
 def test_inline_props_on_model():
     validated = model_validator.validate(
         {
-            "model": {
+            "record": {
                 "properties": {
                     "a": "boolean",
                     "b": "integer{minimum:1}",
@@ -71,7 +69,7 @@ def test_inline_props_on_model():
     )
     assert validated == {
         "version": "1.0.0",
-        "model": {
+        "record": {
             "type": "model",
             "properties": {
                 "a": {"type": "boolean"},
@@ -86,7 +84,7 @@ def test_inline_props_on_model():
 def test_validate_defs():
     validation_result = model_validator.validate(
         {
-            "model": {},
+            "record": {},
             "$defs": {
                 "a": "boolean",
                 "b": "integer{minimum:1}",
@@ -103,16 +101,16 @@ def test_validate_defs():
             "c": "float{exclusiveMaximum: 1.0}",
             "d": "double",
         },
-        "model": {"properties": {}, "type": "model"},
+        "record": {"properties": {}, "type": "model"},
     }
 
 
 def test_settings():
     validation_result = model_validator.validate(
-        {"model": {}, "settings": {"python": {"use-black": True, "use-isort": True}}}
+        {"record": {}, "settings": {"python": {"use-black": True, "use-isort": True}}}
     )
     assert validation_result == {
         "version": "1.0.0",
         "settings": {"python": {"use-black": True, "use-isort": True}},
-        "model": {"properties": {}, "type": "model"},
+        "record": {"properties": {}, "type": "model"},
     }

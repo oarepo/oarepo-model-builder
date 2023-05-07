@@ -1,7 +1,12 @@
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.utils.python_name import parent_module
 from oarepo_model_builder.validation.utils import ImportSchema
+
+from .defaults import DefaultsModelComponent
+from .record import RecordModelComponent
+from .utils import set_default
 
 
 class RecordMetadataClassSchema(ma.Schema):
@@ -44,6 +49,7 @@ class RecordMetadataClassSchema(ma.Schema):
 
 class RecordMetadataModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent, RecordModelComponent]
 
     class ModelSchema(ma.Schema):
         record_metadata = ma.fields.Nested(
@@ -54,18 +60,19 @@ class RecordMetadataModelComponent(DataTypeComponent):
         )
 
     def before_model_prepare(self, datatype, **kwargs):
-        module = datatype.definition["module"]
-        profile_module = datatype.definition["profile-module"]
-        record_prefix = datatype.definition["record-prefix"]
+        records_module = parent_module(datatype.definition["record"]["module"])
+        prefix = datatype.definition["module"]["prefix"]
+        suffix = datatype.definition["module"]["suffix"]
+        alias = datatype.definition["module"]["alias"]
 
-        metadata = setdefault(datatype, "record-metadata", {})
+        metadata = set_default(datatype, "record-metadata", {})
         metadata.setdefault("generate", True)
-        records_module = metadata.setdefault("module", f"{module}.{profile_module}")
-        metadata.setdefault("class", f"{records_module}.models.{record_prefix}Metadata")
+        metadata_module = metadata.setdefault("module", f"{records_module}.models")
+        metadata.setdefault("class", f"{metadata_module}.{prefix}Metadata")
         metadata.setdefault(
             "base-classes", ["invenio_records.models.RecordMetadataBase"]
         )
         metadata.setdefault("extra-code", "")
-        metadata.setdefault("table", f"{record_prefix.lower()}_metadata")
-        metadata.setdefault("alembic", f"{extension_suffix}")
-        metadata.setdefault("alias", f"{extension_suffix}")
+        metadata.setdefault("table", f"{prefix.lower()}_metadata")
+        metadata.setdefault("alembic", f"{suffix}")
+        metadata.setdefault("alias", alias)

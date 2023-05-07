@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Dict, List, Type, Union
 
 from .builders import OutputBuilder
-from .datatypes.datatypes import datatypes
 from .fs import AbstractFileSystem, FileSystem
 from .outputs import OutputBase
 from .schema import ModelSchema
@@ -130,21 +129,13 @@ class ModelBuilder:
 
         return self.outputs
 
-    def _run_output_builders(self, model):
+    def _run_output_builders(self, model, profile, model_path, context):
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(
             self.output_builder_classes, "builder"
         ):
             output_builder = output_builder_class(builder=self)
-            current_model = datatypes.get_datatype(
-                parent=None,
-                data=model.current_model,
-                key=None,
-                model=model.current_model,
-                schema=model.schema,
-            )
-            current_model.profile = model.current_profile
-            current_model.prepare({})
+            current_model = model.get_section(profile, model_path, context)
             output_builder.build(current_model=current_model, schema=model.schema)
 
     def _validate_model(self, model):

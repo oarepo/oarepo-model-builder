@@ -1,12 +1,19 @@
+import os
+
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.utils.camelcase import snake_case
+from oarepo_model_builder.utils.python_name import module_to_path, parent_module
 from oarepo_model_builder.validation.utils import PermissiveSchema
 
+from .defaults import DefaultsModelComponent
+from .record import RecordModelComponent
 from .utils import set_default
 
 
 class ModelMappingSchema(ma.Schema):
+    generate = ma.fields.Bool(metadata={"doc": "Generate mapping (default is true)"})
     alias = ma.fields.Str(
         metadata={
             "doc": "Index alias, under which the mapping is registered in setup.cfg"
@@ -29,6 +36,7 @@ class ModelMappingSchema(ma.Schema):
 
 class MappingModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent, RecordModelComponent]
 
     class ModelSchema(ma.Schema):
         mapping = ma.fields.Nested(
@@ -36,15 +44,19 @@ class MappingModelComponent(DataTypeComponent):
         )
 
     def before_model_prepare(self, datatype, **kwargs):
-        extension_suffix = datatype.definition["extension-suffix"]
-        records_path = datatype.definition["record-records-path"]
+        prefix_snake = datatype.definition["module"]["prefix-snake"]
+        alias = datatype.definition["module"]["alias"]
+        records_path = module_to_path(
+            parent_module(datatype.definition["record"]["module"])
+        )
 
         mapping = set_default(datatype, "mapping", {})
-        mapping.setdefault("alias", extension_suffix)
-        index_name = mapping.setdefault("index", snake_case(model["record-prefix"]))
+        mapping.setdefault("generate", True)
+        mapping.setdefault("alias", alias)
+        index_name = mapping.setdefault("index", snake_case(prefix_snake))
         mapping.setdefault(
             "file",
-            lambda: os.path.join(
+            os.path.join(
                 records_path,
                 "mappings",
                 "os-v2",

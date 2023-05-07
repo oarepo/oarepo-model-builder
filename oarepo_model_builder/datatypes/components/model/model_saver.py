@@ -1,7 +1,10 @@
+import os
+
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
 
+from .defaults import DefaultsModelComponent
 from .utils import set_default
 
 
@@ -21,6 +24,7 @@ class SavedModelSchema(ma.Schema):
 
 class SavedModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent]
 
     class ModelSchema(ma.Schema):
         saved_model = ma.fields.Nested(
@@ -28,10 +32,10 @@ class SavedModelComponent(DataTypeComponent):
         )
 
     def before_model_prepare(self, datatype, **kwargs):
-        module_path = datatype.definition["module-path"]
+        module_path = datatype.definition["module"]["path"]
         saved_model = set_default(datatype, "saved-model", {})
         saved_model.setdefault(
             "file",
-            os.path.join(model["module-path"], "models", "model.json"),
+            os.path.join(module_path, "models", "model.json"),
         )
-        saved_model.setdefault("alias", snake_case(model["record-prefix"]))
+        saved_model.setdefault("alias", datatype.definition["module"]["alias"])

@@ -253,7 +253,7 @@ class DataTypes:
                 c.append(component())
         return c
 
-    @lru_cache()
+    @lru_cache(maxsize=1024)
     def _get_components(self, datatype_class):
         datatype_components = []
         for component in self.components:
@@ -266,23 +266,62 @@ class DataTypes:
                     if issubclass(datatype_class, dt):
                         datatype_components.append(component)
                         break
+
         # remove overridden components
-        ret = []
+        unsorted_components = []
         non_leaf_components = set()
         for c in datatype_components:
             non_leaf_components.update(type(c).mro()[1:])
 
         for c in datatype_components:
             if type(c) not in non_leaf_components:
-                ret.append(c)
-        return tuple(ret)
+                unsorted_components.append(c)
+
+        # sort by dependencies
+        depsort_map = {}
+        for c in unsorted_components:
+            dependencies = getattr(c, "depends_on", [])
+            dependencies_classes = []
+            for dt in dependencies:
+                if isinstance(dt, str):
+                    dt = import_class(dt)
+                dependencies_classes.append(dt)
+            depsort_map[type(c)] = dependencies_classes
+
+        sorted_components = []
+        while unsorted_components:
+            new_unsorted_components = []
+            current_round_sorted_components = set()
+            for c in unsorted_components:
+                if not depsort_map[type(c)]:
+                    sorted_components.append(c)
+                    current_round_sorted_components.add(type(c))
+                else:
+                    new_unsorted_components.append(c)
+            if len(new_unsorted_components) == len(unsorted_components):
+                raise AttributeError(
+                    f"A loop has been detected in component dependencies: {unsorted_components}"
+                )
+            for c in new_unsorted_components:
+                depsort_map[type(c)] = [
+                    x
+                    for x in depsort_map[type(c)]
+                    if x not in current_round_sorted_components
+                ]
+            unsorted_components = new_unsorted_components
+        return tuple(sorted_components)
 
     def get_datatype(self, parent, data, key, model, schema) -> Union[DataType, None]:
         datatype_class = self.get_datatype_class(data.get("type", None))
         if datatype_class:
             return datatype_class(parent, data, key, model, schema)
+        if parent:
+            raise KeyError(
+                f"Do not have datatype for the following data at path {parent.path}:\n"
+                f"{json.dumps(data, indent=4, ensure_ascii=False)}"
+            )
         raise KeyError(
-            f"Do not have datatype for the following data at path {parent.path}:\n"
+            f"Do not have datatype for the following data:\n"
             f"{json.dumps(data, indent=4, ensure_ascii=False)}"
         )
 

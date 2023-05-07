@@ -1,9 +1,14 @@
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import ModelDataType
+from oarepo_model_builder.utils.python_name import (
+    convert_config_to_qualified_name,
+    parent_module,
+)
 from oarepo_model_builder.validation.utils import ImportSchema
 
 from ..facets import RegularFacetsComponent
+from .service import ServiceModelComponent
 from .utils import set_default
 
 
@@ -64,6 +69,7 @@ class FacetsSchema(ma.Schema):
 
 class FacetsModelComponent(RegularFacetsComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [ServiceModelComponent]
 
     class ModelSchema(ma.Schema):
         class Meta:
@@ -81,19 +87,28 @@ class FacetsModelComponent(RegularFacetsComponent):
     )
 
     def before_model_prepare(self, datatype, **kwargs):
-        service_module = datatype.definition["record-services-module"]
-        record_prefix = datatype.definition["record-prefix"]
+        service_module = parent_module(datatype.definition["service"]["module"])
+        prefix = datatype.definition["module"]["prefix"]
 
         facets = set_default(datatype, "facets", {})
-        facets.setdefault("module", f"{model['record-services-module']}.facets")
+        facets.setdefault("module", f"{service_module}.facets")
         facets.setdefault("generate", True)
         facets.setdefault("extra-code", "")
+        facets.setdefault("imports", [])
 
         search_options = set_default(datatype, "search-options", {})
-
-        facets.setdefault(
-            "class", f"{services_module}.search.{record_prefix}SearchOptions"
+        search_module = search_options.setdefault("module", f"{service_module}.search")
+        search_options.setdefault("class", f"{search_module}.{prefix}SearchOptions")
+        search_options.setdefault("base-classes", ["InvenioSearchOptions"])
+        search_options.setdefault("generate", True)
+        search_options.setdefault("extra-code", "")
+        search_options.setdefault(
+            "imports",
+            [
+                {
+                    "import": "invenio_records_resources.services.SearchOptions",
+                    "alias": "InvenioSearchOptions",
+                }
+            ],
         )
-        facets.setdefault("base-classes", [])
-        facets.setdefault("generate", True)
-        facets.setdefault("extra-code", "")
+        convert_config_to_qualified_name(search_options)

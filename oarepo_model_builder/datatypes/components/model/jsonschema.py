@@ -1,12 +1,20 @@
+import os
+
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.utils.python_name import module_to_path, parent_module
 from oarepo_model_builder.validation.utils import PermissiveSchema
 
+from .defaults import DefaultsModelComponent
+from .record import RecordModelComponent
 from .utils import set_default
 
 
 class JSONSchema(ma.Schema):
+    generate = ma.fields.Bool(
+        metadata={"doc": "Generate json schema (default is true)"}
+    )
     alias = ma.fields.Str(
         metadata={"doc": "Alias under which jsonschema is referenced in setup.cfg"}
     )
@@ -28,6 +36,7 @@ class JSONSchema(ma.Schema):
 
 class JSONSchemaModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent, RecordModelComponent]
 
     class ModelSchema(ma.Schema):
         jsonschema = ma.fields.Nested(
@@ -40,19 +49,22 @@ class JSONSchemaModelComponent(DataTypeComponent):
         )
 
     def before_model_prepare(self, datatype, **kwargs):
-        extension_suffix = datatype.definition["extension-suffix"]
-        records_path = datatype.definition["record-records-path"]
+        prefix_snake = datatype.definition["module"]["prefix-snake"]
+        alias = datatype.definition["module"]["alias"]
+        records_path = module_to_path(
+            parent_module(datatype.definition["record"]["module"])
+        )
 
         json_schema = set_default(datatype, "json-schema", {})
-        json_schema.setdefault("alias", extension_suffix)
+        json_schema.setdefault("generate", True)
+        json_schema.setdefault("alias", alias)
         version = json_schema.setdefault(
             "version", datatype.schema.settings.get("version", "1.0.0")
         )
 
-        schema_name = setdefault(
-            json_schema,
+        schema_name = json_schema.setdefault(
             "name",
-            f"{snake_case(model['record-prefix'])}-{version}.json",
+            f"{prefix_snake}-{version}.json",
         )
 
         json_schema.setdefault(

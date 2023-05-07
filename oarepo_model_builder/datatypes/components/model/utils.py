@@ -5,7 +5,7 @@ def set_default(datatype, *attrs):
     for k in keys[:-1]:
         if k not in d:
             d[k] = {}
-            d = d[k]
+        d = d[k]
     if keys[-1] not in d:
         if callable(value):
             value = value(datatype.definition)

@@ -28,4 +28,5 @@ class SampleModelComponent(RegularSampleComponent):
         )
 
     def before_model_prepare(self, datatype, **kwargs):
-        set_default(datatype, "script-import-sample-data", "data/sample_data.yaml")
+        sample = set_default(datatype, "sample", {})
+        sample.setdefault("file", "data/sample_data.yaml")

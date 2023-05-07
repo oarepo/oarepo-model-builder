@@ -24,7 +24,6 @@ class ModelDataType(ObjectDataType):
     json_schema = {"type": "object"}
 
     mapping = {}
-    profile = None  # filled by model builder before .prepare is called
 
     class ModelSchema(ObjectDataType.ModelSchema):
         type = ma.fields.Str(

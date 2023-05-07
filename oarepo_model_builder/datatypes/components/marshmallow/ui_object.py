@@ -10,17 +10,17 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
     eligible_datatypes = [ObjectDataType]
 
     def ui_marshmallow_register_class_names(
-        self, *, datatype, classes, marshmallow_package, **kwargs
+        self, *, datatype, classes, marshmallow_module, **kwargs
     ):
         self._register_class_name(
             datatype,
             datatype.section_ui.config.setdefault("marshmallow", {}),
             classes,
-            marshmallow_package,
+            marshmallow_module,
         )
 
     def ui_marshmallow_build_class_name_existing(
-        self, *, datatype, classes, marshmallow_package, **kwargs
+        self, *, datatype, classes, marshmallow_module, **kwargs
     ):
         if datatype.section_ui.config.get("marshmallow", {}).get("schema-class"):
             self._build_class_name(
@@ -28,13 +28,13 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
                 datatype.section_ui.config.setdefault("marshmallow", {}),
                 datatype.definition.setdefault("ui", {}).setdefault("marshmallow", {}),
                 classes,
-                marshmallow_package,
+                marshmallow_module,
                 datatype.section_ui.fingerprint,
                 "UISchema",
             )
 
     def ui_marshmallow_build_class_name_new(
-        self, *, datatype, classes, marshmallow_package, **kwargs
+        self, *, datatype, classes, marshmallow_module, **kwargs
     ):
         if not datatype.section_ui.config.get("marshmallow", {}).get("schema-class"):
             self._build_class_name(
@@ -42,7 +42,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
                 datatype.section_ui.config.setdefault("marshmallow", {}),
                 datatype.definition.setdefault("ui", {}).setdefault("marshmallow", {}),
                 classes,
-                marshmallow_package,
+                marshmallow_module,
                 datatype.section_ui.fingerprint,
                 "UISchema",
             )

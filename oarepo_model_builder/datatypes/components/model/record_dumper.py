@@ -1,7 +1,12 @@
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
+from oarepo_model_builder.utils.python_name import parent_module
 from oarepo_model_builder.validation.utils import ImportSchema
+
+from .defaults import DefaultsModelComponent
+from .record import RecordModelComponent
+from .utils import set_default
 
 
 class RecordDumperClassSchema(ma.Schema):
@@ -36,6 +41,7 @@ class RecordDumperClassSchema(ma.Schema):
 
 class RecordDumperModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent, RecordModelComponent]
 
     class ModelSchema(ma.Schema):
         record_dumper = ma.fields.Nested(
@@ -45,16 +51,19 @@ class RecordDumperModelComponent(DataTypeComponent):
             metadata={"doc": "Settings for record dumper"},
         )
 
-    def before_model_prepare(self, datatype, **kwargs):
-        module = datatype.definition["module"]
-        profile_module = datatype.definition["profile-module"]
-        record_prefix = datatype.definition["record-prefix"]
+    def before_model_prepare(self, datatype, *, context, **kwargs):
+        record_module = parent_module(datatype.definition["record"]["module"])
+        profile_module = context["profile_module"]
+        prefix = datatype.definition["module"]["prefix"]
 
-        dumper = setdefault(datatype, "record-metadata", {})
+        dumper = set_default(datatype, "record-dumper", {})
         dumper.setdefault("generate", True)
 
-        records_module = metadata.setdefault("module", f"{module}.{profile_module}")
-        dumper.setdefault("class", f"{records_module}.dumper.{record_prefix}Dumper")
-        dumper.setdefault("base-classes", [])
+        dumper_module = dumper.setdefault("module", f"{record_module}.{profile_module}")
+        dumper.setdefault("class", f"{dumper_module}.dumper.{prefix}Dumper")
+        dumper.setdefault("base-classes", ["SearchDumper"])
         dumper.setdefault("extra-code", "")
         dumper.setdefault("extensions", [])
+        dumper.setdefault(
+            "imports", [{"import": "invenio_records.dumpers.SearchDumper"}]
+        )

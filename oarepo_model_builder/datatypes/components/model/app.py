@@ -4,6 +4,7 @@ from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
 from oarepo_model_builder.utils.python_name import convert_config_to_qualified_name
 from oarepo_model_builder.validation.utils import ImportSchema
 
+from .defaults import DefaultsModelComponent
 from .utils import set_default
 
 
@@ -53,6 +54,7 @@ class ExtSchema(ma.Schema):
 class AppModelComponent(DataTypeComponent):
     "flask application"
     eligible_datatypes = [ModelDataType]
+    depends_on = [DefaultsModelComponent]
 
     class ModelSchema(ma.Schema):
         config = ma.fields.Nested(
@@ -63,9 +65,9 @@ class AppModelComponent(DataTypeComponent):
         )
 
     def before_model_prepare(self, datatype, **kwargs):
-        record_prefix = datatype.definition["record-prefix"]
-        extension_suffix = datatype.definition["extension-suffix"]
-        module = datatype.definition["module"]
+        prefix = datatype.definition["module"]["prefix"]
+        alias = datatype.definition["module"]["alias"]
+        module = datatype.definition["module"]["qualified"]
 
         config = set_default(datatype, "config", {})
 
@@ -78,9 +80,9 @@ class AppModelComponent(DataTypeComponent):
 
         ext.setdefault("generate", True)
         ext_module = ext.setdefault("module", f"{module}.ext")
-        ext.setdefault("class", f"{ext_module}.{record_prefix}Ext")
+        ext.setdefault("class", f"{ext_module}.{prefix}Ext")
         ext.setdefault("base-classes", [])
         ext.setdefault("extra_code", "")
-        ext.setdefault("alias", extension_suffix)
+        ext.setdefault("alias", alias)
         ext.setdefault("imports", [])
         convert_config_to_qualified_name(ext)
