@@ -1,7 +1,8 @@
 import sys
+from typing import Mapping
 
 import libcst as cst
-from jinja2 import Environment, FunctionLoader, pass_context
+from jinja2 import Environment, FunctionLoader, pass_context, Undefined
 
 from oarepo_model_builder.outputs import OutputBase
 from oarepo_model_builder.templates import templates
@@ -10,7 +11,8 @@ from oarepo_model_builder.utils.jinja import (
     base_name,
     in_different_package,
     package_name,
-    sorted_imports,
+    generate_import,
+    class_header
 )
 from oarepo_model_builder.utils.verbose import log
 
@@ -69,6 +71,7 @@ class PythonOutput(OutputBase):
                 lambda tn: templates.get_template(tn, context["settings"])
             ),
             autoescape=False,
+            undefined=StrictUndefined
         )
         self.register_default_filters(env)
         for filter_name, filter_func in (filters or {}).items():
@@ -79,9 +82,9 @@ class PythonOutput(OutputBase):
                 **context,
                 **{k.replace("-", "_"): v for k, v in list(context.items())},
             }
-            rendered = env.get_template(template_name).render(context)
+            rendered = env.get_template(template_name).render(make_attrdict(context))
         except Exception as exc:
-            raise RuntimeError(f"Error rendering template {template_name}") from exc
+            raise RuntimeError(f"Error rendering template {template_name}: {str(exc)}") from exc
         try:
             rendered_cst = cst.parse_module(
                 rendered, config=self.cst.config_for_parsing
@@ -97,11 +100,48 @@ class PythonOutput(OutputBase):
 
     @staticmethod
     def register_default_filters(env):
-        env.filters["sorted_imports"] = sorted_imports
+        env.filters["generate_import"] = generate_import
+        env.filters["class_header"] = class_header
         env.filters["package_name"] = package_name
         env.filters["base_name"] = pass_context(lambda context, value: base_name(value))
         env.tests["in_different_package"] = pass_context(
             lambda context, value: in_different_package(
-                context["current_package_name"], value
+                context["current_module"], value
             )
         )
+
+
+class AttrDict(dict):
+    def __getattr__(self, item):
+        try:
+            return self[item]
+        except KeyError as e:
+            raise AttributeError(f'No key {item}') from e
+    def __getitem__(self, item):
+        if super().__contains__(item):
+            ret = super().__getitem__(item)
+        else:
+            ret = super().__getitem__(item.replace('_', '-'))
+
+        if isinstance(ret, Mapping) and not isinstance(ret, AttrDict):
+            return AttrDict(ret)
+        return ret
+
+    def items(self):
+        return [
+            (k, self[k]) for k in self
+        ]
+
+    def values(self):
+        return [self[k] for k in self]
+
+    def __contains__(self, item):
+        return super().__contains__(item) or super().__contains__(item.replace('_', '-'))
+
+class StrictUndefined(Undefined):
+    def __str__(self):
+        self._fail_with_undefined_error()
+
+def make_attrdict(d):
+    d = AttrDict(d)
+    return {k: d[k] for k in d}

@@ -84,7 +84,7 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
         self.process_template(
             python_path,
             self.template,
-            current_package_name=package_name,
+            current_module=package_name,
             imports=imports,
             generated_classes=package_classes,
         )

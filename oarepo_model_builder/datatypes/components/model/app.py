@@ -26,7 +26,7 @@ class ConfigSchema(ma.Schema):
 class ExtSchema(ma.Schema):
     alias = ma.fields.Str(
         metadata={
-            "doc": "Alias under which the extension will be registered in setup.cfg"
+            "doc": "Alias under which the extension will be registered in setup.cfg and in app.extensions"
         }
     )
     module = ma.fields.Str(metadata={"doc": "Module with ext schema"})

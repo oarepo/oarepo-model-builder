@@ -91,7 +91,7 @@ def sort_by_reference_count(classes_list: List[MarshmallowClass]):
     classes_list.sort(key=lambda x: [-x.order, x.class_name])
 
 
-def collect_imports(current_package_name, classes_list: List[MarshmallowClass]):
+def collect_imports(current_module, classes_list: List[MarshmallowClass]):
     for cls in classes_list:
         for fld in cls.fields:
             if not fld.reference:
@@ -100,7 +100,7 @@ def collect_imports(current_package_name, classes_list: List[MarshmallowClass]):
                 # local accessor handles its own imports inside the accessor
                 continue
             # if from different package,
-            if package_name(fld.reference.reference) != current_package_name:
+            if package_name(fld.reference.reference) != current_module:
                 fld.imports.append(Import(import_path=fld.reference.reference))
 
 

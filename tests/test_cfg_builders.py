@@ -30,11 +30,6 @@ def build_python_model(model, output_builders, fn):
     builder = ModelBuilder(
         output_builders=output_builders,
         outputs=[PythonOutput, CFGOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            InvenioModelPreprocessor,
-            InvenioBaseClassesModelPreprocessor,
-        ],
         filesystem=InMemoryFileSystem(),
     )
     builder.build(

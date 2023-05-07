@@ -109,8 +109,6 @@ def load_model(
         k, v = s.split("=", 1)
         schema.schema[k] = v
     check_plugin_packages(schema)
-    if package and not schema.current_model.get("package"):
-        schema.current_model["package"] = package
     if "python" not in schema.settings:
         schema.settings["python"] = {}
     schema.settings["python"]["use-isort"] = isort

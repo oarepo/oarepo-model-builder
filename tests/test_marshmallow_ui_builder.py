@@ -45,11 +45,6 @@ def fulltext_builder():
             InvenioRecordResourceConfigBuilder,
         ],
         outputs=[PythonOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            OpensearchModelPreprocessor,
-            InvenioModelPreprocessor,
-        ],
     )
 
 

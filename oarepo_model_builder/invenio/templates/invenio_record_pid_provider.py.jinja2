@@ -1,6 +1,4 @@
-{% for b in vars.record_pid_provider_bases %}
-from {{ b|package_name }} import {{ b|base_name }}
-{% endfor %}
+{{ vars.pid.imports|generate_import }}
 
-class {{ vars.record_pid_provider_class|base_name }}({% for b in vars.record_pid_provider_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
-    pid_type = "{{ vars.pid_type }}"
+class {{ vars.pid|class_header(class_name="provider_class", base_classes_name="provider-base-classes") }}:
+    pid_type = "{{ vars.pid.type }}"

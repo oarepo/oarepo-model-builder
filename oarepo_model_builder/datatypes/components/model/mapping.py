@@ -10,6 +10,7 @@ from oarepo_model_builder.validation.utils import PermissiveSchema
 from .defaults import DefaultsModelComponent
 from .record import RecordModelComponent
 from .utils import set_default
+from .jsonschema import JSONSchemaModelComponent
 
 
 class ModelMappingSchema(ma.Schema):
@@ -36,7 +37,7 @@ class ModelMappingSchema(ma.Schema):
 
 class MappingModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
-    depends_on = [DefaultsModelComponent, RecordModelComponent]
+    depends_on = [DefaultsModelComponent, RecordModelComponent, JSONSchemaModelComponent]
 
     class ModelSchema(ma.Schema):
         mapping = ma.fields.Nested(
@@ -53,7 +54,8 @@ class MappingModelComponent(DataTypeComponent):
         mapping = set_default(datatype, "mapping", {})
         mapping.setdefault("generate", True)
         mapping.setdefault("alias", alias)
-        index_name = mapping.setdefault("index", snake_case(prefix_snake))
+        index_name = mapping.setdefault("index",
+                                        f"{prefix_snake}-{datatype.definition['json-schema']['version']}")
         mapping.setdefault(
             "file",
             os.path.join(

@@ -108,11 +108,6 @@ def build(model):
     builder = ModelBuilder(
         output_builders=[JSONSchemaBuilder],
         outputs=[JSONSchemaOutput, PythonOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            InvenioModelPreprocessor,
-            InvenioBaseClassesModelPreprocessor,
-        ],
         filesystem=InMemoryFileSystem(),
     )
     builder.build(

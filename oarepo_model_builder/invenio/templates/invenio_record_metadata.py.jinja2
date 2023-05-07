@@ -1,15 +1,11 @@
-from invenio_db import db
+{{ vars.record_metadata.imports|generate_import }}
 
-{% for b in vars.record_metadata_bases %}
-from {{ b|package_name }} import {{ b|base_name }}
-{% endfor %}
+class {{ vars.record_metadata|class_header }}:
+    """Model for {{ vars.record.class|base_name }} metadata."""
 
-class {{ vars.record_metadata_class|base_name }}(db.Model, {% for b in vars.record_metadata_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
-    """Model for {{ vars.record_class|base_name }} metadata."""
-
-    __tablename__ = "{{ vars.record_metadata_table_name }}"
+    __tablename__ = "{{ vars.record_metadata.table }}"
 
     # Enables SQLAlchemy-Continuum versioning
     __versioned__ = {}
 
-{{ vars.invenio_record_metadata_extra_code }}
+{{ vars.record_metadata.extra_code }}

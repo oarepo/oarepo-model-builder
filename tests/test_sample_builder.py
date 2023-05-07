@@ -162,11 +162,6 @@ def build_sample_data(model, count=1):
     builder = ModelBuilder(
         output_builders=[InvenioScriptSampleDataBuilder],
         outputs=[YAMLOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            InvenioModelPreprocessor,
-            InvenioBaseClassesModelPreprocessor,
-        ],
         filesystem=InMemoryFileSystem(),
     )
     schema = ModelSchema(

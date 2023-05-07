@@ -27,6 +27,7 @@ from .model import (
     ServiceModelComponent,
     UIMarshmallowModelComponent,
     UIModelComponent,
+    ProxyModelComponent
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
 from .ui import ObjectUIComponent, RegularUIComponent
@@ -62,4 +63,5 @@ DEFAULT_COMPONENTS = [
     UIMarshmallowModelComponent,
     UIModelComponent,
     DefaultsModelComponent,
+    ProxyModelComponent
 ]

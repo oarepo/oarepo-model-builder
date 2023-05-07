@@ -39,11 +39,6 @@ def test_enum():
             JSONSchemaBuilder,
         ],
         outputs=[PythonOutput, MappingOutput, JSONSchemaOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            OpensearchModelPreprocessor,
-            InvenioModelPreprocessor,
-        ],
         filesystem=filesystem,
     )
 

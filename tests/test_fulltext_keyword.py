@@ -30,12 +30,6 @@ def fulltext_builder():
     return ModelBuilder(
         output_builders=[JSONSchemaBuilder, MappingBuilder],
         outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
-        model_preprocessors=[
-            OpensearchModelPreprocessor,
-            DefaultValuesModelPreprocessor,
-            InvenioModelPreprocessor,
-            InvenioBaseClassesModelPreprocessor,
-        ],
     )
 
 

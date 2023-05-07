@@ -69,12 +69,17 @@ class DefaultsModelComponent(DataTypeComponent):
         )
 
     def before_model_prepare(self, datatype, *, context, **kwargs):
+        def get_model_name(_):
+            model_name = datatype.definition.get('module', {}).get('qualified')
+            if model_name:
+                return model_name.rsplit('.', maxsplit=1)[-1].title()
+            return os.path.basename(
+                context.get("output-directory", os.getcwd())
+            )
         model_name = set_default(
             datatype,
             "model-name",
-            lambda model: os.path.basename(
-                context.get("output-directory", os.getcwd())
-            ),
+            get_model_name
         )
         model_name = convert_name_to_python(model_name).lower()
         module_container = set_default(datatype, "module", {})

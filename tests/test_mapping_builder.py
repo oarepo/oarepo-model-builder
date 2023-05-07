@@ -45,11 +45,6 @@ def build_model(model):
     builder = ModelBuilder(
         output_builders=[MappingBuilder],
         outputs=[MappingOutput, PythonOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            InvenioModelPreprocessor,
-            InvenioBaseClassesModelPreprocessor,
-        ],
         filesystem=InMemoryFileSystem(),
     )
     builder.build(

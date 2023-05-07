@@ -44,7 +44,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         self.process_template(
             python_path,
             "record-facets",
-            current_package_name=package_name(self.current_model.record_facets_class),
+            current_module=package_name(self.current_model.record_facets_class),
             search_options_data=self.search_options_data,
             imports=list(sorted(self.imports)),
             vars=merged,

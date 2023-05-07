@@ -59,8 +59,8 @@ class RecordDumperModelComponent(DataTypeComponent):
         dumper = set_default(datatype, "record-dumper", {})
         dumper.setdefault("generate", True)
 
-        dumper_module = dumper.setdefault("module", f"{record_module}.{profile_module}")
-        dumper.setdefault("class", f"{dumper_module}.dumper.{prefix}Dumper")
+        dumper_module = dumper.setdefault("module", f"{record_module}.dumper")
+        dumper.setdefault("class", f"{dumper_module}.{prefix}Dumper")
         dumper.setdefault("base-classes", ["SearchDumper"])
         dumper.setdefault("extra-code", "")
         dumper.setdefault("extensions", [])

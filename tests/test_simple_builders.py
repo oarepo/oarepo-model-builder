@@ -45,11 +45,6 @@ def build_python_model(model, output_builders, fn):
     builder = ModelBuilder(
         output_builders=output_builders,
         outputs=[PythonOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            InvenioModelPreprocessor,
-            InvenioBaseClassesModelPreprocessor,
-        ],
         filesystem=InMemoryFileSystem(),
     )
     builder.build(
@@ -65,9 +60,11 @@ def build_python_model(model, output_builders, fn):
                     },
                     "opensearch": {"version": "os-v2"},
                 },
-                "model": {"package": "test", **model},
+                "record": {"module": {'qualified': "test"}, **model},
             },
         ),
+        profile='record',
+        model_path=['record'],
         output_dir="",
     )
 
@@ -88,14 +85,13 @@ from invenio_records_resources.records.systemfields import IndexField
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
-from invenio_records_resources.records.api import Record
 from test.records.models import TestMetadata
 from test.records.dumper import TestDumper
-
-class TestRecord(Record):
+from invenio_records_resources.records.api import Record
+class TestRecord(invenio_records_resources.records.api.Record):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
-    index = IndexField("test-test-1.0.0")
+    index = IndexField("test-1.0.0")
     pid = PIDField(
         provider=TestIdProvider,
         context_cls=PIDFieldContext,
@@ -121,40 +117,29 @@ def test_record_pid_provider_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
-from invenio_records.systemfields import ConstantField
-from invenio_records_resources.records.systemfields import IndexField
-
 from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
-
-from invenio_records_resources.records.api import Record
-
+from invenio_records.systemfields import ConstantField
+from invenio_records_resources.records.systemfields import IndexField
 from test.records.models import TestMetadata
 from test.records.dumper import TestDumper
+from invenio_records_resources.records.api import Record
 
-
-class TestIdProvider(RecordIdProviderV2 ):
+class TestIdProvider(RecordIdProviderV2):
     pid_type = "test"
 
-class TestRecord(Record ):
+class TestRecord(invenio_records_resources.records.api.Record):
     model_cls = TestMetadata
-
     schema = ConstantField("$schema", "local://test-1.0.0.json")
-
-
-    index = IndexField("test-test-1.0.0")
-
-
+    index = IndexField("test-1.0.0")
     pid = PIDField(
         provider=TestIdProvider,
         context_cls=PIDFieldContext,
         create=True
     
     )
-
     dumper_extensions = []
     dumper = TestDumper(extensions=dumper_extensions)
-
 """
     )
 
@@ -176,7 +161,7 @@ from invenio_db import db
 from invenio_records.models import RecordMetadataBase
 
 
-class TestMetadata(db.Model, RecordMetadataBase):
+class TestMetadata(RecordMetadataBase, db.Model):
     """Model for TestRecord metadata."""
 
     __tablename__ = "test_metadata"
@@ -200,9 +185,7 @@ import re
 from test import config as config
 
 
-class TestExt():
-    """test extension."""
-
+class TestExt:
     def __init__(self, app=None):
         """Extension initialization."""
         self.resource = None
@@ -225,12 +208,12 @@ class TestExt():
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        self.service = app.config["TEST_SERVICE_CLASS_TEST"](
-            config=app.config["TEST_SERVICE_CONFIG_TEST"](),
+        self.service = app.config["TEST_RECORD_SERVICE_CLASS"](
+            config=app.config["TEST_RECORD_SERVICE_CONFIG"](),
         )
-        self.resource = app.config["TEST_RESOURCE_CLASS_TEST"](
+        self.resource = app.config["TEST_RECORD_RESOURCE_CLASS"](
             service=self.service,
-            config=app.config["TEST_RESOURCE_CONFIG_TEST"](),
+            config=app.config["TEST_RECORD_RESOURCE_CONFIG"](),
         )
 
     def init_config(self, app):

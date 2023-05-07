@@ -216,11 +216,6 @@ def build(model, output_builder_components=None):
             ModelRegistrationBuilder,
         ],
         outputs=[JSONOutput, PythonOutput, CFGOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            InvenioModelPreprocessor,
-            InvenioBaseClassesModelPreprocessor,
-        ],
         filesystem=InMemoryFileSystem(),
     )
     builder.build(

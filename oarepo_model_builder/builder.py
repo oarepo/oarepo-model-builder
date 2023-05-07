@@ -1,11 +1,12 @@
 import copy
 from pathlib import Path
-from typing import Dict, List, Type, Union
+from typing import Dict, List, Type, Union, Any, Iterable
 
 from .builders import OutputBuilder
 from .fs import AbstractFileSystem, FileSystem
 from .outputs import OutputBase
 from .schema import ModelSchema
+from .utils.dict import dict_get
 from .utils.import_class import import_class
 from .validation import validate_model
 
@@ -97,14 +98,21 @@ class ModelBuilder:
     def build(
         self,
         model: ModelSchema,
+        profile: str,
+        model_path: List[str],
         output_dir: Union[str, Path],
         disable_validation: bool = False,
+        context: Dict[str, Any] = None
     ):
         """
         compile the schema to output directory
 
-        :param model:      the model schema
+        :param model:       the model schema
+        :param profile:     the profile under which the builder runs
+        :param model_path:  path within the schema that will be converted to datatype and used by output builders
         :param output_dir:  output directory where to put generated files
+        :param disable_validation: set True to disable validation
+        :param context:     extra context supplied to datatype preparation
         :return:            the outputs (self.outputs)
         """
 
@@ -113,9 +121,11 @@ class ModelBuilder:
         if self.overwrite:
             self.filesystem.overwrite = True
 
+        current_model = dict_get(model.schema, model_path)
+
         self.set_schema(model)
         self.filtered_output_classes = {
-            o.TYPE: o for o in self._filter_classes(self.output_classes, "output")
+            o.TYPE: o for o in self._filter_classes(self.output_classes, current_model, "output")
         }
         self.output_dir = Path(output_dir).absolute()
         self.outputs = {}
@@ -123,19 +133,19 @@ class ModelBuilder:
         if not disable_validation:
             self._validate_model(model)
 
-        self._run_output_builders(model)
+        self._run_output_builders(model, profile, model_path, context or {})
 
         self._save_outputs()
 
         return self.outputs
 
-    def _run_output_builders(self, model, profile, model_path, context):
+    def _run_output_builders(self, model: ModelSchema, profile: str, model_path: Iterable[str], context):
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(
-            self.output_builder_classes, "builder"
+            self.output_builder_classes, dict_get(model.schema, model_path), "builder"
         ):
             output_builder = output_builder_class(builder=self)
-            current_model = model.get_section(profile, model_path, context)
+            current_model = model.get_schema_section(profile, model_path, context)
             output_builder.build(current_model=current_model, schema=model.schema)
 
     def _validate_model(self, model):
@@ -154,13 +164,13 @@ class ModelBuilder:
 
     # private methods
 
-    def _filter_classes(self, classes: List[Type[object]], plugin_type):
+    def _filter_classes(self, classes: List[Type[object]], model, plugin_type):
         if (
-            "plugins" not in self.schema.current_model
-            or plugin_type not in self.schema.current_model["plugins"]
+            "plugins" not in model
+            or plugin_type not in model["plugins"]
         ):
             return classes
-        plugin_config = self.schema.current_model["plugins"][plugin_type]
+        plugin_config = model["plugins"][plugin_type]
 
         disabled = plugin_config.get("disable", [])
         enabled = plugin_config.get("enable", [])

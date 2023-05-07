@@ -38,6 +38,8 @@ class SettingsSchema(ma.Schema):
     schema_version = ma.fields.String(
         attribute="schema-version", data_key="schema-version"
     )
+    schema_server = ma.fields.String(attribute='schema-server', data_key='schema-server',
+                                     load_default='local://')
 
     class Meta:
         unknown = ma.RAISE

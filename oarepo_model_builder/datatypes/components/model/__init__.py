@@ -16,6 +16,7 @@ from .sample import SampleModelComponent
 from .service import ServiceModelComponent
 from .ui import UIModelComponent
 from .ui_marshmallow import UIMarshmallowModelComponent
+from .proxy import ProxyModelComponent
 
 __all__ = [
     "AppModelComponent",
@@ -36,4 +37,5 @@ __all__ = [
     "UIMarshmallowModelComponent",
     "UIModelComponent",
     "DefaultsModelComponent",
+    "ProxyModelComponent"
 ]

@@ -11,7 +11,7 @@ class PythonBuilder(OutputBuilder):
         mod[-1] += ".py"
         return Path(*mod)
 
-    def create_parent_modules(self, python_path):
+    def create_parent_modules(self, python_path: Path):
         ensure_parent_modules(
             self.builder, python_path, max_depth=len(python_path.parts)
         )

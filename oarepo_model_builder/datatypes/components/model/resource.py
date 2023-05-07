@@ -18,7 +18,7 @@ class ResourceClassSchema(ma.Schema):
             "doc": "Name of the config entry that holds the current resource class name"
         }
     )
-    proxy = ma.fields.Str(metadata={"doc": "Qualified name of the generated proxy"})
+    proxy = ma.fields.Str(metadata={"doc": "name of the generated proxy, will be put to _proxies_ module"})
     class_ = ma.fields.Str(
         attribute="class",
         data_key="class",
@@ -117,7 +117,7 @@ class ResourceModelComponent(DataTypeComponent):
         )
         resource.setdefault(
             "proxy",
-            f"{module_container['qualified']}.proxies.current_resource",
+            f"current_resource",
         )
         resource.setdefault("extra-code", "")
         resource.setdefault(

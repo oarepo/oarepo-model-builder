@@ -1,25 +1,22 @@
 import re
-from {{ vars['config-package']|package_name }} import {{ vars['config-package']|base_name }} as config
-{% for b in vars['ext-bases'] %}
-from {{ b|package_name }} import {{ b|base_name }}
-{% endfor %}
+{{ vars.config.module|generate_import(alias='config') }}
+{{ vars.ext.imports|generate_import }}
 
-class {{ vars['ext-class']|base_name }}({% for b in vars['ext-bases'] %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
-    """{{ vars['package'] }} extension."""
+class {{ vars.ext|class_header }}:
 
     def __init__(self, app=None):
         """Extension initialization."""
         self.resource = None
         self.service = None
-        {% if vars['ext-bases'] %}
-        super().__init__(None)
+        {% if vars.ext.base_classes %}
+        super().__init__(app=None)
         {% endif %}
         if app:
             self.init_app(app)
 
     def init_app(self, app):
         """Flask application initialization."""
-        {% if vars['ext-bases'] %}
+        {% if vars.ext.base_classes %}
         super().init_app(app=app)
         {% endif %}
         self.init_config(app)
@@ -28,19 +25,19 @@ class {{ vars['ext-class']|base_name }}({% for b in vars['ext-bases'] %}{{ b|bas
             self.register_flask_extension(app)
 
     def register_flask_extension(self, app):
-        {% if vars['ext-bases'] %}
+        {% if vars.ext.base_classes %}
         super().register_extension()
         {% endif %}
-        app.extensions["{{ vars['flask-extension-name'] }}"] = self
+        app.extensions["{{ vars.ext.alias }}"] = self
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        self.service = app.config["{{ vars['config-service-class-key'] }}"](
-            config=app.config["{{vars["config-service-config-key"]}}"](),
+        self.service = app.config["{{ vars.service.config_key }}"](
+            config=app.config["{{ vars.service_config.config_key }}"](),
         )
-        self.resource = app.config["{{ vars["config-resource-class-key"] }}"](
+        self.resource = app.config["{{ vars.resource.config_key }}"](
             service=self.service,
-            config=app.config["{{vars["config-resource-config-key"]}}"](),
+            config=app.config["{{ vars.resource_config.config_key }}"](),
         )
 
     def init_config(self, app):
@@ -63,4 +60,4 @@ class {{ vars['ext-class']|base_name }}({% for b in vars['ext-bases'] %}{{ b|bas
                 return True
         return False
 
-{{ vars["invenio-ext-extra-code"] }}
+{{ vars.ext.extra_code }}

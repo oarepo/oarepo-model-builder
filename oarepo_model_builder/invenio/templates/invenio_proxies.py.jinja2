@@ -3,14 +3,13 @@ from werkzeug.local import LocalProxy
 
 def _ext_proxy(attr):
     return LocalProxy(
-        lambda: getattr(current_app.extensions["{{ vars.flask_extension_name }}"], attr))
+        lambda: getattr(current_app.extensions["{{ vars.ext.alias }}"], attr))
 
 
-current_service = _ext_proxy('service')
+{{ vars.service.proxy }} = _ext_proxy('service')
 """Proxy to the instantiated vocabulary service."""
 
 
-current_resource = _ext_proxy('resource')
+{{ vars.resource.proxy }} = _ext_proxy('resource')
 """Proxy to the instantiated vocabulary resource."""
 
-{{ vars.invenio_proxies_extra_code }}

@@ -17,7 +17,7 @@ class ServiceClassSchema(ma.Schema):
     config_key = ma.fields.Str(
         metadata={"doc": "Key under which actual service class is registered in config"}
     )
-    proxy = ma.fields.Str(metadata={"doc": "Qualified name of the service proxy"})
+    proxy = ma.fields.Str(metadata={"doc": "name of the service proxy, will be put to _proxies_ package"})
     class_ = ma.fields.Str(
         attribute="class",
         data_key="class",
@@ -142,7 +142,7 @@ class ServiceModelComponent(DataTypeComponent):
             "config-key",
             f"{module_base_upper}_{context['profile_upper']}_SERVICE_CLASS",
         )
-        service.setdefault("proxy", f"{module}.proxies.current_service")
+        service.setdefault("proxy", f"current_service")
         service_module = service.setdefault("module", f"{service_package}.service")
         service.setdefault("class", f"{service_module}.{record_prefix}Service")
         service.setdefault("extra-code", "")
