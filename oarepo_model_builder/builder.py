@@ -5,7 +5,6 @@ from typing import Dict, List, Type, Union
 from .builders import OutputBuilder
 from .datatypes.datatypes import datatypes
 from .fs import AbstractFileSystem, FileSystem
-from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
 from .schema import ModelSchema
 from .utils.import_class import import_class
@@ -15,11 +14,6 @@ from .validation import validate_model
 class ModelBuilder:
     """
     Processes a model file and generates/updates sources for the model
-    """
-
-    model_preprocessor_classes: List[Type[ModelPreprocessor]]
-    """
-    Model preprocessor classes that are called after schema is loaded and before it is processed
     """
 
     output_classes: List[Type[OutputBase]]
@@ -58,7 +52,6 @@ class ModelBuilder:
         self,
         outputs: List[Type[OutputBase]] = (),
         output_builders: List[Type[OutputBuilder]] = (),
-        model_preprocessors: List[Type[ModelPreprocessor]] = (),
         filesystem=FileSystem(),
         overwrite=False,
     ):
@@ -73,7 +66,6 @@ class ModelBuilder:
             assert o.TYPE, f"output_type not set up on class {o}"
         self.output_classes = [*(outputs or [])]
         self.outputs = {}
-        self.model_preprocessor_classes = [*(model_preprocessors or [])]
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
         self.filesystem = filesystem
         self.skip_schema_validation = False  # set to True in some tests
@@ -117,26 +109,17 @@ class ModelBuilder:
         :return:            the outputs (self.outputs)
         """
 
-        # deep copy so that the passed model will not be influenced by preprocessors etc.
+        # deep copy the model
         model = copy.deepcopy(model)
         if self.overwrite:
-            if not hasattr(self.filesystem, "overwrite"):
-                raise AttributeError(
-                    f"Filesystem of type {type(self.filesystem)} does not support overwrite"
-                )
             self.filesystem.overwrite = True
 
         self.set_schema(model)
         self.filtered_output_classes = {
             o.TYPE: o for o in self._filter_classes(self.output_classes, "output")
         }
-        self.output_dir = Path(output_dir).absolute()  # noqa
+        self.output_dir = Path(output_dir).absolute()
         self.outputs = {}
-
-        if not disable_validation:
-            self._validate_model(model)
-
-        self._run_model_preprocessors(model)
 
         if not disable_validation:
             self._validate_model(model)
@@ -160,14 +143,9 @@ class ModelBuilder:
                 model=model.current_model,
                 schema=model.schema,
             )
+            current_model.profile = model.current_profile
             current_model.prepare({})
             output_builder.build(current_model=current_model, schema=model.schema)
-
-    def _run_model_preprocessors(self, model):
-        for model_preprocessor in self._filter_classes(
-            self.model_preprocessor_classes, "model"
-        ):
-            model_preprocessor(self).transform(model, model.settings)
 
     def _validate_model(self, model):
         if not self.skip_schema_validation:

@@ -5,13 +5,6 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.invenio.invenio_script_sample_data import (
     InvenioScriptSampleDataBuilder,
 )
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
-from oarepo_model_builder.model_preprocessors.invenio_base_classes import (
-    InvenioBaseClassesModelPreprocessor,
-)
 from oarepo_model_builder.outputs.yaml import YAMLOutput
 from oarepo_model_builder.schema import ModelSchema
 

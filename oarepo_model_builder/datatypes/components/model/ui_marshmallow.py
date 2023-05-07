@@ -1,9 +1,7 @@
 from oarepo_model_builder.datatypes import ModelDataType
 
-from ..marshmallow import ObjectMarshmallowExtraSchema, UIObjectMarshmallowComponent
+from ..marshmallow import UIObjectMarshmallowComponent
 from .marshmallow import MarshmallowModelMixin
-
-ModelMarshmallowSchema = ObjectMarshmallowExtraSchema
 
 
 class UIMarshmallowModelComponent(MarshmallowModelMixin, UIObjectMarshmallowComponent):
@@ -18,3 +16,40 @@ class UIMarshmallowModelComponent(MarshmallowModelMixin, UIObjectMarshmallowComp
         classes[datatype.definition[self.model_marshmallow_class_name]].append(
             (True, datatype)
         )
+
+    def before_model_prepare(self, datatype, **kwargs):
+        record_prefix = datatype.definition["record-prefix"]
+        services_module = datatype.definition["record-services-module"]
+
+        default_schema_class = f"{services_module}.schema.{record_prefix}RecordUISchema"
+
+        deepmerge(
+            set_default(datatype, "marshmallow", "ui", {}),
+            {"schema-class": default_schema_class, "generate": True, "extra-code": ""},
+        )
+        set_default(datatype, "marshmallow", "base-classes", ["InvenioUISchema"]),
+
+        if "properties" in datatype.definition and "metadata" in (
+            datatype.definition["properties"] or {}
+        ):
+            default_metadata_class = (
+                f"{services_module}.schema.{record_prefix}MetadataSchema"
+            )
+            deepmerge(
+                set_default(
+                    datatype, "properties", "metadata", "ui", "marshmallow", {}
+                ),
+                {
+                    "schema-class": default_metadata_class,
+                    "generate": True,
+                },
+            )
+            set_default(
+                datatype,
+                "properties",
+                "metadata",
+                "ui",
+                "marshmallow",
+                "base-classes",
+                ["ma.Schema"],
+            ),

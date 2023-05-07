@@ -8,7 +8,9 @@ from .marshmallow import ObjectMarshmallowSchema, PropertyMarshmallowSchema
 
 
 class PropertyUISchema(StrictSchema):
-    marshmallow = fields.Nested(PropertyMarshmallowSchema)
+    marshmallow = fields.Nested(
+        PropertyMarshmallowSchema, metadata={"doc": "UI marshmallow"}
+    )
 
 
 class RegularUIComponent(DataTypeComponent):

@@ -44,12 +44,24 @@ class SettingsSchema(ma.Schema):
 
 
 class ModelFileSchema(ma.Schema):
-    version = ma.fields.Str(load_default="1.0.0")
-    model = ma.fields.Nested(get_model_schema)
-    defs = ma.fields.Nested(DefsSchema, attribute="$defs", data_key="$defs")
-    settings = ma.fields.Nested(ExtensibleSchema("settings", SettingsSchema))
+    version = ma.fields.Str(
+        load_default="1.0.0", metadata={"doc": "Model version, default value 1.0.0"}
+    )
+    record = ma.fields.Nested(get_model_schema, metadata={"doc": "Main record"})
+    defs = ma.fields.Nested(
+        DefsSchema,
+        attribute="$defs",
+        data_key="$defs",
+        metadata={"doc": "Extra definitions, might be included via _use_ or _extend_"},
+    )
+    settings = ma.fields.Nested(
+        ExtensibleSchema("settings", SettingsSchema),
+        metadata={"doc": "General settings, applies to all generated sources"},
+    )
     output_directory = ma.fields.String(
-        attribute="output-directory", data_key="output-directory"
+        attribute="output-directory",
+        data_key="output-directory",
+        metadata={"doc": "Directory where sources will be generated to"},
     )
 
 

@@ -79,3 +79,13 @@ def qualified_name(package_name: str, class_name: str):
         if package_path:
             class_name = f"{'.'.join(package_path)}.{class_name}"
     return class_name
+
+
+def convert_config_to_qualified_name(
+    config_section, module_field="module", name_field="class"
+):
+    module = config_section[module_field]
+    class_name = config_section[name_field]
+    qualified = qualified_name(module, class_name)
+    if qualified != class_name:
+        config_section[name_field] = qualified

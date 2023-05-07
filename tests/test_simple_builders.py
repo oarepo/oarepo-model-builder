@@ -35,13 +35,6 @@ from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
 )
 from oarepo_model_builder.invenio.invenio_version import InvenioVersionBuilder
 from oarepo_model_builder.invenio.invenio_views import InvenioViewsBuilder
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
-from oarepo_model_builder.model_preprocessors.invenio_base_classes import (
-    InvenioBaseClassesModelPreprocessor,
-)
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 

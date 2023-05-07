@@ -24,32 +24,43 @@ from .graph import MarshmallowClass, MarshmallowReference
 
 
 class ExtraField(ma.Schema):
-    name = fields.String(required=True)
-    value = fields.String(required=True)
+    name = fields.String(required=True, metadata={"doc": "Name (lhs) of the field"})
+    value = fields.String(
+        required=True, metadata={"doc": "Literal definition (rhs) of the field"}
+    )
 
 
 class ObjectMarshmallowExtraSchema(ma.Schema):
     imports = fields.List(
-        fields.Nested(ImportSchema), required=False
+        fields.Nested(ImportSchema),
+        required=False,
+        metadata={"doc": "Python imports that will be put to marshmallow file"},
     )  # imports must be here as well as it is used on model's root (without field)
-    generate = fields.Boolean(required=False)
+    module = ma.fields.String(metadata={"doc": "Class module"})
+    generate = fields.Boolean(
+        required=False,
+        metadata={"doc": "Generate the marshmallow class (default is true)"},
+    )
     schema_class = fields.String(
         data_key="schema-class",
         attribute="schema-class",
         required=False,
         allow_none=True,
+        metadata={"doc": "The name of the marshmallow class"},
     )
     base_classes = fields.List(
         fields.String(),
         data_key="base-classes",
         attribute="base-classes",
         required=False,
+        metadata={"doc": "List of marshmallow base classes"},
     )
     extra_fields = fields.List(
         fields.Nested(ExtraField),
         required=False,
         data_key="extra-fields",
         attribute="extra-fields",
+        metadata={"doc": "Extra fields to generate into the marhsmallow class"},
     )
 
 
@@ -64,6 +75,7 @@ class ObjectMarshmallowMixin:
         schema_class = marshmallow_config.get("schema-class")
         if not schema_class:
             return
+        raise Exception("module")
         schema_class = convert_to_absolute_class_name(schema_class, marshmallow_package)
         classes[schema_class].append(
             (datatype, marshmallow_config.get("generate", True))

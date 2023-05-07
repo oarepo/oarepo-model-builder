@@ -7,7 +7,9 @@ class FacetsSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
 
-    searchable = ma.fields.Bool(required=False)
+    searchable = ma.fields.Bool(
+        required=False, metadata={"doc": "True if the field is rendered into a facet"}
+    )
 
 
 class RegularFacetsComponent(DataTypeComponent):

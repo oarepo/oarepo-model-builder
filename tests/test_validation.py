@@ -35,9 +35,9 @@ def test_settings_on_model():
                 "profile-package": "test",
                 "package-path": "test",
                 "jsonschemas-package": "test",
-                "mapping-file": "test",
-                "collection-url": "test",
+                "mapping": {"file": "test"},
                 "model-name": "test",
+                "resource-config": {"base-url": "test"},
             }
         }
     )

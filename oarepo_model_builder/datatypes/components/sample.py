@@ -5,9 +5,13 @@ from oarepo_model_builder.validation.utils import StrictSchema
 
 
 class SampleSchema(StrictSchema):
-    skip = ma.fields.Boolean()
-    faker = ma.fields.String()
-    params = ma.fields.Raw()
+    skip = ma.fields.Boolean(
+        metadata={"doc": "Set true to skip generating sample for the field"}
+    )
+    faker = ma.fields.String(
+        metadata={"doc": "The faker to use for generating the sample"}
+    )
+    params = ma.fields.Raw(metadata={"doc": "Params for the faker"})
 
 
 class RegularSampleComponent(DataTypeComponent):

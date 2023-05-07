@@ -14,16 +14,12 @@ def create_builder_from_entrypoints(profile="model", **kwargs):
     # output classes do not depend on profile
     output_classes = load_entry_points_list("oarepo_model_builder.outputs", None)
     builder_classes = load_entry_points_list("oarepo_model_builder.builders", profile)
-    model_preprocessor_classes = load_entry_points_list(
-        "oarepo_model_builder.model_preprocessors", profile
-    )
 
     builder_types = [x.TYPE for x in builder_classes]
 
     return ModelBuilder(
         output_builders=builder_classes,
         outputs=output_classes,
-        model_preprocessors=model_preprocessor_classes,
         **kwargs,
     )
 
