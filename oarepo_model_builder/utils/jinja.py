@@ -51,6 +51,21 @@ def generate_import(ctx, import_object, imported_part="class", alias=None):
     return " ".join(ret)
 
 
+def generate_list(data, separator=", ", start=False, end=False):
+    if not data:
+        return ""
+    ret = []
+    if start:
+        ret.append(separator)
+    for di, d in enumerate(data):
+        if di:
+            ret.append(separator)
+        ret.append(d)
+    if end:
+        ret.append(separator)
+    return "".join(ret)
+
+
 def in_different_package(current_module, value):
     return current_module != package_name(value)
 

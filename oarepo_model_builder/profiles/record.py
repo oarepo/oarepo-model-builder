@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union
+from typing import Any, Dict, List, Union
 
 import json5
 
@@ -10,23 +10,43 @@ from oarepo_model_builder.profiles import Profile
 from oarepo_model_builder.profiles.extend import ExtendProfile
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.utils.deepmerge import deepmerge
+from oarepo_model_builder.utils.dict import dict_get
 
 
-class ModelProfile(Profile):
+class RecordProfile(Profile):
+    default_model_path = ("record",)
+
     def build(
         self,
         model: ModelSchema,
+        profile: str,
+        model_path: List[str],
         output_directory: Union[str, Path],
         builder: ModelBuilder,
         **kwargs,
     ):
-        # at first handle "extend"
-        if "extend" in model.current_model:
-            self.handle_extend(model.current_model.extend, model, builder)
-        return super().build(model, output_directory, builder, **kwargs)
+        current_model = dict_get(model.schema, model_path)
+        if "extend" in current_model:
+            self.handle_extend(
+                current_model["extend"],
+                model,
+                profile,
+                model_path,
+                current_model,
+                builder,
+            )
+        return super().build(
+            model, profile, model_path, output_directory, builder, **kwargs
+        )
 
     def handle_extend(
-        self, extended_schema: str, model: ModelSchema, builder: ModelBuilder
+        self,
+        extended_schema: str,
+        model: ModelSchema,
+        profile: str,
+        model_path: List[str],
+        current_model: Dict[str, Any],
+        builder: ModelBuilder,
     ):
         """
         extending the model means:
@@ -48,6 +68,7 @@ class ModelProfile(Profile):
             configs=[],
             black=False,
             isort=False,
+            autoflake=False,
             sets=[],
             extra_included=model.included_schemas,
             model_content=loaded_schema,
@@ -61,7 +82,7 @@ class ModelProfile(Profile):
             filesystem=fs,
         )
 
-        ExtendProfile().build(extended_model, "", builder)
+        ExtendProfile().build(extended_model, profile, model_path, "", builder)
 
         loaded_model = json5.loads(fs.read("model.json5"))
-        deepmerge(model.current_model, loaded_model)
+        deepmerge(current_model, loaded_model)

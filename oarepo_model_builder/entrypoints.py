@@ -10,7 +10,7 @@ from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.schema import ModelSchema, remove_star_keys
 
 
-def create_builder_from_entrypoints(profile="model", **kwargs):
+def create_builder_from_entrypoints(profile="record", **kwargs):
     # output classes do not depend on profile
     output_classes = load_entry_points_list("oarepo_model_builder.outputs", None)
     builder_classes = load_entry_points_list("oarepo_model_builder.builders", profile)

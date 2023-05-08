@@ -3,7 +3,8 @@
 {{ vars.record.class|generate_import }}
 {{ vars.permissions.class|generate_import }}
 {{ vars.marshmallow.class|generate_import }}
-{{ vars.search_options.class|generate_import }}
+# TODO: waiting for search
+# {{ vars.search_options.class|generate_import }}
 
 
 class {{ vars.service_config|class_header }}:
@@ -14,7 +15,8 @@ class {{ vars.service_config|class_header }}:
     base_permission_policy_cls = {{ vars.permissions.class|base_name }}
 
     schema = {{ vars.marshmallow.class|base_name }}
-    search = {{ vars.search_options.class|base_name }}
+    # TODO: waiting for search
+    # search = {{ vars.search_options.class|base_name }}
     record_cls = {{ vars.record.class|base_name }}
     service_id = "{{ vars.service_config.service_id }}"
 

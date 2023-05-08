@@ -69,7 +69,7 @@ class RecordMetadataModelComponent(DataTypeComponent):
         metadata.setdefault("generate", True)
         metadata_module = metadata.setdefault("module", f"{records_module}.models")
         metadata.setdefault("class", f"{metadata_module}.{prefix}Metadata")
-        metadata.setdefault("base-classes", ["RecordMetadataBase", "db.Model"])
+        metadata.setdefault("base-classes", ["db.Model", "RecordMetadataBase"])
         metadata.setdefault("extra-code", "")
         metadata.setdefault(
             "imports",

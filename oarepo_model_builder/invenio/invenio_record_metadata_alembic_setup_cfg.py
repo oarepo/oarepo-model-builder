@@ -3,7 +3,7 @@ from pathlib import Path
 from ..builders import OutputBuilder
 from ..builders.utils import ensure_parent_modules
 from ..outputs.cfg import CFGOutput
-from ..utils.python_name import split_package_base_name
+from ..utils.python_name import module_to_path, split_package_base_name
 
 
 class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):
@@ -23,8 +23,11 @@ class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):
         )
 
         python_path = (
-            Path(self.current_model.definition["record-metadata"]["alembic"])
-            / "alembic"
+            Path(
+                module_to_path(
+                    self.current_model.definition["record-metadata"]["alembic"]
+                )
+            )
             / "__init__.py"
         )
         # create parent modules if they do not exist

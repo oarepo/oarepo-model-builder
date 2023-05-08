@@ -55,11 +55,15 @@ class RecordModelComponent(DataTypeComponent):
         record.setdefault("generate", True)
         records_module = record.setdefault("module", f"{module}.{profile_module}.api")
         record.setdefault("class", f"{records_module}.{record_prefix}Record")
+        record.setdefault("base-classes", ["InvenioRecord"])
         record.setdefault(
-            "base-classes", ["invenio_records_resources.records.api.Record"]
-        )
-        record.setdefault(
-            "imports", [{"import": "invenio_records_resources.records.api.Record"}]
+            "imports",
+            [
+                {
+                    "import": "invenio_records_resources.records.api.Record",
+                    "alias": "InvenioRecord",
+                }
+            ],
         )
         record.setdefault("extra-code", "")
         convert_config_to_qualified_name(record)

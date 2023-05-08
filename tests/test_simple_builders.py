@@ -86,8 +86,8 @@ from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
 from test.records.dumper import TestDumper
-from invenio_records_resources.records.api import Record
-class TestRecord(invenio_records_resources.records.api.Record):
+from invenio_records_resources.records.api import Record as InvenioRecord
+class TestRecord(InvenioRecord):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
     index = IndexField("test-1.0.0")
@@ -122,12 +122,12 @@ from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.systemfields import IndexField
 from test.records.models import TestMetadata
 from test.records.dumper import TestDumper
-from invenio_records_resources.records.api import Record
+from invenio_records_resources.records.api import Record as InvenioRecord
 
 class TestIdProvider(RecordIdProviderV2):
     pid_type = "test"
 
-class TestRecord(invenio_records_resources.records.api.Record):
+class TestRecord(InvenioRecord):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
     index = IndexField("test-1.0.0")
@@ -160,7 +160,7 @@ from invenio_db import db
 from invenio_records.models import RecordMetadataBase
 
 
-class TestMetadata(RecordMetadataBase, db.Model):
+class TestMetadata(db.Model, RecordMetadataBase):
     """Model for TestRecord metadata."""
 
     __tablename__ = "test_metadata"
@@ -386,14 +386,17 @@ from invenio_records_resources.services import pagination_links
 from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
-from test.services.records.search import TestSearchOptions
+# TODO: waiting for search
+# from test.services.records.search import TestSearchOptions
+
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
     PERMISSIONS_PRESETS = []
     url_prefix = "/test/"
     base_permission_policy_cls = TestPermissionPolicy
     schema = TestSchema
-    search = TestSearchOptions
+    # TODO: waiting for search
+    # search = TestSearchOptions
     record_cls = TestRecord
     service_id = "test"
     components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]

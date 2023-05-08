@@ -11,6 +11,7 @@ from oarepo_model_builder.utils.jinja import (
     base_name,
     class_header,
     generate_import,
+    generate_list,
     in_different_package,
     package_name,
 )
@@ -103,6 +104,7 @@ class PythonOutput(OutputBase):
     @staticmethod
     def register_default_filters(env):
         env.filters["generate_import"] = generate_import
+        env.filters["generate_list"] = generate_list
         env.filters["class_header"] = class_header
         env.filters["package_name"] = package_name
         env.filters["base_name"] = pass_context(lambda context, value: base_name(value))

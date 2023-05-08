@@ -109,7 +109,9 @@ def test_fulltext_keyword(fulltext_builder):
 def load_generated_mapping(fulltext_builder):
     return json5.load(
         fulltext_builder.filesystem.open(
-            os.path.join("test", "records", "mappings", "os-v2", "test-1.0.0.json")
+            os.path.join(
+                "test", "records", "mappings", "os-v2", "test", "test-1.0.0.json"
+            )
         )
     )
 

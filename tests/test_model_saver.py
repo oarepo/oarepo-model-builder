@@ -91,7 +91,7 @@ def test_model_saver():
         },
         "mapping-settings": {
             "alias": "test",
-            "file": "test/records/mappings/os-v2/test-1.0.0.json",
+            "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
             "generate": True,
             "index": "test-1.0.0",
             "module": "test.records.mappings",
@@ -186,11 +186,16 @@ def test_model_saver():
         },
         "proxy": {"module": "test.proxies"},
         "record": {
-            "base-classes": ["invenio_records_resources.records.api.Record"],
+            "base-classes": ["InvenioRecord"],
             "class": "test.records.api.TestRecord",
             "extra-code": "",
             "generate": True,
-            "imports": [{"import": "invenio_records_resources.records.api.Record"}],
+            "imports": [
+                {
+                    "alias": "InvenioRecord",
+                    "import": "invenio_records_resources.records.api.Record",
+                }
+            ],
             "module": "test.records.api",
         },
         "record-dumper": {
@@ -205,7 +210,7 @@ def test_model_saver():
         "record-metadata": {
             "alembic": "test.records.alembic",
             "alias": "test",
-            "base-classes": ["RecordMetadataBase", "db.Model"],
+            "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "test.records.models.TestMetadata",
             "extra-code": "",
             "generate": True,
@@ -423,7 +428,7 @@ def test_model_saver_invenio():
         },
         "mapping-settings": {
             "alias": "test",
-            "file": "test/records/mappings/os-v2/test-1.0.0.json",
+            "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
             "generate": True,
             "index": "test-1.0.0",
             "module": "test.records.mappings",
@@ -512,11 +517,16 @@ def test_model_saver_invenio():
         },
         "proxy": {"module": "test.proxies"},
         "record": {
-            "base-classes": ["invenio_records_resources.records.api.Record"],
+            "base-classes": ["InvenioRecord"],
             "class": "test.records.api.TestRecord",
             "extra-code": "",
             "generate": True,
-            "imports": [{"import": "invenio_records_resources.records.api.Record"}],
+            "imports": [
+                {
+                    "alias": "InvenioRecord",
+                    "import": "invenio_records_resources.records.api.Record",
+                }
+            ],
             "module": "test.records.api",
         },
         "record-dumper": {
@@ -531,7 +541,7 @@ def test_model_saver_invenio():
         "record-metadata": {
             "alembic": "test.records.alembic",
             "alias": "test",
-            "base-classes": ["RecordMetadataBase", "db.Model"],
+            "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "test.records.models.TestMetadata",
             "extra-code": "",
             "generate": True,

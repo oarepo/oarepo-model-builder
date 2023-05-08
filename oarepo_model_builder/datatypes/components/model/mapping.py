@@ -66,8 +66,8 @@ class MappingModelComponent(DataTypeComponent):
 
         mapping = set_default(datatype, "mapping-settings", {})
         mapping.setdefault("generate", True)
-        mapping.setdefault("alias", alias)
-        mapping.setdefault(
+        alias = mapping.setdefault("alias", alias)
+        module = mapping.setdefault(
             "module",
             f'{parent_module(datatype.definition["record"]["module"])}.mappings',
         )
@@ -81,6 +81,7 @@ class MappingModelComponent(DataTypeComponent):
                 records_path,
                 "mappings",
                 "os-v2",
+                alias,
                 f"{index_name}.json",
             ),
         )

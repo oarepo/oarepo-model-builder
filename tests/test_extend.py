@@ -31,7 +31,9 @@ def test_extend_property_preprocessor():
     model = ModelSchema(
         "/tmp/test.json", content=nr_documents_model  # NOSONAR
     )  # NOSONAR - this is fake path on memory filesystem
-    ExtendProfile().build(model, "record", ["record"], "", builder, disable_validation=True)
+    ExtendProfile().build(
+        model, "record", ["record"], "", builder, disable_validation=True
+    )
     loaded_model = json5.loads(fs.read("model.json5"))
     # assert that no class is generated in loaded_model
     check_marshmallow(loaded_model, "")

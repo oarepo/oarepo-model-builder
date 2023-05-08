@@ -73,7 +73,7 @@ def test_prepare_datatype():
         },
         "mapping-settings": {
             "alias": "my_test_record",
-            "file": "my/test/records/mappings/os-v2/test-1.0.0.json",
+            "file": "my/test/records/mappings/os-v2/my_test_record/test-1.0.0.json",
             "generate": True,
             "index": "test-1.0.0",
             "module": "my.test.records.mappings",
@@ -153,11 +153,16 @@ def test_prepare_datatype():
         },
         "proxy": {"module": "my.test.proxies"},
         "record": {
-            "base-classes": ["invenio_records_resources.records.api.Record"],
+            "base-classes": ["InvenioRecord"],
             "class": "my.test.records.api.TestRecord",
             "extra-code": "",
             "generate": True,
-            "imports": [{"import": "invenio_records_resources.records.api.Record"}],
+            "imports": [
+                {
+                    "import": "invenio_records_resources.records.api.Record",
+                    "alias": "InvenioRecord",
+                }
+            ],
             "module": "my.test.records.api",
         },
         "record-dumper": {
@@ -172,7 +177,7 @@ def test_prepare_datatype():
         "record-metadata": {
             "alembic": "my.test.records.alembic",
             "alias": "my_test_record",
-            "base-classes": ["RecordMetadataBase", "db.Model"],
+            "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "my.test.records.models.TestMetadata",
             "extra-code": "",
             "generate": True,

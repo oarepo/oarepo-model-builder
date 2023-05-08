@@ -86,7 +86,7 @@ from oarepo_model_builder.utils.verbose import log
 @click.option(
     "--profile",
     help="Run the builder with this profile",
-    default=["model"],
+    default=["record"],
     multiple=True,
 )
 @click.argument("model_filename", type=click.Path(exists=True), required=True)
@@ -213,9 +213,6 @@ def run_internal(
         with open(save_model, "w") as f:
             yaml.dump(json.loads(json.dumps(model.schema)), f)
 
-    # set the output directory on the schema
-    model.schema["output-directory"] = output_directory
-
     # for each profile on the command line, render it
     profiles_to_render = [y.strip() for x in profiles for y in x.split(",")]
     for profile in profiles_to_render:
@@ -231,7 +228,13 @@ def run_internal(
             raise AttributeError(f"No profile handler for {profile} registered")
 
         # and call it
-        profile_handler.build(model, output_directory, builder)
+        profile_handler.build(
+            model,
+            profile,
+            profile_handler.default_model_path,
+            output_directory,
+            builder,
+        )
     log.leave("Done")
     print(f"Log saved to {Path(output_directory) / 'installation.log'}")
 
