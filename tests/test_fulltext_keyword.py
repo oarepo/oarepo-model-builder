@@ -18,9 +18,16 @@ def get_model_schema(field_type):
         "",
         {
             "settings": {
-                "python": {"use-isort": False, "use-black": False},
+                "python": {
+                    "use-isort": False,
+                    "use-black": False,
+                    "use-autoflake": False,
+                },
             },
-            "model": {"package": "test", "properties": {"a": {"type": field_type}}},
+            "record": {
+                "module": {"qualified": "test"},
+                "properties": {"a": {"type": field_type}},
+            },
         },
     )
 
@@ -36,7 +43,9 @@ def fulltext_builder():
 def test_fulltext(fulltext_builder):
     schema = get_model_schema("fulltext")
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     data = load_generated_jsonschema(fulltext_builder)
 
@@ -56,7 +65,9 @@ def test_fulltext(fulltext_builder):
 def test_keyword(fulltext_builder):
     schema = get_model_schema("keyword")
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     data = load_generated_jsonschema(fulltext_builder)
 
@@ -76,7 +87,9 @@ def test_keyword(fulltext_builder):
 def test_fulltext_keyword(fulltext_builder):
     schema = get_model_schema("fulltext+keyword")
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     data = load_generated_jsonschema(fulltext_builder)
 
@@ -96,9 +109,7 @@ def test_fulltext_keyword(fulltext_builder):
 def load_generated_mapping(fulltext_builder):
     return json5.load(
         fulltext_builder.filesystem.open(
-            os.path.join(
-                "test", "records", "mappings", "os-v2", "test", "test-1.0.0.json"
-            )
+            os.path.join("test", "records", "mappings", "os-v2", "test-1.0.0.json")
         )
     )
 
