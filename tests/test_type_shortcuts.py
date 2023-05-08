@@ -81,9 +81,11 @@ def build_jsonschema(model):
                         "use-autoflake": False,
                     },
                 },
-                "model": {"package": "test", **model},
+                "record": {"module": {"qualified": "test"}, **model},
             },
         ),
+        profile="record",
+        model_path=["record"],
         output_dir="",
     )
     return json5.load(

@@ -14,9 +14,10 @@ def test_array_shortcuts():
         "test.yaml",  # NOSONAR
         "test",
         model_content={
-            "model": {
+            "record": {
                 "use": "invenio",
                 "properties": {"a[]": {"type": "keyword", "^required": True}},
+                "module": {"qualified": "test"},
             },
         },
         isort=False,
@@ -27,7 +28,7 @@ def test_array_shortcuts():
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -36,7 +37,7 @@ def test_array_shortcuts():
     assert (
         strip_whitespaces(
             """
-class TestRecordSchema(InvenioBaseRecordSchema):
+class TestSchema(InvenioBaseRecordSchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -49,7 +50,7 @@ class TestRecordSchema(InvenioBaseRecordSchema):
     )
 
     data = builder.filesystem.read(
-        os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+        os.path.join("test", "records", "mappings", "os-v2", "test-1.0.0.json")
     )
     data = json.loads(data)
     assert data == {
@@ -88,11 +89,13 @@ class TestRecordSchema(InvenioBaseRecordSchema):
 
 def test_singleline_type_shortcut():
     data = """
-model:
+record:
   properties:
     metadata:
       properties:
         title: fulltext
+  module:
+    qualified: test
 """
 
     schema = load_model(
@@ -105,15 +108,17 @@ model:
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
 
 def test_object_shortcut():
     data = """
-model:
+record:
   properties:
     metadata{}:
       title: fulltext
+  module:
+    qualified: test
 """
 
     schema = load_model(
@@ -126,12 +131,14 @@ model:
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
 
 def test_array_shortcut():
     data = """
-model:
+record:
+  module:
+    qualified: test
   properties:
     metadata[]:
       type: fulltext
@@ -147,12 +154,14 @@ model:
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
 
 def test_array_single_line_shortcut():
     data = """
-model:
+record:
+  module:
+    qualified: test
   properties:
     metadata[]: fulltext
 """
@@ -167,12 +176,14 @@ model:
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
 
 def test_misc_shortcuts():
     data = """
-model:
+record:
+  module:
+    qualified: test
   properties:
     metadata:
       properties:
@@ -202,4 +213,4 @@ model:
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
