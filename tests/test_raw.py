@@ -31,7 +31,6 @@ def test_raw_type():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
     ).read()
-    print(data)
     assert (
         strip_whitespaces(
             """

@@ -115,7 +115,7 @@ def build(model):
             "",
             {
                 "settings": {
-                    "python": {"use-isort": False, "use-black": False},
+                    "python": {"use-isort": False, "use-black": False, "use-autoflake": False},
                 },
                 "record": {
                     "module": {"qualified": "test"},

@@ -346,6 +346,7 @@ def build(model, output_builder_components=None):
                     "python": {
                         "use-isort": False,
                         "use-black": False,
+                        "use-autoflake": False,
                     },
                 },
                 "record": {**model, "module": {"qualified": "test"}},
