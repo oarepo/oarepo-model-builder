@@ -178,9 +178,7 @@ class ModelSchema:
                         raise IncludedFileNotFoundException(
                             f"No file for use at path {'/'.join(stack)}"
                         )
-                    included_data = self._load_included_file(
-                        name, source_locations=Key.get_sources(key)
-                    )
+                    included_data = self._load_included_file(name)
                     deepmerge(element, included_data, [], listmerge="keep")
                 return self._resolve_references(element, stack)
             for k, v in element.items():

@@ -117,12 +117,14 @@ def build(model):
                 "settings": {
                     "python": {"use-isort": False, "use-black": False},
                 },
-                "model": {
-                    "package": "test",
+                "record": {
+                    "module": {"qualified": "test"},
                     **model,
                 },
             },
         ),
+        profile="record",
+        model_path=["record"],
         output_dir="",
     )
     data = json5.load(

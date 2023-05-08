@@ -18,9 +18,9 @@ class SettingsPythonSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
 
-    use_isort = ma.fields.Bool(attribute="use-isort", data_key="use-isort")
-    use_black = ma.fields.Bool(attribute="use-black", data_key="use-black")
-    use_autoflake = ma.fields.Bool(attribute="use-autoflake", data_key="use-autoflake")
+    use_isort = ma.fields.Bool(attribute="use-isort", data_key="use-isort", load_default=True)
+    use_black = ma.fields.Bool(attribute="use-black", data_key="use-black", load_default=True)
+    use_autoflake = ma.fields.Bool(attribute="use-autoflake", data_key="use-autoflake", load_default=True)
 
 
 class SettingsOpenSearchSchema(ma.Schema):

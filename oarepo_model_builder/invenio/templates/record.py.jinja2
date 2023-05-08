@@ -9,11 +9,11 @@ from invenio_records_resources.records.systemfields import IndexField
 
 class {{ vars.record|class_header }}:
     model_cls = {{ vars.record_metadata.class|base_name }}
-{% if vars.json_schema.name %}
-    schema = ConstantField("$schema", "{{ settings.schema_server }}{{ vars.json_schema.name }}")
+{% if vars.json_schema_settings.name %}
+    schema = ConstantField("$schema", "{{ settings.schema_server }}{{ vars.json_schema_settings.name }}")
 {% endif %}
-{% if vars.mapping.index %}
-    index = IndexField("{{ vars.mapping.index }}")
+{% if vars.mapping_settings.index %}
+    index = IndexField("{{ vars.mapping_settings.index }}")
 {% endif %}
 {% if not vars.pid.skip %}
     pid = {{ vars.pid.field_class }}(

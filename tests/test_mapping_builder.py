@@ -59,15 +59,17 @@ def build_model(model):
                     },
                     "opensearch": {"version": "os-v2"},
                 },
-                "model": {"package": "test", **model},
+                "record": {"module": {"qualified": "test"}, **model},
             },
         ),
+        profile="record",
+        model_path=["record"],
         output_dir="",
     )
     data = json5.load(
         builder.filesystem.open(
             os.path.join(
-                "test", "records", "mappings", "os-v2", "test", "test-1.0.0.json"
+                "test", "records", "mappings", "os-v2", "test-1.0.0.json"
             )
         )
     )

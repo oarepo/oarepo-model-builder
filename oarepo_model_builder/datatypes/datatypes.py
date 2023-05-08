@@ -12,6 +12,7 @@ from marshmallow import fields
 from ..utils.deepmerge import deepmerge
 from ..utils.import_class import import_class
 from ..utils.properties import class_property
+from ..validation.utils import PermissiveSchema
 
 
 @dataclasses.dataclass
@@ -193,6 +194,8 @@ class DataType(AbstractDataType):
     class ModelSchema(ma.Schema):
         type = fields.String(required=True)
         required = fields.Bool()
+        jsonschema = fields.Nested(PermissiveSchema)
+        mapping = fields.Nested(PermissiveSchema)
 
     def prepare(self, context):
         datatypes.call_components(datatype=self, method="prepare", context=context)

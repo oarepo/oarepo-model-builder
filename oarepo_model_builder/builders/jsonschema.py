@@ -5,7 +5,7 @@ from .json_base import JSONBaseBuilder
 class JSONSchemaBuilder(JSONBaseBuilder):
     TYPE = "jsonschema"
     output_file_type = "jsonschema"
-    output_file_name = "schema-file"
+    output_file_name = ["json-schema-settings", "file"]
     parent_module_root_name = "jsonschemas"
     create_parent_packages = True
 

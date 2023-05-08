@@ -13,7 +13,7 @@ def test_empty_metadata():
         "test",
         model_content={
             "version": "1.0.0",
-            "model": {OAREPO_USE: "invenio", "properties": None},
+            "record": {OAREPO_USE: "invenio", "properties": None},
         },
         isort=False,
         black=False,
@@ -24,6 +24,6 @@ def test_empty_metadata():
 
     tmpdir = mkdtemp()
     try:
-        builder.build(schema, tmpdir)
+        builder.build(schema, profile="record", model_path=["record"], output_dir=tmpdir)
     finally:
         shutil.rmtree(tmpdir)

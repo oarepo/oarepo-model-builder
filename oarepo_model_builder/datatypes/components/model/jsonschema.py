@@ -42,8 +42,8 @@ class JSONSchemaModelComponent(DataTypeComponent):
     class ModelSchema(ma.Schema):
         jsonschema = ma.fields.Nested(
             JSONSchema,
-            data_key="json-schema",
-            attribute="json-schema",
+            data_key="json-schema-settings",
+            attribute="json-schema-settings",
             metadata={
                 "doc": "JSON Schema section of the model. Properties will be generated automatically"
             },
@@ -56,7 +56,7 @@ class JSONSchemaModelComponent(DataTypeComponent):
             parent_module(datatype.definition["record"]["module"])
         )
 
-        json_schema = set_default(datatype, "json-schema", {})
+        json_schema = set_default(datatype, "json-schema-settings", {})
         json_schema.setdefault("generate", True)
         json_schema.setdefault("alias", alias)
         version = json_schema.setdefault(

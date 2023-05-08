@@ -9,18 +9,18 @@ def test_empty_model_validation():
         "version": "1.0.0",
     }
     assert model_validator.validate({"record": {}}) == {
-        "record": {"type": "model", "properties": {}},
+        "record": {"type": "model", "properties": {}, "searchable": True},
         "version": "1.0.0",
     }
     with pytest.raises(ValidationError, match="Must be equal to model"):
         model_validator.validate({"record": {"type": "blah"}})
     assert model_validator.validate({"record": {"properties": {}}}) == {
-        "record": {"type": "model", "properties": {}},
+        "record": {"type": "model", "properties": {}, "searchable": True},
         "version": "1.0.0",
     }
     assert model_validator.validate(
         {"record": {"type": "model", "properties": None}}
-    ) == {"record": {"type": "model", "properties": {}}, "version": "1.0.0"}
+    ) == {"record": {"type": "model", "properties": {}, "searchable": True}, "version": "1.0.0"}
 
 
 def test_unknown_on_top_validation():
@@ -33,8 +33,8 @@ def test_settings_on_model():
         {
             "record": {
                 "module": {"qualified": "test"},
-                "json-schema": {"file": "test"},
-                "mapping": {"file": "test"},
+                "json-schema-settings": {"file": "test"},
+                "mapping-settings": {"file": "test"},
                 "model-name": "test",
                 "resource-config": {"base-url": "test"},
             }
@@ -42,13 +42,13 @@ def test_settings_on_model():
     )
     assert validated == {
         "record": {
-            "json-schema": {"file": "test"},
-            "mapping": {"file": "test"},
+            "json-schema-settings": {"file": "test"},
+            "mapping-settings": {"file": "test"},
             "model-name": "test",
             "module": {"qualified": "test"},
             "properties": {},
             "resource-config": {"base-url": "test"},
-            "type": "model",
+            "type": "model", "searchable": True,
         },
         "version": "1.0.0",
     }
@@ -76,7 +76,7 @@ def test_inline_props_on_model():
                 "b": {"type": "integer", "minimum": 1},
                 "c": {"type": "float", "exclusiveMaximum": 1.0},
                 "d": {"type": "double"},
-            },
+            }, "searchable": True,
         },
     }
 
@@ -101,7 +101,7 @@ def test_validate_defs():
             "c": "float{exclusiveMaximum: 1.0}",
             "d": "double",
         },
-        "record": {"properties": {}, "type": "model"},
+        "record": {"properties": {}, "type": "model", "searchable": True},
     }
 
 
@@ -112,8 +112,8 @@ def test_settings():
     assert validation_result == {
         "version": "1.0.0",
         "settings": {
-            "python": {"use-black": True, "use-isort": True},
+            "python": {"use-black": True, "use-isort": True, "use-autoflake": True},
             "schema-server": "local://",
         },
-        "record": {"properties": {}, "type": "model"},
+        "record": {"properties": {}, "type": "model", "searchable": True},
     }

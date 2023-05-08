@@ -3,6 +3,7 @@ from pathlib import Path
 from oarepo_model_builder.builders import OutputBuilder
 
 from .utils import ensure_parent_modules
+from ..utils.dict import dict_get
 
 
 class JSONBaseBuilder(OutputBuilder):
@@ -13,7 +14,7 @@ class JSONBaseBuilder(OutputBuilder):
 
     def begin(self, current_model, schema):
         super().begin(current_model, schema)
-        output_name = self.current_model.definition[self.output_file_name]
+        output_name = dict_get(self.current_model.definition, self.output_file_name)
         self.output = self.builder.get_output(self.output_file_type, output_name)
 
         if self.create_parent_packages:

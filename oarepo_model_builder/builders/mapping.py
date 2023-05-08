@@ -22,7 +22,7 @@ def deep_searchable_enabled(dt):
 class MappingBuilder(JSONBaseBuilder):
     TYPE = "mapping"
     output_file_type = "mapping"
-    output_file_name = "mapping-file"
+    output_file_name = ["mapping-settings", "file"]
     parent_module_root_name = "mappings"
     create_parent_packages = True
 

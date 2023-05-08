@@ -45,8 +45,11 @@ class MappingModelComponent(DataTypeComponent):
 
     class ModelSchema(ma.Schema):
         mapping = ma.fields.Nested(
-            ModelMappingSchema, metadata={"doc": "Mapping definition"}
+            ModelMappingSchema, attribute='mapping-settings', data_key='mapping-settings',
+            metadata={"doc": "Mapping definition"}
         )
+        searchable = ma.fields.Bool(load_default=True,
+                                    metadata={"doc": "Will the mapping/indexing be generated on model? (can be overriden on individual properties)"})
 
     def before_model_prepare(self, datatype, **kwargs):
         prefix_snake = datatype.definition["module"]["prefix-snake"]
@@ -55,7 +58,7 @@ class MappingModelComponent(DataTypeComponent):
             parent_module(datatype.definition["record"]["module"])
         )
 
-        mapping = set_default(datatype, "mapping", {})
+        mapping = set_default(datatype, "mapping-settings", {})
         mapping.setdefault("generate", True)
         mapping.setdefault("alias", alias)
         mapping.setdefault(
@@ -63,7 +66,7 @@ class MappingModelComponent(DataTypeComponent):
             f'{parent_module(datatype.definition["record"]["module"])}.mappings',
         )
         index_name = mapping.setdefault(
-            "index", f"{prefix_snake}-{datatype.definition['json-schema']['version']}"
+            "index", f"{prefix_snake}-{datatype.definition['json-schema-settings']['version']}"
         )
         mapping.setdefault(
             "file",
@@ -71,6 +74,6 @@ class MappingModelComponent(DataTypeComponent):
                 records_path,
                 "mappings",
                 "os-v2",
-                index_name,
+                f"{index_name}.json",
             ),
         )
