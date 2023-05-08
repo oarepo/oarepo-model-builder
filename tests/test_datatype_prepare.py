@@ -208,7 +208,11 @@ def test_prepare_datatype():
             "module": "my.test.resources.records.config",
         },
         "sample": {"file": "data/sample_data.yaml"},
-        "saved-model": {"alias": "my_test_record", "file": "my/test/models/model.json"},
+        "saved-model": {
+            "alias": "my_test_record",
+            "file": "my/test/models/model.json",
+            "module": "my.test.models",
+        },
         "search-options": {
             "base-classes": ["InvenioSearchOptions"],
             "class": "my.test.services.records.search.TestSearchOptions",
