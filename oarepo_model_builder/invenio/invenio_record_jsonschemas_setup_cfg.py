@@ -12,6 +12,6 @@ class InvenioRecordJSONSchemasSetupCfgBuilder(OutputBuilder):
 
         output.add_entry_point(
             "invenio_jsonschemas.schemas",
-            self.current_model.definition["json-schema"]["alias"],
-            self.current_model.definition["json-schema"]["module"],
+            self.current_model.definition["json-schema-settings"]["alias"],
+            self.current_model.definition["json-schema-settings"]["module"],
         )

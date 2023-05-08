@@ -52,7 +52,7 @@ def test_prepare_datatype():
             "imports": [],
             "module": "my.test.services.records.facets",
         },
-        "json-schema": {
+        "json-schema-settings": {
             "alias": "my_test_record",
             "file": "my/test/records/jsonschemas/test-1.0.0.json",
             "generate": True,
@@ -71,9 +71,9 @@ def test_prepare_datatype():
             ],
             "module": "my.test.resources.records.ui",
         },
-        "mapping": {
+        "mapping-settings": {
             "alias": "my_test_record",
-            "file": "my/test/records/mappings/os-v2/test-1.0.0",
+            "file": "my/test/records/mappings/os-v2/test-1.0.0.json",
             "generate": True,
             "index": "test-1.0.0",
             "module": "my.test.records.mappings",

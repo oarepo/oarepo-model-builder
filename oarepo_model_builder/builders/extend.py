@@ -49,9 +49,7 @@ class ExtendBuilder(JSONBaseBuilder):
                 model.pop(k)  # pop all other stuff
 
         model["marshmallow"] = {"base-classes": [marshmallow["class"]]}
-        model["ui"] = {
-            "marshmallow": {"base-classes": [ui["marshmallow"]["class"]]}
-        }
+        model["ui"] = {"marshmallow": {"base-classes": [ui["marshmallow"]["class"]]}}
 
     def begin(self, schema, settings):
         super(JSONBaseBuilder, self).begin(schema, settings)

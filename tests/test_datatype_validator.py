@@ -9,7 +9,11 @@ from .multilang import UIDataTypeComponent
 def test_empty():
     model = {}
     validator = ModelDataType.validator()
-    assert validator.load(model) == {"type": "model", "properties": {}}
+    assert validator.load(model) == {
+        "type": "model",
+        "properties": {},
+        "searchable": True,
+    }
 
 
 def test_bad_type():
@@ -22,7 +26,11 @@ def test_bad_type():
 def test_empty_properties():
     model = {"properties": {}}
     validator = ModelDataType.validator()
-    assert validator.load(model) == {"type": "model", "properties": {}}
+    assert validator.load(model) == {
+        "type": "model",
+        "properties": {},
+        "searchable": True,
+    }
 
 
 def test_bad_properties():
@@ -35,7 +43,7 @@ def test_bad_properties():
 def test_simple():
     model = {"properties": {"a": {"type": "keyword"}}}
     validator = ModelDataType.validator()
-    assert validator.load(model) == {"type": "model", **model}
+    assert validator.load(model) == {"type": "model", **model, "searchable": True}
 
 
 def test_unknown_datatype():
@@ -52,7 +60,7 @@ def test_object():
         }
     }
     validator = ModelDataType.validator()
-    assert validator.load(model) == {"type": "model", **model}
+    assert validator.load(model) == {"type": "model", **model, "searchable": True}
 
 
 def test_nested():
@@ -62,13 +70,13 @@ def test_nested():
         }
     }
     validator = ModelDataType.validator()
-    assert validator.load(model) == {"type": "model", **model}
+    assert validator.load(model) == {"type": "model", **model, "searchable": True}
 
 
 def test_array():
     model = {"properties": {"a": {"type": "array", "items": {"type": "keyword"}}}}
     validator = ModelDataType.validator()
-    assert validator.load(model) == {"type": "model", **model}
+    assert validator.load(model) == {"type": "model", **model, "searchable": True}
 
 
 def test_array_of_objects():
@@ -84,7 +92,7 @@ def test_array_of_objects():
         }
     }
     validator = ModelDataType.validator()
-    assert validator.load(model) == {"type": "model", **model}
+    assert validator.load(model) == {"type": "model", **model, "searchable": True}
 
 
 def test_ui():
@@ -99,7 +107,7 @@ def test_ui():
     )
     model = {"properties": {"a": {"type": "keyword", "ui": {"test": "blah"}}}}
     validator = ModelDataType.validator()
-    assert validator.load(model) == {"type": "model", **model}
+    assert validator.load(model) == {"type": "model", **model, "searchable": True}
 
 
 def test_clear_cache():
