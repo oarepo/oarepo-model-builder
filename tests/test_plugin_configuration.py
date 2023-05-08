@@ -2,13 +2,21 @@ from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.utils.dict import dict_get
 
 
 def test_output_disabled():
     builder = ModelBuilder()
     schema = ModelSchema("", {"model": {"plugins": {"output": {"disable": "__all__"}}}})
     builder.set_schema(schema)
-    assert builder._filter_classes([JSONSchemaOutput, MappingOutput], "output") == []
+    assert (
+        builder._filter_classes(
+            [JSONSchemaOutput, MappingOutput],
+            dict_get(schema.schema, ["model"]),
+            "output",
+        )
+        == []
+    )
 
 
 def test_output_disabled_single():
@@ -19,7 +27,11 @@ def test_output_disabled_single():
     builder.set_schema(schema)
     assert set(
         x.TYPE
-        for x in builder._filter_classes([JSONSchemaOutput, MappingOutput], "output")
+        for x in builder._filter_classes(
+            [JSONSchemaOutput, MappingOutput],
+            dict_get(schema.schema, ["model"]),
+            "output",
+        )
     ) == {"mapping"}
 
 
@@ -36,7 +48,11 @@ def test_output_enabled():
     builder.set_schema(schema)
     assert set(
         x.TYPE
-        for x in builder._filter_classes([JSONSchemaOutput, MappingOutput], "output")
+        for x in builder._filter_classes(
+            [JSONSchemaOutput, MappingOutput],
+            dict_get(schema.schema, ["model"]),
+            "output",
+        )
     ) == {"mapping"}
 
 
@@ -57,4 +73,9 @@ def test_output_enabled_import():
         },
     )
     builder.set_schema(schema)
-    assert set(x.TYPE for x in builder._filter_classes([], "output")) == {"mapping"}
+    assert set(
+        x.TYPE
+        for x in builder._filter_classes(
+            [], dict_get(schema.schema, ["model"]), "output"
+        )
+    ) == {"mapping"}
