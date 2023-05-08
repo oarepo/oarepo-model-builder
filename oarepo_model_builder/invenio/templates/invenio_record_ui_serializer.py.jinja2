@@ -1,18 +1,14 @@
-from flask_resources import BaseListSchema, MarshmallowSerializer
-from flask_resources.serializers import JSONSerializer
+{{ vars.json_serializer.imports|generate_import }}
+{{ vars.ui.marshmallow.class|generate_import }}
 
-from {{ui_record_schema_class|package_name}} import {{ui_record_schema_class|base_name}}
-
-
-
-class {{vars.record_ui_serializer_class|base_name}}(MarshmallowSerializer):
+class {{ vars.json_serializer|class_header }}:
     """UI JSON serializer."""
 
     def __init__(self):
         """Initialise Serializer."""
         super().__init__(
             format_serializer_cls=JSONSerializer,
-            object_schema_cls={{ui_record_schema_class|base_name}},
+            object_schema_cls={{vars.ui.marshmallow.class|base_name}},
             list_schema_cls=BaseListSchema,
             schema_context={"object_key": "ui"},
         )

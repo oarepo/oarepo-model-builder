@@ -1,11 +1,6 @@
-from invenio_records.dumpers import SearchDumper
+{{ vars.record_dumper.imports|generate_import }}
 
+class {{ vars.record_dumper|class_header }}:
+    """{{ vars.record.class|base_name }} opensearch dumper."""
 
-{% for b in vars.record_dumper_bases %}
-from {{ b|package_name }} import {{ b|base_name }}
-{% endfor %}
-
-class {{ vars.record_dumper_class|base_name }}({% for b in vars.record_dumper_bases %}{{ b|base_name }}, {% endfor %}SearchDumper):
-    """{{ vars.record_class|base_name }} opensearch dumper."""
-
-{{ vars.invenio_record_dumper_extra_code }}
+{{ vars.record_dumper.extra_code }}

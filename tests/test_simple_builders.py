@@ -34,7 +34,7 @@ from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
     InvenioRecordUISerializerBuilder,
 )
 from oarepo_model_builder.invenio.invenio_version import InvenioVersionBuilder
-from oarepo_model_builder.invenio.invenio_views import InvenioViewsBuilder
+from oarepo_model_builder.invenio.invenio_views import InvenioAPIViewsBuilder
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 
@@ -417,21 +417,21 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     )
 
 
-def test_views_builder():
+def test_api_views_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
-        [InvenioViewsBuilder],
-        os.path.join("test", "views.py"),
+        [InvenioAPIViewsBuilder],
+        os.path.join("test", "views", "records", "api.py"),
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from flask import Blueprint
 
-def create_blueprint_from_app_test(app):
-    """Create test blueprint."""
+def create_blueprint_from_app(app):
+    """Create TestRecord blueprint."""
     blueprint = app.extensions["test"].resource.as_blueprint()
-    blueprint.record_once(init_create_blueprint_from_app_test)
+    blueprint.record_once(init_create_blueprint_from_app)
 
     #calls record_once for all other functions starting with "init_addons_"
     #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
@@ -442,7 +442,7 @@ def create_blueprint_from_app_test(app):
 
     return blueprint
 
-def init_create_blueprint_from_app_test(state):
+def init_create_blueprint_from_app(state):
     """Init app."""
     app = state.app
     ext = app.extensions["test"]
@@ -455,25 +455,6 @@ def init_create_blueprint_from_app_test(state):
     if hasattr(ext.service, "indexer"):
         iregistry = app.extensions["invenio-indexer"].registry
         iregistry.register(ext.service.indexer, indexer_id="test")
-
-def create_blueprint_from_app_testExt(app):
-    """Create test-ext blueprint."""
-    blueprint = Blueprint(
-        'test-ext',
-        __name__,
-        url_prefix='test')
-    blueprint.record_once(init_create_blueprint_from_app_test)
-
-    #calls record_once for all other functions starting with "init_app_addons_"
-    #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
-    funcs = globals()
-    funcs = [v for k, v in funcs.items() if k.startswith("init_app_addons_test") and callable(v)]
-    for func in funcs:
-        blueprint.record_once(func)
-
-    return blueprint
-
-
         '''
     )
 
@@ -488,18 +469,18 @@ def test_permissions_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from invenio_records_permissions import RecordPermissionPolicy
-from invenio_records_permissions.generators import SystemProcess, AnyUser
-
+# from invenio_records_permissions.generators import SystemProcess, AnyUser
 
 class TestPermissionPolicy(RecordPermissionPolicy):
-    """test.records.api.TestRecord permissions."""
-
-    can_search = [SystemProcess(), AnyUser()]
-    can_read = [SystemProcess(), AnyUser()]
-    can_create = [SystemProcess()]
-    can_update = [SystemProcess()]
-    can_delete = [SystemProcess()]
-    can_manage = [SystemProcess()]
+    """test.records.api.TestRecord permissions.
+        Values in this class will override permission presets.
+    """
+    # can_search = [SystemProcess(), AnyUser()]
+    # can_read = [SystemProcess(), AnyUser()]
+    # can_create = [SystemProcess()]
+    # can_update = [SystemProcess()]
+    # can_delete = [SystemProcess()]
+    # can_manage = [SystemProcess()]
 '''
     )
 
@@ -530,10 +511,11 @@ def test_ui_serializer_builder():
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from flask_resources import BaseListSchema, MarshmallowSerializer
+from flask_resources import BaseListSchema
+from flask_resources import MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
 
-from test.services.records.ui_schema import TestRecordUISchema
+from test.services.records.ui_schema import TestUISchema
 
 class TestUIJSONSerializer(MarshmallowSerializer):
     """UI JSON serializer."""
@@ -542,7 +524,7 @@ class TestUIJSONSerializer(MarshmallowSerializer):
         """Initialise Serializer."""
         super().__init__(
             format_serializer_cls=JSONSerializer,
-            object_schema_cls=TestRecordUISchema,
+            object_schema_cls=TestUISchema,
             list_schema_cls=BaseListSchema,
             schema_context={"object_key": "ui"},
         )

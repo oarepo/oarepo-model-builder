@@ -1,7 +1,7 @@
 import importlib_metadata
 from flask_resources import ResponseHandler
 
-{{ vars.ui.serializer_class|generate_import }}
+{{ vars.json_serializer.class|generate_import }}
 {{ vars.resource_config.imports|generate_import }}
 
 class {{ vars.resource_config|class_header }}:
@@ -16,7 +16,7 @@ class {{ vars.resource_config|class_header }}:
         for x in importlib_metadata.entry_points(group='invenio.{{ vars.module.qualified }}.response_handlers'):
             entrypoint_response_handlers.update(x.load())
         return {
-            "application/vnd.inveniordm.v1+json": ResponseHandler({{vars.ui.serializer_class|base_name}}()),
+            "application/vnd.inveniordm.v1+json": ResponseHandler({{vars.json_serializer.class|base_name}}()),
             **super().response_handlers,
             **entrypoint_response_handlers
         }

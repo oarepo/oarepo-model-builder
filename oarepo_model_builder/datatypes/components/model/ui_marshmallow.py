@@ -33,7 +33,7 @@ class UIMarshmallowModelComponent(MarshmallowModelMixin, UIObjectMarshmallowComp
 
         marshmallow: Dict = set_default(datatype, "ui", "marshmallow", {})
         marshmallow.setdefault("generate", True)
-        module = marshmallow.setdefault("module", f"{services_module}.schema")
+        module = marshmallow.setdefault("module", f"{services_module}.ui_schema")
         marshmallow.setdefault("class", f"{module}.{prefix}UISchema")
         marshmallow.setdefault("extra-code", "")
         marshmallow.setdefault("base-classes", ["InvenioUISchema"])

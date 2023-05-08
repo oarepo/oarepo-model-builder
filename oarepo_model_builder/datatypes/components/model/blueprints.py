@@ -33,12 +33,6 @@ class BlueprintsModelComponent(DataTypeComponent):
     depends_on = [DefaultsModelComponent]
 
     class ModelSchema(ma.Schema):
-        ui_blueprint = ma.fields.Nested(
-            BlueprintSchema,
-            attribute="ui-blueprint",
-            data_key="ui-blueprint",
-            metadata={"doc": "UI blueprint details"},
-        )
         api_blueprint = ma.fields.Nested(
             BlueprintSchema,
             attribute="api-blueprint",
