@@ -8,7 +8,7 @@ from .invenio_base import InvenioBaseClassPythonBuilder
 class InvenioRecordServiceConfigBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_service_config"
     section = "service-config"
-    template = "record-service-config"
+    template = "service-config"
 
     def process_template(self, python_path, template, **extra_kwargs):
         if self.parent_modules:
