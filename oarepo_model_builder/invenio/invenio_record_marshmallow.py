@@ -18,7 +18,7 @@ from .invenio_base import InvenioBaseClassPythonBuilder
 class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_schema"
     class_config = "record-schema-class"
-    template = "record-schema"
+    template = "marshmallow"
     extra_imports = []
     build_class_method = "marshmallow_build_class"
 
@@ -57,7 +57,7 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
 
             marshmallow_section = n.section_marshmallow
             if marshmallow_section.config.get(
-                "schema-class"
+                "class"
             ) and marshmallow_section.config.get("generate", True):
                 datatypes.call_components(
                     n,

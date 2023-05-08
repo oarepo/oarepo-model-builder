@@ -64,7 +64,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
         super().ui_marshmallow_field(datatype, fields=f)
         fld: MarshmallowField = f[0]
         fld.reference = MarshmallowReference(
-            reference=section.config["marshmallow"]["schema-class"]
+            reference=section.config["marshmallow"]["class"]
         )
         fields.append(fld)
 

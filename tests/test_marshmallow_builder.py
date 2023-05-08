@@ -26,7 +26,7 @@ def get_test_schema(**props):
                     "use-autoflake": False,
                 },
             },
-            "model": {"package": "test", "properties": props},
+            "record": {"module": {"qualified": "test"}, "properties": props},
         },
     )
 
@@ -42,7 +42,9 @@ def fulltext_builder():
 def _test(fulltext_builder, string_type):
     schema = get_test_schema(a={"type": string_type})
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -66,7 +68,9 @@ def test_fulltext_keyword(fulltext_builder):
 def test_simple_array(fulltext_builder):
     schema = get_test_schema(a={"type": "array", "items": {"type": "keyword"}})
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -83,7 +87,9 @@ def test_array_of_objects(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -92,7 +98,7 @@ def test_array_of_objects(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
     a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))
@@ -111,7 +117,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": True},
+            OAREPO_MARSHMALLOW: {"class": "B", "generate": True},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -120,7 +126,9 @@ def test_generate_nested_schema_same_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -129,7 +137,7 @@ def test_generate_nested_schema_same_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
 
     class Meta:
         unknown = ma.RAISE
@@ -156,7 +164,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {
-                "schema-class": "test.services.schema2.B",
+                "class": "test.services.schema2.B",
                 "generate": True,
             },
             "properties": {
@@ -167,7 +175,9 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -179,7 +189,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
             """
 from test.services.schema2 import BSchema
 
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
     a = ma_fields.Nested(lambda: BSchema())        
@@ -211,7 +221,7 @@ def test_use_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": False},
+            OAREPO_MARSHMALLOW: {"class": "B", "generate": False},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -220,7 +230,9 @@ def test_use_nested_schema_same_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -230,7 +242,7 @@ def test_use_nested_schema_same_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
 
     class Meta:
         unknown = ma.RAISE
@@ -247,7 +259,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {"schema-class": "c.B", "generate": False},
+            OAREPO_MARSHMALLOW: {"class": "c.B", "generate": False},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -256,7 +268,9 @@ def test_use_nested_schema_different_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -266,7 +280,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
 
     class Meta:
         unknown = ma.RAISE
@@ -284,7 +298,7 @@ def test_generate_nested_schema_array(fulltext_builder):
             "type": "array",
             "items": {
                 "type": "object",
-                OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": True},
+                OAREPO_MARSHMALLOW: {"class": "B", "generate": True},
                 "properties": {
                     "b": {
                         "type": "keyword",
@@ -294,7 +308,9 @@ def test_generate_nested_schema_array(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -303,7 +319,7 @@ def test_generate_nested_schema_array(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
 
     class Meta:
         unknown = ma.RAISE
@@ -344,7 +360,9 @@ class TestSchema(ma.Schema):
     a = ma_fields.String()'''
         )
 
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
     data = fulltext_builder.filesystem.read(
         os.path.join("test", "services", "records", "schema.py")
     )
@@ -356,7 +374,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {
-                "schema-class": "..schema2.B",
+                "class": "..schema2.B",
                 "generate": True,
             },
             "properties": {
@@ -367,7 +385,9 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -380,7 +400,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
 
 from test.services.records.schema2 import BSchema
 
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
 
     class Meta:
         unknown = ma.RAISE
@@ -417,7 +437,7 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {
-                "schema-class": ".B",
+                "class": ".B",
                 "generate": True,
             },
             "properties": {
@@ -428,7 +448,9 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -438,7 +460,7 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
 
     class Meta:
         unknown = ma.RAISE
@@ -465,7 +487,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         a={
             "type": "object",
             OAREPO_MARSHMALLOW: {
-                "schema-class": "...schema2.B",
+                "class": "...schema2.B",
                 "generate": True,
             },
             "properties": {
@@ -476,7 +498,9 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -487,7 +511,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         strip_whitespaces(
             """
 from test.services.schema2 import BSchema
-class TestRecordSchema(ma.Schema):
+class TestSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
 
