@@ -90,7 +90,7 @@ from invenio_records_resources.records.api import Record as InvenioRecord
 class TestRecord(InvenioRecord):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
-    index = IndexField("test-1.0.0")
+    index = IndexField("test-test-1.0.0")
     pid = PIDField(
         provider=TestIdProvider,
         context_cls=PIDFieldContext,
@@ -130,7 +130,7 @@ class TestIdProvider(RecordIdProviderV2):
 class TestRecord(InvenioRecord):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
-    index = IndexField("test-1.0.0")
+    index = IndexField("test-test-1.0.0")
     pid = PIDField(
         provider=TestIdProvider,
         context_cls=PIDFieldContext,
@@ -391,7 +391,7 @@ from test.services.records.schema import TestSchema
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
-    PERMISSIONS_PRESETS = []
+    PERMISSIONS_PRESETS = ["everyone"]
     url_prefix = "/test/"
     base_permission_policy_cls = TestPermissionPolicy
     schema = TestSchema

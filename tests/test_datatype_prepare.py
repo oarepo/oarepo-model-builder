@@ -75,7 +75,7 @@ def test_prepare_datatype():
             "alias": "my_test_record",
             "file": "my/test/records/mappings/os-v2/my_test_record/test-1.0.0.json",
             "generate": True,
-            "index": "test-1.0.0",
+            "index": "my_test_record-test-1.0.0",
             "module": "my.test.records.mappings",
         },
         "marshmallow": {
@@ -109,7 +109,7 @@ def test_prepare_datatype():
                 {"import": "invenio_records_permissions.RecordPermissionPolicy"}
             ],
             "module": "my.test.services.records.permissions",
-            "presets": [],
+            "presets": ["everyone"],
         },
         "pid": {
             "context-class": "PIDFieldContext",

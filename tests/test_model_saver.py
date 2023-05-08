@@ -93,7 +93,7 @@ def test_model_saver():
             "alias": "test",
             "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
             "generate": True,
-            "index": "test-1.0.0",
+            "index": "test-test-1.0.0",
             "module": "test.records.mappings",
         },
         "marshmallow": {
@@ -127,7 +127,7 @@ def test_model_saver():
                 {"import": "invenio_records_permissions.RecordPermissionPolicy"}
             ],
             "module": "test.services.records.permissions",
-            "presets": [],
+            "presets": ["everyone"],
         },
         "pid": {
             "context-class": "PIDFieldContext",
@@ -430,7 +430,7 @@ def test_model_saver_invenio():
             "alias": "test",
             "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
             "generate": True,
-            "index": "test-1.0.0",
+            "index": "test-test-1.0.0",
             "module": "test.records.mappings",
         },
         "marshmallow": {
@@ -464,7 +464,7 @@ def test_model_saver_invenio():
                 {"import": "invenio_records_permissions.RecordPermissionPolicy"}
             ],
             "module": "test.services.records.permissions",
-            "presets": [],
+            "presets": ["everyone"],
         },
         "pid": {
             "context-class": "PIDFieldContext",

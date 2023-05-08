@@ -63,7 +63,7 @@ class PermissionsModelComponent(DataTypeComponent):
 
         permissions = set_default(datatype, "permissions", {})
         permissions.setdefault("generate", False)
-        permissions.setdefault("presets", [])
+        permissions.setdefault("presets", ["everyone"])
         permissions.setdefault("extra-code", "")
         permissions_module = permissions.setdefault(
             "module",
