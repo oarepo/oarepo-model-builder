@@ -22,7 +22,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
     def ui_marshmallow_build_class_name_existing(
         self, *, datatype, classes, marshmallow_module, **kwargs
     ):
-        if datatype.section_ui.config.get("marshmallow", {}).get("schema-class"):
+        if datatype.section_ui.config.get("marshmallow", {}).get("class"):
             self._build_class_name(
                 datatype,
                 datatype.section_ui.config.setdefault("marshmallow", {}),
@@ -36,7 +36,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
     def ui_marshmallow_build_class_name_new(
         self, *, datatype, classes, marshmallow_module, **kwargs
     ):
-        if not datatype.section_ui.config.get("marshmallow", {}).get("schema-class"):
+        if not datatype.section_ui.config.get("marshmallow", {}).get("class"):
             self._build_class_name(
                 datatype,
                 datatype.section_ui.config.setdefault("marshmallow", {}),

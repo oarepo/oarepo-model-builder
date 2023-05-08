@@ -33,7 +33,7 @@ class ExtendBuilder(JSONBaseBuilder):
 
     def _process_marshmallow_def(self, marshmallow):
         marshmallow.update({"read": False, "write": False})
-        if "schema-class" in marshmallow:
+        if "class" in marshmallow:
             # already generated - if user wants to override this, he has to set schema-class and generate
             marshmallow["generate"] = False
 
@@ -48,9 +48,9 @@ class ExtendBuilder(JSONBaseBuilder):
             elif k not in ("type", "properties"):
                 model.pop(k)  # pop all other stuff
 
-        model["marshmallow"] = {"base-classes": [marshmallow["schema-class"]]}
+        model["marshmallow"] = {"base-classes": [marshmallow["class"]]}
         model["ui"] = {
-            "marshmallow": {"base-classes": [ui["marshmallow"]["schema-class"]]}
+            "marshmallow": {"base-classes": [ui["marshmallow"]["class"]]}
         }
 
     def begin(self, schema, settings):

@@ -17,7 +17,6 @@ from .invenio_base import InvenioBaseClassPythonBuilder
 
 class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_schema"
-    class_config = "record-schema-class"
     template = "marshmallow"
     extra_imports = []
     build_class_method = "marshmallow_build_class"
