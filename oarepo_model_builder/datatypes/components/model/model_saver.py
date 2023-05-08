@@ -20,6 +20,7 @@ class SavedModelSchema(ma.Schema):
     alias = ma.fields.String(
         metadata={"doc": "Alias under which the model is registered in setup.cfg"}
     )
+    module = ma.fields.String(metadata={"doc": "Module where the file is saved"})
 
 
 class SavedModelComponent(DataTypeComponent):
@@ -33,9 +34,16 @@ class SavedModelComponent(DataTypeComponent):
 
     def before_model_prepare(self, datatype, **kwargs):
         module_path = datatype.definition["module"]["path"]
+        module = datatype.definition["module"]["qualified"]
+
         saved_model = set_default(datatype, "saved-model", {})
+
         saved_model.setdefault(
             "file",
             os.path.join(module_path, "models", "model.json"),
+        )
+        saved_model.setdefault(
+            "module",
+            f"{module}.models",
         )
         saved_model.setdefault("alias", datatype.definition["module"]["alias"])
