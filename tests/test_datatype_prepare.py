@@ -56,14 +56,27 @@ def test_prepare_datatype():
             "alias": "my_test_record",
             "file": "my/test/records/jsonschemas/test-1.0.0.json",
             "generate": True,
+            "module": "my.test.records.jsonschemas",
             "name": "test-1.0.0.json",
             "version": "1.0.0",
         },
+        "json-serializer": {
+            "base-classes": ["MarshmallowSerializer"],
+            "class": "my.test.resources.records.ui.TestUIJSONSerializer",
+            "extra-code": "",
+            "imports": [
+                {"import": "flask_resources.BaseListSchema"},
+                {"import": "flask_resources.MarshmallowSerializer"},
+                {"import": "flask_resources.serializers.JSONSerializer"},
+            ],
+            "module": "my.test.resources.records.ui",
+        },
         "mapping": {
             "alias": "my_test_record",
-            "file": "my/test/records/mappings/os-v2/test",
+            "file": "my/test/records/mappings/os-v2/test-1.0.0",
             "generate": True,
-            "index": "test",
+            "index": "test-1.0.0",
+            "module": "my.test.records.mappings",
         },
         "marshmallow": {
             "base-classes": ["ma.Schema"],
@@ -130,14 +143,15 @@ def test_prepare_datatype():
                 "ui": {
                     "marshmallow": {
                         "base-classes": ["ma.Schema"],
-                        "class": "my.test.services.records.schema.TestMetadataUISchema",
+                        "class": "my.test.services.records.ui_schema.TestMetadataUISchema",
                         "extra-code": "",
                         "generate": True,
-                        "module": "my.test.services.records.schema",
+                        "module": "my.test.services.records.ui_schema",
                     }
                 },
             }
         },
+        "proxy": {"module": "my.test.proxies"},
         "record": {
             "base-classes": ["invenio_records_resources.records.api.Record"],
             "class": "my.test.records.api.TestRecord",
@@ -148,25 +162,29 @@ def test_prepare_datatype():
         },
         "record-dumper": {
             "base-classes": ["SearchDumper"],
-            "class": "my.test.records.records.dumper.TestDumper",
+            "class": "my.test.records.dumper.TestDumper",
             "extensions": [],
             "extra-code": "",
             "generate": True,
             "imports": [{"import": "invenio_records.dumpers.SearchDumper"}],
-            "module": "my.test.records.records",
+            "module": "my.test.records.dumper",
         },
         "record-metadata": {
-            "alembic": "test",
+            "alembic": "my.test.records.alembic",
             "alias": "my_test_record",
-            "base-classes": ["invenio_records.models.RecordMetadataBase"],
+            "base-classes": ["RecordMetadataBase", "db.Model"],
             "class": "my.test.records.models.TestMetadata",
             "extra-code": "",
             "generate": True,
+            "imports": [
+                {"import": "invenio_records.models.RecordMetadataBase"},
+                {"import": "invenio_db.db"},
+            ],
             "module": "my.test.records.models",
             "table": "test_metadata",
         },
         "resource": {
-            "base-classes": ["invenio_records_resources.resources.RecordResource"],
+            "base-classes": ["RecordResource"],
             "class": "my.test.resources.records.resource.TestResource",
             "config-key": "TEST_RECORD_RESOURCE_CLASS",
             "extra-code": "",
@@ -175,12 +193,10 @@ def test_prepare_datatype():
                 {"import": "invenio_records_resources.resources.RecordResource"}
             ],
             "module": "my.test.resources.records.resource",
-            "proxy": "my.test.proxies.current_resource",
+            "proxy": "current_resource",
         },
         "resource-config": {
-            "base-classes": [
-                "invenio_records_resources.resources.RecordResourceConfig"
-            ],
+            "base-classes": ["RecordResourceConfig"],
             "base-url": "/my-test/",
             "class": "my.test.resources.records.config.TestResourceConfig",
             "config-key": "TEST_RECORD_RESOURCE_CONFIG",
@@ -207,17 +223,25 @@ def test_prepare_datatype():
             "module": "my.test.services.records.search",
         },
         "service": {
-            "base-classes": ["RecordService"],
+            "base-classes": ["InvenioRecordService"],
             "class": "my.test.services.records.service.TestService",
             "config-key": "TEST_RECORD_SERVICE_CLASS",
             "extra-code": "",
             "generate": True,
-            "imports": [{"import": "invenio_records_resources.services.RecordService"}],
+            "imports": [
+                {
+                    "alias": "InvenioRecordService",
+                    "import": "invenio_records_resources.services.RecordService",
+                }
+            ],
             "module": "my.test.services.records.service",
-            "proxy": "my.test.proxies.current_service",
+            "proxy": "current_service",
         },
         "service-config": {
-            "base-classes": ["RecordServiceConfig"],
+            "base-classes": [
+                "PermissionsPresetsConfigMixin",
+                "InvenioRecordServiceConfig",
+            ],
             "class": "my.test.services.records.config.TestServiceConfig",
             "components": [],
             "config-key": "TEST_RECORD_SERVICE_CONFIG",
@@ -225,7 +249,13 @@ def test_prepare_datatype():
             "generate": True,
             "generate-links": True,
             "imports": [
-                {"import": "invenio_records_resources.services.RecordServiceConfig"}
+                {
+                    "alias": "InvenioRecordServiceConfig",
+                    "import": "invenio_records_resources.services.RecordServiceConfig",
+                },
+                {
+                    "import": "oarepo_runtime.config.service.PermissionsPresetsConfigMixin"
+                },
             ],
             "module": "my.test.services.records.config",
             "service-id": "my_test_record",
@@ -234,13 +264,13 @@ def test_prepare_datatype():
         "ui": {
             "marshmallow": {
                 "base-classes": ["InvenioUISchema"],
-                "class": "my.test.services.records.schema.TestUISchema",
+                "class": "my.test.services.records.ui_schema.TestUISchema",
                 "extra-code": "",
                 "generate": True,
                 "imports": [
                     {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
                 ],
-                "module": "my.test.services.records.schema",
+                "module": "my.test.services.records.ui_schema",
             }
         },
         "ui-blueprint": {
