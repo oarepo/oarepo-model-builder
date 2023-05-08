@@ -207,6 +207,8 @@ class ModelSchema:
             else:
                 data = {}
                 break
+        if "type" not in data:
+            data["type"] = "model"
         parsed_section = datatypes.get_datatype(
             parent=None,
             data=data,

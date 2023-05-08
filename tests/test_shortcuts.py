@@ -104,6 +104,7 @@ record:
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
+        autoflake=False,
     )
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
@@ -127,6 +128,7 @@ record:
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
+        autoflake=False,
     )
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
@@ -150,6 +152,7 @@ record:
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
+        autoflake=False,
     )
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
@@ -172,6 +175,7 @@ record:
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
+        autoflake=False,
     )
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
@@ -209,6 +213,7 @@ record:
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
+        autoflake=False,
     )
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)

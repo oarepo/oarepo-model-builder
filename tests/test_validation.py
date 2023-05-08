@@ -7,21 +7,25 @@ from oarepo_model_builder.validation.model_validation import model_validator
 def test_empty_model_validation():
     assert model_validator.validate({}) == {
         "version": "1.0.0",
+        "settings": {"schema-server": "local://"},
     }
     assert model_validator.validate({"record": {}}) == {
         "record": {"type": "model", "properties": {}, "searchable": True},
+        "settings": {"schema-server": "local://"},
         "version": "1.0.0",
     }
     with pytest.raises(ValidationError, match="Must be equal to model"):
         model_validator.validate({"record": {"type": "blah"}})
     assert model_validator.validate({"record": {"properties": {}}}) == {
         "record": {"type": "model", "properties": {}, "searchable": True},
+        "settings": {"schema-server": "local://"},
         "version": "1.0.0",
     }
     assert model_validator.validate(
         {"record": {"type": "model", "properties": None}}
     ) == {
         "record": {"type": "model", "properties": {}, "searchable": True},
+        "settings": {"schema-server": "local://"},
         "version": "1.0.0",
     }
 
@@ -54,6 +58,7 @@ def test_settings_on_model():
             "type": "model",
             "searchable": True,
         },
+        "settings": {"schema-server": "local://"},
         "version": "1.0.0",
     }
 
@@ -83,6 +88,7 @@ def test_inline_props_on_model():
             },
             "searchable": True,
         },
+        "settings": {"schema-server": "local://"},
     }
 
 
@@ -107,6 +113,7 @@ def test_validate_defs():
             "d": "double",
         },
         "record": {"properties": {}, "type": "model", "searchable": True},
+        "settings": {"schema-server": "local://"},
     }
 
 

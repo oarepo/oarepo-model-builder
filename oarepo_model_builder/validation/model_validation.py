@@ -63,6 +63,7 @@ class ModelFileSchema(ma.Schema):
     settings = ma.fields.Nested(
         ExtensibleSchema("settings", SettingsSchema),
         metadata={"doc": "General settings, applies to all generated sources"},
+        load_default=lambda: SettingsSchema().load({}),
     )
 
 
