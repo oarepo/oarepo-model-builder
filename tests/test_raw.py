@@ -12,7 +12,11 @@ def test_raw_type():
         "test.yaml",
         "test",
         model_content={
-            "model": {"use": "invenio", "properties": {"a": {"type": "flattened"}}},
+            "record": {
+                "use": "invenio",
+                "properties": {"a": {"type": "flattened"}},
+                "module": {"qualified": "test"},
+            },
         },
         isort=False,
         black=False,
@@ -22,7 +26,7 @@ def test_raw_type():
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -38,7 +42,7 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
-class TestRecordSchema(InvenioBaseRecordSchema):
+class TestSchema(InvenioBaseRecordSchema):
     class Meta:
         unknown = ma.RAISE
     a = ma_fields.Raw()
@@ -48,7 +52,7 @@ class TestRecordSchema(InvenioBaseRecordSchema):
     )
 
     data = builder.filesystem.read(
-        os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+        os.path.join("test", "records", "mappings", "os-v2", "test-1.0.0.json")
     )
     data = json.loads(data)
 
