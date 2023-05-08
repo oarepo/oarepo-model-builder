@@ -41,7 +41,7 @@ class RecordMetadataClassSchema(ma.Schema):
         data_key="table",
         metadata={"doc": "Name of the database table"},
     )
-    alembic = ma.fields.Str(metadata={"doc": "Name of the alembic branch"})
+    alembic = ma.fields.Str(metadata={"doc": "module where alembic files are stored"})
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
@@ -79,5 +79,5 @@ class RecordMetadataModelComponent(DataTypeComponent):
             ],
         )
         metadata.setdefault("table", f"{prefix.lower()}_metadata")
-        metadata.setdefault("alembic", f"{suffix}")
+        metadata.setdefault("alembic", f"{records_module}.alembic")
         metadata.setdefault("alias", alias)

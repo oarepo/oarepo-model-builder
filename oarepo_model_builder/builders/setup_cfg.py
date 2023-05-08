@@ -2,7 +2,6 @@ from pkg_resources import parse_version
 
 from oarepo_model_builder.builders import OutputBuilder
 from oarepo_model_builder.outputs.cfg import CFGOutput
-from oarepo_model_builder.utils.verbose import log
 
 
 class SetupCfgBuilder(OutputBuilder):
@@ -15,7 +14,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault(
             "metadata",
             "name",
-            self.current_model.definition["package-base"].replace("_", "-"),
+            self.current_model.definition["module"]["base"].replace("_", "-"),
         )
         version = self.schema.get("version", "1.0.0dev1")
         output.setdefault("metadata", "version", version)
@@ -26,7 +25,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault(
             "metadata",
             "description",
-            f"A sample application for {self.current_model.definition['package']}",
+            f"Repository model for {self.current_model.definition['model-name']}",
         )
         output.setdefault("metadata", "authors", "")
 
@@ -59,11 +58,3 @@ class SetupCfgBuilder(OutputBuilder):
                 output.add_dependency(
                     dep, ">=" + value, group="options.extras_require", section="devs"
                 )
-
-        if output.created:
-            log(
-                log.INFO,
-                f"""To install the data model, run
-    poetry install -E {self.current_model.definition['package']}            
-            """,
-            )

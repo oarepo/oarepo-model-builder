@@ -12,6 +12,6 @@ class InvenioRecordSearchSetupCfgBuilder(OutputBuilder):
 
         output.add_entry_point(
             "invenio_search.mappings",
-            self.current_model.record_mapping_setup_cfg,
-            self.current_model.mapping_package,
+            self.current_model.definition["mapping"]["alias"],
+            self.current_model.definition["mapping"]["module"],
         )

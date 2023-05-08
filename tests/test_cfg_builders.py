@@ -44,9 +44,11 @@ def build_python_model(model, output_builders, fn):
                     },
                     "opensearch": {"version": "os-v2"},
                 },
-                "model": {"package": "test", **model},
+                "record": {"module": {"qualified": "test"}, **model},
             },
         ),
+        profile="record",
+        model_path=["record"],
         output_dir="",
     )
 
@@ -65,7 +67,7 @@ def test_setup_cfg_builder():
 [metadata]
 name = test
 version = 1.0.0
-description = A sample application for test
+description = Repository model for Test
 authors = 
 
 
@@ -149,7 +151,7 @@ def test_invenio_alembic_cfg_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 [options.entry_points]
-invenio_db.alembic = test = test:alembic
+invenio_db.alembic = test = test.records:alembic
         """
     )
 
@@ -164,8 +166,7 @@ def test_invenio_resource_cfg_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 [options.entry_points]
-invenio_base.api_blueprints = test = test.views:create_blueprint_from_app_test
-invenio_base.blueprints = test = test.views:create_blueprint_from_app_testExt
+invenio_base.api_blueprints = test = test.views.records.api:create_blueprint_from_app
         """
     )
 

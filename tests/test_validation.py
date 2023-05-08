@@ -111,6 +111,9 @@ def test_settings():
     )
     assert validation_result == {
         "version": "1.0.0",
-        "settings": {"python": {"use-black": True, "use-isort": True}},
+        "settings": {
+            "python": {"use-black": True, "use-isort": True},
+            "schema-server": "local://",
+        },
         "record": {"properties": {}, "type": "model"},
     }

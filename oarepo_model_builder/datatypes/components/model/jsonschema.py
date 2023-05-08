@@ -20,6 +20,7 @@ class JSONSchema(ma.Schema):
     )
     version = ma.fields.Str(metadata={"doc": "Schema version"})
     name = ma.fields.Str(metadata={"doc": "Schema name"})
+    module = ma.fields.Str(metadata={"doc": "Schema module"})
     file_ = ma.fields.Str(
         data_key="file", attribute="file", metadata={"doc": "Path to schema file"}
     )
@@ -61,7 +62,10 @@ class JSONSchemaModelComponent(DataTypeComponent):
         version = json_schema.setdefault(
             "version", datatype.schema.settings.get("version", "1.0.0")
         )
-
+        json_schema.setdefault(
+            "module",
+            f'{parent_module(datatype.definition["record"]["module"])}.jsonschemas',
+        )
         schema_name = json_schema.setdefault(
             "name",
             f"{prefix_snake}-{version}.json",

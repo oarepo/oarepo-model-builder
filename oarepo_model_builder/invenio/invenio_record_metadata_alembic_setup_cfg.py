@@ -3,7 +3,7 @@ from pathlib import Path
 from ..builders import OutputBuilder
 from ..builders.utils import ensure_parent_modules
 from ..outputs.cfg import CFGOutput
-from ..utils.verbose import log
+from ..utils.python_name import split_package_base_name
 
 
 class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):
@@ -13,14 +13,17 @@ class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):
         super().finish()
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
+        alembic_module_parent, alembic_module = split_package_base_name(
+            self.current_model.definition["record-metadata"]["alembic"]
+        )
         output.add_entry_point(
             "invenio_db.alembic",
-            self.current_model.record_schema_metadata_alembic,
-            f"{self.current_model.package}:alembic",
+            self.current_model.definition["record-metadata"]["alias"],
+            f"{alembic_module_parent}:{alembic_module}",
         )
 
         python_path = (
-            Path(self.current_model.definition["package-path"])
+            Path(self.current_model.definition["record-metadata"]["alembic"])
             / "alembic"
             / "__init__.py"
         )
@@ -30,34 +33,4 @@ class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):
         )
 
         # and create empty __init__.py
-        init_builder = self.builder.get_output("python", python_path)
-        if init_builder.created:
-            # TODO: replace instructions with running bootstrap script
-            log(
-                log.INFO,
-                f"""Do not forget to run:
-    
-    # if the initial database does not exist yet 
-    invenio db init
-    
-    # if the tables do not exist yet (that is, after invenio db init); you have to manually remove 
-    # {self.current_model.record_metadata_table_name} and its versioned counterpart, otherwise
-    # alembic below will not work !
-    invenio db create 
-            
-    # create the branch
-    invenio alembic revision "Create {self.current_model.record_schema_metadata_alembic} branch."  -b {self.current_model.record_schema_metadata_alembic} -p dbdbc1b19cf2 --empty
-    
-    # apply the branch
-    invenio alembic upgrade heads
-    
-    # initial revision
-    invenio alembic revision "Initial revision." -b {self.current_model.record_schema_metadata_alembic}
-    
-    # inspect the generated file and add import sqlalchemy_utils (invenio template does not contain it
-    # remove length=16 from UUIDType(length=16), replace Text() with sa.Text()
-    
-    # create db tables
-    invenio alembic upgrade heads
-            """,
-            )
+        self.builder.get_output("python", python_path)

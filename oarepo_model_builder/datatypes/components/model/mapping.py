@@ -19,6 +19,7 @@ class ModelMappingSchema(ma.Schema):
             "doc": "Index alias, under which the mapping is registered in setup.cfg"
         }
     )
+    module = ma.fields.Str(metadata={"doc": "Module with mapping definition"})
     index = ma.fields.Str(metadata={"doc": "Index name"})
     file_ = ma.fields.Str(
         data_key="file", attribute="file", metadata={"doc": "Path to index file"}
@@ -57,6 +58,10 @@ class MappingModelComponent(DataTypeComponent):
         mapping = set_default(datatype, "mapping", {})
         mapping.setdefault("generate", True)
         mapping.setdefault("alias", alias)
+        mapping.setdefault(
+            "module",
+            f'{parent_module(datatype.definition["record"]["module"])}.mappings',
+        )
         index_name = mapping.setdefault(
             "index", f"{prefix_snake}-{datatype.definition['json-schema']['version']}"
         )

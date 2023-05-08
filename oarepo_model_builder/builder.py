@@ -6,7 +6,7 @@ from .builders import OutputBuilder
 from .fs import AbstractFileSystem, FileSystem
 from .outputs import OutputBase
 from .schema import ModelSchema
-from .utils.dict import dict_get
+from .utils.dict import dict_get, dict_setdefault
 from .utils.import_class import import_class
 from .validation import validate_model
 
@@ -121,7 +121,7 @@ class ModelBuilder:
         if self.overwrite:
             self.filesystem.overwrite = True
 
-        current_model = dict_get(model.schema, model_path)
+        current_model = dict_setdefault(model.schema, model_path, default={})
 
         self.set_schema(model)
         self.filtered_output_classes = {
