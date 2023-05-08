@@ -13,7 +13,7 @@ def test_overwrite():
         "test",
         model_content={
             "version": "1.0.0",
-            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
+            "record": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
         },
         isort=False,
         black=False,
@@ -24,6 +24,6 @@ def test_overwrite():
 
     tmpdir = mkdtemp()
     try:
-        builder.build(schema, tmpdir)
+        builder.build(schema, "record", ["record"], tmpdir)
     finally:
         shutil.rmtree(tmpdir)

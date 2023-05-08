@@ -21,9 +21,10 @@ def test_enum():
         "test.yaml",
         "test",
         model_content={
-            "model": {
+            "record": {
                 "use": "invenio",
                 "properties": {"a": {"type": "keyword", "enum": ["a", "b", "c"]}},
+                "module": {"qualified": "test"},
             },
         },
         isort=False,
@@ -42,7 +43,7 @@ def test_enum():
         filesystem=filesystem,
     )
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -50,7 +51,7 @@ def test_enum():
     assert (
         strip_whitespaces(
             """
-class TestRecordSchema(InvenioBaseRecordSchema):
+class TestSchema(InvenioBaseRecordSchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -66,7 +67,6 @@ class TestRecordSchema(InvenioBaseRecordSchema):
         os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
     )
     data = json.loads(data)
-    print(data)
     assert data == {
         "properties": {
             "$schema": {"type": "string"},
@@ -79,7 +79,7 @@ class TestRecordSchema(InvenioBaseRecordSchema):
     }
 
     data = builder.filesystem.read(
-        os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+        os.path.join("test", "records", "mappings", "os-v2", "test-1.0.0.json")
     )
     data = json.loads(data)
     assert data == {

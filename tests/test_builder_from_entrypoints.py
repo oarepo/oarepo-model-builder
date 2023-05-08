@@ -18,7 +18,11 @@ def test_include_invenio():
         "test",
         model_content={
             "version": "1.0.0",
-            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
+            "record": {
+                "module": {"qualified": "test"},
+                OAREPO_USE: "invenio",
+                "properties": {"a": {"type": "keyword"}},
+            },
         },
         isort=False,
         black=False,
@@ -28,7 +32,7 @@ def test_include_invenio():
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
@@ -47,7 +51,7 @@ from marshmallow_utils import schemas as mu_schemas
 
 
 
-class TestRecordSchema(InvenioBaseRecordSchema):
+class TestSchema(InvenioBaseRecordSchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -67,7 +71,7 @@ class TestRecordSchema(InvenioBaseRecordSchema):
         strip_whitespaces(
             """
 from oarepo_runtime.ui.marshmallow import InvenioUISchema
-class TestRecordUISchema(InvenioUISchema):
+class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
     a = ma_fields.String()    """
@@ -76,7 +80,7 @@ class TestRecordUISchema(InvenioUISchema):
     )
 
     data = builder.filesystem.read(
-        os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+        os.path.join("test", "records", "mappings", "os-v2", "test-1.0.0.json")
     )
     data = json.loads(data)
     assert data == {
@@ -106,7 +110,11 @@ def test_generate_multiple_times():
         "test.yaml",
         "test",
         model_content={
-            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
+            "record": {
+                "module": {"qualified": "test"},
+                OAREPO_USE: "invenio",
+                "properties": {"a": {"type": "keyword"}},
+            },
         },
         isort=False,
         black=False,
@@ -116,7 +124,7 @@ def test_generate_multiple_times():
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
     snapshot_1 = filesystem.snapshot()
 
     # need to reload the schema because of caches ...
@@ -124,12 +132,16 @@ def test_generate_multiple_times():
         "test.yaml",
         "test",
         model_content={
-            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
+            "record": {
+                "module": {"qualified": "test"},
+                OAREPO_USE: "invenio",
+                "properties": {"a": {"type": "keyword"}},
+            },
         },
         isort=False,
         black=False,
     )
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
     snapshot_2 = filesystem.snapshot()
 
     assert snapshot_1.keys() == snapshot_2.keys()
@@ -152,7 +164,11 @@ def test_incremental_builder():
         "test.yaml",
         "test",
         model_content={
-            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
+            "record": {
+                "module": {"qualified": "test"},
+                OAREPO_USE: "invenio",
+                "properties": {"a": {"type": "keyword"}},
+            },
         },
         isort=False,
         black=False,
@@ -162,19 +178,23 @@ def test_incremental_builder():
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
     schema = load_model(
         "test.yaml",
         "test",
         model_content={
-            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
+            "record": {
+                "module": {"qualified": "test"},
+                OAREPO_USE: "invenio",
+                "properties": {"a": {"type": "keyword"}},
+            },
         },
         isort=False,
         black=False,
     )
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
     snapshot_1 = filesystem.snapshot()
 
     snapshot_1.pop(
@@ -185,7 +205,11 @@ def test_incremental_builder():
         "test.yaml",
         "test",
         model_content={
-            "model": {OAREPO_USE: "invenio", "properties": {"a": {"type": "keyword"}}},
+            "record": {
+                "module": {"qualified": "test"},
+                OAREPO_USE: "invenio",
+                "properties": {"a": {"type": "keyword"}},
+            },
         },
         isort=False,
         black=False,
@@ -193,7 +217,7 @@ def test_incremental_builder():
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
     snapshot_2 = filesystem.snapshot()
 
     ret = snapshot_2.pop(
