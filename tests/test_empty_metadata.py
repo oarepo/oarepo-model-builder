@@ -24,6 +24,8 @@ def test_empty_metadata():
 
     tmpdir = mkdtemp()
     try:
-        builder.build(schema, profile="record", model_path=["record"], output_dir=tmpdir)
+        builder.build(
+            schema, profile="record", model_path=["record"], output_dir=tmpdir
+        )
     finally:
         shutil.rmtree(tmpdir)

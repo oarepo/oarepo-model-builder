@@ -2,8 +2,8 @@ from pathlib import Path
 
 from oarepo_model_builder.builders import OutputBuilder
 
-from .utils import ensure_parent_modules
 from ..utils.dict import dict_get
+from .utils import ensure_parent_modules
 
 
 class JSONBaseBuilder(OutputBuilder):

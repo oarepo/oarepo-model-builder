@@ -20,7 +20,10 @@ def test_empty_model_validation():
     }
     assert model_validator.validate(
         {"record": {"type": "model", "properties": None}}
-    ) == {"record": {"type": "model", "properties": {}, "searchable": True}, "version": "1.0.0"}
+    ) == {
+        "record": {"type": "model", "properties": {}, "searchable": True},
+        "version": "1.0.0",
+    }
 
 
 def test_unknown_on_top_validation():
@@ -48,7 +51,8 @@ def test_settings_on_model():
             "module": {"qualified": "test"},
             "properties": {},
             "resource-config": {"base-url": "test"},
-            "type": "model", "searchable": True,
+            "type": "model",
+            "searchable": True,
         },
         "version": "1.0.0",
     }
@@ -76,7 +80,8 @@ def test_inline_props_on_model():
                 "b": {"type": "integer", "minimum": 1},
                 "c": {"type": "float", "exclusiveMaximum": 1.0},
                 "d": {"type": "double"},
-            }, "searchable": True,
+            },
+            "searchable": True,
         },
     }
 

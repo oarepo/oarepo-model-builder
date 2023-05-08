@@ -68,9 +68,7 @@ def build_model(model):
     )
     data = json5.load(
         builder.filesystem.open(
-            os.path.join(
-                "test", "records", "mappings", "os-v2", "test-1.0.0.json"
-            )
+            os.path.join("test", "records", "mappings", "os-v2", "test-1.0.0.json")
         )
     )
     return data
