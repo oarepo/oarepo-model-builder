@@ -1,11 +1,9 @@
-{% for b in vars.record_resource_bases %}
-from {{ b|package_name }} import {{ b|base_name }}
-{% endfor %}
+{{ vars.resource.imports|generate_import }}
 
 
-class {{ vars.record_resource_class|base_name }}({% for b in vars.record_resource_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
-    """{{ vars.record_class|base_name }} resource."""
+class {{ vars.resource|class_header }}:
+    """{{ vars.record.class|base_name }} resource."""
     # here you can for example redefine
     # create_url_rules function to add your own rules
 
-{{ vars.invenio_record_resource_extra_code }}
+{{ vars.resource.extra_code }}

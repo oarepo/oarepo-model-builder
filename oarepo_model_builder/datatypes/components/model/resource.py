@@ -18,7 +18,9 @@ class ResourceClassSchema(ma.Schema):
             "doc": "Name of the config entry that holds the current resource class name"
         }
     )
-    proxy = ma.fields.Str(metadata={"doc": "name of the generated proxy, will be put to _proxies_ module"})
+    proxy = ma.fields.Str(
+        metadata={"doc": "name of the generated proxy, will be put to _proxies_ module"}
+    )
     class_ = ma.fields.Str(
         attribute="class",
         data_key="class",
@@ -120,9 +122,7 @@ class ResourceModelComponent(DataTypeComponent):
             f"current_resource",
         )
         resource.setdefault("extra-code", "")
-        resource.setdefault(
-            "base-classes", ["invenio_records_resources.resources.RecordResource"]
-        )
+        resource.setdefault("base-classes", ["RecordResource"])
         resource.setdefault(
             "imports",
             [{"import": "invenio_records_resources.resources.RecordResource"}],
@@ -143,9 +143,7 @@ class ResourceModelComponent(DataTypeComponent):
         )
         config.setdefault("extra-code", "")
 
-        config.setdefault(
-            "base-classes", ["invenio_records_resources.resources.RecordResourceConfig"]
-        )
+        config.setdefault("base-classes", ["RecordResourceConfig"])
         config.setdefault(
             "imports",
             [{"import": "invenio_records_resources.resources.RecordResourceConfig"}],

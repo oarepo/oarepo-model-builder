@@ -1,54 +1,28 @@
-from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
-{% for imp in link_imports %}
-{% if imp.alias %}
-from {{imp.import_path|package_name}} import {{imp.import_path|base_name}} as {{imp.alias}}
-{%- else %}
-from {{imp.import_path|package_name}} import {{imp.import_path|base_name}}
-{%- endif -%}
-{%- endfor %}
+{{ vars.service_config.imports|generate_import }}
+{{ link_imports|generate_import }}
+{{ vars.record.class|generate_import }}
+{{ vars.permissions.class|generate_import }}
+{{ vars.marshmallow.class|generate_import }}
+{{ vars.search_options.class|generate_import }}
 
-{% for b in vars.record_service_config_bases %}
-from {{ b|package_name }} import {{ b|base_name }}
-{% endfor %}
-{% for b in vars.record_service_config_components %}
-from {{ b|package_name }} import {{ b|base_name }}
-{% endfor %}
-from {{ vars.record_class|package_name }} import {{ vars.record_class|base_name }}
-from {{ vars.record_permissions_class|package_name }} import {{ vars.record_permissions_class|base_name }}
-from {{ record_schema_class|package_name }} import {{ record_schema_class|base_name }}
-{% if  vars.record_search_options_class %}
-from {{ vars.record_search_options_class|package_name }} import {{ vars.record_search_options_class|base_name }}
-{% endif %}
-{% if vars.permissions.presets %}
-from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
-{% endif %}
 
-class {{ vars.record_service_config_class|base_name }}({% if vars.permissions.presets %} PermissionsPresetsConfigMixin, {% endif -%}
-{%- for b in vars.record_service_config_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }} {% endfor %}):
-    """{{ vars.record_class|base_name }} service config."""
-    url_prefix = "{{ vars.collection_url }}"
-    {% if not vars.permissions.presets %}
-    permission_policy_cls = {{ vars.record_permissions_class|base_name }}
-    {% else %}
+class {{ vars.service_config|class_header }}:
+    """{{ vars.record.class|base_name }} service config."""
     PERMISSIONS_PRESETS = [{% for p in vars.permissions.presets %}"{{ p }}"{{ ", " if not loop.last else "" }} {% endfor %}]
-    {% endif %}
-    schema = {{ record_schema_class|base_name }}
-    {% if vars.record_search_options_class %}
-    search = {{ vars.record_search_options_class|base_name }}
-    {% endif %}
-    record_cls = {{ vars.record_class|base_name }}
-    service_id = "{{ vars.service_id }}"
 
-    {% if vars.record_service_config_bases %}
-    components = [ *{% for b in vars.record_service_config_bases[:1] %}{{ b|base_name }}.components{% endfor %}{% for c in vars.record_service_config_components %}, {{ c|base_name }} {% endfor %}]
-    {% else %}
-    components = [ *InvenioRecordServiceConfig.components{% for c in vars.record_service_config_components %}, {{ c|base_name }} {% endfor %}  ]
-    {% endif %}
+    url_prefix = "{{ vars.resource_config.base_url }}"
+    base_permission_policy_cls = {{ vars.permissions.class|base_name }}
 
+    schema = {{ vars.marshmallow.class|base_name }}
+    search = {{ vars.search_options.class|base_name }}
+    record_cls = {{ vars.record.class|base_name }}
+    service_id = "{{ vars.service_config.service_id }}"
 
-    model = "{{ vars.model_name }}"
+    components = [ {% for b in vars.service_config.base_classes %}*{{ b|base_name }}.components{% if not loop.last %}, {% endif %}{% endfor %}{% for c in vars.service_config.components %}, {{ c|base_name }} {% endfor %}]
 
-    {% if vars.record_service_config_generate_links %}
+    model = "{{ vars.module.qualified }}"
+
+    {% if vars.service_config.generate_links %}
     @property
     def links_item(self):
         return {
@@ -66,4 +40,4 @@ class {{ vars.record_service_config_class|base_name }}({% if vars.permissions.pr
         }
 {% endif %}
 
-{{ vars.invenio_record_service_config_extra_code }}
+{{ vars.service_config.extra_code }}

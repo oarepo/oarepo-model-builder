@@ -69,14 +69,15 @@ class RecordMetadataModelComponent(DataTypeComponent):
         metadata.setdefault("generate", True)
         metadata_module = metadata.setdefault("module", f"{records_module}.models")
         metadata.setdefault("class", f"{metadata_module}.{prefix}Metadata")
-        metadata.setdefault(
-            "base-classes", ["RecordMetadataBase", "db.Model"]
-        )
+        metadata.setdefault("base-classes", ["RecordMetadataBase", "db.Model"])
         metadata.setdefault("extra-code", "")
-        metadata.setdefault("imports", [
-            {'import': "invenio_records.models.RecordMetadataBase"},
-            {'import': 'invenio_db.db'}
-        ])
+        metadata.setdefault(
+            "imports",
+            [
+                {"import": "invenio_records.models.RecordMetadataBase"},
+                {"import": "invenio_db.db"},
+            ],
+        )
         metadata.setdefault("table", f"{prefix.lower()}_metadata")
         metadata.setdefault("alembic", f"{suffix}")
         metadata.setdefault("alias", alias)

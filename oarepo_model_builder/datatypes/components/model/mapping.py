@@ -3,14 +3,13 @@ import os
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
-from oarepo_model_builder.utils.camelcase import snake_case
 from oarepo_model_builder.utils.python_name import module_to_path, parent_module
 from oarepo_model_builder.validation.utils import PermissiveSchema
 
 from .defaults import DefaultsModelComponent
+from .jsonschema import JSONSchemaModelComponent
 from .record import RecordModelComponent
 from .utils import set_default
-from .jsonschema import JSONSchemaModelComponent
 
 
 class ModelMappingSchema(ma.Schema):
@@ -37,7 +36,11 @@ class ModelMappingSchema(ma.Schema):
 
 class MappingModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
-    depends_on = [DefaultsModelComponent, RecordModelComponent, JSONSchemaModelComponent]
+    depends_on = [
+        DefaultsModelComponent,
+        RecordModelComponent,
+        JSONSchemaModelComponent,
+    ]
 
     class ModelSchema(ma.Schema):
         mapping = ma.fields.Nested(
@@ -54,8 +57,9 @@ class MappingModelComponent(DataTypeComponent):
         mapping = set_default(datatype, "mapping", {})
         mapping.setdefault("generate", True)
         mapping.setdefault("alias", alias)
-        index_name = mapping.setdefault("index",
-                                        f"{prefix_snake}-{datatype.definition['json-schema']['version']}")
+        index_name = mapping.setdefault(
+            "index", f"{prefix_snake}-{datatype.definition['json-schema']['version']}"
+        )
         mapping.setdefault(
             "file",
             os.path.join(

@@ -2,17 +2,17 @@ import sys
 from typing import Mapping
 
 import libcst as cst
-from jinja2 import Environment, FunctionLoader, pass_context, Undefined
+from jinja2 import Environment, FunctionLoader, Undefined, pass_context
 
 from oarepo_model_builder.outputs import OutputBase
 from oarepo_model_builder.templates import templates
 from oarepo_model_builder.utils.cst import PythonContext, merge
 from oarepo_model_builder.utils.jinja import (
     base_name,
+    class_header,
+    generate_import,
     in_different_package,
     package_name,
-    generate_import,
-    class_header
 )
 from oarepo_model_builder.utils.verbose import log
 
@@ -71,7 +71,7 @@ class PythonOutput(OutputBase):
                 lambda tn: templates.get_template(tn, context["settings"])
             ),
             autoescape=False,
-            undefined=StrictUndefined
+            undefined=StrictUndefined,
         )
         self.register_default_filters(env)
         for filter_name, filter_func in (filters or {}).items():
@@ -84,7 +84,9 @@ class PythonOutput(OutputBase):
             }
             rendered = env.get_template(template_name).render(make_attrdict(context))
         except Exception as exc:
-            raise RuntimeError(f"Error rendering template {template_name}: {str(exc)}") from exc
+            raise RuntimeError(
+                f"Error rendering template {template_name}: {str(exc)}"
+            ) from exc
         try:
             rendered_cst = cst.parse_module(
                 rendered, config=self.cst.config_for_parsing
@@ -116,31 +118,34 @@ class AttrDict(dict):
         try:
             return self[item]
         except KeyError as e:
-            raise AttributeError(f'No key {item}') from e
+            raise AttributeError(f"No key {item}") from e
+
     def __getitem__(self, item):
         if super().__contains__(item):
             ret = super().__getitem__(item)
         else:
-            ret = super().__getitem__(item.replace('_', '-'))
+            ret = super().__getitem__(item.replace("_", "-"))
 
         if isinstance(ret, Mapping) and not isinstance(ret, AttrDict):
             return AttrDict(ret)
         return ret
 
     def items(self):
-        return [
-            (k, self[k]) for k in self
-        ]
+        return [(k, self[k]) for k in self]
 
     def values(self):
         return [self[k] for k in self]
 
     def __contains__(self, item):
-        return super().__contains__(item) or super().__contains__(item.replace('_', '-'))
+        return super().__contains__(item) or super().__contains__(
+            item.replace("_", "-")
+        )
+
 
 class StrictUndefined(Undefined):
     def __str__(self):
         self._fail_with_undefined_error()
+
 
 def make_attrdict(d):
     d = AttrDict(d)

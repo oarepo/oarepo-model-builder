@@ -109,7 +109,6 @@ def test_model_saver():
         "record-pid-provider-bases": [
             "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"
         ],
-        "schema-version": "1.0.0",
         "permissions": {"presets": []},
         "schema-name": "test-1.0.0.json",
         "invenio-record-resource-config-extra-code": "",
@@ -313,7 +312,6 @@ def test_model_saver_invenio():
         "invenio-proxies-extra-code": "",
         "record-blueprints-setup-cfg": "test",
         "record-schema-metadata-alembic": "test",
-        "schema-version": "1.0.0",
         "schema-name": "test-1.0.0.json",
         "flask-commands-setup-cfg": "test",
         "invenio-record-service-config-extra-code": "",

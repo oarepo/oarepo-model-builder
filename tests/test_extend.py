@@ -6128,7 +6128,6 @@ nr_documents_model = {
             }
         },
         "proxies-current-service": "nr_metadata.documents.proxies.current_service",
-        "schema-version": "1.0.0",
         "permissions": {"presets": []},
         "record-metadata-bases": ["invenio_records.models.RecordMetadataBase"],
         "invenio-record-resource-extra-code": "",

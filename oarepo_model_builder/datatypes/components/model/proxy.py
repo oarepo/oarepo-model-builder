@@ -1,9 +1,9 @@
 import marshmallow as ma
 
-from oarepo_model_builder.datatypes import ModelDataType, DataTypeComponent
+from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
 from oarepo_model_builder.validation.utils import StrictSchema
-from .defaults import DefaultsModelComponent
 
+from .defaults import DefaultsModelComponent
 from .utils import set_default
 
 

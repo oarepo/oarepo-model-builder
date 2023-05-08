@@ -1,12 +1,6 @@
-from invenio_records_resources.services import RecordService as InvenioRecordService
+{{ vars.service.imports|generate_import }}
 
+class {{ vars.service|class_header }}:
+    """{{ vars.record.class|base_name }} service."""
 
-
-{% for b in vars.record_service_bases %}
-from {{ b|package_name }} import {{ b|base_name }}
-{% endfor %}
-
-class {{ vars.record_service_class|base_name }}({% for b in vars.record_service_bases %}{{ b|base_name }}{{ ", " if not loop.last else "" }}{% endfor %}):
-    """{{ vars.record_class|base_name }} service."""
-
-{{ vars.invenio_record_service_extra_code }}
+{{ vars.service.extra_code }}

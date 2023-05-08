@@ -1,19 +1,10 @@
-from pathlib import Path
-
-from oarepo_model_builder.builders.python import PythonBuilder
-from oarepo_model_builder.outputs.python import PythonOutput
+from .invenio_base import InvenioBaseClassPythonBuilder
 
 
-class InvenioVersionBuilder(PythonBuilder):
+class InvenioVersionBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_version"
+    section = "version"
+    template = "invenio_version"
 
-    def finish(self):
-        super().finish()
-
-        python_output: PythonOutput = self.builder.get_output(
-            "python", Path(self.current_model.package_path) / "version.py"
-        )
-        python_output.merge(
-            "invenio_version",
-            {"settings": self.settings, "current_model": self.current_model},
-        )
+    def _get_output_module(self):
+        return f"{self.current_model.definition['module']['qualified']}.version"

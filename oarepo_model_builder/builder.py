@@ -1,6 +1,6 @@
 import copy
 from pathlib import Path
-from typing import Dict, List, Type, Union, Any, Iterable
+from typing import Any, Dict, Iterable, List, Type, Union
 
 from .builders import OutputBuilder
 from .fs import AbstractFileSystem, FileSystem
@@ -102,7 +102,7 @@ class ModelBuilder:
         model_path: List[str],
         output_dir: Union[str, Path],
         disable_validation: bool = False,
-        context: Dict[str, Any] = None
+        context: Dict[str, Any] = None,
     ):
         """
         compile the schema to output directory
@@ -125,7 +125,8 @@ class ModelBuilder:
 
         self.set_schema(model)
         self.filtered_output_classes = {
-            o.TYPE: o for o in self._filter_classes(self.output_classes, current_model, "output")
+            o.TYPE: o
+            for o in self._filter_classes(self.output_classes, current_model, "output")
         }
         self.output_dir = Path(output_dir).absolute()
         self.outputs = {}
@@ -139,7 +140,9 @@ class ModelBuilder:
 
         return self.outputs
 
-    def _run_output_builders(self, model: ModelSchema, profile: str, model_path: Iterable[str], context):
+    def _run_output_builders(
+        self, model: ModelSchema, profile: str, model_path: Iterable[str], context
+    ):
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(
             self.output_builder_classes, dict_get(model.schema, model_path), "builder"
@@ -165,10 +168,7 @@ class ModelBuilder:
     # private methods
 
     def _filter_classes(self, classes: List[Type[object]], model, plugin_type):
-        if (
-            "plugins" not in model
-            or plugin_type not in model["plugins"]
-        ):
+        if "plugins" not in model or plugin_type not in model["plugins"]:
             return classes
         plugin_config = model["plugins"][plugin_type]
 

@@ -37,7 +37,6 @@ def build_python_model(model, output_builders, fn):
             "",
             {
                 "settings": {
-                    "schema-version": "1.0.0",
                     "python": {
                         "use-isort": False,
                         "use-black": False,

@@ -1,12 +1,12 @@
-from {{ vars.record_service_config_class|package_name }} import {{ vars.record_service_config_class|base_name }}
-from {{ vars.record_service_class|package_name }} import {{ vars.record_service_class|base_name }}
-from {{ vars.record_resource_config_class|package_name }} import {{ vars.record_resource_config_class|base_name }}
-from {{ vars.record_resource_class|package_name }} import {{ vars.record_resource_class|base_name }}
+{{ vars.service_config|generate_import }}
+{{ vars.service|generate_import }}
+{{ vars.resource_config|generate_import }}
+{{ vars.resource|generate_import }}
 
+{{ vars.resource_config.config_key }} = {{ vars.resource_config.class|base_name }}
+{{ vars.resource.config_key }} = {{ vars.resource.class|base_name }}
 
-{{ vars.config_resource_config_key }} = {{ vars.record_resource_config_class|base_name }}
-{{ vars.config_resource_class_key }} = {{ vars.record_resource_class|base_name }}
-{{ vars.config_service_config_key }} = {{ vars.record_service_config_class|base_name }}
-{{ vars.config_service_class_key }} = {{ vars.record_service_class|base_name }}
+{{ vars.service_config.config_key }} = {{ vars.service_config.class|base_name }}
+{{ vars.service.config_key }} = {{ vars.service.class|base_name }}
 
-{{ vars.invenio_config_extra_code }}
+{{ vars.config.extra_code }}

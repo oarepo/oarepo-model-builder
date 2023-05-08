@@ -52,7 +52,6 @@ def build_python_model(model, output_builders, fn):
             "",
             {
                 "settings": {
-                    "schema-version": "1.0.0",
                     "python": {
                         "use-isort": False,
                         "use-black": False,
@@ -60,11 +59,11 @@ def build_python_model(model, output_builders, fn):
                     },
                     "opensearch": {"version": "os-v2"},
                 },
-                "record": {"module": {'qualified': "test"}, **model},
+                "record": {"module": {"qualified": "test"}, **model},
             },
         ),
-        profile='record',
-        model_path=['record'],
+        profile="record",
+        model_path=["record"],
         output_dir="",
     )
 
@@ -279,10 +278,10 @@ from test.resources.records.config import TestResourceConfig
 from test.resources.records.resource import TestResource
 
 
-TEST_RESOURCE_CONFIG_TEST = TestResourceConfig
-TEST_RESOURCE_CLASS_TEST = TestResource
-TEST_SERVICE_CONFIG_TEST = TestServiceConfig
-TEST_SERVICE_CLASS_TEST = TestService
+TEST_RECORD_RESOURCE_CONFIG = TestResourceConfig
+TEST_RECORD_RESOURCE_CLASS = TestResource
+TEST_RECORD_SERVICE_CONFIG = TestServiceConfig
+TEST_RECORD_SERVICE_CLASS = TestService
         """
     )
 
@@ -337,7 +336,7 @@ from invenio_records_resources.resources import RecordResourceConfig
 class TestResourceConfig(RecordResourceConfig):
     """TestRecord resource config."""
 
-    blueprint_name = 'Test'
+    blueprint_name = 'test'
     url_prefix = '/test/'
 
     @property
@@ -364,9 +363,8 @@ def test_service_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from invenio_records_resources.services import RecordService as InvenioRecordService
-from invenio_records_resources.services import RecordService
 
-class TestService(RecordService):
+class TestService(InvenioRecordService):
     """TestRecord service."""        
 '''
     )
@@ -382,44 +380,39 @@ def test_service_config():
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
+from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
 from invenio_records_resources.services import RecordLink
 from invenio_records_resources.services import pagination_links
-from invenio_records_resources.services import RecordServiceConfig
-from oarepo_runtime.relations.components import CachingRelationsComponent
 from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
-from test.services.records.schema import TestRecordSchema
+from test.services.records.schema import TestSchema
 from test.services.records.search import TestSearchOptions
-
-class TestServiceConfig(RecordServiceConfig):
+class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
+    PERMISSIONS_PRESETS = []
     url_prefix = "/test/"
-    
-    permission_policy_cls = TestPermissionPolicy
-    
-    schema = TestRecordSchema
-    
+    base_permission_policy_cls = TestPermissionPolicy
+    schema = TestSchema
     search = TestSearchOptions
-    
     record_cls = TestRecord
     service_id = "test"
-    
-    components = [ *RecordServiceConfig.components, CachingRelationsComponent   ]
-
+    components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]
     model = "test"
     
     @property
     def links_item(self):
         return {
+            
             "self":RecordLink("{self.url_prefix}{id}"),
+            
         }
-
     @property
     def links_search(self):
         return {
+            
             **pagination_links("{self.url_prefix}{?args*}"),
+            
         }
-
 '''
     )
 
