@@ -2,9 +2,7 @@ import faker.config
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.invenio.invenio_script_sample_data import (
-    InvenioScriptSampleDataBuilder,
-)
+from oarepo_model_builder.invenio.invenio_script_sample_data import SampleDataBuilder
 from oarepo_model_builder.outputs.yaml import YAMLOutput
 from oarepo_model_builder.schema import ModelSchema
 
@@ -160,17 +158,16 @@ def build_sample_data(model, count=1):
     faker.config.PROVIDERS.clear()
     faker.config.PROVIDERS.append("tests.faker_constant")
     builder = ModelBuilder(
-        output_builders=[InvenioScriptSampleDataBuilder],
+        output_builders=[SampleDataBuilder],
         outputs=[YAMLOutput],
         filesystem=InMemoryFileSystem(),
     )
     schema = ModelSchema(
         "test.json",
         {
-            "model": {
-                "script-import-sample-data": "test.yaml",
-                "sample": {"count": count},
-                "package": "test",
+            "record": {
+                "sample": {"file": "test.yaml", "count": count},
+                "module": {"qualified": "test"},
                 "properties": {
                     **model,
                 },
@@ -178,6 +175,6 @@ def build_sample_data(model, count=1):
             "settings": {},
         },
     )
-    builder.build(schema, output_dir="")
+    builder.build(schema, "record", ["record"], output_dir="")
     sample_data = builder.filesystem.read("test.yaml")
     return sample_data

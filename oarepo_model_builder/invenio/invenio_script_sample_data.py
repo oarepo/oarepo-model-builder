@@ -56,10 +56,10 @@ class Provider:
 SKIP = "skip"
 
 
-class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
+class SampleDataBuilder(JSONBaseBuilder):
     TYPE = "script_sample_data"
     output_file_type = "yaml"
-    output_file_name = "script-import-sample-data"
+    output_file_name = ["sample", "file"]
     parent_module_root_name = "jsonschemas"
 
     def __init__(self, builder: ModelBuilder):
@@ -122,7 +122,7 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
         params = config.get("params", params)
 
         for provider in self.sample_data_providers:
-            ret = provider(self.faker, node.schema["settings"], node, params)
+            ret = provider(self.faker, node.schema.schema["settings"], node, params)
             if ret is not SKIP:
                 return ret
         return SKIP

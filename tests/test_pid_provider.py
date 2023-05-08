@@ -12,9 +12,7 @@ def clear_whitespaces(st):
 def get_sources(model_name, model_content=None):
     if not model_content:
         model_content = {
-            "model": {
-                "use": "invenio",
-            },
+            "record": {"use": "invenio", "module": {"qualified": "test"}},
         }
     schema = load_model(
         f"{model_name}.yaml",
@@ -26,7 +24,7 @@ def get_sources(model_name, model_content=None):
 
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(os.path.join(model_name, "records", "api.py")).read()
     return data
