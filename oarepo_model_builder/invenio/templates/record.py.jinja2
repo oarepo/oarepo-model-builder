@@ -19,13 +19,11 @@ class {{ vars.record|class_header }}:
     pid = {{ vars.pid.field_class }}(
         provider={{ vars.pid.provider_class|base_name }},
         context_cls={{ vars.pid.context_class }}{% if vars.pid.field_args %},
-        {% for arg in vars.pid.field_args %}{{ arg }}{{ ", " if not loop.last else "" }}{% endfor %}
+        {{ vars.pid.field_args|generate_list }}
     {% endif %}
     )
 {% endif %}
-    dumper_extensions = [
-        {%- for ext in vars.record.dumper_extensions %}{{ ext }}{% if not loop.last %}, {% endif %}{% endfor -%}
-    ]
+    dumper_extensions = [ {{ vars.record.dumper_extensions|generate_list }} ]
     dumper = {{ vars.record_dumper.class|base_name }}(extensions=dumper_extensions)
 
 {{ vars.record.extra_code }}
