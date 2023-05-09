@@ -263,10 +263,10 @@ class DataTypes:
             if not component.eligible_datatypes:
                 datatype_components.append(component)
             else:
-                for dt in component.eligible_datatypes:
-                    if isinstance(dt, str):
-                        dt = import_class(dt)
-                    if issubclass(datatype_class, dt):
+                for depends_on in component.eligible_datatypes:
+                    if isinstance(depends_on, str):
+                        depends_on = import_class(depends_on)
+                    if issubclass(datatype_class, depends_on):
                         datatype_components.append(component)
                         break
 
@@ -283,13 +283,16 @@ class DataTypes:
         # sort by dependencies
         depsort_map = {}
         for c in unsorted_components:
-            dependencies = getattr(c, "depends_on", [])
-            dependencies_classes = []
-            for dt in dependencies:
-                if isinstance(dt, str):
-                    dt = import_class(dt)
-                dependencies_classes.append(dt)
+            dependencies_classes = depsort_map.setdefault(type(c), [])
             depsort_map[type(c)] = dependencies_classes
+            for depends_on in getattr(c, "depends_on", []):
+                if isinstance(depends_on, str):
+                    depends_on = import_class(depends_on)
+                dependencies_classes.append(depends_on)
+            for affects in getattr(c, "affects", []):
+                if isinstance(affects, str):
+                    affects = import_class(affects)
+                depsort_map.setdefault(affects, []).append(type(c))
 
         sorted_components = []
         while unsorted_components:
