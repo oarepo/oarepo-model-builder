@@ -4,6 +4,8 @@ from .datatypes import DataType
 class BaseDateDataType(DataType):
     marshmallow = {"field-class": "ma_fields.String"}
 
+    facets = {"facet_class": "DateTimeFacet"}
+
 
 class DateDataType(BaseDateDataType):
     model_type = "date"

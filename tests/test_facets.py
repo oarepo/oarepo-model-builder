@@ -12,7 +12,7 @@ def test_include_invenio():
         DUMMY_YAML,
         "test",
         model_content={
-            "model": {
+            "record": {
                 "use": "invenio",
                 "properties": {
                     "jej": {
@@ -35,11 +35,12 @@ def test_include_invenio():
         },
         isort=False,
         black=False,
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "facets.py")

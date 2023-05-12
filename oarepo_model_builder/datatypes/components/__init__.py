@@ -1,5 +1,10 @@
 from .enum import EnumComponent
-from .facets import RegularFacetsComponent
+# from .facets_validation import FacetsValidationModelComponent
+from .facets import (RegularFacetsComponent,
+                     ObjectFacetsComponent,
+                     NestedFacetsComponent,
+                     ArrayFacetsComponent
+)
 from .marshmallow import (
     ArrayMarshmallowComponent,
     ObjectMarshmallowComponent,
@@ -34,7 +39,7 @@ from .sample import ArraySampleComponent, RegularSampleComponent
 from .ui import ObjectUIComponent, RegularUIComponent
 
 DEFAULT_COMPONENTS = [
-    RegularFacetsComponent,
+    # FacetsValidationModelComponent,
     ArraySampleComponent,
     RegularSampleComponent,
     RegularMarshmallowComponent,
@@ -66,4 +71,9 @@ DEFAULT_COMPONENTS = [
     DefaultsModelComponent,
     ProxyModelComponent,
     PluginsModelComponent,
+    ObjectFacetsComponent,
+
+    NestedFacetsComponent,
+    RegularFacetsComponent,
+    ArrayFacetsComponent
 ]

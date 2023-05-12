@@ -4,7 +4,7 @@ from .datatypes import DataType
 
 
 class NumberDataType(DataType):
-    pass
+    facets = {"facet_class": "TermsFacet"}
 
 
 class IntegerDataType(NumberDataType):
@@ -82,3 +82,4 @@ class BooleanDataType(DataType):
         "field-class": "ma_fields.Boolean",
     }
     json_schema = {"type": "boolean"}
+    facets = {"facet_class": "TermsFacet"}
