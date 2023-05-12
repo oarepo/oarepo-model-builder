@@ -290,7 +290,6 @@ def test_model_saver():
             "config-key": "TEST_RECORD_SERVICE_CONFIG",
             "extra-code": "",
             "generate": True,
-            "generate-links": True,
             "imports": [
                 {
                     "alias": "InvenioRecordServiceConfig",
@@ -621,7 +620,6 @@ def test_model_saver_invenio():
             "config-key": "TEST_RECORD_SERVICE_CONFIG",
             "extra-code": "",
             "generate": True,
-            "generate-links": True,
             "imports": [
                 {
                     "alias": "InvenioRecordServiceConfig",
