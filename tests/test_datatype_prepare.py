@@ -64,6 +64,7 @@ def test_prepare_datatype():
             "base-classes": ["MarshmallowSerializer"],
             "class": "my.test.resources.records.ui.TestUIJSONSerializer",
             "extra-code": "",
+            "generate": True,
             "imports": [
                 {"import": "flask_resources.BaseListSchema"},
                 {"import": "flask_resources.MarshmallowSerializer"},
@@ -104,7 +105,7 @@ def test_prepare_datatype():
             "base-classes": ["RecordPermissionPolicy"],
             "class": "my.test.services.records.permissions.TestPermissionPolicy",
             "extra-code": "",
-            "generate": False,
+            "generate": True,
             "imports": [
                 {"import": "invenio_records_permissions.RecordPermissionPolicy"}
             ],
@@ -152,7 +153,7 @@ def test_prepare_datatype():
                 },
             }
         },
-        "proxy": {"module": "my.test.proxies"},
+        "proxy": {"module": "my.test.proxies", "generate": True},
         "record": {
             "base-classes": ["InvenioRecord"],
             "class": "my.test.records.api.TestRecord",

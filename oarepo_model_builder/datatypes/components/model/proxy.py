@@ -12,6 +12,7 @@ class ProxySchema(ma.Schema):
         unknown = ma.RAISE
 
     module = ma.fields.Str()
+    generate = ma.fields.Boolean()
 
 
 class ProxyModelComponent(DataTypeComponent):
@@ -27,3 +28,4 @@ class ProxyModelComponent(DataTypeComponent):
         top_module = datatype.definition["module"]["qualified"]
         proxy = set_default(datatype, "proxy", {})
         proxy.setdefault("module", f"{top_module}.proxies")
+        proxy.setdefault("generate", True)
