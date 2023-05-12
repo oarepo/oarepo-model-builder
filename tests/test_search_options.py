@@ -12,7 +12,7 @@ def test_sort():
         DUMMY_YAML,
         "test",
         model_content={
-            "model": {
+            "record": {
                 "use": "invenio",
                 "properties": {
                     "a": {
@@ -71,7 +71,7 @@ def test_search_class():
         DUMMY_YAML,
         "test",
         model_content={
-            "model": {
+            "record": {
                 "use": "invenio",
                 "properties": {
                     "a": {"type": "fulltext+keyword"},

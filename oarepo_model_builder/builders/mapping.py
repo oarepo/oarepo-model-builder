@@ -35,6 +35,7 @@ class MappingBuilder(JSONBaseBuilder):
         if skip:
             return
         generated = self.generate_model(node)
+        generated.pop("enabled", None)
         self.output.merge(generated)
 
     def generate_model(self, node):
