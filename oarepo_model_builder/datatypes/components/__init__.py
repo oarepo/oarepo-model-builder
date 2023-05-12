@@ -18,6 +18,7 @@ from .model import (
     MarshmallowModelComponent,
     PermissionsModelComponent,
     PIDModelComponent,
+    PluginsModelComponent,
     ProxyModelComponent,
     RecordDumperModelComponent,
     RecordMetadataModelComponent,
@@ -64,4 +65,5 @@ DEFAULT_COMPONENTS = [
     UIModelComponent,
     DefaultsModelComponent,
     ProxyModelComponent,
+    PluginsModelComponent,
 ]

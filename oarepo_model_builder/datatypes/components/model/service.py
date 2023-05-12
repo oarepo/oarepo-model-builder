@@ -76,11 +76,6 @@ class ServiceConfigClassSchema(ma.Schema):
     components = ma.fields.List(
         ma.fields.String(), metadata={"doc": "List of service components"}
     )
-    generate_links = ma.fields.Bool(
-        attribute="generate-links",
-        data_key="generate-links",
-        metadata={"doc": "Generate links section (default)"},
-    )
     module = ma.fields.String(metadata={"doc": "Class module"})
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
@@ -126,7 +121,6 @@ class ServiceModelComponent(DataTypeComponent):
             "class",
             f"{config_module}.{record_prefix}ServiceConfig",
         )
-        config.setdefault("generate-links", True)
         config.setdefault("extra-code", "")
         config.setdefault("service-id", flask_extension_name)
         config.setdefault(

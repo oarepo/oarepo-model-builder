@@ -7,6 +7,7 @@ from jsonpointer import resolve_pointer
 
 from .exceptions import IncludedFileNotFoundException
 from .utils.deepmerge import deepmerge
+from .validation import validate_model
 
 
 class ModelSchema:
@@ -20,6 +21,7 @@ class ModelSchema:
         included_models: Dict[str, Callable] = None,
         merged_models: List[Union[str, Path]] = None,
         loaders=None,
+            validate=True
     ):
         """
         Creates and parses model schema
@@ -51,6 +53,9 @@ class ModelSchema:
         self.schema.setdefault("settings", {})
 
         self._sections = {}
+
+        if validate:
+            validate_model(self)
 
     @property
     def settings(self):

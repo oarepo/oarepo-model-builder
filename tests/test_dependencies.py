@@ -40,7 +40,6 @@ def build(kwargs={}):
     )
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
-    builder.skip_schema_validation = True
     builder.build(schema, "record", ["record"], "")
     data = builder.filesystem.open("setup.cfg").read().strip()
     return data

@@ -29,10 +29,10 @@ def test_extend_property_preprocessor():
     )
 
     model = ModelSchema(
-        "/tmp/test.json", content=nr_documents_model  # NOSONAR
-    )  # NOSONAR - this is fake path on memory filesystem
+        "/tmp/test.json", content=nr_documents_model, validate=False
+    )
     ExtendProfile().build(
-        model, "record", ["record"], "", builder, disable_validation=True
+        model, "record", ["record"], "", builder
     )
     loaded_model = json5.loads(fs.read("model.json5"))
     # assert that no class is generated in loaded_model
@@ -40,7 +40,7 @@ def test_extend_property_preprocessor():
 
 
 nr_documents_model = {
-    "model": {
+    "record": {
         "type": "object",
         "cli-function": "nr_metadata.documents.cli.group",
         "properties": {

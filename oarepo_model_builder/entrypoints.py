@@ -23,7 +23,6 @@ def create_builder_from_entrypoints(profile="record", **kwargs):
         **kwargs,
     )
 
-
 def load_entry_points_dict(name):
     return {
         ep.name: ep.load()
@@ -35,18 +34,27 @@ def load_entry_points_list(name, profile):
     ret = []
     loaded = {}
     group_name = f"{name}.{profile}" if profile else name
+    load_from_entry_point_internal(name, group_name, loaded, ret)
+    # inherit
+    inherit_group = f"{name}.{profile}.inherit" if profile else f"{name}.inherit"
+    for ep in importlib_metadata.entry_points().select(group=inherit_group):
+        inherit_from = ep.value
+        load_from_entry_point_internal(name, inherit_from, loaded, ret)
+    ret.sort()
+    return [x[1] for x in ret]
+
+
+def load_from_entry_point_internal(name, group_name, loaded_keys, loaded_entries):
     for ep in importlib_metadata.entry_points().select(group=group_name):
-        if ep.name in loaded:
+        if ep.name in loaded_keys:
             print(
                 f"WARNING: Entry point {ep.name} has already been registered to group {name}. "
-                f"Previous value {loaded[ep.name]}, new ignored value {ep.value}"
+                f"Previous value {loaded_keys[ep.name]}, new ignored value {ep.value}"
             )
             continue
         loaded_entry_point = ep.load()
-        ret.append((ep.name, loaded_entry_point))
-        loaded[ep.name] = ep.value
-    ret.sort()
-    return [x[1] for x in ret]
+        loaded_entries.append((ep.name, loaded_entry_point))
+        loaded_keys[ep.name] = ep.value
 
 
 def load_model_from_entrypoint(ep: importlib_metadata.EntryPoint):

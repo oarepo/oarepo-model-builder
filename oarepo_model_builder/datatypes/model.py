@@ -48,7 +48,7 @@ class ModelDataType(ObjectDataType):
     @property
     def links(self):
         return {
-            "item": [
+            "links_item": [
                 Link(
                     name="self",
                     link_class="RecordLink",
@@ -56,7 +56,7 @@ class ModelDataType(ObjectDataType):
                     imports=[Import("invenio_records_resources.services.RecordLink")],
                 ),
             ],
-            "search": [
+            "links_search": [
                 Link(
                     name=None,
                     link_class="pagination_links",

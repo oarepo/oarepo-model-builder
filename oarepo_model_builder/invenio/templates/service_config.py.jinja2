@@ -24,22 +24,14 @@ class {{ vars.service_config|class_header }}:
 
     model = "{{ vars.module.qualified }}"
 
-    {% if vars.service_config.generate_links %}
+    {% for links_name, links_def in links.items() %}
     @property
-    def links_item(self):
+    def {{ links_name }}(self):
         return {
-            {% for link in links.item %}
+            {% for link in links_def %}
             {% if link.name -%} "{{link.name}}": {%- else -%}**{%-endif-%}{{link.link_class}}({{link.link_args_str}}),
             {% endfor %}
         }
-
-    @property
-    def links_search(self):
-        return {
-            {% for link in links.search %}
-            {% if link.name -%} "{{link.name}}": {%- else -%}**{%-endif-%}{{link.link_class}}({{link.link_args_str}}),
-            {% endfor %}
-        }
-{% endif %}
+    {% endfor %}
 
 {{ vars.service_config.extra_code }}

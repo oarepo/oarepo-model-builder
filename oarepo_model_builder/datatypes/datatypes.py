@@ -323,7 +323,7 @@ class DataTypes:
             return datatype_class(parent, data, key, model, schema)
         if parent:
             raise KeyError(
-                f"Do not have datatype for the following data at path {parent.path}:\n"
+                f"Do not have datatype for the following data at path '{parent.path}':\n"
                 f"{json.dumps(data, indent=4, ensure_ascii=False)}"
             )
         raise KeyError(

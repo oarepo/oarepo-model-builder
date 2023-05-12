@@ -7,12 +7,14 @@ from oarepo_model_builder.utils.dict import dict_get
 
 def test_output_disabled():
     builder = ModelBuilder()
-    schema = ModelSchema("", {"model": {"plugins": {"output": {"disable": "__all__"}}}})
+    schema = ModelSchema(
+        "", {"record": {"plugins": {"output": {"disable": "__all__"}}}}
+    )
     builder.set_schema(schema)
     assert (
         builder._filter_classes(
             [JSONSchemaOutput, MappingOutput],
-            dict_get(schema.schema, ["model"]),
+            dict_get(schema.schema, ["record"]),
             "output",
         )
         == []
@@ -22,14 +24,14 @@ def test_output_disabled():
 def test_output_disabled_single():
     builder = ModelBuilder()
     schema = ModelSchema(
-        "", {"model": {"plugins": {"output": {"disable": ["jsonschema"]}}}}
+        "", {"record": {"plugins": {"output": {"disable": ["jsonschema"]}}}}
     )
     builder.set_schema(schema)
     assert set(
         x.TYPE
         for x in builder._filter_classes(
             [JSONSchemaOutput, MappingOutput],
-            dict_get(schema.schema, ["model"]),
+            dict_get(schema.schema, ["record"]),
             "output",
         )
     ) == {"mapping"}
@@ -40,7 +42,7 @@ def test_output_enabled():
     schema = ModelSchema(
         "",
         {
-            "model": {
+            "record": {
                 "plugins": {"output": {"disable": "__all__", "enable": ["mapping"]}}
             }
         },
@@ -50,7 +52,7 @@ def test_output_enabled():
         x.TYPE
         for x in builder._filter_classes(
             [JSONSchemaOutput, MappingOutput],
-            dict_get(schema.schema, ["model"]),
+            dict_get(schema.schema, ["record"]),
             "output",
         )
     ) == {"mapping"}
@@ -61,7 +63,7 @@ def test_output_enabled_import():
     schema = ModelSchema(
         "",
         {
-            "model": {
+            "record": {
                 "plugins": {
                     "output": {
                         "include": [
@@ -76,6 +78,6 @@ def test_output_enabled_import():
     assert set(
         x.TYPE
         for x in builder._filter_classes(
-            [], dict_get(schema.schema, ["model"]), "output"
+            [], dict_get(schema.schema, ["record"]), "output"
         )
     ) == {"mapping"}

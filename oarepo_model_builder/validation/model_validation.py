@@ -65,6 +65,8 @@ class ModelFileSchema(ma.Schema):
         metadata={"doc": "General settings, applies to all generated sources"},
         load_default=lambda: SettingsSchema().load({}),
     )
+    runtime_dependencies = ma.fields.Dict(ma.fields.String(), ma.fields.String(), attribute='runtime-dependencies', data_key='runtime-dependencies')
+    dev_dependencies = ma.fields.Dict(ma.fields.String(), ma.fields.String(), attribute='dev-dependencies', data_key='dev-dependencies')
 
 
 class ModelValidator:

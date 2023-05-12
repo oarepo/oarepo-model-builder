@@ -7,13 +7,14 @@ DUMMY_PATH = "/tmp/path.json"  # NOSONAR checking as it is a virtual path
 
 
 def test_loading_from_string():
-    schema = ModelSchema(DUMMY_PATH, {})
+    schema = ModelSchema(DUMMY_PATH, {}, validate=False)
     assert schema.schema == {"settings": {}}
 
 
 def test_loading_from_empty_file():
     schema = ModelSchema(
-        Path(__file__).parent.joinpath("data/empty.json"), loaders={"json": json_loader}
+        Path(__file__).parent.joinpath("data/empty.json"), loaders={"json": json_loader},
+        validate=False
     )
     assert schema.schema == {"settings": {}}
 
@@ -23,6 +24,7 @@ def test_loading_included_resource():
         DUMMY_PATH,
         {"a": {"use": "test1"}},
         {"test1": lambda schema: {"included": "test1"}},
+        validate=False
     )
     assert schema.schema == {
         "settings": {},
@@ -35,6 +37,7 @@ def test_loading_included_resource_root():
         DUMMY_PATH,
         {"use": "test1"},
         {"test1": lambda schema: {"included": "test1"}},
+        validate=False
     )
     assert schema.schema == {
         "settings": {},
@@ -47,6 +50,7 @@ def test_loading_jsonpath_resource():
         DUMMY_PATH,
         {"use": "test1#/test/a"},
         {"test1": lambda schema: {"test": {"a": {"included": "test1"}}}},
+        validate=False
     )
     assert schema.schema == {
         "settings": {},
@@ -55,7 +59,7 @@ def test_loading_jsonpath_resource():
 
 
 def test_loading_current():
-    schema = ModelSchema(DUMMY_PATH, {"b": {"use": "#/a"}, "a": {"a": True}})
+    schema = ModelSchema(DUMMY_PATH, {"b": {"use": "#/a"}, "a": {"a": True}}, validate=False)
     assert schema.schema == {
         "settings": {},
         "b": {"a": True},
@@ -67,6 +71,7 @@ def test_loading_current_by_id():
     schema = ModelSchema(
         DUMMY_PATH,
         {"b": {"use": "#id"}, "a": {"$id": "id", "a": True}},
+        validate=False
     )
     assert schema.schema == {
         "settings": {},
@@ -82,6 +87,7 @@ def test_loading_external_by_id():
             "b": {"use": "aa#id"},
         },
         {"aa": lambda schema: {"a": {"$id": "id", "a": True}}},
+        validate=False
     )
     assert schema.schema == {
         "settings": {},

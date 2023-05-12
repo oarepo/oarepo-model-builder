@@ -8,7 +8,6 @@ from .outputs import OutputBase
 from .schema import ModelSchema
 from .utils.dict import dict_get, dict_setdefault
 from .utils.import_class import import_class
-from .validation import validate_model
 
 
 class ModelBuilder:
@@ -68,7 +67,6 @@ class ModelBuilder:
         self.outputs = {}
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
         self.filesystem = filesystem
-        self.skip_schema_validation = False  # set to True in some tests
         self.overwrite = overwrite
 
     def get_output(self, output_type: str, path: Union[str, Path]):
@@ -101,7 +99,6 @@ class ModelBuilder:
         profile: str,
         model_path: List[str],
         output_dir: Union[str, Path],
-        disable_validation: bool = False,
         context: Dict[str, Any] = None,
     ):
         """
@@ -111,13 +108,11 @@ class ModelBuilder:
         :param profile:     the profile under which the builder runs
         :param model_path:  path within the schema that will be converted to datatype and used by output builders
         :param output_dir:  output directory where to put generated files
-        :param disable_validation: set True to disable validation
         :param context:     extra context supplied to datatype preparation
         :return:            the outputs (self.outputs)
         """
 
         # deep copy the model
-        model = copy.deepcopy(model)
         if self.overwrite:
             self.filesystem.overwrite = True
 
@@ -130,9 +125,6 @@ class ModelBuilder:
         }
         self.output_dir = Path(output_dir).absolute()
         self.outputs = {}
-
-        if not disable_validation:
-            self._validate_model(model)
 
         self._run_output_builders(model, profile, model_path, context or {})
 
@@ -150,10 +142,6 @@ class ModelBuilder:
             output_builder = output_builder_class(builder=self)
             current_model = model.get_schema_section(profile, model_path, context)
             output_builder.build(current_model=current_model, schema=model.schema)
-
-    def _validate_model(self, model):
-        if not self.skip_schema_validation:
-            validate_model(model)
 
     def _save_outputs(self):
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
