@@ -16,7 +16,9 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
 
     def finish(self, **extra_kwargs):
         super().finish()
-        if dict_get(self.current_model.definition, [self.section, "skip"], False):
+        if hasattr(self, "section") and dict_get(
+            self.current_model.definition, [self.section, "skip"], False
+        ):
             return
         module = self._get_output_module()
         python_path = Path(module_to_path(module) + ".py")
