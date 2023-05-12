@@ -41,6 +41,7 @@ class JSONSerializerSchema(ma.Schema):
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
     skip = ma.fields.Boolean()
+    generate = ma.fields.Boolean()
 
 
 class ModelUISchema(ObjectUIExtraSchema):
@@ -78,3 +79,4 @@ class UIModelComponent(ObjectUIComponent):
             ],
         )
         json.setdefault("extra-code", "")
+        json.setdefault("generate", True)

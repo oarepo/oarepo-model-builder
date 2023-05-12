@@ -63,7 +63,7 @@ class PermissionsModelComponent(DataTypeComponent):
         record_services_module = parent_module(datatype.definition["service"]["module"])
 
         permissions = set_default(datatype, "permissions", {})
-        permissions.setdefault("generate", False)
+        permissions.setdefault("generate", True)
         permissions.setdefault("presets", ["everyone"])
         permissions.setdefault("extra-code", "")
         permissions_module = permissions.setdefault(

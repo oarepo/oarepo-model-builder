@@ -35,7 +35,7 @@ def generate_import(ctx, import_object, imported_part="class", alias=None, skip=
         return generate_import(ctx, {"import": import_object, "alias": alias}, None)
     if imported_part:
         if import_object.get("skip"):
-            return False
+            return ""
         return generate_import(ctx, import_object[imported_part], alias)
     import_name = import_object["import"]
     if "." in import_name:
@@ -79,9 +79,12 @@ def with_defined_prefix(always_defined_import_prefixes, value):
 
 
 def class_header(rec, class_name="class", base_classes_name="base-classes"):
-    ret = [
-        base_name(rec[class_name]),
-    ]
+    try:
+        ret = [
+            base_name(rec[class_name]),
+        ]
+    except KeyError:
+        raise KeyError(f'Do not have "{class_name}" inside {rec}')
     base_classes = rec[base_classes_name]
     if base_classes:
         ret.append("(")
