@@ -30,6 +30,7 @@ class JSONSchema(ma.Schema):
         PermissiveSchema,
         metadata={"doc": "Template that will be merged with the schema"},
     )
+    skip = ma.fields.Boolean()
 
     class Meta:
         unknown = ma.RAISE

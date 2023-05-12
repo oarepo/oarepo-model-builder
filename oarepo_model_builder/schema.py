@@ -21,7 +21,7 @@ class ModelSchema:
         included_models: Dict[str, Callable] = None,
         merged_models: List[Union[str, Path]] = None,
         loaders=None,
-            validate=True
+        validate=True,
     ):
         """
         Creates and parses model schema

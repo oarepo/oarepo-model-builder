@@ -16,6 +16,7 @@ def set_default(datatype, *attrs):
         return value
     return d[keys[-1]]
 
+
 def array_contains_value(arr, value):
     if isinstance(value, (int, float, bool, str)):
         return value in arr
@@ -25,6 +26,7 @@ def array_contains_value(arr, value):
         if vv == pv:
             return True
     return False
+
 
 def append_array(datatype, *attrs):
     arr = set_default(datatype, *attrs[:-1], [])

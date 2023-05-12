@@ -41,6 +41,7 @@ class ModelPermissionsSchema(ma.Schema):
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
+    skip = ma.fields.Boolean()
 
     class Meta:
         unknown = ma.RAISE

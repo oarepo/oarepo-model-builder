@@ -19,13 +19,17 @@ def init_{{ vars.api_blueprint.function|base_name }}(state):
     app = state.app
     ext = app.extensions["{{ vars.ext.alias }}"]
 
+    {%  if not vars.service_config.skip %}
     # register service
     sregistry = app.extensions["invenio-records-resources"].registry
     sregistry.register(ext.service, service_id="{{ vars.service_config.service_id }}")
+    {% endif  %}
 
+    {%  if not vars.mapping_settings.skip %}
     # Register indexer
     if hasattr(ext.service, "indexer"):
         iregistry = app.extensions["invenio-indexer"].registry
         iregistry.register(ext.service.indexer, indexer_id="{{ vars.ext.alias }}")
+    {% endif  %}
 
 {{ vars.api_blueprint.extra_code }}

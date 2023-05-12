@@ -23,6 +23,7 @@ def create_builder_from_entrypoints(profile="record", **kwargs):
         **kwargs,
     )
 
+
 def load_entry_points_dict(name):
     return {
         ep.name: ep.load()

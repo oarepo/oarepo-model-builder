@@ -57,6 +57,7 @@ class SearchOptionsSchema(ma.Schema):
         data_key="base-classes",
         metadata={"doc": "List of base classes"},
     )
+    skip = ma.fields.Boolean()
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )

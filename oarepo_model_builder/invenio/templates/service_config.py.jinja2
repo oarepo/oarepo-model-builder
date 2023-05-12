@@ -12,13 +12,20 @@ class {{ vars.service_config|class_header }}:
     PERMISSIONS_PRESETS = [{% for p in vars.permissions.presets %}"{{ p }}"{{ ", " if not loop.last else "" }} {% endfor %}]
 
     url_prefix = "{{ vars.resource_config.base_url }}"
+    {% if not vars.permissions.skip %}
     base_permission_policy_cls = {{ vars.permissions.class|base_name }}
-
+    {% endif %}
+    {% if not vars.marshmallow.skip %}
     schema = {{ vars.marshmallow.class|base_name }}
+    {% endif %}
     # TODO: waiting for search
     # search = {{ vars.search_options.class|base_name }}
+    {% if not vars.record.skip %}
     record_cls = {{ vars.record.class|base_name }}
+    {% endif %}
+    {% if not vars.service_config.skip %}
     service_id = "{{ vars.service_config.service_id }}"
+    {% endif %}
 
     components = [ {% for b in vars.service_config.base_classes %}*{{ b|base_name }}.components{% if not loop.last %}, {% endif %}{% endfor %}{% for c in vars.service_config.components %}, {{ c|base_name }} {% endfor %}]
 

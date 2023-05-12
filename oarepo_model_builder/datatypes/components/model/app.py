@@ -38,6 +38,7 @@ class ExtSchema(ma.Schema):
         data_key="base-classes",
         metadata={"doc": "A list of extension's base classes"},
     )
+    skip = ma.fields.Boolean()
     extra_code = ma.fields.Str(
         metadata={"doc": "Extra code that will be pasted to app extension module"}
     )
