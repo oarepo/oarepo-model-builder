@@ -108,10 +108,12 @@ class AbstractDataType:
         self.schema = schema
         self._sections = {}
 
-    @property
-    def child(self):
-        assert len(self.children) == 1
-        return next(iter(self.children.values()))
+    def copy(self):
+        ret = type(self)(
+            self.parent, self.definition, self.key, self.model, self.schema
+        )
+        ret.__dict__.update(self.__dict__)
+        return ret
 
     def prepare(self, context):
         """
@@ -204,7 +206,7 @@ class DataType(AbstractDataType):
         )
 
     def prepare(self, context):
-        self.id = self.definition.get("$id")
+        self.id = self.definition.get("id")
         datatypes.call_components(datatype=self, method="prepare", context=context)
 
     @class_property

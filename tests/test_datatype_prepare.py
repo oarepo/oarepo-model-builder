@@ -293,3 +293,51 @@ def test_prepare_datatype():
             "module": "my.test.views.records.ui",
         },
     }
+
+
+def test_ids():
+    model = ModelSchema(
+        "",
+        {
+            "settings": {
+                "python": {
+                    "use-isort": False,
+                    "use-black": False,
+                    "use-autoflake": False,
+                },
+                "opensearch": {"version": "os-v2"},
+            },
+            "record": {
+                "type": "model",
+                "properties": {
+                    "a": {"type": "integer", "id": "_a"},
+                    "b": {
+                        "type": "object",
+                        "properties": {
+                            "c": {"type": "integer", "id": "_c"},
+                            "d": {
+                                "type": "array",
+                                "id": "_d",
+                                "items": {
+                                    "type": "object",
+                                    "id": "_di",
+                                    "properties": {
+                                        "e": {"type": "integer", "id": "_e"},
+                                    },
+                                },
+                            },
+                        },
+                        "id": "_b",
+                    },
+                },
+            },
+        },
+    )
+    dt = model.get_schema_section("record", "record")
+    assert dt.id is None
+    assert dt.children["a"].id == "_a"
+    assert dt.children["b"].id == "_b"
+    assert dt.children["b"].children["c"].id == "_c"
+    assert dt.children["b"].children["d"].id == "_d"
+    assert dt.children["b"].children["d"].item.id == "_di"
+    assert dt.children["b"].children["d"].item.children["e"].id == "_e"
