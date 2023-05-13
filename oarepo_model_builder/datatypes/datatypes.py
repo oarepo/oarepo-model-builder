@@ -197,8 +197,14 @@ class DataType(AbstractDataType):
         required = fields.Bool()
         jsonschema = fields.Nested(PermissiveSchema)
         mapping = fields.Nested(PermissiveSchema)
+        id = fields.String(
+            metadata={
+                "doc": "Optional id of this element (for example, for referencing the element)"
+            }
+        )
 
     def prepare(self, context):
+        self.id = self.definition.get("$id")
         datatypes.call_components(datatype=self, method="prepare", context=context)
 
     @class_property
