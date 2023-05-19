@@ -109,8 +109,8 @@ class ObjectPropertiesField(ma.fields.Dict):
         try:
             return super().deserialize(returned_value, attr=attr, data=data, **kwargs)
         except ValidationError as e:
-            components = e.messages['components']
-            new_components = components.pop('value', {})
+            components = e.messages["components"]
+            new_components = components.pop("value", {})
             components.update(new_components)
             raise e
 

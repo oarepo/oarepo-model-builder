@@ -1,6 +1,5 @@
-import os
-
 import copy
+import os
 import pathlib
 from pathlib import Path
 from typing import Callable, Dict, List, Union
@@ -24,7 +23,7 @@ class ModelSchema:
         merged_models: List[Union[str, Path]] = None,
         loaders=None,
         validate=True,
-        source_locations=None
+        source_locations=None,
     ):
         """
         Creates and parses model schema
