@@ -35,8 +35,8 @@ class ModelSaverBuilder(JSONBaseBuilder):
             ret["items"] = self.generate(section.item)
         return ret
 
-    def begin(self, schema, settings):
-        super().begin(schema, settings)
+    def begin(self, current_model, schema):
+        super().begin(current_model, schema)
 
         output_name = dict_get(self.current_model.definition, self.output_file_name)
         self.output = self.builder.get_output(self.output_file_type, output_name)

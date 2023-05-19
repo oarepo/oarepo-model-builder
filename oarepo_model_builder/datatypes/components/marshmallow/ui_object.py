@@ -10,7 +10,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
     eligible_datatypes = [ObjectDataType]
 
     def ui_marshmallow_register_class_names(
-        self, *, datatype, classes, marshmallow_module, **kwargs
+        self, *, datatype, classes, marshmallow_module, **__kwargs
     ):
         self._register_class_name(
             datatype,
@@ -20,7 +20,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
         )
 
     def ui_marshmallow_build_class_name_existing(
-        self, *, datatype, classes, marshmallow_module, **kwargs
+        self, *, datatype, classes, marshmallow_module, **__kwargs
     ):
         if datatype.section_ui.config.get("marshmallow", {}).get("class"):
             self._build_class_name(
@@ -34,7 +34,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
             )
 
     def ui_marshmallow_build_class_name_new(
-        self, *, datatype, classes, marshmallow_module, **kwargs
+        self, *, datatype, classes, marshmallow_module, **__kwargs
     ):
         if not datatype.section_ui.config.get("marshmallow", {}).get("class"):
             self._build_class_name(
@@ -47,7 +47,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
                 "UISchema",
             )
 
-    def ui_marshmallow_build_class(self, *, datatype, classes, **kwargs):
+    def ui_marshmallow_build_class(self, *, datatype, classes, **__kwargs):
         self._build_class(
             datatype,
             datatype.section_ui.config.setdefault("marshmallow", {}),
@@ -57,7 +57,7 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
         )
 
     def ui_marshmallow_field(
-        self, datatype: DataType, *, fields: List[MarshmallowField], **kwargs
+        self, datatype: DataType, *, fields: List[MarshmallowField], **__kwargs
     ):
         section = datatype.section_ui
         f = []
