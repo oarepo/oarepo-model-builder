@@ -166,7 +166,8 @@ def test_invenio_resource_cfg_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 [options.entry_points]
-invenio_base.api_blueprints = test = test.views.records.api:create_blueprint_from_app
+invenio_base.api_blueprints = test = test.views.records.api:create_api_blueprint
+invenio_base.blueprints= test= test.views.records.app:create_app_blueprint
         """
     )
 

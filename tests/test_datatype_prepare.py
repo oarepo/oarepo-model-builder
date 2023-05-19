@@ -26,10 +26,18 @@ def test_prepare_datatype():
         "api-blueprint": {
             "alias": "my_test_record",
             "extra_code": "",
-            "function": "my.test.views.records.api.create_blueprint_from_app",
+            "function": "my.test.views.records.api.create_api_blueprint",
             "generate": True,
             "imports": [],
             "module": "my.test.views.records.api",
+        },
+        "app-blueprint": {
+            "alias": "my_test_record",
+            "extra_code": "",
+            "function": "my.test.views.records.app.create_app_blueprint",
+            "generate": True,
+            "imports": [],
+            "module": "my.test.views.records.app",
         },
         "config": {
             "extra_code": "",
@@ -284,13 +292,13 @@ def test_prepare_datatype():
                 "module": "my.test.services.records.ui_schema",
             }
         },
-        "ui-blueprint": {
+        "app-blueprint": {
             "alias": "my_test_record",
             "extra_code": "",
-            "function": "my.test.views.records.ui.create_blueprint_from_app",
+            "function": "my.test.views.records.app.create_app_blueprint",
             "generate": True,
             "imports": [],
-            "module": "my.test.views.records.ui",
+            "module": "my.test.views.records.app",
         },
     }
 

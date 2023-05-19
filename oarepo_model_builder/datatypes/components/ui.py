@@ -34,4 +34,4 @@ class ObjectUIComponent(RegularUIComponent):
     eligible_datatypes = [ObjectDataType]
 
     class ModelSchema(ma.Schema):
-        ui = ma.fields.Nested(ExtensibleSchema("ui.object", PropertyUISchema))
+        ui = ma.fields.Nested(ExtensibleSchema("ui.object", ObjectUISchema))
