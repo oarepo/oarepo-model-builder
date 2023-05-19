@@ -64,7 +64,7 @@ class UIModelComponent(ObjectUIComponent):
         prefix = datatype.definition["module"]["prefix"]
         resources_module = parent_module(datatype.definition["resource"]["module"])
 
-        ui: Dict = set_default(datatype, "ui", {})
+        set_default(datatype, "ui", {})
 
         json = set_default(datatype, "json-serializer", {})
         json_module = json.setdefault("module", f"{resources_module}.ui")

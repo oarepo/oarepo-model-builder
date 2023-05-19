@@ -62,7 +62,6 @@ class RecordMetadataModelComponent(DataTypeComponent):
 
     def before_model_prepare(self, datatype, **kwargs):
         records_module = parent_module(datatype.definition["record"]["module"])
-        prefix = datatype.definition["module"]["prefix"]
         suffix = datatype.definition["module"]["suffix"]
         alias = datatype.definition["module"]["alias"]
 

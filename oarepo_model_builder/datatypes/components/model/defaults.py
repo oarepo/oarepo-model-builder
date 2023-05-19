@@ -28,7 +28,7 @@ class ModuleSchema(ma.Schema):
     base = ma.fields.String(
         metadata={"doc": "Base name of the module (if the module has dot)"}
     )
-    base_upper = ma.fields.String(
+    ma.fields.String(
         attribute="base-upper",
         data_key="base-upper",
         metadata={"doc": "Uppercase of the base name"},
@@ -43,14 +43,14 @@ class ModuleSchema(ma.Schema):
     prefix = ma.fields.String(
         metadata={"doc": "Prefix that will be applied to class names"}
     )
-    prefix_upper = ma.fields.String(metadata={"doc": "Uppercase variant of the prefix"})
-    prefix_snake = ma.fields.String(metadata={"doc": "Snake variant of the prefix"})
+    ma.fields.String(metadata={"doc": "Uppercase variant of the prefix"})
+    ma.fields.String(metadata={"doc": "Snake variant of the prefix"})
 
     suffix = ma.fields.String(
         metadata={"doc": "Suffix that will be applied to various names"}
     )
-    suffix_upper = ma.fields.String(metadata={"doc": "Uppercase variant of the suffix"})
-    suffix_snake = ma.fields.String(metadata={"doc": "Snake variant of the suffix"})
+    ma.fields.String(metadata={"doc": "Uppercase variant of the suffix"})
+    ma.fields.String(metadata={"doc": "Snake variant of the suffix"})
 
 
 class DefaultsModelComponent(DataTypeComponent):

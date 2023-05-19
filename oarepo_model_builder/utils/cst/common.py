@@ -81,7 +81,6 @@ class PythonContext:
         logger.debug("Merged  : %s", self.to_source_code(merged_node))
 
         top = self.top
-        decider_called = False
         decision = None
         if existing_node is self.top.existing_node:
             # processing existing node. If there was any decision in children, do not decide here
