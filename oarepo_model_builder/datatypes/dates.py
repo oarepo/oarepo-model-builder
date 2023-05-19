@@ -92,6 +92,7 @@ class EDTFDataType(BaseDateDataType):
     schema_type = "string"
     mapping_type = "date"
     model_type = "edtf"
+    marshmallow_field = "TrimmedString"
     ui_marshmallow_field = "l10n.LocalizedEDTF"
     default_facet_class = "EDTFFacet"
     default_facet_imports = [{"import": "oarepo_runtime.facets.date.EDTFFacet"}]
@@ -114,6 +115,7 @@ class EDTFDataType(BaseDateDataType):
                 import_path="oarepo_runtime.validation.CachedMultilayerEDTFValidator",
                 alias=None,
             ),
+            Import(import_path="marshmallow_utils.fields.trimmed.TrimmedString", alias=None)
         )
 
 
@@ -122,6 +124,7 @@ class EDTFIntervalType(BaseDateDataType):
     mapping_type = "date_range"
     model_type = "edtf-interval"
     ui_marshmallow_field = "l10n.LocalizedEDTFInterval"
+    marshmallow_field = "TrimmedString"
     default_facet_class = "EDTFIntervalFacet"
     default_facet_imports = [{"import": "oarepo_runtime.facets.date.EDTFIntervalFacet"}]
 
@@ -143,5 +146,6 @@ class EDTFIntervalType(BaseDateDataType):
                 import_path="oarepo_runtime.validation.CachedMultilayerEDTFValidator",
                 alias=None,
             ),
+            Import(import_path="marshmallow_utils.fields.trimmed.TrimmedString", alias=None),
             *extra,
         )
