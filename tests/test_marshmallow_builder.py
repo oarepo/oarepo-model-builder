@@ -47,7 +47,7 @@ def _test(fulltext_builder, string_type):
     )
 
     with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "records", "schema.py")
+        os.path.join("test", "services", "records", "schema.py")  # NOSONAR
     ) as f:
         data = f.read()
     assert "a = ma_fields.String()" in data
@@ -199,7 +199,7 @@ class TestSchema(ma.Schema):
     )
 
     with fulltext_builder.filesystem.open(
-        os.path.join("test", "services", "schema2.py")
+        os.path.join("test", "services", "schema2.py")  # NOSONAR
     ) as f:
         data = f.read()
 

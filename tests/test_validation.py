@@ -7,7 +7,7 @@ from oarepo_model_builder.validation.model_validation import model_validator
 def test_empty_model_validation():
     assert model_validator.validate({}) == {
         "version": "1.0.0",
-        "settings": {"schema-server": "local://"},
+        "settings": {"schema-server": "local://"},  # NOSONAR
     }
     assert model_validator.validate({"record": {}}) == {
         "record": {"type": "model", "properties": {}, "searchable": True},
@@ -69,8 +69,8 @@ def test_inline_props_on_model():
             "record": {
                 "properties": {
                     "a": "boolean",
-                    "b": "integer{minimum:1}",
-                    "c": "float{exclusiveMaximum: 1.0}",
+                    "b": "integer{minimum:1}",              # NOSONAR
+                    "c": "float{exclusiveMaximum: 1.0}",    # NOSONAR
                     "d": "double",
                 }
             }

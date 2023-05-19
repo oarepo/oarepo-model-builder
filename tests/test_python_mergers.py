@@ -6,7 +6,7 @@ from oarepo_model_builder.utils.cst import PythonContext, merge
 
 
 def test_new_class():
-    existing_module = "# comment start"
+    existing_module = "# comment start"  # NOSONAR
     included_module = """
 # comment before
 class Blah:
@@ -245,13 +245,7 @@ BBB = "456"
     )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert (
-        transformed_cst.code.strip()
-        == """
-AAA = "123"
-BBB = "456"
-            """.strip()
-    )
+    assert transformed_cst.code.strip() == included_module
 
 
 def test_top_level_merged_vars():
@@ -325,7 +319,7 @@ class A:
     )
     transformed_cst = merge(PythonContext(included_cst), original_cst, included_cst)
 
-    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(
+    assert re.sub(r"[\t\n ]", "", transformed_cst.code) == re.sub(  # NOSONAR
         r"[\t\n ]",
         "",
         """

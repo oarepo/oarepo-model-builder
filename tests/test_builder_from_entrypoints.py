@@ -14,7 +14,7 @@ OAREPO_USE = "use"
 
 def test_include_invenio():
     schema = load_model(
-        "test.yaml",
+        "test.yaml",  # NOSONAR
         "test",
         model_content={
             "version": "1.0.0",
@@ -102,7 +102,7 @@ class TestUISchema(InvenioUISchema):
     }
 
     data = builder.filesystem.read("setup.cfg")
-    assert f"version = 1.0.0" in data
+    assert "version = 1.0.0" in data
 
 
 def test_generate_multiple_times():

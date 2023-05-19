@@ -386,8 +386,6 @@ from invenio_records_resources.services import pagination_links
 from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
-# TODO: waiting for search
-# from test.services.records.search import TestSearchOptions
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
@@ -395,8 +393,6 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     url_prefix = "/test/"
     base_permission_policy_cls = TestPermissionPolicy
     schema = TestSchema
-    # TODO: waiting for search
-    # search = TestSearchOptions
     record_cls = TestRecord
     service_id = "test"
     components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]
