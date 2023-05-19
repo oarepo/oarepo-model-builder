@@ -3,8 +3,6 @@
 {{ vars.record.class|generate_import }}
 {{ vars.permissions.class|generate_import }}
 {{ vars.marshmallow.class|generate_import }}
-# TODO: waiting for search
-# {{ vars.search_options.class|generate_import }}
 
 
 class {{ vars.service_config|class_header }}:
@@ -18,8 +16,6 @@ class {{ vars.service_config|class_header }}:
     {% if not vars.marshmallow.skip %}
     schema = {{ vars.marshmallow.class|base_name }}
     {% endif %}
-    # TODO: waiting for search
-    # search = {{ vars.search_options.class|base_name }}
     {% if not vars.record.skip %}
     record_cls = {{ vars.record.class|base_name }}
     {% endif %}

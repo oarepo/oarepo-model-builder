@@ -3,6 +3,7 @@ from typing import List, Optional, Set
 
 from ....utils.python_name import base_name, package_name
 from ...datatypes import Import
+from oarepo_model_builder.validation import InvalidModelException
 
 
 @dataclasses.dataclass
@@ -46,7 +47,7 @@ class MarshmallowClass:
     imports: List[Import]
     fields: List[MarshmallowField]
     strict: bool
-    order: int = None
+    order: Optional[int] = None
 
     references: List[MarshmallowReference] = dataclasses.field(default_factory=list)
 
@@ -83,7 +84,7 @@ def sort_by_reference_count(classes_list: List[MarshmallowClass]):
                 processed_class_names.add(c.class_name)
                 c.order = order
         if len(for_another_round) == len(to_process):
-            raise Exception("Cycle found, code missing")
+            raise InvalidModelException("Cycle found, code missing")
         else:
             for c in for_another_round:
                 c.remove_references(processed_class_names)
@@ -147,7 +148,7 @@ def set_package_dependencies(classes_by_package):
             else:
                 processed_dependencies.add(c.package)
         if len(for_another_round) == len(to_process):
-            raise Exception("Cycle found in packages, code missing")
+            raise InvalidModelException("Cycle found in packages, code missing")
         else:
             for c in for_another_round:
                 c.remove_dependencies(processed_dependencies)

@@ -4,14 +4,18 @@ except ImportError:
     import json as json5
 
 
-def json_loader(file_path, schema, content=None):
+def json_loader(
+    file_path, schema, content=None  # NOSONAR schema kept for extensibility
+):
     if content:
         return json5.loads(content)
     with open(file_path) as f:
         return json5.load(f)
 
 
-def yaml_loader(file_path, schema, content=None):
+def yaml_loader(
+    file_path, schema, content=None  # NOSONAR schema kept for extensibility
+):
     try:
         import yaml
     except ImportError:

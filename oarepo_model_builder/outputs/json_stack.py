@@ -49,7 +49,7 @@ class JSONStack:
                         assert key == len(top)
                         top.append(el)
                 else:
-                    raise NotImplemented(
+                    raise NotImplementedError(
                         f"Set for datatype {type(top)} is not implemented"
                     )
                 self.stack.append(el)

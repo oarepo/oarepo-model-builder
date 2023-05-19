@@ -27,7 +27,7 @@ class ConflictResolution(Enum):
 
 class ConflictResolver:
     def resolve_conflict(
-        self, context, existing_node, new_node, merged_node
+        self, context, existing_node, new_node, merged_node  # NOSONAR
     ) -> ConflictResolution:
         return ConflictResolution.KEEP_PREVIOUS
 
@@ -97,11 +97,6 @@ class PythonContext:
             else:
                 decision = ConflictResolution.KEEP_NEW
 
-        logger.debug(
-            "---> %s %s",
-            "<decider returned>" if decider_called else "<automatic>",
-            decision,
-        )
         logger.debug("")
         if decision == ConflictResolution.KEEP_PREVIOUS:
             return existing_node
@@ -114,7 +109,7 @@ class PythonContext:
         elif decision == ConflictResolution.REMOVE:
             top.operations.add(OperationPerformed.REMOVAL)
             return self.REMOVED
-        elif decision == ConflictResolution.NEW_AS_TODO:
+        elif decision == ConflictResolution.NEW_AS_TODO:  # NOSONAR
             top.new_as_comment = True
             return existing_node
         raise RuntimeError("Unknown decision")

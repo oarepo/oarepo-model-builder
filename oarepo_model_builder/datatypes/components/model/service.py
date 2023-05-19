@@ -151,7 +151,7 @@ class ServiceModelComponent(DataTypeComponent):
             "config-key",
             f"{module_base_upper}_{context['profile_upper']}_SERVICE_CLASS",
         )
-        service.setdefault("proxy", f"current_service")
+        service.setdefault("proxy", "current_service")
         service_module = service.setdefault("module", f"{service_package}.service")
         service.setdefault("class", f"{service_module}.{record_prefix}Service")
         service.setdefault("extra-code", "")

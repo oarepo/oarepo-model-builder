@@ -170,8 +170,6 @@ class ModelSchema:
                 for key in element:
                     if key in (self.USE_KEYWORD, self.REF_KEYWORD):
                         break
-                else:
-                    raise  # just for making pycharm happy
                 included_name = element[key]
 
                 # if it is a dictionary, then probably it is a name of a property,

@@ -10,8 +10,6 @@ from oarepo_model_builder.utils.python_name import module_to_path
 class InvenioBaseClassPythonBuilder(PythonBuilder):
     section: str
     template: str
-    # section = None
-    # template = None
     parent_modules = True
     skip_if_not_generating = True
 

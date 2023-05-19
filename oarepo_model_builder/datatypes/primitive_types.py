@@ -33,7 +33,7 @@ class FloatDataType(NumberDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma_fields.Float",
+            "field-class": "ma_fields.Float",  # NOSONAR
         }
     }
     marshmallow = {

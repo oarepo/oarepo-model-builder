@@ -20,4 +20,5 @@ class PythonBuilder(OutputBuilder):
         return self.module_to_path(package_name(class_name))
 
     def build_node(self, datatype):
+        "intended to be overridden in children"
         pass

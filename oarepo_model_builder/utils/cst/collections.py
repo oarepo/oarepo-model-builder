@@ -40,7 +40,6 @@ class DictMerger(MergerBase):
     def get_key(self, context, el):
         if hasattr(el, "key") and el.key:
             return el.key.value
-        # TODO: StarredDictElement might contain trailing comma, should remove it
         return context.to_source_code(el)
 
     def merge_internal(self, context: PythonContext, existing_node, new_node):

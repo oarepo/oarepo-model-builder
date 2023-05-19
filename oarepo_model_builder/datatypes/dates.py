@@ -2,7 +2,7 @@ from .datatypes import DataType
 
 
 class BaseDateDataType(DataType):
-    marshmallow = {"field-class": "ma_fields.String"}
+    marshmallow = {"field-class": "ma_fields.String"}  # NOSONAR
 
 
 class DateDataType(BaseDateDataType):
@@ -10,7 +10,9 @@ class DateDataType(BaseDateDataType):
     ui = {
         "marshmallow": {
             "field-class": "l10n.LocalizedDate",
-            "imports": [{"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"}],
+            "imports": [
+                {"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"}  # NOSONAR
+            ],
         }
     }
     marshmallow = {

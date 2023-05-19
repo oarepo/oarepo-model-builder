@@ -6,7 +6,9 @@ import marshmallow as ma
 from oarepo_model_builder.utils.import_class import import_class
 
 
-def ExtensibleSchema(extensibility_entry_point, *base_schemas):
+def ExtensibleSchema(  # NOSONAR - title case because used inside a class
+    extensibility_entry_point, *base_schemas
+):
     def creator(*args, **kwargs):
         extra_validators = []
         for ep in sorted(

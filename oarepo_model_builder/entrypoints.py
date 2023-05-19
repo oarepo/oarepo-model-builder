@@ -62,7 +62,7 @@ def load_model_from_entrypoint(ep: importlib_metadata.EntryPoint):
     def load(schema):
         try:
             loaded_schema = ep.load()
-        except:
+        except:  # NOSONAR intentionally broad
             module = import_module(ep.module)
             split_attr = ep.attr.split(".")
             fn = f"{split_attr[-2]}.{split_attr[-1]}"
@@ -91,7 +91,6 @@ def load_included_models_from_entry_points():
 
 def load_model(
     model_filename,
-    package=None,
     configs=(),
     black=True,
     isort=True,

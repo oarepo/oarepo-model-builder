@@ -3,7 +3,7 @@ import dataclasses
 import json
 from collections.abc import Mapping
 from functools import cached_property, lru_cache
-from typing import Any, Dict, List, Type, Union
+from typing import Any, Dict, List, Type, Union, Optional
 
 import importlib_metadata
 import marshmallow as ma
@@ -18,7 +18,7 @@ from ..validation.utils import PermissiveSchema
 @dataclasses.dataclass
 class Import:
     import_path: str
-    alias: str = None
+    alias: Optional[str] = None
 
     @staticmethod
     def from_config(d):
@@ -238,33 +238,29 @@ class DataType(AbstractDataType):
         datatypes.call_components(datatype=self, method="prepare", context=context)
 
     @class_property
-    def validator(clz):
+    def validator(cls):
         validators = list(
-            datatypes.call_class_components(datatype=clz, method="model_schema")
-        ) + list(datatypes.get_class_components(clz, "ModelSchema"))
+            datatypes.call_class_components(datatype=cls, method="model_schema")
+        ) + list(datatypes.get_class_components(cls, "ModelSchema"))
         validators = [x for x in validators if x]
 
         class Meta:
             unknown = ma.RAISE
 
         ret = type(
-            f"{clz.__name__}ModelValidator",
-            (*validators, clz.ModelSchema),
+            f"{cls.__name__}ModelValidator",
+            (*validators, cls.ModelSchema),
             {"Meta": Meta},
         )
-        # print(clz)
-        # print([x.__qualname__ for x in ret.mro()])
-        # print([r for r in sorted(ret._declared_fields)])
-        # print()
         return ret
 
     def deep_iter(self):
         yield self
 
-    def _process_json_schema(self, section: Section, **kwargs):
+    def _process_json_schema(self, section: Section, **__kwargs):
         section.config.setdefault("type", self.definition["type"])
 
-    def _process_mapping(self, section: Section, **kwargs):
+    def _process_mapping(self, section: Section, **__kwargs):
         section.config.setdefault("type", self.definition["type"])
 
 
@@ -399,11 +395,11 @@ class DataTypes:
         self._get_components.cache_clear()
         try:
             del self.datatype_map
-        except:
+        except:  # NOSONAR intentionally broad, used only in tests
             pass
         try:
             del self.components
-        except:
+        except:  # NOSONAR intentionally broad, used only in tests
             pass
 
 

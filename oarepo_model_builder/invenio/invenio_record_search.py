@@ -1,5 +1,3 @@
-
-
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 OAREPO_FACETS_PROPERTY = "facets"
@@ -11,7 +9,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
     class_config = "record-search-options-class"
     template = None
 
-    def begin(self, schema, settings):
+    def begin(self, schema, settings):  # NOSONAR
         super().begin(schema, settings)
         self.template = "record-search-options"
         self.search_options_data = []

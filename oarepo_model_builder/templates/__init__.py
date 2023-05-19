@@ -18,7 +18,7 @@ class TemplateRegistry:
             for k, v in loaded_package.TEMPLATES.items():
                 self.mapping[k] = base_path.joinpath(v)
 
-    def get_template(self, template_key, settings):
+    def get_template(self, template_key, settings):  # NOSONAR
         # try to get the template key from settings
         path = self.mapping.get(template_key, None)
         if not path:

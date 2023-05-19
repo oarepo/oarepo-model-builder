@@ -75,9 +75,6 @@ from oarepo_model_builder.utils.verbose import log
     help="Call autoflake on generated sources",
 )
 @click.option(
-    "--resolve-conflicts", type=click.Choice(["replace", "keep", "comment", "debug"])
-)
-@click.option(
     "--overwrite",
     type=bool,
     default=False,
@@ -104,7 +101,6 @@ def run(
     isort,
     black,
     autoflake,
-    resolve_conflicts,
     save_model,
     overwrite,
     profile,
@@ -120,7 +116,6 @@ def run(
             included_models,
             package,
             configs,
-            resolve_conflicts,
             sets,
             black,
             isort,
@@ -149,7 +144,6 @@ def run_internal(
     included_models,
     package,
     configs,
-    resolve_conflicts,
     sets,
     black,
     isort,
@@ -200,7 +194,6 @@ def run_internal(
     # load model (and resolve includes) and optionally save it before the processing (for debugging)
     model = load_model(
         model_filename,
-        package,
         configs,
         black,
         isort,

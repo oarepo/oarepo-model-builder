@@ -10,7 +10,6 @@ OAREPO_USE = "use"
 def test_empty_metadata():
     schema = load_model(
         "test.yaml",
-        "test",
         model_content={
             "version": "1.0.0",
             "record": {OAREPO_USE: "invenio", "properties": None},
