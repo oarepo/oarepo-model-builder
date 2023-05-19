@@ -28,7 +28,7 @@ class ModuleSchema(ma.Schema):
     base = ma.fields.String(
         metadata={"doc": "Base name of the module (if the module has dot)"}
     )
-    ma.fields.String(
+    base_upper = ma.fields.String(
         attribute="base-upper",
         data_key="base-upper",
         metadata={"doc": "Uppercase of the base name"},
@@ -43,14 +43,14 @@ class ModuleSchema(ma.Schema):
     prefix = ma.fields.String(
         metadata={"doc": "Prefix that will be applied to class names"}
     )
-    ma.fields.String(metadata={"doc": "Uppercase variant of the prefix"})
-    ma.fields.String(metadata={"doc": "Snake variant of the prefix"})
+    prefix_upper = ma.fields.String(metadata={"doc": "Uppercase variant of the prefix"})
+    prefix_snake = ma.fields.String(metadata={"doc": "Snake variant of the prefix"})
 
     suffix = ma.fields.String(
         metadata={"doc": "Suffix that will be applied to various names"}
     )
-    ma.fields.String(metadata={"doc": "Uppercase variant of the suffix"})
-    ma.fields.String(metadata={"doc": "Snake variant of the suffix"})
+    suffix_upper = ma.fields.String(metadata={"doc": "Uppercase variant of the suffix"})
+    suffix_snake = ma.fields.String(metadata={"doc": "Snake variant of the suffix"})
 
 
 class DefaultsModelComponent(DataTypeComponent):
@@ -91,7 +91,7 @@ class DefaultsModelComponent(DataTypeComponent):
             "base",
             split_base_name(module),
         )
-        base_upper = module_container.setdefault(
+        module_container.setdefault(
             "base-upper",
             module_base.upper(),
         )
@@ -104,11 +104,11 @@ class DefaultsModelComponent(DataTypeComponent):
             "prefix",
             camel_case(module_base),
         )
-        prefix_upper = module_container.setdefault(
+        module_container.setdefault(
             "prefix-upper",
             prefix.upper(),
         )
-        prefix_snake = module_container.setdefault(
+        module_container.setdefault(
             "prefix-snake",
             snake_case(prefix),
         )
@@ -117,11 +117,11 @@ class DefaultsModelComponent(DataTypeComponent):
             "suffix",
             snake_case(prefix),
         )
-        suffix_upper = module_container.setdefault(
+        module_container.setdefault(
             "suffix-upper",
             suffix.upper(),
         )
-        suffix_snake = module_container.setdefault(
+        module_container.setdefault(
             "suffix-snake",
             snake_case(suffix),
         )
