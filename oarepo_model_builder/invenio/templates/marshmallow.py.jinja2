@@ -6,13 +6,7 @@ from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
 
-{% for imp in imports %}
-{% if imp.alias %}
-from {{imp.import_path|package_name}} import {{imp.import_path|base_name}} as {{imp.alias}}
-{% else %}
-from {{imp.import_path|package_name}} import {{imp.import_path|base_name}}
-{% endif %}
-{% endfor %}
+{{ imports|generate_import }}
 
 {% for cls in generated_classes %}
 class {{cls.class_name|base_name}}({% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{{bc}}{% endfor %}):

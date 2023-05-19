@@ -95,11 +95,18 @@ class PythonOutput(OutputBase):
         except:
             print(rendered, file=sys.stderr)
             raise
-        self.cst = merge(
-            PythonContext(rendered_cst),
-            self.cst,
-            rendered_cst,
-        )
+
+        try:
+            self.cst = merge(
+                PythonContext(rendered_cst),
+                self.cst,
+                rendered_cst,
+            )
+        except:
+            print(rendered)
+            print("====")
+            print(self.original_data)
+            raise
 
     @staticmethod
     def register_default_filters(env):

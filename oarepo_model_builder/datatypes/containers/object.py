@@ -106,7 +106,13 @@ class ObjectPropertiesField(ma.fields.Dict):
                 children, top_props = self.elevate_props(v)
                 v = {"type": "array", **top_props, "items": children}
             returned_value[k] = v
-        return super().deserialize(returned_value, attr=attr, data=data, **kwargs)
+        try:
+            return super().deserialize(returned_value, attr=attr, data=data, **kwargs)
+        except ValidationError as e:
+            components = e.messages['components']
+            new_components = components.pop('value', {})
+            components.update(new_components)
+            raise e
 
     def elevate_props(self, v):
         children = {}

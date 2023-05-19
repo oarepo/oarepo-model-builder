@@ -43,7 +43,7 @@ from .primitive_types import (
     FloatDataType,
     IntegerDataType,
 )
-from .strings import StringDataType  # noqa , just for export
+from .strings import StringDataType, UUIDDataType  # noqa , just for export
 from .strings import (  # noqa
     FulltextDataType,
     FulltextKeywordDataType,
@@ -64,6 +64,7 @@ DEFAULT_DATATYPES = [
     FulltextDataType,
     KeywordDataType,
     FulltextKeywordDataType,
+    UUIDDataType,
     ObjectDataType,
     NestedDataType,
     FlattenDataType,

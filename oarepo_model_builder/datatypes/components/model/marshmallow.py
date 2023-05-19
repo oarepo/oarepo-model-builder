@@ -20,7 +20,6 @@ class ModelMarshmallowSchema(ObjectMarshmallowExtraSchema):
     extra_code = ma.fields.String(
         attribute="extra-code",
         data_key="extra-code",
-        metadata={"doc": "Extra code to be merged to marshmallow file"},
     )
 
 

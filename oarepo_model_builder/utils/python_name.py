@@ -4,8 +4,10 @@ import re
 
 
 def convert_name_to_python(name):
-    # special case :)
+    if not name:
+        return name
 
+    # special case :)
     name = name.replace("@v", "_version")
     if name == "id":
         name = name.replace("id", "_id")

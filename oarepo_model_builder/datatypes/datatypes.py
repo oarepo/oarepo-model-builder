@@ -108,11 +108,39 @@ class AbstractDataType:
         self.schema = schema
         self._sections = {}
 
-    def copy(self):
+    def copy(self, without_children=False):
         ret = type(self)(
-            self.parent, self.definition, self.key, self.model, self.schema
+            # shallow copy of the definition to enable overwriting pieces of it
+            self.parent,
+            {**self.definition},
+            self.key,
+            self.model,
+            self.schema,
         )
-        ret.__dict__.update(self.__dict__)
+        ret.__dict__.update(
+            {
+                k: v
+                for k, v in self.__dict__.items()
+                if k
+                not in (
+                    "parent",
+                    "definition",
+                    "key",
+                    "model",
+                    "schema",
+                    "_sections",
+                    "children",
+                    "item",
+                )
+            }
+        )
+        # clear up sections
+        ret._sections = {}
+        if without_children:
+            if ret.children:
+                ret.children = {}
+            elif hasattr(ret, "item"):
+                ret.item = None
         return ret
 
     def prepare(self, context):

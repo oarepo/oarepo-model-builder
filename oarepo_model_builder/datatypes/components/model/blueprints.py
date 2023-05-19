@@ -55,22 +55,22 @@ class BlueprintsModelComponent(DataTypeComponent):
         )
         api.setdefault(
             "function",
-            f"{api_module}.create_blueprint_from_app",
+            f"{api_module}.create_api_blueprint",
         )
         api.setdefault("imports", [])
         convert_config_to_qualified_name(api, name_field="function")
 
-        ui = set_default(datatype, "ui-blueprint", {})
-        ui.setdefault("generate", True)
-        ui.setdefault("alias", alias)
-        ui.setdefault("extra_code", "")
-        ui_module = ui.setdefault(
+        app = set_default(datatype, "app-blueprint", {})
+        app.setdefault("generate", True)
+        app.setdefault("alias", alias)
+        app.setdefault("extra_code", "")
+        ui_module = app.setdefault(
             "module",
-            f"{module}.views.{profile}.ui",
+            f"{module}.views.{profile}.app",
         )
-        ui.setdefault(
+        app.setdefault(
             "function",
-            f"{ui_module}.create_blueprint_from_app",
+            f"{ui_module}.create_app_blueprint",
         )
-        ui.setdefault("imports", [])
-        convert_config_to_qualified_name(ui, name_field="function")
+        app.setdefault("imports", [])
+        convert_config_to_qualified_name(app, name_field="function")

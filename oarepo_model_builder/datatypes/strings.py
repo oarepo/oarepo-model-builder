@@ -44,6 +44,11 @@ class KeywordDataType(StringDataType):
     mapping = {"type": "keyword"}
 
 
+class UUIDDataType(StringDataType):
+    model_type = "uuid"
+    mapping = {"type": "keyword"}
+
+
 class FulltextKeywordDataType(StringDataType):
     model_type = "fulltext+keyword"
     mapping = {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
