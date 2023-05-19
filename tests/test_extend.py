@@ -175,7 +175,9 @@ nr_documents_model = {
                                                 }
                                             },
                                             "additionalProperties": {"type": "string"},
-                                            "propertyNames": {"pattern": "^[a-z]{2}$"},
+                                            "propertyNames": {
+                                                "pattern": "^[a-z]{2}$" # NOSONAR
+                                            },  # NOSONAR
                                             "type": "object",
                                             "mapping": {
                                                 "properties": {
@@ -365,7 +367,7 @@ nr_documents_model = {
                                     "keys": [
                                         {"target": "id", "key": "id"},
                                         {"target": "title", "key": "title"},
-                                        {"target": "type", "key": "type.id"},
+                                        {"target": "type", "key": "type.id"},  # NOSONAR
                                         {
                                             "model": {
                                                 "properties": {
@@ -625,7 +627,7 @@ nr_documents_model = {
                             "validators": [],
                             "imports": [],
                         },
-                        "label.cs": "Autoři",
+                        "label.cs": "Autoři",  # NOSONAR
                         "items": {
                             "marshmallow": {
                                 "field-class": "ma_fields.Nested",
@@ -6063,7 +6065,9 @@ nr_documents_model = {
                     "read": False,
                     "validators": ["validate_datetime"],
                     "imports": [
-                        {"import": "oarepo_runtime.validation.validate_datetime"},
+                        {
+                            "import": "oarepo_runtime.validation.validate_datetime"  # NOSONAR
+                        },  # NOSONAR
                         {"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"},
                         {"import": "oarepo_runtime.validation.validate_datetime"},
                         {"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"},

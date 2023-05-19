@@ -146,9 +146,8 @@ class ObjectDataType(DataType):
         def before_load(self, value, **kwargs):
             if not value:
                 return value
-            if isinstance(value, dict):
-                if value.get("properties") is None:
-                    value["properties"] = {}
+            if isinstance(value, dict) and value.get("properties") is None:
+                value["properties"] = {}
             return value
 
     def prepare(self, context):

@@ -29,7 +29,7 @@ class MarshmallowModelMixin:
     register_class_names_method = None
     build_class_names_method = None
 
-    def after_model_prepare(self, *, datatype, context, **kwargs):
+    def after_model_prepare(self, *, datatype, **__kwargs):
         classes = defaultdict(list)
         marshmallow_def = dict_get(datatype.definition, self.model_marshmallow_section)
         marshmallow_module = marshmallow_def["module"]

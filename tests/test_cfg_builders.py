@@ -59,7 +59,7 @@ def test_setup_cfg_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
         [SetupCfgBuilder],
-        os.path.join("setup.cfg"),
+        os.path.join("setup.cfg"),  # NOSONAR
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(

@@ -24,11 +24,13 @@ def test_include_invenio():
                         "properties": {
                             "c": {
                                 "type": "keyword",
-                                "facets": {"field": 'TermsFacet(field="cosi")'},
+                                "facets": {
+                                    "field": 'TermsFacet(field="cosi")'  # NOSONAR
+                                },
                             }
                         },
                     },
-                    "a": "fulltext+keyword",
+                    "a": "fulltext+keyword",  # NOSONAR
                     "b": {
                         "type": "keyword",
                         "facets": {"field": 'TermsFacet(field="cosi")'},
@@ -46,7 +48,7 @@ def test_include_invenio():
     builder.build(schema, "")
 
     data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")  # NOSONAR
     ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",

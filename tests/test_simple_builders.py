@@ -74,7 +74,7 @@ def test_record_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
         [InvenioRecordBuilder],
-        os.path.join("test", "records", "api.py"),
+        os.path.join("test", "records", "api.py"),  # NOSONAR
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(
@@ -267,7 +267,7 @@ def test_config_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
         [InvenioConfigBuilder],
-        os.path.join("test", "config.py"),
+        os.path.join("test", "config.py"),  # NOSONAR
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(

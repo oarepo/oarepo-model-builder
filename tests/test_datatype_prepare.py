@@ -31,7 +31,7 @@ def test_prepare_datatype():
             "imports": [],
             "module": "my.test.views.records.api",
         },
-        "app-blueprint": {
+        "app-blueprint": {  # NOSONAR
             "alias": "my_test_record",
             "extra_code": "",
             "function": "my.test.views.records.app.create_app_blueprint",
@@ -88,7 +88,7 @@ def test_prepare_datatype():
             "module": "my.test.records.mappings",
         },
         "marshmallow": {
-            "base-classes": ["ma.Schema"],
+            "base-classes": ["ma.Schema"],  # NOSONAR
             "class": "my.test.services.records.schema.TestSchema",
             "extra-code": "",
             "generate": True,

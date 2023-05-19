@@ -98,11 +98,11 @@ def test_model_saver():
             "module": "test.records.mappings",
         },
         "marshmallow": {
-            "base-classes": ["ma.Schema"],
+            "base-classes": ["ma.Schema"],  # NOSONAR
             "class": "test.services.records.schema.TestSchema",
             "extra-code": "",
             "generate": True,
-            "module": "test.services.records.schema",
+            "module": "test.services.records.schema",  # NOSONAR
         },
         "model-name": "Test",
         "module": {
@@ -144,7 +144,7 @@ def test_model_saver():
                 },
                 {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
             ],
-            "module": "test.records.api",
+            "module": "test.records.api",  # NOSONAR
             "provider-base-classes": ["RecordIdProviderV2"],
             "provider-class": "test.records.api.TestIdProvider",
             "type": "test",
@@ -180,7 +180,7 @@ def test_model_saver():
                         "class": "test.services.records.ui_schema.TestMetadataUISchema",
                         "extra-code": "",
                         "generate": True,
-                        "module": "test.services.records.ui_schema",
+                        "module": "test.services.records.ui_schema",  # NOSONAR
                     }
                 },
             },
