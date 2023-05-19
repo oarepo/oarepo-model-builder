@@ -1,26 +1,17 @@
-import copy
-import importlib
 from pathlib import Path
-from typing import Dict, List, Type, Union
+from typing import Any, Dict, Iterable, List, Type, Union
 
-from .builders import OutputBuilder, OutputBuilderComponent
+from .builders import OutputBuilder
 from .fs import AbstractFileSystem, FileSystem
-from .model_preprocessors import ModelPreprocessor
 from .outputs import OutputBase
-from .property_preprocessors import PropertyPreprocessor
 from .schema import ModelSchema
-from .utils.cst import ConflictResolver
-from .validation import validate_model
+from .utils.dict import dict_get, dict_setdefault
+from .utils.import_class import import_class
 
 
 class ModelBuilder:
     """
     Processes a model file and generates/updates sources for the model
-    """
-
-    model_preprocessor_classes: List[Type[ModelPreprocessor]]
-    """
-    Model preprocessor classes that are called after schema is loaded and before it is processed
     """
 
     output_classes: List[Type[OutputBase]]
@@ -38,29 +29,14 @@ class ModelBuilder:
     A list of extension classes to be used in build. 
     """
 
-    property_preprocessor_classes: List[Type[PropertyPreprocessor]]
-    """
-    Processor classes (called before and after file builder is called)
-    """
-
     output_builders: List[OutputBuilder]
     """
     A list of output_builders. Each extension is responsible for generating one or more files
     """
 
-    output_builder_components: Dict[str, List[OutputBuilderComponent]]
-    """
-    A list of output builder components for an output builder
-    """
-
     outputs: Dict[Path, OutputBase]
     """
     Mapping between concrete output (file path relative to output dir) and instance of builder class
-    """
-
-    property_preprocessors: List[PropertyPreprocessor]
-    """
-    Current instances of processor classes.
     """
 
     filesystem: AbstractFileSystem
@@ -70,20 +46,11 @@ class ModelBuilder:
     If true, overwrite already existing files. If false, perform merge
     """
 
-    conflict_resolver: ConflictResolver
-    """
-    Resolver for conflicts
-    """
-
     def __init__(
         self,
         outputs: List[Type[OutputBase]] = (),
         output_builders: List[Type[OutputBuilder]] = (),
-        property_preprocessors: List[Type[PropertyPreprocessor]] = (),
-        model_preprocessors: List[Type[ModelPreprocessor]] = (),
-        output_builder_components: Dict[str, List[Type[OutputBuilderComponent]]] = None,
         filesystem=FileSystem(),
-        conflict_resolver: ConflictResolver = None,
         overwrite=False,
     ):
         """
@@ -91,26 +58,14 @@ class ModelBuilder:
 
         :param output_builders:          A list of extension classes to use in builds
         :param outputs:     List of file builder classes that generate files
-        :param property_preprocessors: List of output type processor classes
         """
         self.output_builder_classes = [*output_builders]
         for o in outputs:
             assert o.TYPE, f"output_type not set up on class {o}"
         self.output_classes = [*(outputs or [])]
         self.outputs = {}
-        self.property_preprocessor_classes = [*(property_preprocessors or [])]
-        self.model_preprocessor_classes = [*(model_preprocessors or [])]
         self.filtered_output_classes = {o.TYPE: o for o in self.output_classes}
-        if output_builder_components:
-            self.output_builder_components = {
-                builder_type: [x() for x in components]
-                for builder_type, components in output_builder_components.items()
-            }
-        else:
-            self.output_builder_components = {}
         self.filesystem = filesystem
-        self.skip_schema_validation = False  # set to True in some tests
-        self.conflict_resolver = conflict_resolver
         self.overwrite = overwrite
 
     def get_output(self, output_type: str, path: Union[str, Path]):
@@ -136,81 +91,56 @@ class ModelBuilder:
             self.outputs[path] = output
         return output
 
-    def get_output_builder_components(self, output_builder_type):
-        return self.output_builder_components.get(output_builder_type, ())
-
     # main entry point
     def build(
         self,
         model: ModelSchema,
+        profile: str,
+        model_path: List[str],
         output_dir: Union[str, Path],
-        disable_validation: bool = False,
+        context: Dict[str, Any] = None,
     ):
         """
         compile the schema to output directory
 
-        :param model:      the model schema
+        :param model:       the model schema
+        :param profile:     the profile under which the builder runs
+        :param model_path:  path within the schema that will be converted to datatype and used by output builders
         :param output_dir:  output directory where to put generated files
+        :param context:     extra context supplied to datatype preparation
         :return:            the outputs (self.outputs)
         """
 
-        # deep copy so that the passed model will not be influenced by preprocessors etc.
-        model = copy.deepcopy(model)
+        # deep copy the model
         if self.overwrite:
-            if not hasattr(self.filesystem, "overwrite"):
-                raise AttributeError(
-                    f"Filesystem of type {type(self.filesystem)} does not support overwrite"
-                )
             self.filesystem.overwrite = True
+
+        current_model = dict_setdefault(model.schema, model_path, default={})
 
         self.set_schema(model)
         self.filtered_output_classes = {
-            o.TYPE: o for o in self._filter_classes(self.output_classes, "output")
+            o.TYPE: o
+            for o in self._filter_classes(self.output_classes, current_model, "output")
         }
-        self.output_dir = Path(output_dir).absolute()  # noqa
+        self.output_dir = Path(output_dir).absolute()
         self.outputs = {}
 
-        if not disable_validation:
-            self._validate_model(model)
-
-        self._run_model_preprocessors(model)
-
-        if not disable_validation:
-            self._validate_model(model)
-
-        # noinspection PyTypeChecker
-        property_preprocessors: List[PropertyPreprocessor] = [
-            e(self)
-            for e in self._filter_classes(
-                self.property_preprocessor_classes, "property"
-            )
-        ]
-
-        self._run_output_builders(model, property_preprocessors)
+        self._run_output_builders(model, profile, model_path, context or {})
 
         self._save_outputs()
 
         return self.outputs
 
-    def _run_output_builders(self, model, property_preprocessors):
+    def _run_output_builders(
+        self, model: ModelSchema, profile: str, model_path: Iterable[str], context
+    ):
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(
-            self.output_builder_classes, "builder"
+            self.output_builder_classes, dict_get(model.schema, model_path), "builder"
         ):
-            output_builder = output_builder_class(
-                builder=self, property_preprocessors=property_preprocessors
-            )
-            output_builder.build(model)
-
-    def _run_model_preprocessors(self, model):
-        for model_preprocessor in self._filter_classes(
-            self.model_preprocessor_classes, "model"
-        ):
-            model_preprocessor(self).transform(model, model.settings)
-
-    def _validate_model(self, model):
-        if not self.skip_schema_validation:
-            validate_model(model)
+            output_builder = output_builder_class(builder=self)
+            current_model = model.get_schema_section(profile, model_path, context)
+            output_builder.build(current_model=current_model, schema=model.schema)
 
     def _save_outputs(self):
         for output in sorted(self.outputs.values(), key=lambda x: x.path):
@@ -224,13 +154,10 @@ class ModelBuilder:
 
     # private methods
 
-    def _filter_classes(self, classes: List[Type[object]], plugin_type):
-        if (
-            "plugins" not in self.schema.current_model
-            or plugin_type not in self.schema.current_model.plugins
-        ):
+    def _filter_classes(self, classes: List[Type[object]], model, plugin_type):
+        if "plugins" not in model or plugin_type not in model["plugins"]:
             return classes
-        plugin_config = self.schema.current_model.plugins[plugin_type]
+        plugin_config = model["plugins"][plugin_type]
 
         disabled = plugin_config.get("disable", [])
         enabled = plugin_config.get("enable", [])
@@ -240,8 +167,7 @@ class ModelBuilder:
             enabled = [*enabled]  # will be adding inclusions so make a copy
             classes = [*classes]
             for incl in included:
-                package_name, class_name = incl.split(":")
-                class_type = getattr(importlib.import_module(package_name), class_name)
+                class_type = import_class(incl)
                 classes.append(class_type)
                 if enabled and class_type.TYPE not in enabled:
                     enabled.append(class_type.TYPE)

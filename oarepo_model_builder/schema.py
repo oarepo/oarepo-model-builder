@@ -1,51 +1,14 @@
 import copy
+import os
 import pathlib
 from pathlib import Path
 from typing import Callable, Dict, List, Union
 
-import munch
-import yaml
 from jsonpointer import resolve_pointer
-from yaml import SafeDumper
 
 from .exceptions import IncludedFileNotFoundException
 from .utils.deepmerge import deepmerge
-from .utils.hyphen_munch import HyphenMunch
-
-
-class Key(str):
-    def __new__(cls, value, *args, source=None, **kwargs):
-        ret = super().__new__(cls, value)
-        ret.sources = {source} if source else {}
-        return ret
-
-    @staticmethod
-    def annotate_keys_with_source(data, source):
-        if isinstance(data, dict):
-            return {
-                Key(k, source=source): Key.annotate_keys_with_source(v, source)
-                for k, v in data.items()
-            }
-        elif isinstance(data, (tuple, list)):
-            return [Key.annotate_keys_with_source(k, source) for k in data]
-        else:
-            return data
-
-    @staticmethod
-    def get_sources(data):
-        if isinstance(data, Key):
-            return data.sources
-        return []
-
-
-def key_representer(dumper, data):
-    return dumper.represent_str(str(data))
-
-
-yaml.add_representer(Key, key_representer)
-yaml.add_multi_representer(Key, key_representer)
-SafeDumper.add_representer(Key, key_representer)
-SafeDumper.add_multi_representer(Key, key_representer)
+from .validation import validate_model
 
 
 class ModelSchema:
@@ -59,7 +22,8 @@ class ModelSchema:
         included_models: Dict[str, Callable] = None,
         merged_models: List[Union[str, Path]] = None,
         loaders=None,
-        model_field="model",
+        validate=True,
+        source_locations=None,
     ):
         """
         Creates and parses model schema
@@ -73,6 +37,9 @@ class ModelSchema:
         self.file_path = file_path
         self.included_schemas = included_models or {}
         self.loaders = loaders
+        self.source_locations = [*(source_locations or [])]
+        self.source_locations.append(os.path.abspath(os.curdir))
+        self.source_locations.append(os.path.dirname(os.path.abspath(self.file_path)))
 
         if content is not None:
             self.schema = content
@@ -89,45 +56,15 @@ class ModelSchema:
         use_star_keys(self.schema)
 
         self.schema.setdefault("settings", {})
-        self.schema = munch.munchify(self.schema, factory=HyphenMunch)
 
-        self.model_field = model_field
+        self._sections = {}
 
-    def debug_print(self):
-        def _print(data, prefix):
-            if isinstance(data, dict):
-                print()
-                for k, v in sorted(data.items()):
-                    print(f"{prefix}{k}{Key.get_sources(k)}:", end="")
-                    _print(v, prefix + "  ")
-            elif isinstance(data, (list, tuple)):
-                print()
-                for v in sorted(data):
-                    _print(v, prefix + "-  ")
-            else:
-                print(f"{prefix}{data}")
-
-        _print(self.schema, "")
-        print()
-
-    def get(self, key):
-        return self.schema.get(key, None)
-
-    def set(self, key, value):
-        self.schema[key] = value
+        if validate:
+            validate_model(self)
 
     @property
     def settings(self):
-        return self.schema.settings
-
-    @property
-    def current_model(self):
-        return self.schema.get(self.model_field, {})
-
-    def merge(self, another):
-        self.schema = munch.munchify(
-            deepmerge(another, self.schema, []), factory=HyphenMunch
-        )
+        return self.schema.get("settings", {})
 
     def _load(self, file_path, content=None):
         """
@@ -146,7 +83,7 @@ class ModelSchema:
                     f"in entry point group oarepo_model_builder.loaders"
                 )
             loaded = self.loaders[extension](file_path, self, content=content)
-        return Key.annotate_keys_with_source(loaded, file_path)
+        return loaded
 
     def _fetch_included(self, file_path):
         included = self.included_schemas[file_path]
@@ -207,8 +144,11 @@ class ModelSchema:
         return ret
 
     def _resolve_file_path(self, file_id, source_locations):
+        if file_id in self.included_schemas:
+            return file_id
+        source_locations = [*(source_locations or []), *self.source_locations]
         for location in source_locations:
-            pth = Path(location).parent / file_id
+            pth = Path(location) / file_id
             if pth.exists():
                 return pth
         pth = self.abs_path.parent / file_id
@@ -230,8 +170,6 @@ class ModelSchema:
                 for key in element:
                     if key in (self.USE_KEYWORD, self.REF_KEYWORD):
                         break
-                else:
-                    raise  # just for making pycharm happy
                 included_name = element[key]
 
                 # if it is a dictionary, then probably it is a name of a property,
@@ -249,9 +187,7 @@ class ModelSchema:
                         raise IncludedFileNotFoundException(
                             f"No file for use at path {'/'.join(stack)}"
                         )
-                    included_data = self._load_included_file(
-                        name, source_locations=Key.get_sources(key)
-                    )
+                    included_data = self._load_included_file(name)
                     deepmerge(element, included_data, [], listmerge="keep")
                 return self._resolve_references(element, stack)
             for k, v in element.items():
@@ -263,6 +199,39 @@ class ModelSchema:
     @property
     def abs_path(self):
         return Path(self.file_path).absolute()
+
+    def get_schema_section(self, profile, section, prepare_context=None):
+        if not isinstance(section, (tuple, list)):
+            section = (section,)
+        section = tuple(section)
+        key = (profile, section)
+        if key in self._sections:
+            return self._sections[key]
+        from oarepo_model_builder.datatypes import datatypes
+
+        data = self.schema
+        for p in section:
+            if p in data:
+                data = data[p]
+            else:
+                data = {}
+                break
+        if "type" not in data:
+            data["type"] = "model"
+        parsed_section = datatypes.get_datatype(
+            parent=None,
+            data=data,
+            key=None,
+            model=data,
+            schema=self,
+        )
+        prepare_context = prepare_context or {}
+        prepare_context.setdefault("profile", profile)
+        prepare_context.setdefault("profile_module", profile + "s")
+        prepare_context.setdefault("profile_upper", profile.upper())
+        parsed_section.prepare(prepare_context)
+        self._sections[key] = parsed_section
+        return parsed_section
 
 
 def resolve_id(json, element_id):

@@ -27,14 +27,18 @@ def test_dev_dependencies():
 def build(kwargs={}):
     schema = load_model(
         "test.yaml",
-        "test",
-        model_content={"model": {}, **kwargs},
+        model_content={
+            "record": {},
+            "settings": {"schema-server": "local://"},
+            "version": "1.0.0",
+            **kwargs,
+        },
         isort=False,
         black=False,
+        autoflake=False,
     )
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
-    builder.skip_schema_validation = True
-    builder.build(schema, "")
+    builder.build(schema, "record", ["record"], "")
     data = builder.filesystem.open("setup.cfg").read().strip()
     return data

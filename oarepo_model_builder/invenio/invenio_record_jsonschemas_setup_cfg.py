@@ -7,11 +7,13 @@ class InvenioRecordJSONSchemasSetupCfgBuilder(OutputBuilder):
 
     def finish(self):
         super().finish()
+        if self.current_model.definition["json-schema-settings"].get("skip"):
+            return
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
         output.add_entry_point(
             "invenio_jsonschemas.schemas",
-            self.current_model.record_jsonschemas_setup_cfg,
-            self.current_model.jsonschemas_package,
+            self.current_model.definition["json-schema-settings"]["alias"],
+            self.current_model.definition["json-schema-settings"]["module"],
         )

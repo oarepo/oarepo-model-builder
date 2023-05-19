@@ -1,4 +1,3 @@
-from . import process
 from .json_base import JSONBaseBuilder
 
 
@@ -6,25 +5,55 @@ class ExtendBuilder(JSONBaseBuilder):
     TYPE = "extend"
     output_file_type = "json"
 
-    @process("**")
-    def model_element(self):
-        self.model_element_enter()
-        self.build_children()
-        self.model_element_leave()
+    def build_node(self, node):
+        generated = self.generate(node)
+        # on model, move the marshmallow class into base_classes
+        self._process_top_level_marshmallow(generated)
+        generated["type"] = "object"
+        self.output.merge(generated)
 
-    def enter_model(self):
-        # build children are handled in model_element, so no default handling here
-        pass
+    def generate(self, node):
+        ret = {**node.definition}
+        ret.pop("properties", None)
+        ret.pop("items", None)
 
-    def output_primitive(self, top, data):
-        if data is not None and not isinstance(data, (str, float, int, bool)):
-            data = str(data)
-        return super().output_primitive(top, data)
+        self._process_marshmallow_def(ret.setdefault("marshmallow", {}))
+        self._process_marshmallow_def(
+            ret.setdefault("ui", {}).setdefault("marshmallow", {})
+        )
 
-    def begin(self, schema, settings):
-        super(JSONBaseBuilder, self).begin(schema, settings)
+        if getattr(node, "children", None):
+            properties = ret.setdefault("properties", {})
+            for k, v in node.children.items():
+                v = self.generate(v)
+                properties[k] = v
+        if getattr(node, "item", None):
+            ret["items"] = self.generate(node.item)
+        return ret
+
+    def _process_marshmallow_def(self, marshmallow):
+        marshmallow.update({"read": False, "write": False})
+        if "class" in marshmallow:
+            # already generated - if user wants to override this, he has to set schema-class and generate
+            marshmallow["generate"] = False
+
+    def _process_top_level_marshmallow(self, model):
+        marshmallow = model.pop("marshmallow")
+        ui = model.pop("ui")
+
+        for k in list(model.keys()):
+            if k.endswith("-class"):
+                prefix = k[:-6]
+                model[f"{prefix}-bases"] = [model.pop(k)]
+            elif k not in ("type", "properties"):
+                model.pop(k)  # pop all other stuff
+
+        model["marshmallow"] = {"base-classes": [marshmallow["class"]]}
+        model["ui"] = {"marshmallow": {"base-classes": [ui["marshmallow"]["class"]]}}
+
+    def begin(self, current_model, schema):
+        super(JSONBaseBuilder, self).begin(current_model, schema)
         self.output = self.builder.get_output(self.output_file_type, "model.json5")
-        self.output.primitive("type", "object")
 
     def finish(self):
         # force clean output

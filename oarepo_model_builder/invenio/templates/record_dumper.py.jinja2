@@ -1,0 +1,6 @@
+{{ vars.record_dumper.imports|generate_import }}
+
+class {{ vars.record_dumper|class_header }}:
+    """{{ vars.record.class|base_name }} opensearch dumper."""
+
+{{ vars.record_dumper.extra_code }}

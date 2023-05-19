@@ -1,0 +1,40 @@
+{{ vars.service_config.imports|generate_import }}
+{{ link_imports|generate_import }}
+{{ vars.record.class|generate_import }}
+{{ vars.permissions.class|generate_import }}
+{{ vars.marshmallow.class|generate_import }}
+
+
+class {{ vars.service_config|class_header }}:
+    """{{ vars.record.class|base_name }} service config."""
+    PERMISSIONS_PRESETS = [{% for p in vars.permissions.presets %}"{{ p }}"{{ ", " if not loop.last else "" }} {% endfor %}]
+
+    url_prefix = "{{ vars.resource_config.base_url }}"
+    {% if not vars.permissions.skip %}
+    base_permission_policy_cls = {{ vars.permissions.class|base_name }}
+    {% endif %}
+    {% if not vars.marshmallow.skip %}
+    schema = {{ vars.marshmallow.class|base_name }}
+    {% endif %}
+    {% if not vars.record.skip %}
+    record_cls = {{ vars.record.class|base_name }}
+    {% endif %}
+    {% if not vars.service_config.skip %}
+    service_id = "{{ vars.service_config.service_id }}"
+    {% endif %}
+
+    components = [ {% for b in vars.service_config.base_classes %}*{{ b|base_name }}.components{% if not loop.last %}, {% endif %}{% endfor %}{% for c in vars.service_config.components %}, {{ c|base_name }} {% endfor %}]
+
+    model = "{{ vars.module.qualified }}"
+
+    {% for links_name, links_def in links.items() %}
+    @property
+    def {{ links_name }}(self):
+        return {
+            {% for link in links_def %}
+            {% if link.name -%} "{{link.name}}": {%- else -%}**{%-endif-%}{{link.link_class}}({{link.link_args_str}}),
+            {% endfor %}
+        }
+    {% endfor %}
+
+{{ vars.service_config.extra_code }}

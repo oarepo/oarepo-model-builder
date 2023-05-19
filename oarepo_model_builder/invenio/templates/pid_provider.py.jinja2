@@ -1,0 +1,4 @@
+{{ vars.pid.imports|generate_import }}
+
+class {{ vars.pid|class_header(class_name="provider_class", base_classes_name="provider-base-classes") }}:
+    pid_type = "{{ vars.pid.type }}"

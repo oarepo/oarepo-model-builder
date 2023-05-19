@@ -1,0 +1,21 @@
+{{ vars.service_config|generate_import }}
+{{ vars.service|generate_import }}
+{{ vars.resource_config|generate_import }}
+{{ vars.resource|generate_import }}
+
+{% if not vars.resource_config.skip %}
+{{ vars.resource_config.config_key }} = {{ vars.resource_config.class|base_name }}
+{% endif  %}
+
+{% if not vars.resource.skip %}
+{{ vars.resource.config_key }} = {{ vars.resource.class|base_name }}
+{% endif  %}
+
+{% if not vars.service_config.skip %}
+{{ vars.service_config.config_key }} = {{ vars.service_config.class|base_name }}
+{% endif  %}
+{% if not vars.service.skip %}
+{{ vars.service.config_key }} = {{ vars.service.class|base_name }}
+{% endif  %}
+
+{{ vars.config.extra_code }}

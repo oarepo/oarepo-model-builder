@@ -1,179 +1,406 @@
 import copy
-from collections import namedtuple
-from typing import List, Union
+import dataclasses
+import json
+from collections.abc import Mapping
+from functools import cached_property, lru_cache
+from typing import Any, Dict, List, Type, Union, Optional
 
 import importlib_metadata
 import marshmallow as ma
 from marshmallow import fields
 
-from ..utils.facet_helpers import facet_definition, facet_name
+from ..utils.deepmerge import deepmerge
+from ..utils.import_class import import_class
+from ..utils.properties import class_property
+from ..validation.utils import PermissiveSchema
 
-Import = namedtuple("Import", "import_path,alias")
+
+@dataclasses.dataclass
+class Import:
+    import_path: str
+    alias: Optional[str] = None
+
+    @staticmethod
+    def from_config(d):
+        if isinstance(d, dict):
+            return Import(d["import"], d.get("alias"))
+        elif isinstance(d, (tuple, list)):
+            return [Import.from_config(x) for x in d]
+
+    def __hash__(self):
+        return hash(self.import_path) ^ hash(self.alias)
+
+    def __eq__(self, o):
+        return self.import_path == o.import_path and self.alias == o.alias
 
 
-class DataType:
-    model_type = None
-    marshmallow_field = None
-    ui_marshmallow_field = None
-    schema_type = None
-    mapping_type = None
-    default_facet_class = "TermsFacet"
-    default_facet_imports = [
-        {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
-    ]
+@dataclasses.dataclass
+class Section:
+    section_name: str
+    config: Dict[str, Any]
+    children: Dict[str, "AbstractDataType"] = dataclasses.field(default_factory=dict)
+    item: "AbstractDataType" = None
 
-    class ModelSchema(ma.Schema):
-        type = fields.String(required=True)
+    @cached_property
+    def fingerprint(self):
+        f = [self.section_name, json.dumps(self.config, sort_keys=True, default=repr)]
+        for key, dt in self.children.items():
+            f.append(f"  @@@ {key} {type(dt).__name__}")
+            f.append(
+                "    "
+                + getattr(dt, "section_" + self.section_name).fingerprint.replace(
+                    "\n", "\n    "
+                )
+            )
+        if self.item:
+            f.append(f"### {type(self.item).__name__}")
+            f.append(
+                getattr(self.item, "section_" + self.section_name).fingerprint.replace(
+                    "\n", "\n  "
+                )
+            )
+        return "\n".join(f)
 
-    def __init__(self, definition, key, model, schema, stack):
+
+class MergedAttrDict(Mapping):
+    def __init__(self, source, fallback):
+        self._source = source
+        self._fallback = fallback
+
+    def __iter__(self):
+        return iter(self.keys())
+
+    def __getitem__(self, key):
+        if key in self._source:
+            return self._source[key]
+        return self._fallback[key]
+
+    def __getattr__(self, key):
+        try:
+            return self[key.replace("_", "-")]
+        except KeyError:
+            raise AttributeError(f"Attribute {key} not found")
+
+    def __len__(self):
+        return len(self.keys())
+
+    def keys(self):
+        return set(self._source.keys()).union(self._fallback.keys())
+
+
+class AbstractDataType:
+    parent: "AbstractDataType"
+    children: Dict[str, "AbstractDataType"]
+
+    def __init__(
+        self,
+        parent: "AbstractDataType",
+        definition: Any,
+        key: str,
+        model: Any,
+        schema: Any,
+    ):
+        self.parent = parent
+        self.children = {}
         self.definition = definition
         self.key = key
         self.model = model
         self.schema = schema
-        self.stack = stack
+        self._sections = {}
 
-    def _copy_definition(self, **extras):
-        ret = copy.deepcopy(self.definition)
-        for k, v in extras.items():
-            if v is not None:
-                ret[k] = v
+    def copy(self, without_children=False):
+        ret = type(self)(
+            # shallow copy of the definition to enable overwriting pieces of it
+            self.parent,
+            {**self.definition},
+            self.key,
+            self.model,
+            self.schema,
+        )
+        ret.__dict__.update(
+            {
+                k: v
+                for k, v in self.__dict__.items()
+                if k
+                not in (
+                    "parent",
+                    "definition",
+                    "key",
+                    "model",
+                    "schema",
+                    "_sections",
+                    "children",
+                    "item",
+                )
+            }
+        )
+        # clear up sections
+        ret._sections = {}
+        if without_children:
+            if ret.children:
+                ret.children = {}
+            elif hasattr(ret, "item"):
+                ret.item = None
         return ret
 
     def prepare(self, context):
-        """Called at the beginning in model-preprocessing phase,
-        should prepare self.definition (add defaults etc).
-        Might use the provided context to store cross-node information.
-
-        This call should always be deterministic.
         """
-        definition = self.definition.setdefault("marshmallow", {})
-        if self.marshmallow_field:
-            definition.setdefault("field-class", self.marshmallow_field)
-        definition.setdefault("validators", []).extend(self.marshmallow_validators())
-
-        ui = self.definition.setdefault("ui", {})
-        definition = ui.setdefault("marshmallow", {})
-        if self.ui_marshmallow_field:
-            definition.setdefault("field-class", self.ui_marshmallow_field)
-        elif self.marshmallow_field:
-            definition.setdefault("field-class", self.marshmallow_field)
-
-    def model_schema(self, **_extras):
-        return None
-
-    def json_schema(self, **extras):
-        return self._copy_definition(type=self.schema_type, **extras)
-
-    def mapping(self, **extras):
-        return self._copy_definition(type=self.mapping_type, **extras)
-
-    def marshmallow(self, **extras):
-        ret = self.definition.get("marshmallow", {})
-        for k, v in extras.items():
-            if v is not None:
-                ret[k] = v
-        return ret
-
-    def ui_marshmallow(self, **extras):
-        ret = self.definition["ui"]["marshmallow"]
-        for k, v in extras.items():
-            if v is not None:
-                ret[k] = v
-        return ret
-
-    def marshmallow_validators(self) -> List[str]:
-        return []
-
-    def imports(self, *extra) -> List[Import]:
-        return extra
-
-    def dumper_class(self, data):  # NOSONAR
-        return None
-
-    @property
-    def facet_class(self):
-        facets = self.definition.get("facets", {})
-        return facets.get("facet-class", self.default_facet_class)
-
-    @property
-    def facet_imports(self):
-        facets = self.definition.get("facets", {})
-        return facets.get("imports", self.default_facet_imports)
-
-    def get_facet(self, stack, parent_path, path_suffix=None):
+        Prepare the datatype. This might fill "children" property as well
         """
-        path_suffix - intended to be used from subclasses, such as fulltext+keyword or vocabulary
+
+    def __getattr__(self, name):
         """
-        key, field, args, path = facet_definition(self)
-        local_path = parent_path
-        if len(parent_path) > 0 and self.key:
-            local_path = parent_path + "." + self.key
-        elif self.key:
-            local_path = self.key
-        if path:
-            path = local_path + "." + path
+        datatype.json_schema maps to self.definition['json-schema'].
+        If it has not been found, an empty section is returned.
+
+        At first _process_json_schema is called on the datatype, if it exists.
+
+        Before returning, process_json_schema method is called on all components (datatypes.components)
+        with datatype and section keyword arguments
+        """
+        if name.startswith("section_"):
+            name = name[len("section_") :]
+            run_processors = True
+        elif name.startswith("default_section_"):
+            name = name[len("default_section_") :]
+            run_processors = False
         else:
-            path = local_path
+            config_key = name.replace("_", "-")
+            if config_key in self.definition:
+                return self.definition[config_key]
 
-        f_name = facet_name(f"{local_path}{path_suffix or ''}")
+            return object.__getattribute__(self, name)
 
-        if field:
-            return [{"facet": field, "path": f_name}]
-        else:
-            label = f"{local_path}{path_suffix or ''}".replace(".", "/") + ".label"
-            if args:
-                serialized_args = ", " + ", ".join(args)
-            else:
-                serialized_args = ""
+        # get the section
+        section_key = name.replace("_", "-")
+        if section_key in self._sections:
+            return self._sections[section_key]
+        config = self.definition.get(section_key, {})
+        config = copy.deepcopy(config)
 
-        return self._get_facet_definition(
-            stack,
-            self.facet_class,
-            f_name,
-            path,
-            path_suffix or "",
-            label,
-            serialized_args,
+        # get the default from datatype
+        if hasattr(self, name):
+            deepmerge(config, copy.deepcopy(getattr(self, name)))
+
+        section = Section(
+            name, config, getattr(self, "children", {}), getattr(self, "item", None)
         )
 
-    def _get_facet_definition(
-        self, stack, facet_class, facet_name, path, path_suffix, label, serialized_args
-    ):
-        return [
-            {
-                "facet": f'{facet_class}(field="{path}{path_suffix}", label=_("{label}"){serialized_args})',
-                "path": facet_name,
+        if run_processors:
+            if hasattr(self, f"_process_{name}"):
+                getattr(self, f"_process_{name}")(section=section)
+
+            # call components
+            datatypes.call_components(
+                self,
+                f"process_{name}",
+                section=section,
+            )
+        self._sections[section_key] = section
+        return section
+
+    @cached_property
+    def path(self):
+        ret = []
+        p = self
+        while p:
+            if p.key:
+                ret.append(p.key)
+            p = p.parent
+        return ".".join(reversed(ret))
+
+    @cached_property
+    def stack(self):
+        ret = []
+        p = self
+        while p:
+            ret.append(p)
+            p = p.parent
+        return tuple(reversed(ret))
+
+
+class DataType(AbstractDataType):
+    model_type = None
+
+    class ModelSchema(ma.Schema):
+        type = fields.String(required=True)
+        required = fields.Bool()
+        jsonschema = fields.Nested(PermissiveSchema)
+        mapping = fields.Nested(PermissiveSchema)
+        id = fields.String(
+            metadata={
+                "doc": "Optional id of this element (for example, for referencing the element)"
             }
-        ]
+        )
+
+    def prepare(self, context):
+        self.id = self.definition.get("id")
+        datatypes.call_components(datatype=self, method="prepare", context=context)
+
+    @class_property
+    def validator(cls):
+        validators = list(
+            datatypes.call_class_components(datatype=cls, method="model_schema")
+        ) + list(datatypes.get_class_components(cls, "ModelSchema"))
+        validators = [x for x in validators if x]
+
+        class Meta:
+            unknown = ma.RAISE
+
+        ret = type(
+            f"{cls.__name__}ModelValidator",
+            (*validators, cls.ModelSchema),
+            {"Meta": Meta},
+        )
+        return ret
+
+    def deep_iter(self):
+        yield self
+
+    def _process_json_schema(self, section: Section, **__kwargs):
+        section.config.setdefault("type", self.definition["type"])
+
+    def _process_mapping(self, section: Section, **__kwargs):
+        section.config.setdefault("type", self.definition["type"])
+
+
+class DataTypeComponent:
+    eligible_datatypes = []
 
 
 class DataTypes:
-    def __init__(self) -> None:
-        self.datatype_map = {}
+    @cached_property
+    def datatype_map(self) -> Dict[str, DataType]:
+        d = {}
+        for entry in importlib_metadata.entry_points(
+            group="oarepo_model_builder.datatypes"
+        ):
+            for dt in entry.load():
+                d[dt.model_type] = dt
+        return d
 
-    def _prepare_datatypes(self):
-        if not self.datatype_map:
-            for entry in importlib_metadata.entry_points(
-                group="oarepo_model_builder.datatypes"
-            ):
-                for dt in entry.load():
-                    self.datatype_map[dt.model_type] = dt
+    @cached_property
+    def components(self) -> List[DataTypeComponent]:
+        c = []
+        for entry in importlib_metadata.entry_points(
+            group="oarepo_model_builder.datatypes.components"
+        ):
+            for component in entry.load():
+                c.append(component())
+        return c
 
-    def get_datatype(self, data, key, model, schema, stack) -> Union[DataType, None]:
+    @lru_cache(maxsize=1024)
+    def _get_components(self, datatype_class):
+        datatype_components = []
+        for component in self.components:
+            if not component.eligible_datatypes:
+                datatype_components.append(component)
+            else:
+                for depends_on in component.eligible_datatypes:
+                    if isinstance(depends_on, str):
+                        depends_on = import_class(depends_on)
+                    if issubclass(datatype_class, depends_on):
+                        datatype_components.append(component)
+                        break
+
+        # remove overridden components
+        unsorted_components = []
+        non_leaf_components = set()
+        for c in datatype_components:
+            non_leaf_components.update(type(c).mro()[1:])
+
+        for c in datatype_components:
+            if type(c) not in non_leaf_components:
+                unsorted_components.append(c)
+
+        # sort by dependencies
+        depsort_map = {}
+        for c in unsorted_components:
+            dependencies_classes = depsort_map.setdefault(type(c), [])
+            depsort_map[type(c)] = dependencies_classes
+            for depends_on in getattr(c, "depends_on", []):
+                if isinstance(depends_on, str):
+                    depends_on = import_class(depends_on)
+                dependencies_classes.append(depends_on)
+            for affects in getattr(c, "affects", []):
+                if isinstance(affects, str):
+                    affects = import_class(affects)
+                depsort_map.setdefault(affects, []).append(type(c))
+
+        sorted_components = []
+        while unsorted_components:
+            new_unsorted_components = []
+            current_round_sorted_components = set()
+            for c in unsorted_components:
+                if not depsort_map[type(c)]:
+                    sorted_components.append(c)
+                    current_round_sorted_components.add(type(c))
+                else:
+                    new_unsorted_components.append(c)
+            if len(new_unsorted_components) == len(unsorted_components):
+                raise AttributeError(
+                    f"A loop has been detected in component dependencies: {unsorted_components}"
+                )
+            for c in new_unsorted_components:
+                depsort_map[type(c)] = [
+                    x
+                    for x in depsort_map[type(c)]
+                    if x not in current_round_sorted_components
+                ]
+            unsorted_components = new_unsorted_components
+        return tuple(sorted_components)
+
+    def get_datatype(self, parent, data, key, model, schema) -> Union[DataType, None]:
         datatype_class = self.get_datatype_class(data.get("type", None))
         if datatype_class:
-            return datatype_class(data, key, model, schema, stack)
-        return None
+            return datatype_class(parent, data, key, model, schema)
+        if parent:
+            raise KeyError(
+                f"Do not have datatype for the following data at path '{parent.path}':\n"
+                f"{json.dumps(data, indent=4, ensure_ascii=False)}"
+            )
+        raise KeyError(
+            f"Do not have datatype for the following data:\n"
+            f"{json.dumps(data, indent=4, ensure_ascii=False)}"
+        )
 
     def get_datatype_class(self, datatype_type):
-        self._prepare_datatypes()
         return self.datatype_map.get(datatype_type)
 
-    def facet(self, stack):
-        return stack[0].get_facet(stack[1:], "")
+    def call_components(self, datatype: DataType, method: str, **kwargs):
+        ret = []
+        for component in self._get_components(type(datatype)):
+            if hasattr(component, method):
+                ret.append(getattr(component, method)(datatype=datatype, **kwargs))
+        return ret
 
-    def clear_cache(self):
-        self.datatype_map = {}
+    def call_class_components(self, datatype: Type[DataType], method: str, **kwargs):
+        ret = []
+        for component in self._get_components(datatype):
+            if hasattr(component, method):
+                ret.append(getattr(component, method)(datatype=datatype, **kwargs))
+        return ret
+
+    def get_class_components(self, datatype: Type[DataType], name: str):
+        ret = []
+        for component in self._get_components(datatype):
+            if hasattr(component, name):
+                ret.append(getattr(component, name))
+        return ret
+
+    def _clear_caches(self):
+        """
+        mostly for testing
+        """
+        self._get_components.cache_clear()
+        try:
+            del self.datatype_map
+        except:  # NOSONAR intentionally broad, used only in tests
+            pass
+        try:
+            del self.components
+        except:  # NOSONAR intentionally broad, used only in tests
+            pass
 
 
 datatypes = DataTypes()

@@ -21,15 +21,21 @@ flatten:
 """
 
 
-from .containers import ArrayDataType, FlattenDataType, NestedDataType, ObjectDataType
-from .datatypes import DataType, Import, datatypes  # noqa
-from .dates import (
+from .containers import (  # noqa
+    ArrayDataType,
+    FlattenDataType,
+    NestedDataType,
+    ObjectDataType,
+)
+from .datatypes import DataType, DataTypeComponent, Import, Section, datatypes  # noqa
+from .dates import (  # noqa
     DateDataType,
     DateTimeDataType,
     EDTFDataType,
     EDTFIntervalType,
     TimeDataType,
 )
+from .model import ModelDataType  # noqa
 from .primitive_types import NumberDataType  # noqa , just for export
 from .primitive_types import (
     BooleanDataType,
@@ -37,12 +43,13 @@ from .primitive_types import (
     FloatDataType,
     IntegerDataType,
 )
-from .strings import StringDataType  # noqa , just for export
-from .strings import (
+from .strings import (  # noqa , just for export; noqa
     FulltextDataType,
     FulltextKeywordDataType,
     KeywordDataType,
+    StringDataType,
     URLDataType,
+    UUIDDataType,
 )
 
 DEFAULT_DATATYPES = [
@@ -58,9 +65,11 @@ DEFAULT_DATATYPES = [
     FulltextDataType,
     KeywordDataType,
     FulltextKeywordDataType,
+    UUIDDataType,
     ObjectDataType,
     NestedDataType,
     FlattenDataType,
     ArrayDataType,
     URLDataType,
+    ModelDataType,
 ]

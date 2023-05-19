@@ -4,29 +4,21 @@ from .datatypes import DataType
 
 
 class NumberDataType(DataType):
-    def marshmallow_validators(self):
-        validators = []
-        ranges = {}
-        for param, schema in (
-            ("min", "minimumExclusive"),
-            ("max", "maximumExclusive"),
-            ("min_inclusive", "minimum"),
-            ("max_inclusive", "maximum"),
-        ):
-            if schema in self.definition:
-                ranges[param] = self.definition[schema]
-
-        if ranges:
-            params = ", ".join(f"{k}={v}" for k, v in ranges.items())
-            validators.append(f"ma_validate.Range({params})")
-
-        return validators
+    pass
 
 
 class IntegerDataType(NumberDataType):
-    marshmallow_field = "ma_fields.Integer"
-    schema_type = "integer"
     model_type = "integer"
+
+    ui = {
+        "marshmallow": {
+            "field-class": "ma_fields.Integer",
+        }
+    }
+    marshmallow = {
+        "field-class": "ma_fields.Integer",
+    }
+    json_schema = {"type": "integer"}
 
     class ModelSchema(DataType.ModelSchema):
         minimum = fields.Integer(required=False)
@@ -37,9 +29,17 @@ class IntegerDataType(NumberDataType):
 
 
 class FloatDataType(NumberDataType):
-    marshmallow_field = "ma_fields.Float"
-    schema_type = "number"
     model_type = "float"
+
+    ui = {
+        "marshmallow": {
+            "field-class": "ma_fields.Float",  # NOSONAR
+        }
+    }
+    marshmallow = {
+        "field-class": "ma_fields.Float",
+    }
+    json_schema = {"type": "number"}
 
     class ModelSchema(DataType.ModelSchema):
         minimum = fields.Float(required=False)
@@ -50,9 +50,17 @@ class FloatDataType(NumberDataType):
 
 
 class DoubleDataType(NumberDataType):
-    marshmallow_field = "ma_fields.Float"
-    schema_type = "number"
     model_type = "double"
+
+    ui = {
+        "marshmallow": {
+            "field-class": "ma_fields.Float",
+        }
+    }
+    marshmallow = {
+        "field-class": "ma_fields.Float",
+    }
+    json_schema = {"type": "number"}
 
     class ModelSchema(DataType.ModelSchema):
         minimum = fields.Float(required=False)
@@ -63,5 +71,14 @@ class DoubleDataType(NumberDataType):
 
 
 class BooleanDataType(DataType):
-    marshmallow_field = "ma_fields.Boolean"
     model_type = "boolean"
+
+    ui = {
+        "marshmallow": {
+            "field-class": "ma_fields.Boolean",
+        }
+    }
+    marshmallow = {
+        "field-class": "ma_fields.Boolean",
+    }
+    json_schema = {"type": "boolean"}

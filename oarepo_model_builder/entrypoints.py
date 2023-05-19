@@ -8,34 +8,16 @@ import importlib_metadata
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.schema import ModelSchema, remove_star_keys
-from oarepo_model_builder.utils.hyphen_munch import HyphenMunch
 
 
-def create_builder_from_entrypoints(profile="model", **kwargs):
+def create_builder_from_entrypoints(profile="record", **kwargs):
     # output classes do not depend on profile
     output_classes = load_entry_points_list("oarepo_model_builder.outputs", None)
     builder_classes = load_entry_points_list("oarepo_model_builder.builders", profile)
-    preprocess_classes = load_entry_points_list(
-        "oarepo_model_builder.property_preprocessors", profile
-    )
-    model_preprocessor_classes = load_entry_points_list(
-        "oarepo_model_builder.model_preprocessors", profile
-    )
-
-    builder_types = [x.TYPE for x in builder_classes]
-    output_builder_components = {
-        builder_type: load_entry_points_list(
-            f"oarepo_model_builder.builder_components.{builder_type}", profile
-        )
-        for builder_type in builder_types
-    }
 
     return ModelBuilder(
         output_builders=builder_classes,
         outputs=output_classes,
-        property_preprocessors=preprocess_classes,
-        model_preprocessors=model_preprocessor_classes,
-        output_builder_components=output_builder_components,
         **kwargs,
     )
 
@@ -51,25 +33,34 @@ def load_entry_points_list(name, profile):
     ret = []
     loaded = {}
     group_name = f"{name}.{profile}" if profile else name
+    load_from_entry_point_internal(name, group_name, loaded, ret)
+    # inherit
+    inherit_group = f"{name}.{profile}.inherit" if profile else f"{name}.inherit"
+    for ep in importlib_metadata.entry_points().select(group=inherit_group):
+        inherit_from = ep.value
+        load_from_entry_point_internal(name, inherit_from, loaded, ret)
+    ret.sort()
+    return [x[1] for x in ret]
+
+
+def load_from_entry_point_internal(name, group_name, loaded_keys, loaded_entries):
     for ep in importlib_metadata.entry_points().select(group=group_name):
-        if ep.name in loaded:
+        if ep.name in loaded_keys:
             print(
                 f"WARNING: Entry point {ep.name} has already been registered to group {name}. "
-                f"Previous value {loaded[ep.name]}, new ignored value {ep.value}"
+                f"Previous value {loaded_keys[ep.name]}, new ignored value {ep.value}"
             )
             continue
         loaded_entry_point = ep.load()
-        ret.append((ep.name, loaded_entry_point))
-        loaded[ep.name] = ep.value
-    ret.sort()
-    return [x[1] for x in ret]
+        loaded_entries.append((ep.name, loaded_entry_point))
+        loaded_keys[ep.name] = ep.value
 
 
 def load_model_from_entrypoint(ep: importlib_metadata.EntryPoint):
     def load(schema):
         try:
             loaded_schema = ep.load()
-        except:
+        except:  # NOSONAR intentionally broad
             module = import_module(ep.module)
             split_attr = ep.attr.split(".")
             fn = f"{split_attr[-2]}.{split_attr[-1]}"
@@ -98,7 +89,6 @@ def load_included_models_from_entry_points():
 
 def load_model(
     model_filename,
-    package=None,
     configs=(),
     black=True,
     isort=True,
@@ -125,13 +115,11 @@ def load_model(
         k, v = s.split("=", 1)
         schema.schema[k] = v
     check_plugin_packages(schema)
-    if package and not schema.current_model.get("package"):
-        schema.current_model.package = package
     if "python" not in schema.settings:
-        schema.settings.python = HyphenMunch()
-    schema.settings.python.use_isort = isort
-    schema.settings.python.use_black = black
-    schema.settings.python.use_autoflake = autoflake
+        schema.settings["python"] = {}
+    schema.settings["python"]["use-isort"] = isort
+    schema.settings["python"]["use-black"] = black
+    schema.settings["python"]["use-autoflake"] = autoflake
     return schema
 
 

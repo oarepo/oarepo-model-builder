@@ -10,10 +10,10 @@ class OutputBase:
         self.executable = False
 
     def begin(self):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def finish(self):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     @property
     def created(self):

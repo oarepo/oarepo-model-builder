@@ -7,18 +7,9 @@ from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.builders.jsonschema import JSONSchemaBuilder
 from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.opensearch import (
-    OpensearchModelPreprocessor,
-)
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
-    DataTypePreprocessor,
-)
 from oarepo_model_builder.schema import ModelSchema
 
 
@@ -27,9 +18,16 @@ def get_model_schema(field_type):
         "",
         {
             "settings": {
-                "python": {"use-isort": False, "use-black": False},
+                "python": {
+                    "use-isort": False,
+                    "use-black": False,
+                    "use-autoflake": False,
+                },
             },
-            "model": {"package": "test", "properties": {"a": {"type": field_type}}},
+            "record": {
+                "module": {"qualified": "test"},
+                "properties": {"a": {"type": field_type}},
+            },
         },
     )
 
@@ -39,18 +37,15 @@ def fulltext_builder():
     return ModelBuilder(
         output_builders=[JSONSchemaBuilder, MappingBuilder],
         outputs=[JSONSchemaOutput, MappingOutput, PythonOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            OpensearchModelPreprocessor,
-        ],
-        property_preprocessors=[DataTypePreprocessor],
     )
 
 
 def test_fulltext(fulltext_builder):
     schema = get_model_schema("fulltext")
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     data = load_generated_jsonschema(fulltext_builder)
 
@@ -70,7 +65,9 @@ def test_fulltext(fulltext_builder):
 def test_keyword(fulltext_builder):
     schema = get_model_schema("keyword")
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     data = load_generated_jsonschema(fulltext_builder)
 
@@ -90,7 +87,9 @@ def test_keyword(fulltext_builder):
 def test_fulltext_keyword(fulltext_builder):
     schema = get_model_schema("fulltext+keyword")
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     data = load_generated_jsonschema(fulltext_builder)
 

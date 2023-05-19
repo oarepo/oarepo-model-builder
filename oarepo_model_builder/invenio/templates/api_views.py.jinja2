@@ -1,0 +1,35 @@
+from flask import Blueprint
+
+def {{ vars.api_blueprint.function|base_name }}(app):
+    """Create {{ vars.record.class|base_name }} blueprint."""
+    blueprint = app.extensions["{{ vars.ext.alias }}"].resource.as_blueprint()
+    blueprint.record_once(init_{{ vars.api_blueprint.function|base_name }})
+
+    #calls record_once for all other functions starting with "init_addons_"
+    #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
+    funcs = globals()
+    funcs = [v for k, v in funcs.items() if k.startswith("init_addons_{{ vars.module.suffix_snake }}") and callable(v)]
+    for func in funcs:
+        blueprint.record_once(func)
+
+    return blueprint
+
+def init_{{ vars.api_blueprint.function|base_name }}(state):
+    """Init app."""
+    app = state.app
+    ext = app.extensions["{{ vars.ext.alias }}"]
+
+    {%  if not vars.service_config.skip %}
+    # register service
+    sregistry = app.extensions["invenio-records-resources"].registry
+    sregistry.register(ext.service, service_id="{{ vars.service_config.service_id }}")
+    {% endif  %}
+
+    {%  if not vars.mapping_settings.skip %}
+    # Register indexer
+    if hasattr(ext.service, "indexer"):
+        iregistry = app.extensions["invenio-indexer"].registry
+        iregistry.register(ext.service.indexer, indexer_id="{{ vars.ext.alias }}")
+    {% endif  %}
+
+{{ vars.api_blueprint.extra_code }}

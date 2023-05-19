@@ -1,15 +1,20 @@
 import json
-from typing import Callable, List
+from typing import Callable
 
 import faker
 import faker.providers
 from faker import Faker
 
+from oarepo_model_builder.datatypes import (
+    ArrayDataType,
+    DataType,
+    ObjectDataType,
+    Section,
+)
+
 from ..builder import ModelBuilder
-from ..builders import process
 from ..builders.json_base import JSONBaseBuilder
 from ..entrypoints import load_entry_points_list
-from ..property_preprocessors import PropertyPreprocessor
 
 
 class SampleDataGenerator(faker.Generator):
@@ -51,16 +56,14 @@ class Provider:
 SKIP = "skip"
 
 
-class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
+class SampleDataBuilder(JSONBaseBuilder):
     TYPE = "script_sample_data"
     output_file_type = "yaml"
-    output_file_name = "script-import-sample-data"
+    output_file_name = ["sample", "file"]
     parent_module_root_name = "jsonschemas"
 
-    def __init__(
-        self, builder: ModelBuilder, property_preprocessors: List[PropertyPreprocessor]
-    ):
-        super().__init__(builder, property_preprocessors)
+    def __init__(self, builder: ModelBuilder):
+        super().__init__(builder)
         self.generator = SampleDataGenerator()
         from faker.config import PROVIDERS
 
@@ -76,104 +79,88 @@ class InvenioScriptSampleDataBuilder(JSONBaseBuilder):
             "oarepo_model_builder.sample_data_providers", profile=None
         ) + [faker_provider]
 
-    @process("**", condition=lambda current, stack: stack.schema_valid)
-    def model_element(self):
-        schema_element_type = self.stack.top.schema_element_type
+    def build_node(self, node: DataType):
+        if not self.output.created:
+            return
 
-        if schema_element_type == "property":
-            self.generate_property(self.stack.top.key)
-        elif schema_element_type == "items":
-            # the count is in the sample section above the "items" element, so need to look at [-2], not the top
-            count = self.get_count(self.stack[-2].data, None)
+        sample: Section = node.section_sample
+        for __ in range(sample.config.get("count", 10)):
+            self.output.next_document()
+            generated = self.generate_sample_for_node_and_children(node)
+            self.output.merge(generated)
+
+    def generate_sample_for_node_and_children(self, node):
+        sample_section, sample = get_oarepo_sample(node)
+        if "sample" in sample:
+            return sample["sample"]
+        if sample.get("skip"):
+            return SKIP
+
+        if isinstance(node, ObjectDataType):
+            ret = {}
+            for k, v in sample_section.children.items():
+                v = self.generate_sample_for_node_and_children(v)
+                if v is not SKIP:
+                    ret[k] = v
+        elif isinstance(node, ArrayDataType):
+            count = sample.get("count")
             if count is None:
                 count = self.faker.random_int(1, 5)
-            for key in range(count):
-                self.generate_property(key)
+            ret = {}
+            for __ in range(count):
+                v = self.generate_sample_for_node_and_children(sample_section.item)
+                if v is not SKIP:
+                    ret[json.dumps(v, sort_keys=True)] = v
+            ret = list(ret.values())
         else:
-            self.build_children()
+            ret = self.generate_fake(node, sample)
+        return ret
 
-    def generate_property(self, key):
-        if not self.skip(self.stack):
-            if "properties" in self.stack.top.data:
-                self.output.enter(key, {})
-                self.build_children()
-                self.output.leave()
-            elif "items" in self.stack.top.data:
-                self.output.enter(key, [])
-                self.build_children()
-                top = self.output.stack.real_top
-
-                # make items unique, just for sure
-                top_as_dict = {}
-                for t in top:
-                    top_as_dict[json.dumps(t, sort_keys=True)] = t
-                top.clear()
-                top.extend(top_as_dict.values())
-
-                self.output.leave()
-            else:
-                self.output.primitive(key, self.generate_fake(self.stack))
-
-    def build(self, schema):
-        output_name = schema.current_model[self.output_file_name]
-        output = self.builder.get_output(self.output_file_type, output_name)
-        if not output.created:
-            return
-        count = self.get_count(schema.schema)
-        for _ in range(count):
-            super().build(schema)
-
-    def get_count(self, schema, default_count=50):
-        return schema.get("sample", {}).get("count", default_count)
-
-    def skip(self, stack):
-        return get_oarepo_sample(stack).get("skip", False)
-
-    def on_enter_model(self, output_name):
-        self.output.next_document()
-
-    def generate_fake(self, stack):
+    def generate_fake(self, node: DataType, config):
         params = {}
         method = None
-        config = get_oarepo_sample(stack)
         params = config.get("params", params)
 
         for provider in self.sample_data_providers:
-            ret = provider(self.faker, self.settings, stack, params)
+            ret = provider(self.faker, node.schema.schema["settings"], node, params)
             if ret is not SKIP:
                 return ret
+        return SKIP
 
 
-def get_oarepo_sample(stack):
-    if isinstance(stack.top.data, dict) and "sample" in stack.top.data:
-        sample = stack.top.data.get("sample")
-        if isinstance(sample, dict):
-            return sample
-        if isinstance(sample, str):
-            return {"faker": "constant", "params": {"value": sample}}
-        if isinstance(sample, (list, dict)):
-            if (
-                stack.top.schema_element_type == "property"
-                and "items" in stack.top.data
-            ):
-                return {
-                    "faker": "random_elements",
-                    "params": {"elements": sample, "unique": True},
-                }
-            else:
-                return {"faker": "random_element", "params": {"elements": sample}}
+def get_oarepo_sample(node):
+    sample_section = node.section_sample
+    sample = sample_section.config
 
-    return {}
+    if isinstance(sample, dict):
+        return sample_section, sample
+    if isinstance(sample, str):
+        return sample_section, {"faker": "constant", "params": {"value": sample}}
+    if isinstance(sample, (list, dict)):
+        if not node.key:
+            # array
+            return sample_section, {
+                "faker": "random_elements",
+                "params": {"elements": sample, "unique": True},
+            }
+        else:
+            # element
+            return sample_section, {
+                "faker": "random_element",
+                "params": {"elements": sample},
+            }
+
+    return sample_section, {}
 
 
-def faker_provider(faker, settings, stack, params):
-    config = get_oarepo_sample(stack)
+def faker_provider(faker, settings, node, params):
+    __, config = get_oarepo_sample(node)
     method = config.get("faker")
     if not method:
-        if stack.top.key in faker.formatters:
-            method = stack.top.key
+        if node.key in faker.formatters:
+            method = node.key
         else:
-            data_type = stack.top.data.get("type")
+            data_type = node.model_type
             if data_type == "integer":
                 method = "random_int"
             elif data_type == "number":
@@ -193,7 +180,7 @@ def faker_provider(faker, settings, stack, params):
                 method = "sentence"
             else:
                 print(
-                    f"Warning: do not know how to generate sample data for {data_type} at path {stack.path}, using plain string rule"
+                    f"Warning: do not know how to generate sample data for {data_type} at path {node.path}, using plain string rule"
                 )
                 method = "sentence"
     return getattr(faker, method)(**params)

@@ -1,0 +1,11 @@
+{{ vars.record_metadata.imports|generate_import }}
+
+class {{ vars.record_metadata|class_header }}:
+    """Model for {{ vars.record.class|base_name }} metadata."""
+
+    __tablename__ = "{{ vars.record_metadata.table }}"
+
+    # Enables SQLAlchemy-Continuum versioning
+    __versioned__ = {}
+
+{{ vars.record_metadata.extra_code }}

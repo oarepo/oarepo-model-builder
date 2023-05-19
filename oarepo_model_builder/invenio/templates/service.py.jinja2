@@ -1,0 +1,6 @@
+{{ vars.service.imports|generate_import }}
+
+class {{ vars.service|class_header }}:
+    """{{ vars.record.class|base_name }} service."""
+
+{{ vars.service.extra_code }}

@@ -1,6 +1,4 @@
 import os
-import re
-import sys
 
 import pytest
 
@@ -9,31 +7,16 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.invenio.invenio_record_resource_config import (
     InvenioRecordResourceConfigBuilder,
 )
-from oarepo_model_builder.invenio.invenio_record_ui_schema import (
-    InvenioRecordUISchemaBuilder,
+from oarepo_model_builder.invenio.invenio_record_ui_marshmallow import (
+    InvenioRecordUIMarshmallowBuilder,
 )
 from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
     InvenioRecordUISerializerBuilder,
 )
-from oarepo_model_builder.model_preprocessors.datatype_default import (
-    DatatypeDefaultModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.default_values import (
-    DefaultValuesModelPreprocessor,
-)
-from oarepo_model_builder.model_preprocessors.invenio import InvenioModelPreprocessor
-from oarepo_model_builder.model_preprocessors.opensearch import (
-    OpensearchModelPreprocessor,
-)
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.property_preprocessors.datatype_preprocessor import (
-    DataTypePreprocessor,
-)
 from oarepo_model_builder.schema import ModelSchema
 
-OAREPO_MARSHMALLOW = "marshmallow"
-B_SCHEMA = 'classB(ma.Schema):"""Bschema."""b=ma_fields.String()'
-BUI_SCHEMA = 'classBUISchema(ma.Schema):"""BUISchemaschema."""b=ma_fields.String()'
+from .utils import strip_whitespaces
 
 
 def get_test_schema(**props):
@@ -41,9 +24,13 @@ def get_test_schema(**props):
         "",
         {
             "settings": {
-                "python": {"use-isort": False, "use-black": False},
+                "python": {
+                    "use-isort": False,
+                    "use-black": False,
+                    "use-autoflake": False,
+                },
             },
-            "model": {"package": "test", "properties": props},
+            "record": {"module": {"qualified": "test"}, "properties": props},
         },
     )
 
@@ -52,25 +39,20 @@ def get_test_schema(**props):
 def fulltext_builder():
     return ModelBuilder(
         output_builders=[
-            InvenioRecordUISchemaBuilder,
+            InvenioRecordUIMarshmallowBuilder,
             InvenioRecordUISerializerBuilder,
             InvenioRecordResourceConfigBuilder,
         ],
         outputs=[PythonOutput],
-        model_preprocessors=[
-            DefaultValuesModelPreprocessor,
-            OpensearchModelPreprocessor,
-            InvenioModelPreprocessor,
-            DatatypeDefaultModelPreprocessor,
-        ],
-        property_preprocessors=[DataTypePreprocessor],
     )
 
 
 def _test(fulltext_builder, string_type):
     schema = get_test_schema(a={"type": string_type})
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")  # NOSONAR
@@ -94,7 +76,9 @@ def test_fulltext_keyword(fulltext_builder):
 def test_simple_array(fulltext_builder):
     schema = get_test_schema(a={"type": "array", "items": {"type": "keyword"}})
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
@@ -104,7 +88,6 @@ def test_simple_array(fulltext_builder):
 
 
 def test_array_of_objects(fulltext_builder):
-    print("starting test ...", file=sys.stderr)
     schema = get_test_schema(
         a={
             "type": "array",
@@ -112,25 +95,44 @@ def test_array_of_objects(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
     assert (
-        'class AItemUISchema(ma.Schema):\n    """AItemUISchema schema."""\n    b = ma_fields.Integer()'
-        in data
+        strip_whitespaces(
+            """ 
+class TestUISchema(InvenioUISchema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.List(ma_fields.Nested(lambda: AItemUISchema()))
+
+
+class AItemUISchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    b = ma_fields.Integer() """
+        )
+        in strip_whitespaces(data)
     )
-    assert "a = ma_fields.List(ma_fields.Nested(lambda: AItemUISchema()))" in data
 
 
 def test_generate_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": True},
-            "ui": {OAREPO_MARSHMALLOW: {"schema-class": "BUISchema", "generate": True}},
+            "marshmallow": {"class": "B", "generate": True},
+            "ui": {"marshmallow": {"class": "BUISchema", "generate": True}},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -139,33 +141,36 @@ def test_generate_nested_schema_same_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class BUISchema(ma.Schema):
-        \"""BUISchema schema.\"""
-        
-        b = ma_fields.String()""",
+        strip_whitespaces(
+            """
+class TestUISchema(InvenioUISchema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.Nested(lambda: BUISchema())
+
+
+class BUISchema(ma.Schema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    b = ma_fields.String()    
+    """
         )
-        in re.sub(r"\s", "", data)
-    )
-    assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestUISchema(ma.Schema):
-        \"""TestUISchema schema.\"""
-        
-        a = ma_fields.Nested(lambda: BUISchema())""",
-        )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
 
 
@@ -173,13 +178,13 @@ def test_generate_nested_schema_different_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {
-                "schema-class": "test.services.schema2.B",
+            "marshmallow": {
+                "class": "test.services.schema2.B",
                 "generate": True,
             },
             "ui": {
-                OAREPO_MARSHMALLOW: {
-                    "schema-class": "test.services.schema2.BUISchema",
+                "marshmallow": {
+                    "class": "test.services.schema2.BUISchema",
                     "generate": True,
                 }
             },
@@ -191,23 +196,25 @@ def test_generate_nested_schema_different_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestUISchema(ma.Schema):
-        \"""TestUISchema schema.\"""
-    
-        a = ma_fields.Nested(lambda: BUISchema())""",
+        strip_whitespaces(
+            """
+from test.services.schema2 import BUISchema
+class TestUISchema(InvenioUISchema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.Nested(lambda: BUISchema())
+    """
         )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
 
 
@@ -215,10 +222,8 @@ def test_use_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": False},
-            "ui": {
-                OAREPO_MARSHMALLOW: {"schema-class": "BUISchema", "generate": False}
-            },
+            "marshmallow": {"class": "B", "generate": False},
+            "ui": {"marshmallow": {"class": "BUISchema", "generate": False}},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -227,35 +232,39 @@ def test_use_nested_schema_same_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-        print(data)
+
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestUISchema(ma.Schema):
-        \"""TestUISchema schema.\"""
-        
-        a = ma_fields.Nested(lambda: BUISchema())""",
+        strip_whitespaces(
+            """
+class TestUISchema(InvenioUISchema):
+
+    class Meta:
+        unknown = ma.RAISE
+
+
+    a = ma_fields.Nested(lambda: BUISchema())
+"""
         )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
-    assert "classBUISchema(ma.Schema)" not in re.sub(r"\s", "", data)
+
+    assert strip_whitespaces("class BUISchema") not in strip_whitespaces(data)
 
 
 def test_use_nested_schema_different_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {"schema-class": "c.B", "generate": False},
-            "ui": {
-                OAREPO_MARSHMALLOW: {"schema-class": "c.BUISchema", "generate": False}
-            },
+            "marshmallow": {"class": "c.B", "generate": False},
+            "ui": {"marshmallow": {"class": "c.BUISchema", "generate": False}},
             "properties": {
                 "b": {
                     "type": "keyword",
@@ -264,16 +273,27 @@ def test_use_nested_schema_different_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert re.sub(r"\s", "", "from c import BUISchema") in re.sub(r"\s", "", data)
+
     assert (
-        'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.Nested(lambda:BUISchema())'
-        in re.sub(r"\s", "", data)
+        strip_whitespaces(
+            """
+from c import BUISchema
+from oarepo_runtime.ui.marshmallow import InvenioUISchema
+class TestUISchema(InvenioUISchema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.Nested(lambda: BUISchema())
+"""
+        )
+        in strip_whitespaces(data)
     )
 
 
@@ -283,10 +303,8 @@ def test_generate_nested_schema_array(fulltext_builder):
             "type": "array",
             "items": {
                 "type": "object",
-                OAREPO_MARSHMALLOW: {"schema-class": "B", "generate": True},
-                "ui": {
-                    OAREPO_MARSHMALLOW: {"schema-class": "BUISchema", "generate": True}
-                },
+                "marshmallow": {"class": "B", "generate": True},
+                "ui": {"marshmallow": {"class": "BUISchema", "generate": True}},
                 "properties": {
                     "b": {
                         "type": "keyword",
@@ -296,16 +314,30 @@ def test_generate_nested_schema_array(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert BUI_SCHEMA in re.sub(r"\s", "", data)
     assert (
-        'classTestUISchema(ma.Schema):"""TestUISchemaschema."""a=ma_fields.List(ma_fields.Nested(lambda:BUISchema()))'
-        in re.sub(r"\s", "", data)
+        strip_whitespaces(
+            """
+class TestUISchema(InvenioUISchema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.List(ma_fields.Nested(lambda: BUISchema()))
+
+
+class BUISchema(ma.Schema):
+    class Meta:
+        unknown = ma.RAISE
+    b = ma_fields.String()
+"""
+        )
+        in strip_whitespaces(data)
     )
 
 
@@ -327,7 +359,9 @@ class TestUISchema(ma.Schema):
     a = ma_fields.String()'''
         )
 
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
     data = fulltext_builder.filesystem.read(
         os.path.join("test", "services", "records", "ui_schema.py")
     )
@@ -338,13 +372,13 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {
-                "schema-class": ".schema2.B",
+            "marshmallow": {
+                "class": ".schema2.B",
                 "generate": True,
             },
             "ui": {
-                OAREPO_MARSHMALLOW: {
-                    "schema-class": ".ui_schema2.BUISchema",
+                "marshmallow": {
+                    "class": "..ui_schema2.BUISchema",
                     "generate": True,
                 }
             },
@@ -356,44 +390,54 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestUISchema(ma.Schema):
-        \"""TestUISchema schema.\"""
-    
-        a = ma_fields.Nested(lambda:BUISchema())""",
+        strip_whitespaces(
+            """
+class TestUISchema(InvenioUISchema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.Nested(lambda: BUISchema())
+"""
         )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
 
-    assert "from test.services.records.ui_schema2 import BUISchema" in data
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema2.py")
     ) as f:
         data = f.read()
-    assert BUI_SCHEMA in re.sub(r"\s", "", data)
+    assert (
+        strip_whitespaces(
+            """
+class BUISchema(ma.Schema):
+    class Meta:
+        unknown = ma.RAISE
+    b = ma_fields.String()
+"""
+        )
+        in strip_whitespaces(data)
+    )
 
 
 def test_generate_nested_schema_relative_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {
-                "schema-class": ".B",
+            "marshmallow": {
+                "class": ".B",
                 "generate": True,
             },
             "ui": {
-                OAREPO_MARSHMALLOW: {
-                    "schema-class": ".BUISchema",
+                "marshmallow": {
+                    "class": ".BUISchema",
                     "generate": True,
                 }
             },
@@ -405,7 +449,9 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
@@ -413,15 +459,20 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
         data = f.read()
 
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestUISchema(ma.Schema):
-        \"""TestUISchema schema.\"""
+        strip_whitespaces(
+            """
+class TestUISchema(InvenioUISchema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.Nested(lambda: BUISchema())
 
-        a = ma_fields.Nested(lambda:BUISchema())""",
+class BUISchema(ma.Schema):
+    class Meta:
+        unknown = ma.RAISE
+    b = ma_fields.String()
+"""
         )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
 
 
@@ -429,13 +480,13 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
     schema = get_test_schema(
         a={
             "type": "object",
-            OAREPO_MARSHMALLOW: {
-                "schema-class": "..schema2.B",
+            "marshmallow": {
+                "class": "...schema2.B",
                 "generate": True,
             },
             "ui": {
-                OAREPO_MARSHMALLOW: {
-                    "schema-class": "..schema2.BUISchema",
+                "marshmallow": {
+                    "class": "..schema2.BUISchema",
                     "generate": True,
                 }
             },
@@ -447,7 +498,9 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
@@ -455,18 +508,17 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
         data = f.read()
 
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """class TestUISchema(ma.Schema):
-        \"""TestUISchema schema.\"""
-
-        a = ma_fields.Nested(lambda: BUISchema())""",
+        strip_whitespaces(
+            """
+from test.services.records.schema2 import BUISchema
+class TestUISchema(InvenioUISchema):
+    class Meta:
+        unknown = ma.RAISE
+    a = ma_fields.Nested(lambda: BUISchema())
+"""
         )
-        in re.sub(r"\s", "", data)
+        in strip_whitespaces(data)
     )
-
-    assert "from test.services.schema2 import BUISchema" in data
 
 
 def test_generate_json_serializer(fulltext_builder):
@@ -476,18 +528,18 @@ def test_generate_json_serializer(fulltext_builder):
         }
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
     with fulltext_builder.filesystem.open(
         os.path.join("test", "resources", "records", "ui.py")
     ) as f:
         data = f.read()
-        print(data)
     assert (
-        re.sub(
-            r"\s",
-            "",
-            """
-from flask_resources import BaseListSchema, MarshmallowSerializer
+        strip_whitespaces(
+            '''
+from flask_resources import BaseListSchema
+from flask_resources import MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
 
 from test.services.records.ui_schema import TestUISchema
@@ -495,72 +547,28 @@ from test.services.records.ui_schema import TestUISchema
 
 
 class TestUIJSONSerializer(MarshmallowSerializer):
-    \"""UI JSON serializer.\"""
+    """UI JSON serializer."""
 
     def __init__(self):
-        \"""Initialise Serializer.\"""
+        """Initialise Serializer."""
         super().__init__(
             format_serializer_cls=JSONSerializer,
             object_schema_cls=TestUISchema,
             list_schema_cls=BaseListSchema,
             schema_context={"object_key": "ui"},
         )    
-    """,
+    '''
         )
-        == re.sub(r"\s", "", data)
-    )
-
-
-def test_generate_resource_config(fulltext_builder):
-    schema = get_test_schema(
-        a={
-            "type": "keyword",
-        }
-    )
-    fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
-    with fulltext_builder.filesystem.open(
-        os.path.join("test", "resources", "records", "config.py")
-    ) as f:
-        data = f.read()
-        print(data)
-    assert (
-        re.sub(
-            r"\s",
-            "",
-            """
-import importlib_metadata
-from flask_resources import ResponseHandler
-
-from test.resources.records.ui import TestUIJSONSerializer
-
-
-
-class TestResourceConfig():
-    \"""TestRecord resource config.\"""
-
-    blueprint_name = 'Test'
-    url_prefix = '/test/'
-
-    @property
-    def response_handlers(self):
-        entrypoint_response_handlers = {}
-        for x in importlib_metadata.entry_points(group='invenio.test.response_handlers'):
-            entrypoint_response_handlers.update(x.load())
-        return {
-            "application/vnd.inveniordm.v1+json": ResponseHandler(TestUIJSONSerializer()),
-            **super().response_handlers,
-            **entrypoint_response_handlers
-        }    """,
-        )
-        == re.sub(r"\s", "", data)
+        == strip_whitespaces(data)
     )
 
 
 def test_localized_date(fulltext_builder):
     schema = get_test_schema(a={"type": "date"})
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
@@ -574,7 +582,9 @@ def test_metadata(fulltext_builder):
         metadata={"type": "object", "properties": {"a": {"type": "keyword"}}}
     )
     fulltext_builder.filesystem = InMemoryFileSystem()
-    fulltext_builder.build(schema, output_dir="")
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
 
     with fulltext_builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")

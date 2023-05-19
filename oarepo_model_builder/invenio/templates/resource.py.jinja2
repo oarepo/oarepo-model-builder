@@ -1,0 +1,9 @@
+{{ vars.resource.imports|generate_import }}
+
+
+class {{ vars.resource|class_header }}:
+    """{{ vars.record.class|base_name }} resource."""
+    # here you can for example redefine
+    # create_url_rules function to add your own rules
+
+{{ vars.resource.extra_code }}

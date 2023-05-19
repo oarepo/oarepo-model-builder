@@ -2,7 +2,6 @@ from pkg_resources import parse_version
 
 from oarepo_model_builder.builders import OutputBuilder
 from oarepo_model_builder.outputs.cfg import CFGOutput
-from oarepo_model_builder.utils.verbose import log
 
 
 class SetupCfgBuilder(OutputBuilder):
@@ -13,7 +12,9 @@ class SetupCfgBuilder(OutputBuilder):
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
         output.setdefault(
-            "metadata", "name", self.current_model.package_base.replace("_", "-")
+            "metadata",
+            "name",
+            self.current_model.definition["module"]["base"].replace("_", "-"),
         )
         version = self.schema.get("version", "1.0.0dev1")
         output.setdefault("metadata", "version", version)
@@ -24,7 +25,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault(
             "metadata",
             "description",
-            f"A sample application for {self.current_model.package}",
+            f"Repository model for {self.current_model.definition['model-name']}",
         )
         output.setdefault("metadata", "authors", "")
 
@@ -49,19 +50,11 @@ class SetupCfgBuilder(OutputBuilder):
         )
 
         if "runtime-dependencies" in self.schema:
-            for dep, value in self.schema.runtime_dependencies.items():
+            for dep, value in self.schema["runtime-dependencies"].items():
                 output.add_dependency(dep, ">=" + value)
 
         if "dev-dependencies" in self.schema:
-            for dep, value in self.schema.dev_dependencies.items():
+            for dep, value in self.schema["dev-dependencies"].items():
                 output.add_dependency(
                     dep, ">=" + value, group="options.extras_require", section="devs"
                 )
-
-        if output.created:
-            log(
-                log.INFO,
-                f"""To install the data model, run
-    poetry install -E {self.current_model.package}            
-            """,
-            )

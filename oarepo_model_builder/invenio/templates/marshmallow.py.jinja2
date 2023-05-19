@@ -1,0 +1,20 @@
+from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
+from marshmallow import ValidationError
+from marshmallow import validate as ma_validate
+import marshmallow as ma
+from marshmallow import fields as ma_fields
+from marshmallow_utils import fields as mu_fields
+from marshmallow_utils import schemas as mu_schemas
+
+{{ imports|generate_import }}
+
+{% for cls in generated_classes %}
+class {{cls.class_name|base_name}}({% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{{bc}}{% endfor %}):
+{% if cls.strict %}
+    class Meta:
+        unknown = ma.RAISE
+{% endif %}
+{% for fld in cls.fields %}
+    {{fld.key}} = {{fld.full_definition}}
+{% endfor %}
+{% endfor %}

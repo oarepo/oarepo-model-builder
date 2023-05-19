@@ -7,11 +7,13 @@ class InvenioRecordSearchSetupCfgBuilder(OutputBuilder):
 
     def finish(self):
         super().finish()
+        if self.current_model.definition["mapping-settings"].get("skip"):
+            return
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 
         output.add_entry_point(
             "invenio_search.mappings",
-            self.current_model.record_mapping_setup_cfg,
-            self.current_model.mapping_package,
+            self.current_model.definition["mapping-settings"]["alias"],
+            self.current_model.definition["mapping-settings"]["module"],
         )

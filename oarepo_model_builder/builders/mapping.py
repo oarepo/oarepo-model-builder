@@ -1,105 +1,85 @@
-from pathlib import Path
-
-from ..utils.verbose import log
-from . import process
+from ..datatypes import ModelDataType, Section
+from ..utils.deepmerge import deepmerge
+from ..utils.dict import dict_get
 from .json_base import JSONBaseBuilder
-from .utils import ensure_parent_modules
+
+
+def deep_searchable_enabled(dt):
+    mapping = dt.section_mapping
+    facets = dt.section_facets
+    if (
+        mapping.config.get("enabled", None) is False
+        or facets.config.get("searchable") is False
+    ):
+        return False
+    if mapping.item:
+        return deep_searchable_enabled(mapping.item)
+    for c in mapping.children.values():
+        if not deep_searchable_enabled(c):
+            return False
+    return True
 
 
 class MappingBuilder(JSONBaseBuilder):
     TYPE = "mapping"
     output_file_type = "mapping"
-    output_file_name = "mapping-file"
+    output_file_name = ["mapping-settings", "file"]
+    skip = ["mapping-settings", "skip"]
     parent_module_root_name = "mappings"
+    create_parent_packages = True
 
-    @process("**", condition=lambda current, stack: stack.schema_valid)
-    def enter_model_element(self):
-        # ignore schema leaves different than "type" - for example, minLength, ...
-        # that should not be present in mapping
-        element_type = self.stack.top.schema_element_type
+    def build_node(self, node):
+        skip = dict_get(
+            self.current_model.definition, ["mapping-settings", "skip"], False
+        )
+        if skip:
+            return
+        generated = self.generate_model(node)
+        generated.pop("enabled", None)
+        self.output.merge(generated)
 
-        if element_type == "items":
-            # do not output "items" container
-            self.build_children()
-            self.set_searchable()
-            self.merge_mapping(self.stack.top.data)
+    def generate_model(self, node):
+        generated = self.generate(node)
+        generated.pop("enabled", None)
+        generated.pop("type", None)
 
-        elif element_type in ("properties", "property"):
-            self.index_enabled_stack.append(
-                self.stack.top.data.get("facets", {}).get(
-                    "searchable", self.index_enabled_stack[-1]
-                )
-            )
-            self.children_indexed.append(False)
+        return {**node.section_global_mapping.config, "mappings": generated}
 
-            self.model_element_enter()
+    def generate(self, node, parent_enabled=True):
+        mapping: Section = node.section_mapping
+        facets: Section = node.section_facets
+        ret = {**mapping.config}
 
-            # process children
-            self.build_children()
-            if element_type == "property":
-                self.set_searchable()
+        searchable = facets.config.get("searchable")
+        if searchable is not None:
+            ret.setdefault("enabled", searchable)
 
-            self.merge_mapping(self.stack.top.data)
+        this_node_enabled = True
+        if not isinstance(node, ModelDataType):
+            if not deep_searchable_enabled(node):
+                ret.setdefault("enabled", False)
+                return ret
 
-            self.model_element_leave()
+            if not parent_enabled:
+                ret.setdefault("enabled", False)
 
-            self.index_enabled_stack.pop()
-            self.children_indexed.pop()
+            if ret.get("enabled") is False:
+                return ret
+        else:
+            this_node_enabled = deep_searchable_enabled(node)
 
-        elif element_type == "type" and self.stack.top.data != "array":
-            # do not output "type=array"
-            self.model_element_enter()
-            self.model_element_leave()
-
-    def set_searchable(self):
-        if self.stack.top.data.type != "array":
-            if self.stack.top.data.type in ("object", "nested"):
-                searchable = self.children_indexed[-1]
-                if not searchable:
-                    self.stack.top.data.setdefault("mapping", {})["enabled"] = False
-            else:
-                searchable = self.index_enabled_stack[-1] or self.children_indexed[-1]
-                if not searchable:
-                    self.stack.top.data.setdefault("mapping", {})["index"] = False
+        if mapping.children:
+            properties = ret.setdefault("properties", {})
+            for k, v in mapping.children.items():
+                v = self.generate(v, this_node_enabled)
+                if k in properties:
+                    deepmerge(properties[k], v)
                 else:
-                    for idx in range(0, len(self.children_indexed)):
-                        self.children_indexed[idx] = True
-
-    def merge_mapping(self, data):
-        if isinstance(data, dict) and "mapping" in data:
-            mapping = self.call_components(
-                "before_merge_mapping", data["mapping"], stack=self.stack
-            )
-            if not mapping.get("enabled", True):
-                self.output.replace_mapping(mapping)
-            else:
-                self.output.merge_mapping(mapping)
-
-    def on_enter_model(self, output_name):
-        self.index_enabled_stack = [self.current_model.get("searchable", True)]
-        self.children_indexed = [False]
-        ensure_parent_modules(
-            self.builder, Path(output_name), ends_at=self.parent_module_root_name
-        )
-        if "mapping" in self.current_model:
-            if (
-                "opensearch" not in self.settings
-                or "version" not in self.settings.opensearch
-            ):
-                raise ValueError(
-                    "Please define settings.opensearch.version (for example, to os-v2)"
-                )
-            self.output.merge(
-                self.current_model.mapping[self.settings.opensearch.version]
-            )
-        self.output.enter("mappings", {})
-
-    def finish(self):
-        super().finish()
-
-        log(
-            log.INFO,
-            f"""
-    invenio index init --force
-            """,
-        )
+                    properties[k] = v
+        if mapping.item:
+            v = self.generate(mapping.item, this_node_enabled)
+            ret.pop("type", None)
+            deepmerge(ret, v)
+        if ret.get("enabled") is True:  # keep only enabled: False there
+            ret.pop("enabled")
+        return ret

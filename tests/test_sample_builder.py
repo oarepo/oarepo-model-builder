@@ -1,12 +1,9 @@
-from pathlib import Path
-
 import faker.config
 
-from oarepo_model_builder.entrypoints import create_builder_from_entrypoints
+from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
-from oarepo_model_builder.invenio.invenio_script_sample_data import (
-    InvenioScriptSampleDataBuilder,
-)
+from oarepo_model_builder.invenio.invenio_script_sample_data import SampleDataBuilder
+from oarepo_model_builder.outputs.yaml import YAMLOutput
 from oarepo_model_builder.schema import ModelSchema
 
 
@@ -15,7 +12,7 @@ def test_sample_builder_string():
         build_sample_data(
             {
                 "a": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             }
         )
@@ -25,7 +22,7 @@ def test_sample_builder_string():
         build_sample_data(
             {
                 "a": {
-                    "type": "string",
+                    "type": "keyword",
                 }
             },
             count=2,
@@ -52,7 +49,7 @@ def test_sample_builder_float():
         build_sample_data(
             {
                 "a": {
-                    "type": "number",
+                    "type": "float",
                 }
             }
         )
@@ -81,10 +78,10 @@ def test_sample_builder_object():
                     "type": "object",
                     "properties": {
                         "a": {
-                            "type": "string",
+                            "type": "keyword",
                         },
                         "b": {
-                            "type": "string",
+                            "type": "keyword",
                         },
                     },
                 }
@@ -105,7 +102,7 @@ def test_sample_builder_simple_array():
                 "a": {
                     "type": "array",
                     "sample": {"count": 1},
-                    "items": {"type": "string"},
+                    "items": {"type": "keyword"},
                 }
             }
         )
@@ -119,7 +116,7 @@ def test_sample_builder_simple_array():
                 "a": {
                     "type": "array",
                     "sample": {"count": 2},
-                    "items": {"type": "string"},
+                    "items": {"type": "keyword"},
                 }
             }
         )
@@ -139,10 +136,10 @@ def test_sample_builder_complex_array():
                         "type": "object",
                         "properties": {
                             "b": {
-                                "type": "string",
+                                "type": "keyword",
                             },
                             "c": {
-                                "type": "string",
+                                "type": "keyword",
                             },
                         },
                     },
@@ -160,21 +157,24 @@ a:
 def build_sample_data(model, count=1):
     faker.config.PROVIDERS.clear()
     faker.config.PROVIDERS.append("tests.faker_constant")
-    builder = create_builder_from_entrypoints()
-    builder.filesystem = InMemoryFileSystem()
-    builder.output_dir = Path.cwd()
-    sample_builder = InvenioScriptSampleDataBuilder(
-        builder=builder, property_preprocessors=[]
+    builder = ModelBuilder(
+        output_builders=[SampleDataBuilder],
+        outputs=[YAMLOutput],
+        filesystem=InMemoryFileSystem(),
     )
     schema = ModelSchema(
         "test.json",
         {
-            "model": {"script-import-sample-data": "test.yaml", "properties": model},
+            "record": {
+                "sample": {"file": "test.yaml", "count": count},
+                "module": {"qualified": "test"},
+                "properties": {
+                    **model,
+                },
+            },
             "settings": {},
-            "sample": {"count": count},
         },
     )
-    sample_builder.build(schema)
-    builder._save_outputs()
+    builder.build(schema, "record", ["record"], output_dir="")
     sample_data = builder.filesystem.read("test.yaml")
     return sample_data

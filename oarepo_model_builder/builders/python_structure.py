@@ -1,4 +1,3 @@
-from oarepo_model_builder.builders import process
 from oarepo_model_builder.builders.python import PythonBuilder
 from oarepo_model_builder.builders.utils import ensure_parent_modules
 
@@ -6,7 +5,7 @@ from oarepo_model_builder.builders.utils import ensure_parent_modules
 class PythonStructureBuilder(PythonBuilder):
     TYPE = "python_structure"
 
-    @process("/model")
+    # @process("/model")
     def model(self):
         self.build_children()
         package_path = self.model.package_path

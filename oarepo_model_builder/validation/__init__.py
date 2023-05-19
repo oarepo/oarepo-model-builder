@@ -1,7 +1,5 @@
 from marshmallow import ValidationError
-from munch import unmunchify
 
-from oarepo_model_builder.utils.hyphen_munch import HyphenMunch, munch
 from oarepo_model_builder.validation.model_validation import model_validator
 
 
@@ -22,12 +20,8 @@ def flatten_errors(err_data, path):
 
 
 def validate_model(model):
-    # remove munch, keeping stuff like Path etc.
-    data = unmunchify(model.schema)
-    validator = model_validator.validator_class("root")()
     try:
-        loaded_data = validator.dump(validator.load(data))
-        model.schema = munch.munchify(loaded_data, HyphenMunch)
+        model.schema = model_validator.validate(model.schema)
         return True
     except ValidationError as e:
         msg = []

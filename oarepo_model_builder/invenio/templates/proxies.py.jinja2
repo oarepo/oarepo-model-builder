@@ -1,0 +1,16 @@
+from flask import current_app
+from werkzeug.local import LocalProxy
+
+def _ext_proxy(attr):
+    return LocalProxy(
+        lambda: getattr(current_app.extensions["{{ vars.ext.alias }}"], attr))
+
+{% if not vars.service.skip %}
+{{ vars.service.proxy }} = _ext_proxy('service')
+"""Proxy to the instantiated vocabulary service."""
+{% endif %}
+
+{% if not vars.resource.skip %}
+{{ vars.resource.proxy }} = _ext_proxy('resource')
+"""Proxy to the instantiated vocabulary resource."""
+{% endif %}

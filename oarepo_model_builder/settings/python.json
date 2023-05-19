@@ -1,0 +1,7 @@
+{
+  "python": {
+    "use-black": true,
+    "use-isort": true,
+    "use-autoflake": true
+  }
+}
