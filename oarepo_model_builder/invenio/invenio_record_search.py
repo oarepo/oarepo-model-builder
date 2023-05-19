@@ -1,10 +1,5 @@
-from typing import Set
 
-from oarepo_model_builder.utils.jinja import package_name
 
-from ..datatypes import datatypes
-from ..datatypes.datatypes import MergedAttrDict
-from ..utils.deepmerge import deepmerge
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 OAREPO_FACETS_PROPERTY = "facets"

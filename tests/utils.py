@@ -39,7 +39,15 @@ def print_lines_around(lines, position):
 
 def strip_whitespaces(x):
     x = re.sub(r"[ \t]+", " ", x)
-    x = re.sub(r"[ \t]+([^a-zA-Z0-9_])", r"\1", x)
-    x = re.sub(r"\s*\n[\s\n]*", "\n", x)
+    x = re.sub(
+        r"[ \t]+([^a-zA-Z0-9_])",  # NOSONAR : used in tests, no denial of service possible
+        r"\1",
+        x,
+    )
+    x = re.sub(
+        r"\s*\n[\s\n]*",  # NOSONAR : used in tests, no denial of service possible
+        "\n",
+        x,
+    )
     x = x.strip()
     return x
