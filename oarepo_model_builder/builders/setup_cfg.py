@@ -30,17 +30,11 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault("metadata", "authors", "")
 
         output.setdefault("options", "python", ">=3.9")
-
-        output.add_dependency("invenio_access", ">=1.4.4")
-        output.add_dependency("invenio_app", ">=1.3.4")
-        output.add_dependency("invenio_db", ">=1.0.14")
-        output.add_dependency("invenio_pidstore", ">=1.2.3")
-        output.add_dependency("invenio_records", ">=2.0.0")
-        output.add_dependency("invenio-records-rest", ">=2.1.0")
-        output.add_dependency("invenio_records_permissions", ">=0.13.0")
-        output.add_dependency("invenio_records_resources", ">=0.21.4")
-        output.add_dependency("invenio-search", ">=2.1.0")
-        output.add_dependency("tqdm", ">=4.64.1")
+        try:
+            ov = int(self.settings["oarepo-version"])
+            output.add_dependency("oarepo", f">={ov},<{ov+1}")
+        except ValueError:
+            output.add_dependency("oarepo", self.settings["oarepo-version"])
         output.add_dependency("oarepo-runtime", ">=1.0.0")
 
         output.setdefault("options", "packages", "find:")
