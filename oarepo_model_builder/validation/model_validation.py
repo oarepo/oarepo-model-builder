@@ -44,6 +44,9 @@ class SettingsSchema(ma.Schema):
     schema_server = ma.fields.String(
         attribute="schema-server", data_key="schema-server", load_default="local://"
     )
+    oarepo_version = ma.fields.String(
+        attribute="oarepo-version", data_key="oarepo-version", load_default="11"
+    )
 
     class Meta:
         unknown = ma.RAISE
