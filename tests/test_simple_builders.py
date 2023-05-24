@@ -376,7 +376,7 @@ def test_service_config():
         [InvenioRecordServiceConfigBuilder],
         os.path.join("test", "services", "records", "config.py"),
     )
-
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
@@ -386,6 +386,8 @@ from invenio_records_resources.services import pagination_links
 from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
+from test.services.records.search import TestSearchOptions
+
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
@@ -393,6 +395,7 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     url_prefix = "/test/"
     base_permission_policy_cls = TestPermissionPolicy
     schema = TestSchema
+    search = TestSearchOptions
     record_cls = TestRecord
     service_id = "test"
     components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]

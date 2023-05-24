@@ -57,7 +57,6 @@ def test_prepare_datatype():
         "facets": {
             "extra-code": "",
             "generate": True,
-            "imports": [],
             "module": "my.test.services.records.facets",
         },
         "json-schema-settings": {

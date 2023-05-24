@@ -43,7 +43,8 @@ from .primitive_types import (
     FloatDataType,
     IntegerDataType,
 )
-from .strings import (  # noqa , just for export; noqa
+from .strings import StringDataType  # noqa , just for export
+from .strings import (  # noqa
     FulltextDataType,
     FulltextKeywordDataType,
     KeywordDataType,

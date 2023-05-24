@@ -67,7 +67,6 @@ def test_model_saver():
         "facets": {
             "extra-code": "",
             "generate": True,
-            "imports": [],
             "module": "test.services.records.facets",
         },
         "json-schema-settings": {
@@ -404,7 +403,6 @@ def test_model_saver_invenio():
         "facets": {
             "extra-code": "",
             "generate": True,
-            "imports": [],
             "module": "test.services.records.facets",
         },
         "json-schema-settings": {

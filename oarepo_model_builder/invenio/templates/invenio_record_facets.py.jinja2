@@ -3,12 +3,14 @@
 from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
+
 {% for imp in imports %}
-{% if imp.1 %}
-from {{imp.0|package_name}} import {{imp.0|base_name}} as {{imp.1}}
-{% else %}
-from {{imp.0|package_name}} import {{imp.0|base_name}}
-{% endif %}
+{#{{ imp }}#}
+{#{% if imp.1 %}#}
+{#from {{imp.0|package_name}} import {{imp.0|base_name}} as {{imp.1}}#}
+{#{% else %}#}
+from {{imp.0}} import {{imp.1}}
+{#{% endif %}#}
 {% endfor %}
 
 
@@ -18,4 +20,4 @@ from {{imp.0|package_name}} import {{imp.0|base_name}}
 {% endfor %}
 {% endfor %}
 
-{{ vars.invenio_record_facets_extra_code }}
+{#{{ vars.invenio_record_facets_extra_code }}#}
