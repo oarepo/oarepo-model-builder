@@ -61,11 +61,11 @@ class TestSchema(InvenioBaseRecordSchema):
                 "id": {"type": "keyword"},
                 "created": {
                     "type": "date",
-                    "format": "strict_date_time||strict_date_time_no_millis",
+                    "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date",
                 },
                 "updated": {
                     "type": "date",
-                    "format": "strict_date_time||strict_date_time_no_millis",
+                    "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date",
                 },
                 "$schema": {"type": "keyword"},
             },
