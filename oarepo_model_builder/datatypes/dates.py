@@ -27,7 +27,7 @@ class DateDataType(BaseDateDataType):
         "validators": ["validate_date('%Y-%m-%d')"],
         "imports": [{"import": "oarepo_runtime.validation.validate_date"}],
     }
-    mapping = {"type": "date", "format": "strict_date"}
+    mapping = {"type": "date", "format": "basic_date||strict_date"}
     json_schema = {"type": "string", "format": "date"}
 
 
@@ -45,7 +45,7 @@ class TimeDataType(BaseDateDataType):
         "validators": ["validate_date('%H:%M:%S')"],
         "imports": [{"import": "oarepo_runtime.validation.validate_date"}],
     }
-    mapping = {"type": "date", "format": "strict_time||strict_time_no_millis"}
+    mapping = {"type": "date", "format": "strict_time||strict_time_no_millis||basic_time||basic_time_no_millis"}
     json_schema = {"type": "string", "format": "time"}
 
 
@@ -63,7 +63,7 @@ class DateTimeDataType(BaseDateDataType):
         "validators": ["validate_datetime"],
         "imports": [{"import": "oarepo_runtime.validation.validate_datetime"}],
     }
-    mapping = {"type": "date", "format": "strict_date_time||strict_date_time_no_millis"}
+    mapping = {"type": "date", "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date"}
     json_schema = {"type": "string", "format": "date-time"}
 
 
