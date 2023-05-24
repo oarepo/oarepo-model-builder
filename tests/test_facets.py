@@ -14,6 +14,7 @@ def test_include_invenio():
         model_content={
             "record": {
                 "use": "invenio",
+                "module" : {"qualified": "test"},
                 "properties": {
                     "jej": {
                         "type": "nested",
@@ -50,7 +51,7 @@ def test_include_invenio():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
@@ -111,6 +112,7 @@ def test_nested():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "b": {
                         "type": "nested",
@@ -139,7 +141,7 @@ def test_nested():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
@@ -194,6 +196,7 @@ def test_object():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "b": {
                         "type": "object",
@@ -225,7 +228,7 @@ def test_object():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
@@ -278,6 +281,7 @@ def test_nest_obj():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "b_nes": {
                         "type": "nested",
@@ -319,7 +323,7 @@ def test_nest_obj():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -385,6 +389,7 @@ def test_array():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "a[]": "keyword",
                     "b[]": "fulltext",
@@ -402,7 +407,7 @@ def test_array():
 
     builder.build(schema, "record", ["record"], "")
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
 
@@ -452,6 +457,7 @@ def test_array_object():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "arr": {
                         "type": "array",
@@ -493,7 +499,7 @@ def test_array_object():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
@@ -541,6 +547,7 @@ def test_array_nested():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "obj": {
                         "type": "object",
@@ -577,7 +584,7 @@ def test_array_nested():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
@@ -623,6 +630,7 @@ def test_not_searchable():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "a": {"type": "fulltext+keyword", "facets": {"searchable": False}},
                     "b": {
@@ -660,7 +668,7 @@ def test_not_searchable():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
@@ -712,6 +720,7 @@ def test_top_facets():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "searchable": False,
                 "properties": {
                     "a": {"type": "fulltext+keyword", "facets": {"searchable": True}},
@@ -750,7 +759,7 @@ def test_top_facets():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
@@ -806,6 +815,7 @@ def test_searchable_true():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "a": {"type": "fulltext+keyword", "facets": {"searchable": False}},
                     "b": {
@@ -830,7 +840,7 @@ def test_searchable_true():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "record", ["record"], "")
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
@@ -872,6 +882,7 @@ def test_enum():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "a": {
                         "type": "keyword",
@@ -899,7 +910,7 @@ def test_enum():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
 
@@ -950,6 +961,7 @@ def test_customizations_args_class():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "a": {
                         "type": "keyword",
@@ -972,7 +984,7 @@ def test_customizations_args_class():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
 
@@ -1021,6 +1033,7 @@ def test_customizations_field():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "a": {
                         "type": "keyword",
@@ -1044,7 +1057,7 @@ def test_customizations_field():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "facets.py")
+        os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(

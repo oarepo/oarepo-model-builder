@@ -73,6 +73,7 @@ def test_search_class():
         model_content={
             "record": {
                 "use": "invenio",
+                "module": {"qualified": "test"},
                 "properties": {
                     "a": {"type": "fulltext+keyword"},
                     "b": {
@@ -93,7 +94,7 @@ def test_search_class():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests", "services", "records", "search.py")
+        os.path.join("test", "services", "records", "search.py")
     ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -104,8 +105,8 @@ from flask_babelex import lazy_gettext as _
 from . import facets
 
 
-class TestsSearchOptions(InvenioSearchOptions):
-    \"""TestsRecord search options.\"""
+class TestSearchOptions(InvenioSearchOptions):
+    \"""TestRecord search options.\"""
 
     facets = {
         '_schema': facets._schema,
