@@ -166,6 +166,7 @@ class AbstractDataType:
                 f"process_{name}",
                 section=section,
             )
+        self._sections[section_key] = section
         return section
 
     @cached_property

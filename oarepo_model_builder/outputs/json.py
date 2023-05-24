@@ -39,7 +39,10 @@ class JSONOutput(OutputBase):
         self.original_data = None
 
     def finish(self):
-        if DeepDiff(self.data, self.original_data):
+        # create differing but non-empty files
+        if DeepDiff(self.data, self.original_data) and (
+            self.data or self.original_data
+        ):
             self.builder.filesystem.mkdir(self.path.parent)
             log(2, "Saving %s", self.path)
             with self.builder.filesystem.open(self.path, mode="w") as f:
@@ -47,3 +50,9 @@ class JSONOutput(OutputBase):
 
     def merge(self, value):
         self.data = deepmerge(value, self.data)
+
+    @property
+    def modified(self):
+        return DeepDiff(self.data, self.original_data) and (
+            self.data or self.original_data
+        )

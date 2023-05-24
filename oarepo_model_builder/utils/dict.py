@@ -1,12 +1,12 @@
-from typing import Iterable, List
+from typing import List
 
 
-def dict_get(data, path: Iterable[str]):
-    for p in path:
+def dict_get(data, path: List[str], default=None):
+    for p in path[:-1]:
         if not data:
             data = {}
         data = data.get(p)
-    return data
+    return (data or {}).get(path[-1], default)
 
 
 def dict_setdefault(data, path: List[str], default=None):

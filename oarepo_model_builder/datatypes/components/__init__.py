@@ -1,5 +1,4 @@
 from .enum import EnumComponent
-# from .facets_validation import FacetsValidationModelComponent
 from .facets import (RegularFacetsComponent,
                      ObjectFacetsComponent,
                      NestedFacetsComponent,
@@ -34,12 +33,13 @@ from .model import (
     ServiceModelComponent,
     UIMarshmallowModelComponent,
     UIModelComponent,
+    SearchOptionsModelComponent
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
 from .ui import ObjectUIComponent, RegularUIComponent
 
 DEFAULT_COMPONENTS = [
-    # FacetsValidationModelComponent,
+    SearchOptionsModelComponent,
     ArraySampleComponent,
     RegularSampleComponent,
     RegularMarshmallowComponent,
@@ -72,7 +72,6 @@ DEFAULT_COMPONENTS = [
     ProxyModelComponent,
     PluginsModelComponent,
     ObjectFacetsComponent,
-
     NestedFacetsComponent,
     RegularFacetsComponent,
     ArrayFacetsComponent

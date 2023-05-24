@@ -30,6 +30,7 @@ class ModelMappingSchema(ma.Schema):
         PermissiveSchema,
         metadata={"doc": "Mapping template, merged with generated mapping"},
     )
+    skip = ma.fields.Boolean()
 
     class Meta:
         unknown = ma.RAISE

@@ -17,13 +17,14 @@ class JSONBaseBuilder(OutputBuilder):
         output_name = dict_get(self.current_model.definition, self.output_file_name)
         self.output = self.builder.get_output(self.output_file_type, output_name)
 
-        if self.create_parent_packages:
+    def finish(self):
+        super().finish()
+
+        if self.create_parent_packages and self.output.modified:
+            output_name = dict_get(self.current_model.definition, self.output_file_name)
             package_path = Path(output_name).parent
             ensure_parent_modules(
                 self.builder,
                 self.builder.output_dir.joinpath(package_path / "__init__.py"),
                 max_depth=len(package_path.parts),
             )
-
-    def finish(self):
-        return super().finish()

@@ -66,7 +66,6 @@ class TestSchema(InvenioBaseRecordSchema):
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ).read()
-    print(data)
     assert (
         strip_whitespaces(
             """

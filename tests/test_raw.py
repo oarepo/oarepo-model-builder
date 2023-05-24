@@ -77,7 +77,6 @@ class TestSchema(InvenioBaseRecordSchema):
         os.path.join("test", "records", "jsonschemas", "test-1.0.0.json")
     )
     data = json.loads(data)
-    print(data)
     assert data == {
         "properties": {
             "a": {"type": "object"},

@@ -67,7 +67,6 @@ def test_model_saver():
         "facets": {
             "extra-code": "",
             "generate": True,
-            "imports": [],
             "module": "test.services.records.facets",
         },
         "json-schema-settings": {
@@ -82,6 +81,7 @@ def test_model_saver():
             "base-classes": ["MarshmallowSerializer"],
             "class": "test.resources.records.ui.TestUIJSONSerializer",
             "extra-code": "",
+            "generate": True,
             "imports": [
                 {"import": "flask_resources.BaseListSchema"},
                 {"import": "flask_resources.MarshmallowSerializer"},
@@ -122,7 +122,7 @@ def test_model_saver():
             "base-classes": ["RecordPermissionPolicy"],
             "class": "test.services.records.permissions.TestPermissionPolicy",
             "extra-code": "",
-            "generate": False,
+            "generate": True,
             "imports": [
                 {"import": "invenio_records_permissions.RecordPermissionPolicy"}
             ],
@@ -184,7 +184,7 @@ def test_model_saver():
                 },
             },
         },
-        "proxy": {"module": "test.proxies"},
+        "proxy": {"module": "test.proxies", "generate": True},
         "record": {
             "base-classes": ["InvenioRecord"],
             "class": "test.records.api.TestRecord",
@@ -403,7 +403,6 @@ def test_model_saver_invenio():
         "facets": {
             "extra-code": "",
             "generate": True,
-            "imports": [],
             "module": "test.services.records.facets",
         },
         "json-schema-settings": {
@@ -418,6 +417,7 @@ def test_model_saver_invenio():
             "base-classes": ["MarshmallowSerializer"],
             "class": "test.resources.records.ui.TestUIJSONSerializer",
             "extra-code": "",
+            "generate": True,
             "imports": [
                 {"import": "flask_resources.BaseListSchema"},
                 {"import": "flask_resources.MarshmallowSerializer"},
@@ -458,7 +458,7 @@ def test_model_saver_invenio():
             "base-classes": ["RecordPermissionPolicy"],
             "class": "test.services.records.permissions.TestPermissionPolicy",
             "extra-code": "",
-            "generate": False,
+            "generate": True,
             "imports": [
                 {"import": "invenio_records_permissions.RecordPermissionPolicy"}
             ],
@@ -514,7 +514,7 @@ def test_model_saver_invenio():
                 "ui": {"marshmallow": {"read": False, "write": False}},
             },
         },
-        "proxy": {"module": "test.proxies"},
+        "proxy": {"module": "test.proxies", "generate": True},
         "record": {
             "base-classes": ["InvenioRecord"],
             "class": "test.records.api.TestRecord",

@@ -22,7 +22,9 @@ def to_import_dict(import_object):
 
 
 @pass_context
-def generate_import(ctx, import_object, imported_part="class", alias=None):
+def generate_import(ctx, import_object, imported_part="class", alias=None, skip=False):
+    if skip:
+        return ""
     import_object = to_import_dict(import_object)
     if isinstance(import_object, list):
         import_object = [to_import_dict(x) for x in import_object]
@@ -32,6 +34,8 @@ def generate_import(ctx, import_object, imported_part="class", alias=None):
     if isinstance(import_object, str):
         return generate_import(ctx, {"import": import_object, "alias": alias}, None)
     if imported_part:
+        if import_object.get("skip"):
+            return ""
         return generate_import(ctx, import_object[imported_part], alias)
     import_name = import_object["import"]
     if "." in import_name:
@@ -75,9 +79,12 @@ def with_defined_prefix(always_defined_import_prefixes, value):
 
 
 def class_header(rec, class_name="class", base_classes_name="base-classes"):
-    ret = [
-        base_name(rec[class_name]),
-    ]
+    try:
+        ret = [
+            base_name(rec[class_name]),
+        ]
+    except KeyError:
+        raise KeyError(f'Do not have "{class_name}" inside {rec}')
     base_classes = rec[base_classes_name]
     if base_classes:
         ret.append("(")

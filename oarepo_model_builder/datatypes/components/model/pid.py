@@ -55,6 +55,7 @@ class PIDSchema(ma.Schema):
     module = ma.fields.String(
         metadata={"doc": "Module where the pid provider will be placed"}
     )
+    skip = ma.fields.Boolean()
 
 
 class PIDModelComponent(DataTypeComponent):

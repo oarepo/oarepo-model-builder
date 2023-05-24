@@ -1,4 +1,5 @@
 from ..datatypes import Section
+from ..utils.dict import dict_get
 from .json_base import JSONBaseBuilder
 
 
@@ -10,6 +11,11 @@ class JSONSchemaBuilder(JSONBaseBuilder):
     create_parent_packages = True
 
     def build_node(self, node):
+        skip = dict_get(
+            self.current_model.definition, ["json-schema-settings", "skip"], False
+        )
+        if skip:
+            return
         generated = self.generate(node)
         self.output.merge(generated)
 

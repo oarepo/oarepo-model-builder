@@ -62,6 +62,7 @@ class ObjectMarshmallowExtraSchema(ma.Schema):
         attribute="extra-fields",
         metadata={"doc": "Extra fields to generate into the marhsmallow class"},
     )
+    skip = fields.Boolean()
 
 
 class ObjectMarshmallowSchema(PropertyMarshmallowSchema, ObjectMarshmallowExtraSchema):

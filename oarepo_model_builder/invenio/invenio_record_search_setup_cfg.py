@@ -7,6 +7,8 @@ class InvenioRecordSearchSetupCfgBuilder(OutputBuilder):
 
     def finish(self):
         super().finish()
+        if self.current_model.definition["mapping-settings"].get("skip"):
+            return
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
 

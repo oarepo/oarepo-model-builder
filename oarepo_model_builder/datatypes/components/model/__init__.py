@@ -8,21 +8,23 @@ from .marshmallow import MarshmallowModelComponent
 from .model_saver import SavedModelComponent
 from .permissions import PermissionsModelComponent
 from .pid import PIDModelComponent
+from .plugins import PluginsModelComponent
 from .proxy import ProxyModelComponent
 from .record import RecordModelComponent
 from .record_dumper import RecordDumperModelComponent
 from .record_metadata import RecordMetadataModelComponent
 from .resource import ResourceModelComponent
 from .sample import SampleModelComponent
+from .search_options import SearchOptionsModelComponent
 from .service import ServiceModelComponent
 from .ui import UIModelComponent
 from .ui_marshmallow import UIMarshmallowModelComponent
-from .plugins import PluginsModelComponent
 
 __all__ = [
     "AppModelComponent",
     "BlueprintsModelComponent",
     "FacetsModelComponent",
+    "SearchOptionsModelComponent",
     "JSONSchemaModelComponent",
     "MappingModelComponent",
     "MarshmallowModelComponent",
@@ -39,5 +41,5 @@ __all__ = [
     "UIModelComponent",
     "DefaultsModelComponent",
     "ProxyModelComponent",
-    "PluginsModelComponent"
+    "PluginsModelComponent",
 ]

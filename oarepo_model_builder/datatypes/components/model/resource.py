@@ -41,6 +41,7 @@ class ResourceClassSchema(ma.Schema):
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
+    skip = ma.fields.Boolean()
 
 
 class ResourceConfigClassSchema(ma.Schema):
@@ -81,6 +82,7 @@ class ResourceConfigClassSchema(ma.Schema):
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
+    skip = ma.fields.Boolean()
 
 
 class ResourceModelComponent(DataTypeComponent):

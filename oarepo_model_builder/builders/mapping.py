@@ -1,5 +1,6 @@
 from ..datatypes import ModelDataType, Section
 from ..utils.deepmerge import deepmerge
+from ..utils.dict import dict_get
 from .json_base import JSONBaseBuilder
 
 
@@ -23,11 +24,18 @@ class MappingBuilder(JSONBaseBuilder):
     TYPE = "mapping"
     output_file_type = "mapping"
     output_file_name = ["mapping-settings", "file"]
+    skip = ["mapping-settings", "skip"]
     parent_module_root_name = "mappings"
     create_parent_packages = True
 
     def build_node(self, node):
+        skip = dict_get(
+            self.current_model.definition, ["mapping-settings", "skip"], False
+        )
+        if skip:
+            return
         generated = self.generate_model(node)
+        generated.pop("enabled", None)
         self.output.merge(generated)
 
     def generate_model(self, node):

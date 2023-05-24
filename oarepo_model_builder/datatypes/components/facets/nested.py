@@ -1,5 +1,4 @@
-from oarepo_model_builder.datatypes import ObjectDataType, NestedDataType, datatypes
-from .field import RegularFacetsComponent
+from oarepo_model_builder.datatypes import  NestedDataType, datatypes
 from .object import ObjectFacetsComponent
 
 
@@ -8,56 +7,38 @@ class NestedFacetsComponent(ObjectFacetsComponent):
 
     eligible_datatypes = [NestedDataType]
 
-    def build_definition(self, datatype, facets, facetka=None):
-        inner_facetka = facetka['class']
-        facetka['class'] = f'NestedLabeledFacet(path = {datatype.path}, nested = {inner_facetka})'
+    def build_definition(self, datatype, facets, facet_definition=None, searchable = True):
+        inner_facet_definition = facet_definition['class']
+        facet_section = datatype.section_facets.config
+        if facet_section != {}:
+            _path = datatype.path
+            if 'path' in facet_section:
+
+                path = _path + "." + facet_section['path']
+            else:
+                path = _path
+
+
+            facet_searchable = facet_section.get('searchable', '')
+            if facet_definition:
+                fs = facet_definition.get('facet_searchable', '')
+                if fs != '' and facet_searchable != '' and fs != facet_searchable:
+                    facet_definition['facet_searchable'] = facet_searchable
+                imports = facet_section.get('imports', [])
+                arguments = facet_section.get('args', [])
+                arguments_string = ",".join(arguments)
+                if arguments_string != '':
+                    arguments_string = ',' + arguments_string
+                facet_definition['imports'].extend(imports)
+                facet_definition['class'] = facet_section.get('field', f'{datatype.section_facets.config["facet_class"]}(path = \"{path}\", nested_facet = {inner_facet_definition} {arguments_string})')
         datatypes.call_components(
             datatype.parent,
             "build_definition",
             facets=facets,
-            facetka=facetka
+            facet_definition=facet_definition,
+            searchable=searchable
         )
-    def build_facets(self, datatype, facets, facetka):
-        print(facetka)
-        # print("nesteeed")
-        # facet_section = datatype.section_facets
-        # stack = []
-        # nest = False
-        # if not inner:
-        #     inner = []
-        # else:
-        #     nest = True
-        #     for i in inner:
-        #         stack.append(i)
-        #     inner = []
-        #
-        #
-        # for c in datatype.children.values():
-        #     datatypes.call_components(
-        #         c,
-        #         "build_facets",
-        #         facets=facets,
-        #         # inner = inner
-        #     )
-        # nested_facets = self.create_nest(facet_section.config, datatype, inner)
-        # if not nest:
-        #     for i in nested_facets:
-        #         facets.append(i)
-        # else:
-        #     for i in nested_facets:
-        #         inner.append(i)
-        #     for x in stack:
-        #         inner.append(x)
-        #     # inner = stack
-        #     # return inner
-        # print("nested after")
-        #
-        # facet_section = datatype.section_facets
-        # facets.append(facet_section.config)
-        # print(facet_section.config)
-    def create_nest(self, config,datatype, inner):
-        nested_facets = []
-        for i in inner:
-            for x in i:
-                nested_facets.append({x: config['facet_class'] + f'(path=\"{datatype.path}\" nested = {i[x]}' + ')'})
-        return nested_facets
+
+    def build_facets(self, datatype, facets, facet_definition = None, searchable = True):
+        pass
+

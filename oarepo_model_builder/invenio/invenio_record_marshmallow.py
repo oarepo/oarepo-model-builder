@@ -20,6 +20,7 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
     template = "marshmallow"
     extra_imports = []
     build_class_method = "marshmallow_build_class"
+    skip_if_not_generating = False
 
     def build_node(self, node: DataType):
         # everything is done in finish

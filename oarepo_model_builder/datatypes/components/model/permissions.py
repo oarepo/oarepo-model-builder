@@ -41,6 +41,7 @@ class ModelPermissionsSchema(ma.Schema):
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
+    skip = ma.fields.Boolean()
 
     class Meta:
         unknown = ma.RAISE
@@ -62,7 +63,7 @@ class PermissionsModelComponent(DataTypeComponent):
         record_services_module = parent_module(datatype.definition["service"]["module"])
 
         permissions = set_default(datatype, "permissions", {})
-        permissions.setdefault("generate", False)
+        permissions.setdefault("generate", True)
         permissions.setdefault("presets", ["everyone"])
         permissions.setdefault("extra-code", "")
         permissions_module = permissions.setdefault(

@@ -37,6 +37,7 @@ class RecordDumperClassSchema(ma.Schema):
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
+    skip = ma.fields.Boolean()
 
 
 class RecordDumperModelComponent(DataTypeComponent):
