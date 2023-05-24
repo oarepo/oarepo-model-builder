@@ -19,6 +19,7 @@ class ArrayDataType(DataType):
 
     facets = {"facet_class": "TermsFacet"}
 
+
     class ModelSchema(DataType.ModelSchema):
         items = fields.Nested(FieldSchema)
         uniqueItems = fields.Boolean(required=False)

@@ -43,14 +43,13 @@ class PriorityMergerMixin:
             for idx, new in enumerate(new_list):
                 if new.type != existing.type:
                     break
-                if isinstance(existing.node, type(new.node)):
-                    if merger.identity(context, existing.node).deep_equals(
-                        merger.identity(context, new.node)
-                    ):
-                        ret.append(merger.merge(context, existing.node, new.node))
-                        del new_list[idx]
-                        found = True
-                        break
+                if isinstance(existing.node, type(new.node)) and merger.identity(
+                    context, existing.node
+                ).deep_equals(merger.identity(context, new.node)):
+                    ret.append(merger.merge(context, existing.node, new.node))
+                    del new_list[idx]
+                    found = True
+                    break
             if not found:
                 ret.append(merger.merge(context, existing.node, None))
 

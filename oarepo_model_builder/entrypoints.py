@@ -15,8 +15,6 @@ def create_builder_from_entrypoints(profile="record", **kwargs):
     output_classes = load_entry_points_list("oarepo_model_builder.outputs", None)
     builder_classes = load_entry_points_list("oarepo_model_builder.builders", profile)
 
-    builder_types = [x.TYPE for x in builder_classes]
-
     return ModelBuilder(
         output_builders=builder_classes,
         outputs=output_classes,
@@ -62,7 +60,7 @@ def load_model_from_entrypoint(ep: importlib_metadata.EntryPoint):
     def load(schema):
         try:
             loaded_schema = ep.load()
-        except:
+        except:  # NOSONAR intentionally broad
             module = import_module(ep.module)
             split_attr = ep.attr.split(".")
             fn = f"{split_attr[-2]}.{split_attr[-1]}"
@@ -91,7 +89,6 @@ def load_included_models_from_entry_points():
 
 def load_model(
     model_filename,
-    package=None,
     configs=(),
     black=True,
     isort=True,

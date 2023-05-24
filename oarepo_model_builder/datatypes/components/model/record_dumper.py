@@ -54,7 +54,6 @@ class RecordDumperModelComponent(DataTypeComponent):
 
     def before_model_prepare(self, datatype, *, context, **kwargs):
         record_module = parent_module(datatype.definition["record"]["module"])
-        profile_module = context["profile_module"]
         prefix = datatype.definition["module"]["prefix"]
 
         dumper = set_default(datatype, "record-dumper", {})

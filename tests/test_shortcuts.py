@@ -12,7 +12,6 @@ from .utils import strip_whitespaces
 def test_array_shortcuts():
     schema = load_model(
         "test.yaml",  # NOSONAR
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -99,7 +98,6 @@ record:
 
     schema = load_model(
         "test.yaml",
-        "test",
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
@@ -123,7 +121,6 @@ record:
 
     schema = load_model(
         "test.yaml",
-        "test",
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
@@ -147,7 +144,6 @@ record:
 
     schema = load_model(
         "test.yaml",
-        "test",
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
@@ -170,7 +166,6 @@ record:
 
     schema = load_model(
         "test.yaml",
-        "test",
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,
@@ -208,7 +203,6 @@ record:
 
     schema = load_model(
         "test.yaml",
-        "test",
         model_content=yaml.safe_load(data),
         isort=False,
         black=False,

@@ -60,7 +60,7 @@ class ObjectMarshmallowExtraSchema(ma.Schema):
         required=False,
         data_key="extra-fields",
         attribute="extra-fields",
-        metadata={"doc": "Extra fields to generate into the marhsmallow class"},
+        metadata={"doc": "Extra fields to generate into the marshmallow class"},
     )
     skip = fields.Boolean()
 
@@ -76,7 +76,6 @@ class ObjectMarshmallowMixin:
         schema_class = marshmallow_config.get("class")
         if not schema_class:
             return
-        raise Exception("module")
         schema_class = convert_to_absolute_class_name(schema_class, marshmallow_module)
         classes[schema_class].append(
             (datatype, marshmallow_config.get("generate", True))
@@ -176,7 +175,9 @@ class ObjectMarshmallowMixin:
             "Please specify your own class name for marshmallow at this path"
         )
 
-    def _build_class(self, datatype, marshmallow, children, field_generator, classes):
+    def _build_class(
+        self, datatype, marshmallow, children, field_generator, classes  # NOSONAR
+    ):
         fields = []
         for _, c in sorted(children.items()):
             datatypes.call_components(c, field_generator, fields=fields)

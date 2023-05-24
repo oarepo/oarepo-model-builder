@@ -28,7 +28,11 @@ def test_extend_property_preprocessor():
         filesystem=fs,
     )
 
-    model = ModelSchema("/tmp/test.json", content=nr_documents_model, validate=False)
+    model = ModelSchema(
+        "/tmp/test.json",  # NOSONAR: this is just a dummy path
+        content=nr_documents_model,
+        validate=False,
+    )
     ExtendProfile().build(model, "record", ["record"], "", builder)
     loaded_model = json5.loads(fs.read("model.json5"))
     # assert that no class is generated in loaded_model
@@ -175,7 +179,9 @@ nr_documents_model = {
                                                 }
                                             },
                                             "additionalProperties": {"type": "string"},
-                                            "propertyNames": {"pattern": "^[a-z]{2}$"},
+                                            "propertyNames": {
+                                                "pattern": "^[a-z]{2}$"  # NOSONAR
+                                            },  # NOSONAR
                                             "type": "object",
                                             "mapping": {
                                                 "properties": {
@@ -365,7 +371,7 @@ nr_documents_model = {
                                     "keys": [
                                         {"target": "id", "key": "id"},
                                         {"target": "title", "key": "title"},
-                                        {"target": "type", "key": "type.id"},
+                                        {"target": "type", "key": "type.id"},  # NOSONAR
                                         {
                                             "model": {
                                                 "properties": {
@@ -625,7 +631,7 @@ nr_documents_model = {
                             "validators": [],
                             "imports": [],
                         },
-                        "label.cs": "Autoři",
+                        "label.cs": "Autoři",  # NOSONAR
                         "items": {
                             "marshmallow": {
                                 "field-class": "ma_fields.Nested",
@@ -6063,7 +6069,9 @@ nr_documents_model = {
                     "read": False,
                     "validators": ["validate_datetime"],
                     "imports": [
-                        {"import": "oarepo_runtime.validation.validate_datetime"},
+                        {
+                            "import": "oarepo_runtime.validation.validate_datetime"  # NOSONAR
+                        },  # NOSONAR
                         {"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"},
                         {"import": "oarepo_runtime.validation.validate_datetime"},
                         {"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"},

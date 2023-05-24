@@ -25,6 +25,7 @@ class PluginsSchema(ma.Schema):
         unknown = ma.RAISE
 
     output = ma.fields.Nested(PluginSchema)
+    builder = ma.fields.Nested(PluginSchema)
 
 
 class PluginsModelComponent(DataTypeComponent):

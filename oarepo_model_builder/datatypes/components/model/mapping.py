@@ -68,14 +68,14 @@ class MappingModelComponent(DataTypeComponent):
         mapping = set_default(datatype, "mapping-settings", {})
         mapping.setdefault("generate", True)
         alias = mapping.setdefault("alias", alias)
-        module = mapping.setdefault(
+        mapping.setdefault(
             "module",
             f'{parent_module(datatype.definition["record"]["module"])}.mappings',
         )
         short_index_name = (
             f"{prefix_snake}-{datatype.definition['json-schema-settings']['version']}"
         )
-        index_name = mapping.setdefault(
+        mapping.setdefault(
             "index",
             f"{alias}-{short_index_name}",
         )

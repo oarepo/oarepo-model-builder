@@ -69,7 +69,6 @@ DUMMY_YAML = "test.yaml"
 def test_search_class():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",

@@ -49,6 +49,7 @@ class OutputBuilder:
             self._build_node_internal(child)
 
     def build_node(self, datatype: DataType):
+        "Intended to be overriden in children"
         pass
 
 

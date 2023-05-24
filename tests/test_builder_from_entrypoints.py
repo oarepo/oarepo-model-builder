@@ -14,8 +14,7 @@ OAREPO_USE = "use"
 
 def test_include_invenio():
     schema = load_model(
-        "test.yaml",
-        "test",
+        "test.yaml",  # NOSONAR
         model_content={
             "version": "1.0.0",
             "record": {
@@ -66,6 +65,7 @@ class TestSchema(InvenioBaseRecordSchema):
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ).read()
+    print(data)
     assert (
         strip_whitespaces(
             """
@@ -101,13 +101,12 @@ class TestUISchema(InvenioUISchema):
     }
 
     data = builder.filesystem.read("setup.cfg")
-    assert f"version = 1.0.0" in data
+    assert "version = 1.0.0" in data
 
 
 def test_generate_multiple_times():
     schema = load_model(
         "test.yaml",
-        "test",
         model_content={
             "record": {
                 "module": {"qualified": "test"},
@@ -129,7 +128,6 @@ def test_generate_multiple_times():
     # need to reload the schema because of caches ...
     schema = load_model(
         "test.yaml",
-        "test",
         model_content={
             "record": {
                 "module": {"qualified": "test"},
@@ -161,7 +159,6 @@ def test_generate_multiple_times():
 def test_incremental_builder():
     schema = load_model(
         "test.yaml",
-        "test",
         model_content={
             "record": {
                 "module": {"qualified": "test"},
@@ -181,7 +178,6 @@ def test_incremental_builder():
 
     schema = load_model(
         "test.yaml",
-        "test",
         model_content={
             "record": {
                 "module": {"qualified": "test"},
@@ -202,7 +198,6 @@ def test_incremental_builder():
 
     schema = load_model(
         "test.yaml",
-        "test",
         model_content={
             "record": {
                 "module": {"qualified": "test"},

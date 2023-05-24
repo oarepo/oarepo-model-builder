@@ -44,7 +44,7 @@ def test_model_saver():
         "api-blueprint": {
             "alias": "test",
             "extra_code": "",
-            "function": "test.views.records.api.create_blueprint_from_app",
+            "function": "test.views.records.api.create_api_blueprint",
             "generate": True,
             "imports": [],
             "module": "test.views.records.api",
@@ -97,11 +97,11 @@ def test_model_saver():
             "module": "test.records.mappings",
         },
         "marshmallow": {
-            "base-classes": ["ma.Schema"],
+            "base-classes": ["ma.Schema"],  # NOSONAR
             "class": "test.services.records.schema.TestSchema",
             "extra-code": "",
             "generate": True,
-            "module": "test.services.records.schema",
+            "module": "test.services.records.schema",  # NOSONAR
         },
         "model-name": "Test",
         "module": {
@@ -143,7 +143,7 @@ def test_model_saver():
                 },
                 {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
             ],
-            "module": "test.records.api",
+            "module": "test.records.api",  # NOSONAR
             "provider-base-classes": ["RecordIdProviderV2"],
             "provider-class": "test.records.api.TestIdProvider",
             "type": "test",
@@ -179,7 +179,7 @@ def test_model_saver():
                         "class": "test.services.records.ui_schema.TestMetadataUISchema",
                         "extra-code": "",
                         "generate": True,
-                        "module": "test.services.records.ui_schema",
+                        "module": "test.services.records.ui_schema",  # NOSONAR
                     }
                 },
             },
@@ -315,13 +315,13 @@ def test_model_saver():
                 "module": "test.services.records.ui_schema",
             }
         },
-        "ui-blueprint": {
+        "app-blueprint": {
             "alias": "test",
             "extra_code": "",
-            "function": "test.views.records.ui.create_blueprint_from_app",
+            "function": "test.views.records.app.create_app_blueprint",
             "generate": True,
             "imports": [],
-            "module": "test.views.records.ui",
+            "module": "test.views.records.app",
         },
     }
 
@@ -380,7 +380,7 @@ def test_model_saver_invenio():
         "api-blueprint": {
             "alias": "test",
             "extra_code": "",
-            "function": "test.views.records.api.create_blueprint_from_app",
+            "function": "test.views.records.api.create_api_blueprint",
             "generate": True,
             "imports": [],
             "module": "test.views.records.api",
@@ -645,12 +645,12 @@ def test_model_saver_invenio():
                 "module": "test.services.records.ui_schema",
             }
         },
-        "ui-blueprint": {
+        "app-blueprint": {
             "alias": "test",
             "extra_code": "",
-            "function": "test.views.records.ui.create_blueprint_from_app",
+            "function": "test.views.records.app.create_app_blueprint",
             "generate": True,
             "imports": [],
-            "module": "test.views.records.ui",
+            "module": "test.views.records.app",
         },
     }

@@ -66,7 +66,9 @@ class RegularMarshmallowComponentMixin:
 
         fields.append(MarshmallowField(field_name, field, imports))
 
-    def _marshmallow_field_arguments(self, datatype, section, marshmallow, field_name):
+    def _marshmallow_field_arguments(
+        self, datatype, section, marshmallow, field_name  # NOSONAR
+    ):
         arguments = copy.copy(marshmallow.get("arguments", []))
         read = marshmallow.get("read", True)
         write = marshmallow.get("write", True)

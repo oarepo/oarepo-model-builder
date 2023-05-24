@@ -35,7 +35,6 @@ class CFGOutput(OutputBase):
             if line == e.strip():
                 break
         else:
-            # TODO: this is a private api, but 'append' seems not to work on empty option
             grp.append(line)
 
     # low-level API

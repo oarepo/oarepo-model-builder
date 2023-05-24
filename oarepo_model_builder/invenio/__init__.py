@@ -11,6 +11,7 @@ TEMPLATES = {
     "resource-config": "templates/resource_config.py.jinja2",
     "resource": "templates/resource.py.jinja2",
     "api-views": "templates/api_views.py.jinja2",
+    "app-views": "templates/app_views.py.jinja2",
     "version": "templates/version.py.jinja2",
     "config": "templates/config.py.jinja2",
     "ext": "templates/ext.py.jinja2",

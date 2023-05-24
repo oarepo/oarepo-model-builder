@@ -19,7 +19,6 @@ from .utils import strip_whitespaces
 def test_enum():
     schema = load_model(
         "test.yaml",
-        "test",
         model_content={
             "record": {
                 "use": "invenio",

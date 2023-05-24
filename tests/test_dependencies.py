@@ -27,7 +27,6 @@ def test_dev_dependencies():
 def build(kwargs={}):
     schema = load_model(
         "test.yaml",
-        "test",
         model_content={
             "record": {},
             "settings": {"schema-server": "local://"},

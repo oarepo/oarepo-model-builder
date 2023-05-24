@@ -91,7 +91,7 @@ class DefaultsModelComponent(DataTypeComponent):
             "base",
             split_base_name(module),
         )
-        base_upper = module_container.setdefault(
+        module_container.setdefault(
             "base-upper",
             module_base.upper(),
         )
@@ -104,11 +104,11 @@ class DefaultsModelComponent(DataTypeComponent):
             "prefix",
             camel_case(module_base),
         )
-        prefix_upper = module_container.setdefault(
+        module_container.setdefault(
             "prefix-upper",
             prefix.upper(),
         )
-        prefix_snake = module_container.setdefault(
+        module_container.setdefault(
             "prefix-snake",
             snake_case(prefix),
         )
@@ -117,11 +117,11 @@ class DefaultsModelComponent(DataTypeComponent):
             "suffix",
             snake_case(prefix),
         )
-        suffix_upper = module_container.setdefault(
+        module_container.setdefault(
             "suffix-upper",
             suffix.upper(),
         )
-        suffix_snake = module_container.setdefault(
+        module_container.setdefault(
             "suffix-snake",
             snake_case(suffix),
         )

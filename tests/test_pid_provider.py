@@ -16,7 +16,6 @@ def get_sources(model_name, model_content=None):
         }
     schema = load_model(
         f"{model_name}.yaml",
-        model_name,
         model_content=model_content,
         isort=False,
         black=False,

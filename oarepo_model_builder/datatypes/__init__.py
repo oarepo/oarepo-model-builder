@@ -48,7 +48,9 @@ from .strings import (  # noqa
     FulltextDataType,
     FulltextKeywordDataType,
     KeywordDataType,
+    StringDataType,
     URLDataType,
+    UUIDDataType,
 )
 
 DEFAULT_DATATYPES = [
@@ -64,6 +66,7 @@ DEFAULT_DATATYPES = [
     FulltextDataType,
     KeywordDataType,
     FulltextKeywordDataType,
+    UUIDDataType,
     ObjectDataType,
     NestedDataType,
     FlattenDataType,

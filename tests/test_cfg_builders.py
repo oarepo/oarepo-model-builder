@@ -59,7 +59,7 @@ def test_setup_cfg_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
         [SetupCfgBuilder],
-        os.path.join("setup.cfg"),
+        os.path.join("setup.cfg"),  # NOSONAR
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(
@@ -74,16 +74,7 @@ authors =
 [options]
 python = >=3.9
 install_requires =
-    invenio_access>=1.4.4
-    invenio_app>=1.3.4
-    invenio_db>=1.0.14
-    invenio_pidstore>=1.2.3
-    invenio_records>=2.0.0
-    invenio-records-rest>=2.1.0
-    invenio_records_permissions>=0.13.0
-    invenio_records_resources>=0.21.4
-    invenio-search>=2.1.0
-    tqdm>=4.64.1
+    oarepo>=11,<12
     oarepo-runtime>=1.0.0
 packages = find:
 
@@ -166,7 +157,8 @@ def test_invenio_resource_cfg_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 [options.entry_points]
-invenio_base.api_blueprints = test = test.views.records.api:create_blueprint_from_app
+invenio_base.api_blueprints = test = test.views.records.api:create_api_blueprint
+invenio_base.blueprints= test= test.views.records.app:create_app_blueprint
         """
     )
 

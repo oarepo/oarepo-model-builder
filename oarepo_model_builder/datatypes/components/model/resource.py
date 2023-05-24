@@ -121,7 +121,7 @@ class ResourceModelComponent(DataTypeComponent):
         )
         resource.setdefault(
             "proxy",
-            f"current_resource",
+            "current_resource",
         )
         resource.setdefault("extra-code", "")
         resource.setdefault("base-classes", ["RecordResource"])

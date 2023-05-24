@@ -28,6 +28,12 @@ def array_contains_value(arr, value):
     return False
 
 
+def deep_equals(value, value2):
+    if isinstance(value, (int, float, bool, str)):
+        return value == value2
+    return json.dumps(value, sort_keys=True) == json.dumps(value2, sort_keys=True)
+
+
 def append_array(datatype, *attrs):
     arr = set_default(datatype, *attrs[:-1], [])
     value = attrs[-1]
@@ -44,3 +50,18 @@ def prepend_array(datatype, *attrs):
         value = value(datatype.definition)
     if not array_contains_value(arr, value):
         arr.insert(0, value)
+
+
+def place_after(datatype, *attrs):
+    value = attrs[-1]
+    placeholder = attrs[-2]
+    arr = set_default(datatype, *attrs[:-2], [])
+    if callable(value):
+        value = value(datatype.definition)
+    if callable(placeholder):
+        placeholder = placeholder(datatype.definition)
+    if not array_contains_value(arr, value):
+        for idx, elem in enumerate(arr):
+            if deep_equals(placeholder, elem):
+                arr.insert(idx + 1, value)
+                break

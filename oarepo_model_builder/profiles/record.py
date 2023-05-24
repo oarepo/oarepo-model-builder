@@ -64,7 +64,6 @@ class RecordProfile(Profile):
 
         extended_model = load_model(
             extended_schema.split("#", maxsplit=1)[0],
-            package=None,
             configs=[],
             black=False,
             isort=False,

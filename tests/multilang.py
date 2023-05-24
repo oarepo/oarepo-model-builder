@@ -10,7 +10,7 @@ class MultilangPreprocessor:
     #     path="/properties/*",
     #     condition=lambda current, stack: current.type == "multilingual",
     # )
-    def modify_multilang_schema(self, data, stack, **kwargs):
+    def modify_multilang_schema(self, data, **__kwargs):
         data["type"] = "object"
         data["properties"] = {"lang": {"type": "string"}, "value": {"type": "string"}}
         return data
@@ -39,7 +39,7 @@ class MultilangPreprocessor:
     #     path="/properties/*",
     #     condition=lambda current, stack: current.type == "multilingual",
     # )
-    def modify_multilang_marshmallow(self, data, stack, **kwargs):
+    def modify_multilang_marshmallow(self, data, **__kwargs):
         data["type"] = "object"
         deepmerge(
             data.setdefault("marshmallow", {}),

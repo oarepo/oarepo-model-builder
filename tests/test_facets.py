@@ -9,8 +9,7 @@ DUMMY_YAML = "test.yaml"
 
 def test_include_invenio():
     schema = load_model(
-        DUMMY_YAML,
-        "test",
+        "test.yaml",
         model_content={
             "record": {
                 "use": "invenio",
@@ -108,7 +107,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_nested():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -192,7 +190,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_object():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -277,7 +274,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_nest_obj():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -385,7 +381,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_array():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -453,7 +448,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_array_object():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -543,7 +537,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_array_nested():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -559,7 +552,7 @@ def test_array_nested():
                                     "properties": {
                                         "d": {
                                             "type": "fulltext+keyword",
-                                            # "facets": {"key": "test"},
+                                            "facets": {"key": "test"},
                                         },
                                         "e": {
                                             "type": "object",
@@ -608,7 +601,7 @@ created = DateTimeFacet(field="created", label=_("created.label") )
 
 _id = TermsFacet(field="id", label=_("id.label") )
 
-obj_arr_d_keyword = NestedLabeledFacet(path ="obj.arr", nested_facet = TermsFacet(field="obj.arr.d.keyword", label=_("obj/arr/d/keyword.label") ))
+test = NestedLabeledFacet(path ="obj.arr", nested_facet = TermsFacet(field="obj.arr.d.keyword", label=_("obj/arr/d/keyword.label") ))
 
 
 
@@ -626,7 +619,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_not_searchable():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -716,7 +708,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_top_facets():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -811,7 +802,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_searchable_true():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -878,7 +868,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_enum():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -957,7 +946,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_customizations_args_class():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",
@@ -1029,7 +1017,6 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 def test_customizations_field():
     schema = load_model(
         DUMMY_YAML,
-        "test",
         model_content={
             "record": {
                 "use": "invenio",

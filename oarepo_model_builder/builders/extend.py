@@ -51,8 +51,8 @@ class ExtendBuilder(JSONBaseBuilder):
         model["marshmallow"] = {"base-classes": [marshmallow["class"]]}
         model["ui"] = {"marshmallow": {"base-classes": [ui["marshmallow"]["class"]]}}
 
-    def begin(self, schema, settings):
-        super(JSONBaseBuilder, self).begin(schema, settings)
+    def begin(self, current_model, schema):
+        super(JSONBaseBuilder, self).begin(current_model, schema)
         self.output = self.builder.get_output(self.output_file_type, "model.json5")
 
     def finish(self):

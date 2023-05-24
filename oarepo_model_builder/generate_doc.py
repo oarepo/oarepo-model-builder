@@ -29,8 +29,8 @@ def generate_doc(outfile):
             if schema_class.__doc__:
                 print(f"{schema_class.__doc__}", file=f)
             print(file=f)
-            print(f"| property | type | documentation |", file=f)
-            print(f"| --- | --- | --- |", file=f)
+            print("| property | type | documentation |", file=f)
+            print("| --- | --- | --- |", file=f)
             for fld_name, fld in sorted(schema["fields"].items()):
                 if "ref" in fld:
                     fld_col = f'[{fld["ref"].__name__}](#{fld["ref"].__name__})'

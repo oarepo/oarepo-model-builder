@@ -2,6 +2,7 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.invenio.invenio_api_views import InvenioAPIViewsBuilder
 from oarepo_model_builder.invenio.invenio_config import InvenioConfigBuilder
 from oarepo_model_builder.invenio.invenio_ext import InvenioExtBuilder
 from oarepo_model_builder.invenio.invenio_proxies import InvenioProxiesBuilder
@@ -34,7 +35,6 @@ from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
     InvenioRecordUISerializerBuilder,
 )
 from oarepo_model_builder.invenio.invenio_version import InvenioVersionBuilder
-from oarepo_model_builder.invenio.invenio_views import InvenioAPIViewsBuilder
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
 
@@ -74,7 +74,7 @@ def test_record_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
         [InvenioRecordBuilder],
-        os.path.join("test", "records", "api.py"),
+        os.path.join("test", "records", "api.py"),  # NOSONAR
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(
@@ -267,7 +267,7 @@ def test_config_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
         [InvenioConfigBuilder],
-        os.path.join("test", "config.py"),
+        os.path.join("test", "config.py"),  # NOSONAR
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(
@@ -376,6 +376,7 @@ def test_service_config():
         [InvenioRecordServiceConfigBuilder],
         os.path.join("test", "services", "records", "config.py"),
     )
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
@@ -386,6 +387,7 @@ from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
 from test.services.records.search import TestSearchOptions
+
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
@@ -428,10 +430,10 @@ def test_api_views_builder():
         '''
 from flask import Blueprint
 
-def create_blueprint_from_app(app):
+def create_api_blueprint(app):
     """Create TestRecord blueprint."""
     blueprint = app.extensions["test"].resource.as_blueprint()
-    blueprint.record_once(init_create_blueprint_from_app)
+    blueprint.record_once(init_create_api_blueprint)
 
     #calls record_once for all other functions starting with "init_addons_"
     #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
@@ -442,7 +444,7 @@ def create_blueprint_from_app(app):
 
     return blueprint
 
-def init_create_blueprint_from_app(state):
+def init_create_api_blueprint(state):
     """Init app."""
     app = state.app
     ext = app.extensions["test"]

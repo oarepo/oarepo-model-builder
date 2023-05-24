@@ -12,6 +12,7 @@ class NumberDataType(DataType):
     }
 
 
+
 class IntegerDataType(NumberDataType):
     model_type = "integer"
 
@@ -38,7 +39,7 @@ class FloatDataType(NumberDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma_fields.Float",
+            "field-class": "ma_fields.Float",  # NOSONAR
         }
     }
     marshmallow = {
@@ -93,3 +94,4 @@ class BooleanDataType(DataType):
             {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
         ],
     }
+

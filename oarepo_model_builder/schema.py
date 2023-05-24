@@ -1,4 +1,5 @@
 import copy
+import os
 import pathlib
 from pathlib import Path
 from typing import Callable, Dict, List, Union
@@ -22,6 +23,7 @@ class ModelSchema:
         merged_models: List[Union[str, Path]] = None,
         loaders=None,
         validate=True,
+        source_locations=None,
     ):
         """
         Creates and parses model schema
@@ -35,6 +37,9 @@ class ModelSchema:
         self.file_path = file_path
         self.included_schemas = included_models or {}
         self.loaders = loaders
+        self.source_locations = [*(source_locations or [])]
+        self.source_locations.append(os.path.abspath(os.curdir))
+        self.source_locations.append(os.path.dirname(os.path.abspath(self.file_path)))
 
         if content is not None:
             self.schema = content
@@ -141,8 +146,9 @@ class ModelSchema:
     def _resolve_file_path(self, file_id, source_locations):
         if file_id in self.included_schemas:
             return file_id
+        source_locations = [*(source_locations or []), *self.source_locations]
         for location in source_locations:
-            pth = Path(location).parent / file_id
+            pth = Path(location) / file_id
             if pth.exists():
                 return pth
         pth = self.abs_path.parent / file_id
@@ -164,8 +170,6 @@ class ModelSchema:
                 for key in element:
                     if key in (self.USE_KEYWORD, self.REF_KEYWORD):
                         break
-                else:
-                    raise  # just for making pycharm happy
                 included_name = element[key]
 
                 # if it is a dictionary, then probably it is a name of a property,

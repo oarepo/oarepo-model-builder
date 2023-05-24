@@ -64,9 +64,10 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
                     self.build_class_method,
                     classes=classes,
                 )
-            to_process.extend(marshmallow_section.children.values())
-            if marshmallow_section.item:
-                to_process.append(marshmallow_section.item)
+            if marshmallow_section.config.get("generate", True):
+                to_process.extend(marshmallow_section.children.values())
+                if marshmallow_section.item:
+                    to_process.append(marshmallow_section.item)
         return classes
 
     def generate_package(self, package_name, package_classes: List[MarshmallowClass]):
