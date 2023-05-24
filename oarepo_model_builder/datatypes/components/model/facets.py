@@ -1,12 +1,11 @@
 import marshmallow as ma
-from marshmallow import fields
 
-from oarepo_model_builder.datatypes import DataTypeComponent
-from .defaults import DefaultsModelComponent
+from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType, datatypes
 from oarepo_model_builder.datatypes.components.model.utils import set_default
-from oarepo_model_builder.validation.utils import ImportSchema
-from oarepo_model_builder.datatypes import DataType, datatypes
-from oarepo_model_builder.datatypes import ModelDataType
+
+from .defaults import DefaultsModelComponent
+
+
 class FacetsSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
@@ -34,37 +33,34 @@ class FacetsModelComponent(DataTypeComponent):
             FacetsSchema,
             required=False,
         )
+
     def before_model_prepare(self, datatype, *, context, **kwargs):
         module = datatype.definition["module"]["qualified"]
         profile_module = context["profile_module"]
 
-
-        facets= set_default(datatype, "facets", {})
+        facets = set_default(datatype, "facets", {})
         facets.setdefault("generate", True)
         facets.setdefault("module", f"{module}.services.{profile_module}.facets")
 
         facets.setdefault("extra-code", "")
 
-
-
     def process_facets(self, datatype, section, **kwargs):
         facets = []
-        searchable = datatype.definition.get('searchable', True)
+        searchable = datatype.definition.get("searchable", True)
         datatypes.call_components(
             datatype,
             "build_facets",
             facets=facets,
             facet_definition=None,
-            searchable = searchable,
-
+            searchable=searchable,
         )
-        section.config['facets'] = facets
-        datatype.definition['config']['facets'] = facets
+        section.config["facets"] = facets
+        datatype.definition["config"]["facets"] = facets
         return section
 
-    def build_facets(self, datatype, facets, facet_definition = None, searchable = True):
+    def build_facets(self, datatype, facets, facet_definition=None, searchable=True):
         for c in datatype.children.values():
-            if c.model_type == 'array':
+            if c.model_type == "array":
                 children = c.item.children
             else:
                 children = c.children
@@ -77,13 +73,13 @@ class FacetsModelComponent(DataTypeComponent):
                     facets=facets,
                     facet_definition=None,
                     searchable=searchable,
-
                 )
 
         return facets
+
     def get_leaf(self, children, facets, searchable):
         for c in children.values():
-            if c.model_type == 'array':
+            if c.model_type == "array":
                 children = c.item.children
             else:
                 children = c.children
@@ -94,12 +90,14 @@ class FacetsModelComponent(DataTypeComponent):
                     c,
                     "build_facets",
                     facets=facets,
-                    facet_definition = None,
-                    searchable=searchable
+                    facet_definition=None,
+                    searchable=searchable,
                 )
-    def build_definition(self,datatype,  facets, facet_definition = None, searchable = True):
+
+    def build_definition(
+        self, datatype, facets, facet_definition=None, searchable=True
+    ):
         if facet_definition:
-            facet_searchable = facet_definition.get('facet_searchable', searchable)
+            facet_searchable = facet_definition.get("facet_searchable", searchable)
             if facet_searchable:
                 facets.append(facet_definition)
-

@@ -42,19 +42,33 @@ class FulltextDataType(StringDataType):
 class KeywordDataType(StringDataType):
     model_type = "keyword"
     mapping = {"type": "keyword"}
-    facets = {"facet_class": "TermsFacet", "imports": [{"import" :"invenio_records_resources.services.records.facets.TermsFacet"}]}
+    facets = {
+        "facet_class": "TermsFacet",
+        "imports": [
+            {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
+        ],
+    }
 
 
 class FulltextKeywordDataType(StringDataType):
     model_type = "fulltext+keyword"
     mapping = {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
-    facets = {"facet_class": "TermsFacet",
-              "keyword": True,
-              # "path": "_keyword",
-              "imports": [{"import" :"invenio_records_resources.services.records.facets.TermsFacet"}]}
+    facets = {
+        "facet_class": "TermsFacet",
+        "keyword": True,
+        # "path": "_keyword",
+        "imports": [
+            {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
+        ],
+    }
 
 
 class URLDataType(StringDataType):
     model_type = "url"
     mapping = {"type": "keyword"}
-    facets = {"facet_class": "TermsFacet", "imports": [{"import" :"invenio_records_resources.services.records.facets.TermsFacet"}]}
+    facets = {
+        "facet_class": "TermsFacet",
+        "imports": [
+            {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
+        ],
+    }

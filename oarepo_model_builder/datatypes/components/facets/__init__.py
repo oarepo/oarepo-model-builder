@@ -1,17 +1,11 @@
-from .field import (
-    RegularFacetsComponent,
-
-)
+from .array import ArrayFacetsComponent
+from .field import RegularFacetsComponent
+from .nested import NestedFacetsComponent
 from .object import ObjectFacetsComponent
 
-
-from .nested import NestedFacetsComponent
-from .array import ArrayFacetsComponent
 __all__ = [
     "RegularFacetsComponent",
     "ObjectFacetsComponent",
-
     "NestedFacetsComponent",
-    "ArrayFacetsComponent"
-
+    "ArrayFacetsComponent",
 ]

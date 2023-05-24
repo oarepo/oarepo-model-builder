@@ -22,4 +22,3 @@ class EnumComponent(DataTypeComponent):
             section.config.setdefault("marshmallow", {}).setdefault(
                 "validators", []
             ).append(f"ma_validate.OneOf({repr(enum)})")
-

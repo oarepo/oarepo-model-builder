@@ -1,16 +1,5 @@
-from collections import defaultdict
-from typing import List
 
-from oarepo_model_builder.datatypes import DataType, datatypes
-from oarepo_model_builder.datatypes.components.marshmallow.graph import (
-    collect_imports,
-    set_package_dependencies,
-    sort_by_reference_count,
-)
-from oarepo_model_builder.datatypes.components.marshmallow.object import (
-    MarshmallowClass,
-)
-from oarepo_model_builder.utils.jinja import package_name
+from oarepo_model_builder.datatypes import DataType
 
 from .invenio_base import InvenioBaseClassPythonBuilder
 
@@ -20,7 +9,6 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
     # class_config = "record-search-options-class"
     template = "record-search-options"
 
-
     def build_node(self, node: DataType):
         # everything is done in finish
         pass
@@ -28,19 +16,18 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
     def finish(self, **extra_kwargs):
         self._generate_facets(self.current_model, **extra_kwargs)
 
-
     def _generate_facets(self, node: DataType, **extra_kwargs):
-        facets = node.definition['config']['facets']
+        facets = node.definition["config"]["facets"]
 
-        package = node.definition['facets']['module']
+        package = node.definition["facets"]["module"]
         search_options_data = []
-        python_path = self.class_to_path(f'{package}.facets')
+        python_path = self.class_to_path(f"{package}.facets")
         imports = []
         for f in facets:
-            search_options_data.append({f["path"] : f["class"]})
-            if 'imports' in f:
-                for i in f['imports']:
-                    imports.append((i['import']).rsplit(".", 1))
+            search_options_data.append({f["path"]: f["class"]})
+            if "imports" in f:
+                for i in f["imports"]:
+                    imports.append((i["import"]).rsplit(".", 1))
 
         imports = list(map(list, set(map(tuple, imports))))
         imports.sort(key=lambda x: (x[0], x[1]))
@@ -53,5 +40,3 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
             imports=imports,
             **extra_kwargs,
         )
-
-

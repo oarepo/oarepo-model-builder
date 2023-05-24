@@ -1,8 +1,9 @@
 from .enum import EnumComponent
-from .facets import (RegularFacetsComponent,
-                     ObjectFacetsComponent,
-                     NestedFacetsComponent,
-                     ArrayFacetsComponent
+from .facets import (
+    ArrayFacetsComponent,
+    NestedFacetsComponent,
+    ObjectFacetsComponent,
+    RegularFacetsComponent,
 )
 from .marshmallow import (
     ArrayMarshmallowComponent,
@@ -30,10 +31,10 @@ from .model import (
     ResourceModelComponent,
     SampleModelComponent,
     SavedModelComponent,
+    SearchOptionsModelComponent,
     ServiceModelComponent,
     UIMarshmallowModelComponent,
     UIModelComponent,
-    SearchOptionsModelComponent
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
 from .ui import ObjectUIComponent, RegularUIComponent
@@ -74,5 +75,5 @@ DEFAULT_COMPONENTS = [
     ObjectFacetsComponent,
     NestedFacetsComponent,
     RegularFacetsComponent,
-    ArrayFacetsComponent
+    ArrayFacetsComponent,
 ]

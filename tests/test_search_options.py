@@ -84,7 +84,7 @@ def test_search_class():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -93,7 +93,7 @@ def test_search_class():
     builder.build(schema, "record", ["record"], "")
 
     data = builder.filesystem.open(
-        os.path.join("tests",   "services", "records","search.py")
+        os.path.join("tests", "services", "records", "search.py")
     ).read()
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",

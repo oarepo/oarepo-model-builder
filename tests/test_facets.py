@@ -20,14 +20,21 @@ def test_include_invenio():
                         "properties": {
                             "c": {
                                 "type": "keyword",
-                                "facets": {"path": 'cosi'},
+                                "facets": {"path": "cosi"},
                             }
                         },
                     },
                     "a": "fulltext+keyword",
                     "b": {
                         "type": "keyword",
-                        "facets": {"path": 'cosi', "imports": [{"import" :"invenio_records_resources.services.records.facets.TermsFacet2"}]},
+                        "facets": {
+                            "path": "cosi",
+                            "imports": [
+                                {
+                                    "import": "invenio_records_resources.services.records.facets.TermsFacet2"
+                                }
+                            ],
+                        },
                     },
                     "c": "fulltext",
                 },
@@ -197,7 +204,9 @@ def test_object():
                             "d": {"type": "fulltext+keyword"},
                             "f": {
                                 "type": "object",
-                                "properties": {"g": {"type": "keyword", "facets": {"path": "cosi"}}},
+                                "properties": {
+                                    "g": {"type": "keyword", "facets": {"path": "cosi"}}
+                                },
                             },
                             "e": "fulltext",
                         },
@@ -207,7 +216,7 @@ def test_object():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -301,7 +310,7 @@ def test_nest_obj():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -385,7 +394,7 @@ def test_array():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -475,7 +484,7 @@ def test_array_object():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -559,7 +568,7 @@ def test_array_nested():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -643,7 +652,7 @@ def test_not_searchable():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -733,7 +742,7 @@ def test_top_facets():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -814,7 +823,7 @@ def test_searchable_true():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -864,9 +873,16 @@ def test_enum():
             "record": {
                 "use": "invenio",
                 "properties": {
-                    "a": {"type": "keyword", "enum": ["a", "b"], "facets": {"facet-class": 'EnumTermsFacet',
-                                                                            "imports": [{"import" :"oarepo_runtime.facets.enum.EnumTermsFacet"}]
-                                                                            }},
+                    "a": {
+                        "type": "keyword",
+                        "enum": ["a", "b"],
+                        "facets": {
+                            "facet-class": "EnumTermsFacet",
+                            "imports": [
+                                {"import": "oarepo_runtime.facets.enum.EnumTermsFacet"}
+                            ],
+                        },
+                    },
                     "b": {
                         "type": "keyword",
                     },
@@ -875,7 +891,7 @@ def test_enum():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -948,7 +964,7 @@ def test_customizations_args_class():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
@@ -1010,7 +1026,7 @@ def test_customizations_field():
                         "type": "keyword",
                         "facets": {
                             "facet-class": "MyFacetClass",
-                            "args": ["blah=123", "alzp=\"jej\""],
+                            "args": ["blah=123", 'alzp="jej"'],
                             "path": "aaa",
                             "imports": [{"import": "blah.MyFacetClass"}],
                         },
@@ -1020,7 +1036,7 @@ def test_customizations_field():
         },
         isort=False,
         black=False,
-        autoflake=False
+        autoflake=False,
     )
 
     filesystem = InMemoryFileSystem()
