@@ -17,7 +17,9 @@ class {{ vars.service_config|class_header }}:
     {% if not vars.marshmallow.skip %}
     schema = {{ vars.marshmallow.class|base_name }}
     {% endif %}
+    {% if not vars.search_options.skip %}
     search = {{ vars.search_options.class|base_name }}
+    {% endif %}
     {% if not vars.record.skip %}
     record_cls = {{ vars.record.class|base_name }}
     {% endif %}
