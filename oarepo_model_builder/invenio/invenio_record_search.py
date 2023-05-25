@@ -1,11 +1,10 @@
-
 from oarepo_model_builder.datatypes import DataType
 
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 
 class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
-    # TYPE = "invenio_record_search"
+    TYPE = "invenio_record_search"
     # class_config = "record-search-options-class"
     template = "record-search-options"
 
@@ -17,7 +16,7 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
         self._generate_facets(self.current_model, **extra_kwargs)
 
     def _generate_facets(self, node: DataType, **extra_kwargs):
-        facets = node.definition["config"]["facets"]
+        facets = self.current_model.section_facets.config["facets"]
 
         package = node.definition["facets"]["module"]
         search_options_data = []

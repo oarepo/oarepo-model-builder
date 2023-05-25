@@ -7,7 +7,7 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
     template = "record-search-options"
 
     def finish(self, **extra_kwargs):
-        facets = self.current_model.definition["config"]["facets"]
+        facets = self.current_model.section_facets.config["facets"]
         search_data = []
         for f in facets:
             search_data.append({f["path"]: "facets." + f["path"]})

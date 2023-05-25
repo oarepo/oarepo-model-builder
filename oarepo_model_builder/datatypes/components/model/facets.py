@@ -55,7 +55,6 @@ class FacetsModelComponent(DataTypeComponent):
             searchable=searchable,
         )
         section.config["facets"] = facets
-        datatype.definition["config"]["facets"] = facets
         return section
 
     def build_facets(self, datatype, facets, facet_definition=None, searchable=True):
