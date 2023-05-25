@@ -6,21 +6,18 @@ from .invenio_base import InvenioBaseClassPythonBuilder
 class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_search"
     # class_config = "record-search-options-class"
-    template = "record-search-options"
+    section = "facets"
+    template = "record-facets"
 
     def build_node(self, node: DataType):
         # everything is done in finish
         pass
 
     def finish(self, **extra_kwargs):
-        self._generate_facets(self.current_model, **extra_kwargs)
-
-    def _generate_facets(self, node: DataType, **extra_kwargs):
         facets = self.current_model.section_facets.config["facets"]
-
-        package = node.definition["facets"]["module"]
+        package = self.current_model.definition["facets"]["module"]
         search_options_data = []
-        python_path = self.class_to_path(f"{package}.facets")
+
         imports = []
         for f in facets:
             search_options_data.append({f["path"]: f["class"]})
@@ -31,9 +28,7 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
         imports = list(map(list, set(map(tuple, imports))))
         imports.sort(key=lambda x: (x[0], x[1]))
 
-        self.process_template(
-            python_path,
-            "record-facets",
+        return super().finish(
             current_package_name=package,
             search_options_data=search_options_data,
             imports=imports,
