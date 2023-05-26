@@ -1,8 +1,8 @@
 import os
-import re
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import InMemoryFileSystem
+from tests.utils import strip_whitespaces
 
 DUMMY_YAML = "test.yaml"
 
@@ -95,9 +95,7 @@ def test_search_class():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "search.py")
     ).read()
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
 from flask_babelex import lazy_gettext as _
@@ -109,7 +107,7 @@ class TestSearchOptions(InvenioSearchOptions):
 
     facets = {
         '_schema': facets._schema,
-      'a_keyword': facets.a_keyword,
+      'a': facets.a,
       'b': facets.b,
       'created': facets.created,
       '_id': facets._id,

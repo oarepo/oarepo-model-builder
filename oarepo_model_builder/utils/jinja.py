@@ -11,7 +11,11 @@ from .python_name import (  # noqa
 
 
 def sorted_imports(imports):
-    imports = list(sorted(imports, key=lambda x: (x["import"], x.get("alias"))))
+    # make the entries unique
+    imports_dict = {(x["import"], x.get("alias")): x for x in imports}
+    imports = list(imports_dict.values())
+    # sort them
+    imports.sort(key=lambda x: (x["import"], x.get("alias")))
     return imports
 
 

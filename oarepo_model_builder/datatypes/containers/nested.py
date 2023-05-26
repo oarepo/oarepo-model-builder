@@ -11,4 +11,3 @@ class NestedDataType(ObjectDataType):
             {"import": "oarepo_runtime.facets.nested_facet.NestedLabeledFacet"}
         ],
     }
-

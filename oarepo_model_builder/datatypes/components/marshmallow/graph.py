@@ -1,9 +1,10 @@
 import dataclasses
 from typing import List, Optional, Set
 
+from oarepo_model_builder.validation import InvalidModelException
+
 from ....utils.python_name import base_name, package_name
 from ...datatypes import Import
-from oarepo_model_builder.validation import InvalidModelException
 
 
 @dataclasses.dataclass

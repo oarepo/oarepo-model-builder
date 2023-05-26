@@ -3,6 +3,7 @@ import re
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import InMemoryFileSystem
+from tests.utils import strip_whitespaces
 
 DUMMY_YAML = "test.yaml"
 
@@ -13,7 +14,7 @@ def test_include_invenio():
         model_content={
             "record": {
                 "use": "invenio",
-                "module" : {"qualified": "test"},
+                "module": {"qualified": "test"},
                 "properties": {
                     "jej": {
                         "type": "nested",
@@ -49,9 +50,13 @@ def test_include_invenio():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -75,7 +80,7 @@ _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
 
 
-a_keyword = TermsFacet(field="a.keyword", label=_("a/keyword.label") )
+a = TermsFacet(field="a", label=_("a.label") )
 
 
 
@@ -138,9 +143,13 @@ def test_nested():
 
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -161,7 +170,7 @@ b_c = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.c", label
 
 
 
-b_d_keyword = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.d.keyword", label=_("b/d/keyword.label") ))
+b_d = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.d", label=_("b/d.label") ))
 
 
 
@@ -224,9 +233,13 @@ def test_object():
 
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -246,7 +259,7 @@ b_c = TermsFacet(field="b.c", label=_("b/c.label") )
 
 
 
-b_d_keyword = TermsFacet(field="b.d.keyword", label=_("b/d/keyword.label") )
+b_d = TermsFacet(field="b.d", label=_("b/d.label") )
 
 
 
@@ -318,9 +331,13 @@ def test_nest_obj():
 
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -341,7 +358,7 @@ b_nes_c = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_n
 
 
 
-b_nes_d_keyword = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.d.keyword", label=_("b_nes/d/keyword.label") ))
+b_nes_d = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.d", label=_("b_nes/d.label") ))
 
 
 
@@ -353,7 +370,7 @@ b_obj_c = TermsFacet(field="b_obj.c", label=_("b_obj/c.label") )
 
 
 
-b_obj_d_keyword = TermsFacet(field="b_obj.d.keyword", label=_("b_obj/d/keyword.label") )
+b_obj_d = TermsFacet(field="b_obj.d", label=_("b_obj/d.label") )
 
 
 
@@ -401,9 +418,13 @@ def test_array():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
 
     builder.build(schema, "record", ["record"], "")
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
 
     assert re.sub(r"\s", "", data) == re.sub(
@@ -424,7 +445,7 @@ a = TermsFacet(field="a", label=_("a.label") )
 
 
 
-c_keyword = TermsFacet(field="c.keyword", label=_("c/keyword.label") )
+c = TermsFacet(field="c", label=_("c.label") )
 
 
 
@@ -492,9 +513,13 @@ def test_array_object():
 
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -576,9 +601,13 @@ def test_array_nested():
 
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -601,7 +630,7 @@ created = DateTimeFacet(field="created", label=_("created.label") )
 
 _id = TermsFacet(field="id", label=_("id.label") )
 
-test = NestedLabeledFacet(path ="obj.arr", nested_facet = TermsFacet(field="obj.arr.d.keyword", label=_("obj/arr/d/keyword.label") ))
+test = NestedLabeledFacet(path ="obj.arr", nested_facet = TermsFacet(field="obj.arr.d", label=_("obj/arr/d.label") ))
 
 
 
@@ -659,9 +688,13 @@ def test_not_searchable():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -749,13 +782,14 @@ def test_top_facets():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
-    print(data)
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
 \"""Facet definitions.\"""
 
@@ -770,7 +804,7 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
 
-a_keyword = TermsFacet(field="a.keyword", label=_("a/keyword.label") )
+a = TermsFacet(field="a", label=_("a.label") )
 
 
 
@@ -829,9 +863,13 @@ def test_searchable_true():
     filesystem = InMemoryFileSystem()
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "record", ["record"], "")
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
@@ -898,9 +936,13 @@ def test_enum():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
 
     assert re.sub(r"\s", "", data) == re.sub(
@@ -971,9 +1013,13 @@ def test_customizations_args_class():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
 
     assert re.sub(r"\s", "", data) == re.sub(
@@ -1043,9 +1089,13 @@ def test_customizations_field():
     builder = create_builder_from_entrypoints(filesystem=filesystem)
     builder.build(schema, "record", ["record"], "")
 
-    data = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
     print(data)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",

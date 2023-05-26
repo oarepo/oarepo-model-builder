@@ -21,4 +21,3 @@ class PythonBuilder(OutputBuilder):
 
     def build_node(self, datatype):
         "intended to be overridden in children"
-        pass

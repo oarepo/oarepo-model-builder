@@ -2,10 +2,11 @@ import marshmallow as ma
 from marshmallow import fields
 
 from oarepo_model_builder.datatypes import datatypes
-from oarepo_model_builder.utils.facet_helpers import facet_name
+from oarepo_model_builder.utils.facet_helpers import facet_name, flatten
 from oarepo_model_builder.validation.utils import ImportSchema
 
 from ...datatypes import DataTypeComponent
+from . import FacetDefinition
 
 
 class FacetsSchema(ma.Schema):
@@ -31,48 +32,49 @@ class RegularFacetsComponent(DataTypeComponent):
             required=False,
         )
 
-    def build_facets(self, datatype, facets, facet_definition=None, searchable=True):
-        facet_section = datatype.section_facets
-        if not facet_section.config == {}:
-            _path = datatype.path
-            if "keyword" in datatype.section_facets.config:
-                _path = _path + ".keyword"
-            if "path" in facet_section.config:
-                path = _path + "." + facet_section.config["path"]
+    def facet_path(self, datatype, facet_section):
+        _path = datatype.path
+        if "path" in facet_section:
+            path = _path + "." + facet_section["path"]
+        else:
+            path = _path
+        return path
 
-            else:
-                path = _path
-            key = facet_section.config.get("key", facet_name(_path))
-            label = facet_section.config.get(
-                "label", f'{_path.replace(".", "/")}.label'
-            )
-            facet_searchable = facet_section.config.get("searchable", searchable)
-            imports = facet_section.config.get("imports", [])
-            arguments = facet_section.config.get("args", [])
-            arguments_string = ",".join(arguments)
-            if arguments_string != "":
-                arguments_string = "," + arguments_string
-            field = facet_section.config.get(
-                "field",
-                datatype.section_facets.config["facet_class"]
-                + f'(field="{path}", label =_("{label}") {arguments_string} '
-                + ")",
-            )
-            facet_definition = {
-                "path": key,
-                "class": field,
-                "facet_searchable": facet_searchable,
-                "imports": imports,
-            }
-        datatypes.call_components(
-            datatype.parent,
-            "build_definition",
-            facets=facets,
-            facet_definition=facet_definition,
-            searchable=searchable,
+    def process_facets(self, datatype, section, **__kwargs):
+        # create the facet definition
+        facet_section = section.config
+
+        path = self.facet_path(datatype, facet_section)
+        facet_definition = FacetDefinition(
+            path=facet_section.get("key", facet_name(datatype.path)),
+            dot_path=datatype.path,
+            searchable=facet_section.get("searchable"),
+            imports=facet_section.get("imports", []),
         )
 
-    def create_definition(self, config, datatype):
-        return {
-            datatype.path: config["facet_class"] + f'(field="{datatype.path}"' + ")"
-        }
+        # set the field on the definition
+        label = facet_section.get("label", f'{datatype.path.replace(".", "/")}.label')
+        facet_definition.set_field(
+            facet_section,
+            arguments=[
+                f"field={repr(path)}",
+                f"label =_({repr(label)})",
+                *facet_section.get("args", []),
+            ],
+        )
+
+        # if there is indeed a facet here, process via parents
+        if facet_definition.field:
+            facets = flatten(
+                datatypes.call_components(
+                    datatype.parent,
+                    "build_facet_definition",
+                    facet_definition=facet_definition,
+                )
+            )
+        else:
+            facets = []
+
+        # and store it on the element
+        section.config["facets"] = facets
+        return section

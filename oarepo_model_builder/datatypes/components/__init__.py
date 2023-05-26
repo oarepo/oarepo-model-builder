@@ -1,12 +1,8 @@
 from .enum import EnumComponent
-
-from .facets import (
-    ArrayFacetsComponent,
-    NestedFacetsComponent,
-    ObjectFacetsComponent,
-    RegularFacetsComponent,
-)
-
+from .facets.array import ArrayFacetsComponent
+from .facets.field import RegularFacetsComponent
+from .facets.nested import NestedFacetsComponent
+from .facets.object import ObjectFacetsComponent
 from .marshmallow import (
     ArrayMarshmallowComponent,
     ObjectMarshmallowComponent,
@@ -78,5 +74,4 @@ DEFAULT_COMPONENTS = [
     NestedFacetsComponent,
     RegularFacetsComponent,
     ArrayFacetsComponent,
-
 ]
