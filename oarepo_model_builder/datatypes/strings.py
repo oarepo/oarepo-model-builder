@@ -50,7 +50,6 @@ class KeywordDataType(StringDataType):
     }
 
 
-
 class UUIDDataType(StringDataType):
     model_type = "uuid"
     mapping = {"type": "keyword"}
@@ -69,7 +68,6 @@ class FulltextKeywordDataType(StringDataType):
     }
 
 
-
 class URLDataType(StringDataType):
     model_type = "url"
     mapping = {"type": "keyword"}
@@ -79,4 +77,3 @@ class URLDataType(StringDataType):
             {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
         ],
     }
-

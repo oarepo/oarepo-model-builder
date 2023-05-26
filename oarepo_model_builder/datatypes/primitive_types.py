@@ -12,7 +12,6 @@ class NumberDataType(DataType):
     }
 
 
-
 class IntegerDataType(NumberDataType):
     model_type = "integer"
 
@@ -94,4 +93,3 @@ class BooleanDataType(DataType):
             {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
         ],
     }
-

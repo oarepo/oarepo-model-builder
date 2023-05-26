@@ -3,7 +3,7 @@ import dataclasses
 import json
 from collections.abc import Mapping
 from functools import cached_property, lru_cache
-from typing import Any, Dict, List, Type, Union, Optional
+from typing import Any, Dict, List, Optional, Type, Union
 
 import importlib_metadata
 import marshmallow as ma

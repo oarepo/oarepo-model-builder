@@ -48,7 +48,6 @@ from .strings import (  # noqa
     FulltextDataType,
     FulltextKeywordDataType,
     KeywordDataType,
-    StringDataType,
     URLDataType,
     UUIDDataType,
 )

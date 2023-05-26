@@ -50,7 +50,6 @@ class OutputBuilder:
 
     def build_node(self, datatype: DataType):
         "Intended to be overriden in children"
-        pass
 
 
 TEMPLATES = {
