@@ -36,7 +36,7 @@ class FacetsModelComponent(ObjectFacetsComponent):
             required=False,
         )
 
-    def before_model_prepare(self, datatype, *, context, **kwargs):
+    def before_model_prepare(self, datatype, *, context, **__kwargs):
         module = datatype.definition["module"]["qualified"]
         profile_module = context["profile_module"]
 

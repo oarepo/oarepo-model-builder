@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 @dataclasses.dataclass
@@ -8,7 +8,7 @@ class FacetDefinition:
     dot_path: str
     searchable: bool
     imports: List[Dict[str, str]]
-    field: str = None
+    field: Optional[str] = None
 
     def update(self, facet_section):
         self.imports.extend(facet_section.get("imports", []))

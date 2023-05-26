@@ -8,7 +8,6 @@ from .invenio_base import InvenioBaseClassPythonBuilder
 
 class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
     TYPE = "invenio_record_facets"
-    # class_config = "record-search-options-class"
     section = "facets"
     template = "record-facets"
 

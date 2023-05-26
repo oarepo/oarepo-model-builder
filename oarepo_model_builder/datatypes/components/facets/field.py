@@ -38,10 +38,9 @@ class RegularFacetsComponent(DataTypeComponent):
             path = _path + "." + facet_section["path"]
         else:
             path = _path
-        # TODO: keyword
         return path
 
-    def process_facets(self, datatype, section, **kwargs):
+    def process_facets(self, datatype, section, **__kwargs):
         # create the facet definition
         facet_section = section.config
 
