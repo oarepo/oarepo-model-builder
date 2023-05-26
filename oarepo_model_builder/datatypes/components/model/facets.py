@@ -1,8 +1,10 @@
 import marshmallow as ma
 
-from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType, datatypes
+from oarepo_model_builder.datatypes import ModelDataType
 from oarepo_model_builder.datatypes.components.model.utils import set_default
 
+from ..facets import FacetDefinition
+from ..facets.object import ObjectFacetsComponent
 from .defaults import DefaultsModelComponent
 
 
@@ -24,7 +26,7 @@ class FacetsSchema(ma.Schema):
     skip = ma.fields.Boolean()
 
 
-class FacetsModelComponent(DataTypeComponent):
+class FacetsModelComponent(ObjectFacetsComponent):
     eligible_datatypes = [ModelDataType]
     depends_on = [DefaultsModelComponent]
 
@@ -44,59 +46,15 @@ class FacetsModelComponent(DataTypeComponent):
 
         facets.setdefault("extra-code", "")
 
-    def process_facets(self, datatype, section, **kwargs):
-        facets = []
-        searchable = datatype.definition.get("searchable", True)
-        datatypes.call_components(
-            datatype,
-            "build_facets",
-            facets=facets,
-            facet_definition=None,
-            searchable=searchable,
-        )
-        section.config["facets"] = facets
-        return section
-
-    def build_facets(self, datatype, facets, facet_definition=None, searchable=True):
-        for c in datatype.children.values():
-            if c.model_type == "array":
-                children = c.item.children
-            else:
-                children = c.children
-            if children != {}:
-                self.get_leaf(children, facets, searchable)
-            else:
-                datatypes.call_components(
-                    c,
-                    "build_facets",
-                    facets=facets,
-                    facet_definition=None,
-                    searchable=searchable,
-                )
-
-        return facets
-
-    def get_leaf(self, children, facets, searchable):
-        for c in children.values():
-            if c.model_type == "array":
-                children = c.item.children
-            else:
-                children = c.children
-            if children != {}:
-                self.get_leaf(children, facets, searchable)
-            else:
-                datatypes.call_components(
-                    c,
-                    "build_facets",
-                    facets=facets,
-                    facet_definition=None,
-                    searchable=searchable,
-                )
-
-    def build_definition(
-        self, datatype, facets, facet_definition=None, searchable=True
+    def build_facet_definition(
+        self,
+        datatype,
+        facet_definition: FacetDefinition,
     ):
-        if facet_definition:
-            facet_searchable = facet_definition.get("facet_searchable", searchable)
-            if facet_searchable:
-                facets.append(facet_definition)
+        if facet_definition.searchable is None:
+            facet_definition.searchable = datatype.definition.get("searchable", True)
+        if facet_definition.searchable is not False:
+            return [facet_definition]
+        else:
+            # facet will not be generated
+            return []

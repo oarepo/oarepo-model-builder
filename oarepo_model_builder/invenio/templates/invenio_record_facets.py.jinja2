@@ -3,21 +3,11 @@
 from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
-
-{% for imp in imports %}
-{#{{ imp }}#}
-{#{% if imp.1 %}#}
-{#from {{imp.0|package_name}} import {{imp.0|base_name}} as {{imp.1}}#}
-{#{% else %}#}
-from {{imp.0}} import {{imp.1}}
-{#{% endif %}#}
-{% endfor %}
+{{ imports|generate_import }}
 
 
-{% for dict in search_options_data %}
-{% for key, value in dict.items()%}
-{{ key }} = {{ value }}
-{% endfor %}
+{% for facet in facets %}
+{{ facet.path }} = {{ facet.field }}
 {% endfor %}
 
 {#{{ vars.invenio_record_facets_extra_code }}#}

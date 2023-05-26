@@ -17,9 +17,6 @@ class ArrayDataType(DataType):
     }
     json_schema = {"type": "array"}
 
-    facets = {"facet_class": "TermsFacet"}
-
-
     class ModelSchema(DataType.ModelSchema):
         items = fields.Nested(FieldSchema)
         uniqueItems = fields.Boolean(required=False)

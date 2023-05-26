@@ -1,6 +1,10 @@
 from .python_name import convert_name_to_python
 
 
+def flatten(list_of_lists):
+    return [x for l in list_of_lists for x in l]
+
+
 def facet_definition(obj):
     key = None
     field = None

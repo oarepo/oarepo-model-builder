@@ -1,10 +1,13 @@
+from typing import List
+
 from oarepo_model_builder.datatypes import DataType
 
+from ..datatypes.components.facets import FacetDefinition
 from .invenio_base import InvenioBaseClassPythonBuilder
 
 
 class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
-    TYPE = "invenio_record_search"
+    TYPE = "invenio_record_facets"
     # class_config = "record-search-options-class"
     section = "facets"
     template = "record-facets"
@@ -14,23 +17,18 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
         pass
 
     def finish(self, **extra_kwargs):
-        facets = self.current_model.section_facets.config["facets"]
+        facets: List[FacetDefinition] = []
+        for node in self.current_model.deep_iter():
+            facets.extend(node.section_facets.config["facets"])
         package = self.current_model.definition["facets"]["module"]
-        search_options_data = []
 
         imports = []
         for f in facets:
-            search_options_data.append({f["path"]: f["class"]})
-            if "imports" in f:
-                for i in f["imports"]:
-                    imports.append((i["import"]).rsplit(".", 1))
-
-        imports = list(map(list, set(map(tuple, imports))))
-        imports.sort(key=lambda x: (x[0], x[1]))
+            imports.extend(f.imports)
 
         return super().finish(
             current_package_name=package,
-            search_options_data=search_options_data,
+            facets=facets,
             imports=imports,
             **extra_kwargs,
         )
