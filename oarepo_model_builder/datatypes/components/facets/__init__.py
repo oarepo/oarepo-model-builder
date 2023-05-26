@@ -21,6 +21,6 @@ class FacetDefinition:
         if field:
             self.field = field
         else:
-            field_class = facet_section.get("facet_class")
+            field_class = facet_section.get("facet-class")
             if field_class:
                 self.field = f"{field_class}({', '.join(arguments)})"

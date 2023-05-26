@@ -26,6 +26,6 @@ class NestedFacetsComponent(ObjectFacetsComponent):
         return super().build_facet_definition(datatype, facet_definition)
 
     def process_facets(self, datatype, section, **kwargs):
-        # container itself does not generate any facets. Need to have it here because facet_class is set
+        # container itself does not generate any facets. Need to have it here because facet-class is set
         # and calling field implementation would generate non meaningful facet record here.
         section.config["facets"] = []

@@ -5,7 +5,7 @@ class BaseDateDataType(DataType):
     marshmallow = {"field-class": "ma_fields.String"}
 
     facets = {
-        "facet_class": "DateTimeFacet",
+        "facet-class": "DateTimeFacet",
         "imports": [{"import": "oarepo_runtime.facets.date.DateTimeFacet"}],
     }
 
