@@ -3,6 +3,7 @@ import marshmallow as ma
 
 from oarepo_model_builder.datatypes import ModelDataType
 from oarepo_model_builder.utils.python_name import parent_module
+from oarepo_model_builder.validation.extensibility import ExtensibleSchema
 from oarepo_model_builder.validation.utils import ImportSchema
 
 from ..ui import ObjectUIComponent, ObjectUIExtraSchema
@@ -52,7 +53,7 @@ class UIModelComponent(ObjectUIComponent):
     depends_on = [ResourceModelComponent]
 
     class ModelSchema(ma.Schema):
-        ui = ma.fields.Nested(ModelUISchema, metadata={"doc": "UI settings"})
+        ui = ma.fields.Nested(ExtensibleSchema('ui.model', ModelUISchema), metadata={"doc": "UI settings"})
         json_serializer = ma.fields.Nested(
             JSONSerializerSchema,
             attribute="json-serializer",
