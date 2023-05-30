@@ -81,7 +81,7 @@ def test_no_index():
     data = build_model(model)
 
     assert data == {
-        "mappings": {"properties": {"a": {"type": "keyword", "enabled": False}}}
+        "mappings": {"properties": {"a": {"type": "keyword", "index": False}}}
     }
 
 
@@ -90,7 +90,7 @@ def test_no_index_on_model():
     data = build_model(model)
 
     assert data == {
-        "mappings": {"properties": {"a": {"type": "keyword", "enabled": False}}}
+        "mappings": {"properties": {"a": {"type": "keyword", "index": False}}}
     }
 
 
