@@ -58,9 +58,7 @@ def test_include_invenio():
         .replace("'", '"')
     )
     print(data)
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
 \"""Facet definitions.\"""
 
@@ -80,7 +78,7 @@ _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
 
 
-a = TermsFacet(field="a", label=_("a.label") )
+a = TermsFacet(field="a.keyword", label=_("a.label") )
 
 
 
@@ -151,9 +149,7 @@ def test_nested():
         .replace("'", '"')
     )
     print(data)
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
 \"""Facet definitions.\"""
 
@@ -170,7 +166,7 @@ b_c = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.c", label
 
 
 
-b_d = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.d", label=_("b/d.label") ))
+b_d = NestedLabeledFacet(path ="b", nested_facet = TermsFacet(field="b.d.keyword", label=_("b/d.label") ))
 
 
 
@@ -241,9 +237,7 @@ def test_object():
         .replace("'", '"')
     )
     print(data)
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
         \"""Facet definitions.\"""
 
@@ -259,7 +253,7 @@ b_c = TermsFacet(field="b.c", label=_("b/c.label") )
 
 
 
-b_d = TermsFacet(field="b.d", label=_("b/d.label") )
+b_d = TermsFacet(field="b.d.keyword", label=_("b/d.label") )
 
 
 
@@ -338,9 +332,7 @@ def test_nest_obj():
         .read()
         .replace("'", '"')
     )
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
         \"""Facet definitions.\"""
 
@@ -358,7 +350,7 @@ b_nes_c = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_n
 
 
 
-b_nes_d = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.d", label=_("b_nes/d.label") ))
+b_nes_d = NestedLabeledFacet(path ="b_nes", nested_facet = TermsFacet(field="b_nes.d.keyword", label=_("b_nes/d.label") ))
 
 
 
@@ -370,7 +362,7 @@ b_obj_c = TermsFacet(field="b_obj.c", label=_("b_obj/c.label") )
 
 
 
-b_obj_d = TermsFacet(field="b_obj.d", label=_("b_obj/d.label") )
+b_obj_d = TermsFacet(field="b_obj.d.keyword", label=_("b_obj/d.label") )
 
 
 
@@ -427,9 +419,7 @@ def test_array():
     )
     print(data)
 
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
         \"""Facet definitions.\"""
 
@@ -445,7 +435,7 @@ a = TermsFacet(field="a", label=_("a.label") )
 
 
 
-c = TermsFacet(field="c", label=_("c.label") )
+c = TermsFacet(field="c.keyword", label=_("c.label") )
 
 
 
@@ -609,9 +599,7 @@ def test_array_nested():
         .replace("'", '"')
     )
     print(data)
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
         \"""Facet definitions.\"""
 
@@ -630,7 +618,7 @@ created = DateTimeFacet(field="created", label=_("created.label") )
 
 _id = TermsFacet(field="id", label=_("id.label") )
 
-test = NestedLabeledFacet(path ="obj.arr", nested_facet = TermsFacet(field="obj.arr.d", label=_("obj/arr/d.label") ))
+test = NestedLabeledFacet(path ="obj.arr", nested_facet = TermsFacet(field="obj.arr.d.keyword", label=_("obj/arr/d.label") ))
 
 
 
@@ -804,7 +792,7 @@ from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
 
-a = TermsFacet(field="a", label=_("a.label") )
+a = TermsFacet(field="a.keyword", label=_("a.label") )
 
 
 
