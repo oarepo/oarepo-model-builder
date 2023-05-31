@@ -1,6 +1,11 @@
 {
   "marshmallow": {
-    "base-classes": ["InvenioBaseRecordSchema"]
+    "base-classes": ["BaseRecordSchema"],
+      "imports": [
+        {
+          "import": "oarepo_runtime.marshmallow.BaseRecordSchema"
+        }
+      ]
   },
   "ui": {
     "marshmallow": {
