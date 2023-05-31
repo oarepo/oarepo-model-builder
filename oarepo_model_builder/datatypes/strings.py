@@ -61,7 +61,7 @@ class FulltextKeywordDataType(StringDataType):
     facets = {
         "facet-class": "TermsFacet",
         "keyword": True,
-        # "path": "_keyword",
+        "path": "keyword",
         "imports": [
             {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
         ],
