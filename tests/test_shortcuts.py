@@ -35,7 +35,7 @@ def test_array_shortcuts():
     assert (
         strip_whitespaces(
             """
-class TestSchema(InvenioBaseRecordSchema):
+class TestSchema(BaseRecordSchema):
 
     class Meta:
         unknown = ma.RAISE

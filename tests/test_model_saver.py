@@ -433,7 +433,8 @@ def test_model_saver_invenio():
             "module": "test.records.mappings",
         },
         "marshmallow": {
-            "base-classes": ["InvenioBaseRecordSchema"],
+            "base-classes": ["BaseRecordSchema"],
+            "imports": [{"import": "oarepo_runtime.marshmallow.BaseRecordSchema"}],
             "class": "test.services.records.schema.TestSchema",
             "extra-code": "",
             "generate": True,

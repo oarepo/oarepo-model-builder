@@ -33,14 +33,14 @@ def test_raw_type():
     assert (
         strip_whitespaces(
             """
-from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
 from marshmallow import ValidationError
 from marshmallow import validate as ma_validate
 import marshmallow as ma
 from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
-class TestSchema(InvenioBaseRecordSchema):
+from oarepo_runtime.marshmallow import BaseRecordSchema
+class TestSchema(BaseRecordSchema):
     class Meta:
         unknown = ma.RAISE
     a = ma_fields.Raw()
