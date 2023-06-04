@@ -8,7 +8,6 @@ from .marshmallow import MarshmallowModelComponent
 from .model_saver import SavedModelComponent
 from .permissions import PermissionsModelComponent
 from .pid import PIDModelComponent
-from .plugins import PluginsModelComponent
 from .proxy import ProxyModelComponent
 from .record import RecordModelComponent
 from .record_dumper import RecordDumperModelComponent
@@ -41,5 +40,4 @@ __all__ = [
     "UIModelComponent",
     "DefaultsModelComponent",
     "ProxyModelComponent",
-    "PluginsModelComponent",
 ]
