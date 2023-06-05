@@ -1,32 +1,32 @@
 from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.systemfields import IndexField
 
-{{ pid|generate_import('provider-class') }}
-{{pid.imports|generate_import }}
-{{ record_metadata|generate_import }}
+{{ vars.pid|generate_import('provider-class') }}
+{{ vars.pid.imports|generate_import }}
+{{ vars.record_metadata|generate_import }}
 {{ vars.record_dumper|generate_import }}
-{{ record.imports|generate_import }}
+{{ vars.record.imports|generate_import }}
 
-class {{ record|class_header }}:
-{% if not record_metadata.skip %}
-    model_cls = {{ record_metadata.class|base_name }}
+class {{ vars.record|class_header }}:
+{% if not vars.record_metadata.skip %}
+    model_cls = {{ vars.record_metadata.class|base_name }}
 {% endif %}
 {% if not vars.json_schema_settings.skip %}
     schema = ConstantField("$schema", "{{ settings.schema_server }}{{ vars.json_schema_settings.name }}")
 {% endif %}
-{% if not mapping_settings.skip %}
-    index = IndexField("{{ mapping_settings.index }}")
+{% if not vars.mapping_settings.skip %}
+    index = IndexField("{{ vars.mapping_settings.index }}")
 {% endif %}
-{% if not pid.skip %}
-    pid = {{ pid.field_class }}(
-        provider={{ pid.provider_class|base_name }},
-        context_cls={{ pid.context_class }}{% if pid.field_args %},
-        {{ pid.field_args|generate_list }}
+{% if not vars.pid.skip %}
+    pid = {{ vars.pid.field_class }}(
+        provider={{ vars.pid.provider_class|base_name }},
+        context_cls={{ vars.pid.context_class }}{% if vars.pid.field_args %},
+        {{ vars.pid.field_args|generate_list }}
     {% endif %}
     )
 {% endif %}
 {% if not vars.record_dumper.skip %}
-    dumper_extensions = [ {{ record.dumper_extensions|generate_list }} ]
+    dumper_extensions = [ {{ vars.record.dumper_extensions|generate_list }} ]
     dumper = {{ vars.record_dumper.class|base_name }}(extensions=dumper_extensions)
 {% endif %}
 

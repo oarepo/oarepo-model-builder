@@ -12,6 +12,7 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
     template: str
     parent_modules = True
     skip_if_not_generating = True
+    section_remap = {}
 
     @property
     def generate(self):
@@ -41,7 +42,13 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
             self.current_model,
             f"section_mb_{self.TYPE.replace('-', '_')}",
         )
+
+        if self.section_remap:
+            for replaced_section, replacing_section in self.section_remap.items():
+                replacing = getattr(self.current_model, replacing_section).config
+                section.config[replaced_section] = replacing
         merged = MergedAttrDict(section.config, self.current_model.definition)
+
         self.process_template(
             python_path,
             self.template,
