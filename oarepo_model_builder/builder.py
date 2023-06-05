@@ -121,7 +121,8 @@ class ModelBuilder:
         }
         self.output_dir = Path(output_dir).absolute()
         self.outputs = {}
-
+        context = context or {}
+        context.setdefault("profile", profile)
         self._run_output_builders(model, profile, model_path, context or {})
 
         self._save_outputs()

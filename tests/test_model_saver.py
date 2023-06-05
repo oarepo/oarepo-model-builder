@@ -208,7 +208,7 @@ def test_model_saver():
             "module": "test.records.dumper",
         },
         "record-metadata": {
-            "alembic": "test.records.alembic",
+            "alembic": "test.alembic",
             "alias": "test",
             "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "test.records.models.TestMetadata",
@@ -539,7 +539,7 @@ def test_model_saver_invenio():
             "module": "test.records.dumper",
         },
         "record-metadata": {
-            "alembic": "test.records.alembic",
+            "alembic": "test.alembic",
             "alias": "test",
             "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "test.records.models.TestMetadata",
