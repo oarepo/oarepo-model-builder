@@ -184,7 +184,7 @@ def test_prepare_datatype():
             "module": "my.test.records.dumper",
         },
         "record-metadata": {
-            "alembic": "my.test.records.alembic",
+            "alembic": "my.test.alembic",
             "alias": "my_test_record",
             "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "my.test.records.models.TestMetadata",

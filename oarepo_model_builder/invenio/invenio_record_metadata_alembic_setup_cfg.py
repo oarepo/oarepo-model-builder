@@ -13,6 +13,9 @@ class InvenioRecordMetadataAlembicSetupCfgBuilder(OutputBuilder):
         super().finish()
 
         output: CFGOutput = self.builder.get_output("cfg", "setup.cfg")
+        if "alembic" not in self.current_model.definition["record-metadata"]:
+            return
+
         alembic_module_parent, alembic_module = split_package_base_name(
             self.current_model.definition["record-metadata"]["alembic"]
         )
