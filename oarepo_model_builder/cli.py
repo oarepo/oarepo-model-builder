@@ -83,7 +83,7 @@ from oarepo_model_builder.utils.verbose import log
 @click.option(
     "--profile",
     help="Run the builder with this profile",
-    default=["record"],
+    default=[],
     multiple=True,
 )
 @click.argument("model_filename", type=click.Path(exists=True), required=True)
@@ -205,6 +205,8 @@ def run_internal(
     if save_model:
         with open(save_model, "w") as f:
             yaml.dump(json.loads(json.dumps(model.schema)), f)
+    if not profiles:
+        profiles = model.schema.get("profiles", ["record"])
 
     # for each profile on the command line, render it
     profiles_to_render = [y.strip() for x in profiles for y in x.split(",")]

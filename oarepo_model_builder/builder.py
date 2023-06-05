@@ -5,7 +5,6 @@ from .builders import OutputBuilder
 from .fs import AbstractFileSystem, FileSystem
 from .outputs import OutputBase
 from .schema import ModelSchema
-from .utils.dict import dict_get, dict_setdefault
 from .utils.import_class import import_class
 
 
@@ -115,12 +114,10 @@ class ModelBuilder:
         if self.overwrite:
             self.filesystem.overwrite = True
 
-        current_model = dict_setdefault(model.schema, model_path, default={})
-
         self.set_schema(model)
         self.filtered_output_classes = {
             o.TYPE: o
-            for o in self._filter_classes(self.output_classes, current_model, "output")
+            for o in self._filter_classes(self.output_classes, model.schema, "output")
         }
         self.output_dir = Path(output_dir).absolute()
         self.outputs = {}
@@ -136,7 +133,7 @@ class ModelBuilder:
     ):
         output_builder_class: Type[OutputBuilder]
         for output_builder_class in self._filter_classes(
-            self.output_builder_classes, dict_get(model.schema, model_path), "builder"
+            self.output_builder_classes, model.schema, "builder"
         ):
             output_builder = output_builder_class(builder=self)
             current_model = model.get_schema_section(profile, model_path, context)

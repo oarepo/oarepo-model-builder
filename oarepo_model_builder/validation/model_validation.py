@@ -1,6 +1,7 @@
 import marshmallow as ma
 
 from .extensibility import ExtensibleSchema
+from .plugins import PluginsSchema
 
 
 def get_model_schema():
@@ -80,6 +81,11 @@ class ModelFileSchema(ma.Schema):
         attribute="dev-dependencies",
         data_key="dev-dependencies",
     )
+    plugins = ma.fields.Nested(
+        ExtensibleSchema("plugins", PluginsSchema),
+        metadata={"doc": "Plugins to load, enable, disable"},
+    )
+    profiles = ma.fields.List(ma.fields.String())
 
 
 class ModelValidator:

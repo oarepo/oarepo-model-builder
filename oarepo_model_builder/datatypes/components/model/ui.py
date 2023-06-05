@@ -1,4 +1,3 @@
-
 import marshmallow as ma
 
 from oarepo_model_builder.datatypes import ModelDataType
@@ -53,7 +52,9 @@ class UIModelComponent(ObjectUIComponent):
     depends_on = [ResourceModelComponent]
 
     class ModelSchema(ma.Schema):
-        ui = ma.fields.Nested(ExtensibleSchema('ui.model', ModelUISchema), metadata={"doc": "UI settings"})
+        ui = ma.fields.Nested(
+            ExtensibleSchema("ui.model", ModelUISchema), metadata={"doc": "UI settings"}
+        )
         json_serializer = ma.fields.Nested(
             JSONSerializerSchema,
             attribute="json-serializer",
