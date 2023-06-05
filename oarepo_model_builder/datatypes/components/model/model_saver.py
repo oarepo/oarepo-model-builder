@@ -32,7 +32,10 @@ class SavedModelComponent(DataTypeComponent):
             SavedModelSchema, attribute="saved-model", data_key="saved-model"
         )
 
-    def before_model_prepare(self, datatype, **kwargs):
+    def before_model_prepare(self, datatype, context=None, **kwargs):
+        profile = context.get("profile_module")
+        file = f"{profile}.json"
+
         module_path = datatype.definition["module"]["path"]
         module = datatype.definition["module"]["qualified"]
 
@@ -40,7 +43,7 @@ class SavedModelComponent(DataTypeComponent):
 
         saved_model.setdefault(
             "file",
-            os.path.join(module_path, "models", "model.json"),
+            os.path.join(module_path, "models", file),
         )
         saved_model.setdefault(
             "module",
