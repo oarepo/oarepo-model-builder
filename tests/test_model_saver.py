@@ -248,7 +248,7 @@ def test_model_saver():
         "sample": {"file": "data/sample_data.yaml"},
         "saved-model": {
             "alias": "test",
-            "file": "test/models/model.json",
+            "file": "test/models/records.json",
             "module": "test.models",
         },
         "search-options": {
@@ -329,7 +329,7 @@ def test_model_saver():
     assert (
         data[2].strip()
         == """[options.entry_points]
-oarepo.models = test = test.models:model.json"""
+oarepo.models = test = test.models:records.json"""
     )
 
 
@@ -364,7 +364,7 @@ def build(model, output_builder_components=None):
     )
     return (
         json5.load(
-            builder.filesystem.open(os.path.join("test", "models", "model.json"))
+            builder.filesystem.open(os.path.join("test", "models", "records.json"))
         ),
         builder.filesystem.read(os.path.join("test", "models", "__init__.py")),
         builder.filesystem.read("setup.cfg"),
@@ -579,7 +579,7 @@ def test_model_saver_invenio():
         "sample": {"file": "data/sample_data.yaml"},
         "saved-model": {
             "alias": "test",
-            "file": "test/models/model.json",
+            "file": "test/models/records.json",
             "module": "test.models",
         },
         "search-options": {

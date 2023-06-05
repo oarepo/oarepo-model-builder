@@ -224,7 +224,7 @@ def test_prepare_datatype():
         "sample": {"file": "data/sample_data.yaml"},
         "saved-model": {
             "alias": "my_test_record",
-            "file": "my/test/models/model.json",
+            "file": "my/test/models/records.json",
             "module": "my.test.models",
         },
         "search-options": {
