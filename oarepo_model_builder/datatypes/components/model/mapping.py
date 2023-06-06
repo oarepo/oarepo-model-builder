@@ -58,7 +58,7 @@ class MappingModelComponent(DataTypeComponent):
             },
         )
 
-    def before_model_prepare(self, datatype, **kwargs):
+    def before_model_prepare(self, datatype, *, context, **kwargs):
         prefix_snake = datatype.definition["module"]["prefix-snake"]
         alias = datatype.definition["module"]["alias"]
         records_path = module_to_path(
