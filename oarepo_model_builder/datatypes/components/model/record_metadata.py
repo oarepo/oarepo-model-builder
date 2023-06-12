@@ -49,6 +49,9 @@ class RecordMetadataClassSchema(ma.Schema):
             )
         }
     )
+    use_versioning = ma.fields.Boolean(
+        attribute="use-versioning", data_key="use-versioning", load_default=True
+    )
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
@@ -88,6 +91,7 @@ class RecordMetadataModelComponent(DataTypeComponent):
         )
         metadata.setdefault("table", f"{prefix.lower()}_metadata")
         metadata.setdefault("alias", alias)
+        metadata.setdefault("use-versioning", True)
 
         if profile == "record":
             # only add alembic for records profile, do not add it for other profiles.

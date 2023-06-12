@@ -35,6 +35,9 @@ class {{ vars.ext|class_header }}:
         {% if not vars.service.skip %}
         self.service = app.config["{{ vars.service.config_key }}"](
             config=app.config["{{ vars.service_config.config_key }}"](),
+            {% if vars.service.additional_args %}
+                {{ vars.service.additional_args|generate_list }}
+            {% endif %}
         )
         {% endif %}
         {% if not vars.resource.skip %}

@@ -81,7 +81,7 @@ class EDTFDataType(BaseDateDataType):
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.String",
+        "field-class": "TrimmedString",
         "validators": ["CachedMultilayerEDTFValidator(types=(EDTFDate,))"],
         "imports": [
             {"import": "oarepo_runtime.validation.CachedMultilayerEDTFValidator"},
@@ -105,7 +105,7 @@ class EDTFIntervalType(BaseDateDataType):
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.String",
+        "field-class": "TrimmedString",
         "validators": ["CachedMultilayerEDTFValidator(types=(EDTFInterval,))"],
         "imports": [
             {"import": "oarepo_runtime.validation.CachedMultilayerEDTFValidator"},

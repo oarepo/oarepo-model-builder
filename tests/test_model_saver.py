@@ -41,99 +41,133 @@ def test_model_saver():
         },
     )
     assert data[0]["model"] == {
-        "api-blueprint": {
-            "alias": "test",
-            "extra_code": "",
-            "function": "test.views.records.api.create_api_blueprint",
-            "generate": True,
-            "imports": [],
-            "module": "test.views.records.api",
-        },
-        "config": {
-            "extra_code": "",
-            "generate": True,
-            "imports": [],
-            "module": "test.config",
-        },
-        "ext": {
-            "alias": "test",
-            "base-classes": [],
-            "class": "test.ext.TestExt",
-            "extra_code": "",
-            "generate": True,
-            "imports": [],
-            "module": "test.ext",
-        },
-        "facets": {
-            "extra-code": "",
-            "generate": True,
-            "module": "test.services.records.facets",
-        },
-        "json-schema-settings": {
-            "alias": "test",
-            "file": "test/records/jsonschemas/test-1.0.0.json",
-            "generate": True,
-            "module": "test.records.jsonschemas",
-            "name": "test-1.0.0.json",
-            "version": "1.0.0",
-        },
-        "json-serializer": {
-            "base-classes": ["MarshmallowSerializer"],
-            "class": "test.resources.records.ui.TestUIJSONSerializer",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {"import": "flask_resources.BaseListSchema"},
-                {"import": "flask_resources.MarshmallowSerializer"},
-                {"import": "flask_resources.serializers.JSONSerializer"},
-            ],
-            "module": "test.resources.records.ui",
-        },
-        "mapping-settings": {
-            "alias": "test",
-            "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
-            "generate": True,
-            "index": "test-test-1.0.0",
-            "module": "test.records.mappings",
-        },
-        "marshmallow": {
-            "base-classes": ["ma.Schema"],  # NOSONAR
-            "class": "test.services.records.schema.TestSchema",
-            "extra-code": "",
-            "generate": True,
-            "module": "test.services.records.schema",  # NOSONAR
-        },
-        "model-name": "Test",
+        "searchable": True,
         "module": {
+            "qualified": "test",
             "alias": "test",
+            "path": "test",
             "base": "test",
             "base-upper": "TEST",
             "kebab-module": "test",
-            "path": "test",
             "prefix": "Test",
-            "prefix-snake": "test",
             "prefix-upper": "TEST",
-            "qualified": "test",
+            "prefix-snake": "test",
             "suffix": "test",
-            "suffix-snake": "test",
             "suffix-upper": "TEST",
+            "suffix-snake": "test",
         },
-        "permissions": {
-            "base-classes": ["RecordPermissionPolicy"],
-            "class": "test.services.records.permissions.TestPermissionPolicy",
-            "extra-code": "",
+        "type": "model",
+        "sample": {"file": "data/sample_data.yaml"},
+        "model-name": "Test",
+        "search-options": {
             "generate": True,
+            "module": "test.services.records.search",
+            "extra-code": "",
+            "class": "test.services.records.search.TestSearchOptions",
+            "base-classes": ["InvenioSearchOptions"],
             "imports": [
-                {"import": "invenio_records_permissions.RecordPermissionPolicy"}
+                {
+                    "import": "invenio_records_resources.services.SearchOptions",
+                    "alias": "InvenioSearchOptions",
+                }
             ],
-            "module": "test.services.records.permissions",
-            "presets": ["everyone"],
+        },
+        "config": {
+            "generate": True,
+            "module": "test.config",
+            "extra_code": "",
+            "imports": [],
+        },
+        "ext": {
+            "generate": True,
+            "module": "test.ext",
+            "class": "test.ext.TestExt",
+            "base-classes": [],
+            "extra_code": "",
+            "alias": "test",
+            "imports": [],
+        },
+        "api-blueprint": {
+            "generate": True,
+            "alias": "test",
+            "extra_code": "",
+            "module": "test.views.records.api",
+            "function": "test.views.records.api.create_api_blueprint",
+            "imports": [],
+        },
+        "app-blueprint": {
+            "generate": True,
+            "alias": "test",
+            "extra_code": "",
+            "module": "test.views.records.app",
+            "function": "test.views.records.app.create_app_blueprint",
+            "imports": [],
+        },
+        "facets": {
+            "generate": True,
+            "module": "test.services.records.facets",
+            "extra-code": "",
+        },
+        "record": {
+            "generate": True,
+            "module": "test.records.api",
+            "class": "test.records.api.TestRecord",
+            "base-classes": ["InvenioRecord"],
+            "imports": [
+                {
+                    "import": "invenio_records_resources.records.api.Record",
+                    "alias": "InvenioRecord",
+                }
+            ],
+            "extra-code": "",
+        },
+        "resource": {
+            "generate": True,
+            "config-key": "TEST_RECORD_RESOURCE_CLASS",
+            "module": "test.resources.records.resource",
+            "class": "test.resources.records.resource.TestResource",
+            "proxy": "current_resource",
+            "extra-code": "",
+            "base-classes": ["RecordResource"],
+            "imports": [
+                {"import": "invenio_records_resources.resources.RecordResource"}
+            ],
+        },
+        "resource-config": {
+            "generate": True,
+            "base-url": "/test/",
+            "config-key": "TEST_RECORD_RESOURCE_CONFIG",
+            "module": "test.resources.records.config",
+            "class": "test.resources.records.config.TestResourceConfig",
+            "extra-code": "",
+            "base-classes": ["RecordResourceConfig"],
+            "imports": [
+                {"import": "invenio_records_resources.resources.RecordResourceConfig"}
+            ],
+        },
+        "saved-model": {
+            "file": "test/models/records.json",
+            "module": "test.models",
+            "alias": "test",
+        },
+        "proxy": {"module": "test.proxies", "generate": True},
+        "json-schema-settings": {
+            "generate": True,
+            "alias": "test",
+            "version": "1.0.0",
+            "module": "test.records.jsonschemas",
+            "name": "test-1.0.0.json",
+            "file": "test/records/jsonschemas/test-1.0.0.json",
         },
         "pid": {
+            "generate": True,
+            "type": "test",
+            "module": "test.records.api",
+            "provider-class": "test.records.api.TestIdProvider",
+            "provider-base-classes": ["RecordIdProviderV2"],
+            "field-class": "PIDField",
             "context-class": "PIDFieldContext",
             "field-args": ["create=True"],
-            "field-class": "PIDField",
-            "generate": True,
             "imports": [
                 {
                     "import": "invenio_records_resources.records.systemfields.pid.PIDField"
@@ -143,185 +177,152 @@ def test_model_saver():
                 },
                 {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
             ],
-            "module": "test.records.api",  # NOSONAR
-            "provider-base-classes": ["RecordIdProviderV2"],
-            "provider-class": "test.records.api.TestIdProvider",
-            "type": "test",
-        },
-        "properties": {
-            "a": {"type": "keyword"},
-            "b": {
-                "marshmallow": {
-                    "class": "test.services.records.schema.BSchema",
-                    "generate": True,
-                },
-                "properties": {"c": {"type": "keyword"}},
-                "type": "object",
-                "ui": {
-                    "marshmallow": {
-                        "class": "test.services.records.ui_schema.BUISchema",
-                        "generate": True,
-                    }
-                },
-            },
-            "metadata": {
-                "marshmallow": {
-                    "base-classes": ["ma.Schema"],
-                    "class": "test.services.records.schema.TestMetadataSchema",
-                    "extra-code": "",
-                    "generate": True,
-                    "module": "test.services.records.schema",
-                },
-                "type": "object",
-                "ui": {
-                    "marshmallow": {
-                        "base-classes": ["ma.Schema"],
-                        "class": "test.services.records.ui_schema.TestMetadataUISchema",
-                        "extra-code": "",
-                        "generate": True,
-                        "module": "test.services.records.ui_schema",  # NOSONAR
-                    }
-                },
-            },
-        },
-        "proxy": {"module": "test.proxies", "generate": True},
-        "record": {
-            "base-classes": ["InvenioRecord"],
-            "class": "test.records.api.TestRecord",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {
-                    "alias": "InvenioRecord",
-                    "import": "invenio_records_resources.records.api.Record",
-                }
-            ],
-            "module": "test.records.api",
         },
         "record-dumper": {
-            "base-classes": ["SearchDumper"],
-            "class": "test.records.dumper.TestDumper",
-            "extensions": [],
-            "extra-code": "",
             "generate": True,
-            "imports": [{"import": "invenio_records.dumpers.SearchDumper"}],
             "module": "test.records.dumper",
+            "class": "test.records.dumper.TestDumper",
+            "base-classes": ["SearchDumper"],
+            "extra-code": "",
+            "extensions": [],
+            "imports": [{"import": "invenio_records.dumpers.SearchDumper"}],
         },
         "record-metadata": {
-            "alembic": "test.alembic",
-            "alias": "test",
-            "base-classes": ["db.Model", "RecordMetadataBase"],
-            "class": "test.records.models.TestMetadata",
-            "extra-code": "",
             "generate": True,
+            "module": "test.records.models",
+            "class": "test.records.models.TestMetadata",
+            "base-classes": ["db.Model", "RecordMetadataBase"],
+            "extra-code": "",
             "imports": [
                 {"import": "invenio_records.models.RecordMetadataBase"},
                 {"import": "invenio_db.db"},
             ],
-            "module": "test.records.models",
             "table": "test_metadata",
-        },
-        "resource": {
-            "base-classes": ["RecordResource"],
-            "class": "test.resources.records.resource.TestResource",
-            "config-key": "TEST_RECORD_RESOURCE_CLASS",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {"import": "invenio_records_resources.resources.RecordResource"}
-            ],
-            "module": "test.resources.records.resource",
-            "proxy": "current_resource",
-        },
-        "resource-config": {
-            "base-classes": ["RecordResourceConfig"],
-            "base-url": "/test/",
-            "class": "test.resources.records.config.TestResourceConfig",
-            "config-key": "TEST_RECORD_RESOURCE_CONFIG",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {"import": "invenio_records_resources.resources.RecordResourceConfig"}
-            ],
-            "module": "test.resources.records.config",
-        },
-        "sample": {"file": "data/sample_data.yaml"},
-        "saved-model": {
             "alias": "test",
-            "file": "test/models/records.json",
-            "module": "test.models",
-        },
-        "search-options": {
-            "base-classes": ["InvenioSearchOptions"],
-            "class": "test.services.records.search.TestSearchOptions",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {
-                    "alias": "InvenioSearchOptions",
-                    "import": "invenio_records_resources.services.SearchOptions",
-                }
-            ],
-            "module": "test.services.records.search",
-        },
-        "searchable": True,
-        "service": {
-            "base-classes": ["InvenioRecordService"],
-            "class": "test.services.records.service.TestService",
-            "config-key": "TEST_RECORD_SERVICE_CLASS",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {
-                    "alias": "InvenioRecordService",
-                    "import": "invenio_records_resources.services.RecordService",
-                }
-            ],
-            "module": "test.services.records.service",
-            "proxy": "current_service",
+            "use-versioning": True,
+            "alembic": "test.alembic",
         },
         "service-config": {
+            "generate": True,
+            "config-key": "TEST_RECORD_SERVICE_CONFIG",
+            "module": "test.services.records.config",
+            "class": "test.services.records.config.TestServiceConfig",
+            "extra-code": "",
+            "service-id": "test",
             "base-classes": [
                 "PermissionsPresetsConfigMixin",
                 "InvenioRecordServiceConfig",
             ],
-            "class": "test.services.records.config.TestServiceConfig",
             "components": [],
-            "config-key": "TEST_RECORD_SERVICE_CONFIG",
-            "extra-code": "",
-            "generate": True,
             "imports": [
                 {
-                    "alias": "InvenioRecordServiceConfig",
                     "import": "invenio_records_resources.services.RecordServiceConfig",
+                    "alias": "InvenioRecordServiceConfig",
                 },
                 {
                     "import": "oarepo_runtime.config.service.PermissionsPresetsConfigMixin"
                 },
             ],
-            "module": "test.services.records.config",
-            "service-id": "test",
         },
-        "type": "model",
+        "service": {
+            "generate": True,
+            "config-key": "TEST_RECORD_SERVICE_CLASS",
+            "proxy": "current_service",
+            "module": "test.services.records.service",
+            "class": "test.services.records.service.TestService",
+            "extra-code": "",
+            "base-classes": ["InvenioRecordService"],
+            "imports": [
+                {
+                    "import": "invenio_records_resources.services.RecordService",
+                    "alias": "InvenioRecordService",
+                }
+            ],
+        },
         "ui": {
             "marshmallow": {
-                "base-classes": ["InvenioUISchema"],
+                "generate": True,
+                "module": "test.services.records.ui_schema",
                 "class": "test.services.records.ui_schema.TestUISchema",
                 "extra-code": "",
-                "generate": True,
+                "base-classes": ["InvenioUISchema"],
                 "imports": [
                     {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
                 ],
-                "module": "test.services.records.ui_schema",
             }
         },
-        "app-blueprint": {
-            "alias": "test",
-            "extra_code": "",
-            "function": "test.views.records.app.create_app_blueprint",
+        "json-serializer": {
+            "module": "test.resources.records.ui",
+            "class": "test.resources.records.ui.TestUIJSONSerializer",
+            "base-classes": ["MarshmallowSerializer"],
+            "imports": [
+                {"import": "flask_resources.BaseListSchema"},
+                {"import": "flask_resources.MarshmallowSerializer"},
+                {"import": "flask_resources.serializers.JSONSerializer"},
+            ],
+            "extra-code": "",
             "generate": True,
-            "imports": [],
-            "module": "test.views.records.app",
+        },
+        "mapping-settings": {
+            "generate": True,
+            "alias": "test",
+            "module": "test.records.mappings",
+            "index": "test-test-1.0.0",
+            "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
+        },
+        "marshmallow": {
+            "generate": True,
+            "module": "test.services.records.schema",
+            "class": "test.services.records.schema.TestSchema",
+            "extra-code": "",
+            "base-classes": ["ma.Schema"],
+        },
+        "permissions": {
+            "generate": True,
+            "presets": ["everyone"],
+            "extra-code": "",
+            "module": "test.services.records.permissions",
+            "class": "test.services.records.permissions.TestPermissionPolicy",
+            "base-classes": ["RecordPermissionPolicy"],
+            "imports": [
+                {"import": "invenio_records_permissions.RecordPermissionPolicy"}
+            ],
+        },
+        "properties": {
+            "a": {"type": "keyword"},
+            "b": {
+                "marshmallow": {
+                    "generate": True,
+                    "class": "test.services.records.schema.BSchema",
+                },
+                "type": "object",
+                "ui": {
+                    "marshmallow": {
+                        "generate": True,
+                        "class": "test.services.records.ui_schema.BUISchema",
+                    }
+                },
+                "properties": {"c": {"type": "keyword"}},
+            },
+            "metadata": {
+                "type": "object",
+                "marshmallow": {
+                    "module": "test.services.records.schema",
+                    "generate": True,
+                    "class": "test.services.records.schema.TestMetadataSchema",
+                    "extra-code": "",
+                    "base-classes": ["ma.Schema"],
+                },
+                "ui": {
+                    "marshmallow": {
+                        "generate": True,
+                        "module": "test.services.records.ui_schema",
+                        "class": "test.services.records.ui_schema.TestMetadataUISchema",
+                        "extra-code": "",
+                        "base-classes": ["ma.Schema"],
+                    }
+                },
+            },
         },
     }
 
@@ -377,100 +378,153 @@ def test_model_saver_invenio():
     )
     print(repr(data[0]))
     assert data[0]["model"] == {
-        "api-blueprint": {
+        "ui": {
+            "marshmallow": {
+                "base-classes": ["InvenioUISchema"],
+                "imports": [
+                    {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
+                ],
+                "generate": True,
+                "module": "test.services.records.ui_schema",
+                "class": "test.services.records.ui_schema.TestUISchema",
+                "extra-code": "",
+            }
+        },
+        "type": "model",
+        "searchable": True,
+        "module": {
+            "qualified": "test",
             "alias": "test",
-            "extra_code": "",
-            "function": "test.views.records.api.create_api_blueprint",
-            "generate": True,
-            "imports": [],
-            "module": "test.views.records.api",
-        },
-        "config": {
-            "extra_code": "",
-            "generate": True,
-            "imports": [],
-            "module": "test.config",
-        },
-        "ext": {
-            "alias": "test",
-            "base-classes": [],
-            "class": "test.ext.TestExt",
-            "extra_code": "",
-            "generate": True,
-            "imports": [],
-            "module": "test.ext",
-        },
-        "facets": {
-            "extra-code": "",
-            "generate": True,
-            "module": "test.services.records.facets",
-        },
-        "json-schema-settings": {
-            "alias": "test",
-            "file": "test/records/jsonschemas/test-1.0.0.json",
-            "generate": True,
-            "module": "test.records.jsonschemas",
-            "name": "test-1.0.0.json",
-            "version": "1.0.0",
-        },
-        "json-serializer": {
-            "base-classes": ["MarshmallowSerializer"],
-            "class": "test.resources.records.ui.TestUIJSONSerializer",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {"import": "flask_resources.BaseListSchema"},
-                {"import": "flask_resources.MarshmallowSerializer"},
-                {"import": "flask_resources.serializers.JSONSerializer"},
-            ],
-            "module": "test.resources.records.ui",
-        },
-        "mapping-settings": {
-            "alias": "test",
-            "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
-            "generate": True,
-            "index": "test-test-1.0.0",
-            "module": "test.records.mappings",
+            "path": "test",
+            "base": "test",
+            "base-upper": "TEST",
+            "kebab-module": "test",
+            "prefix": "Test",
+            "prefix-upper": "TEST",
+            "prefix-snake": "test",
+            "suffix": "test",
+            "suffix-upper": "TEST",
+            "suffix-snake": "test",
         },
         "marshmallow": {
             "base-classes": ["BaseRecordSchema"],
             "imports": [{"import": "oarepo_runtime.marshmallow.BaseRecordSchema"}],
-            "class": "test.services.records.schema.TestSchema",
-            "extra-code": "",
             "generate": True,
             "module": "test.services.records.schema",
-        },
-        "model-name": "Test",
-        "module": {
-            "alias": "test",
-            "base": "test",
-            "base-upper": "TEST",
-            "kebab-module": "test",
-            "path": "test",
-            "prefix": "Test",
-            "prefix-snake": "test",
-            "prefix-upper": "TEST",
-            "qualified": "test",
-            "suffix": "test",
-            "suffix-snake": "test",
-            "suffix-upper": "TEST",
-        },
-        "permissions": {
-            "base-classes": ["RecordPermissionPolicy"],
-            "class": "test.services.records.permissions.TestPermissionPolicy",
+            "class": "test.services.records.schema.TestSchema",
             "extra-code": "",
+        },
+        "sample": {"file": "data/sample_data.yaml"},
+        "model-name": "Test",
+        "search-options": {
             "generate": True,
+            "module": "test.services.records.search",
+            "extra-code": "",
+            "class": "test.services.records.search.TestSearchOptions",
+            "base-classes": ["InvenioSearchOptions"],
             "imports": [
-                {"import": "invenio_records_permissions.RecordPermissionPolicy"}
+                {
+                    "import": "invenio_records_resources.services.SearchOptions",
+                    "alias": "InvenioSearchOptions",
+                }
             ],
-            "module": "test.services.records.permissions",
-            "presets": ["everyone"],
+        },
+        "config": {
+            "generate": True,
+            "module": "test.config",
+            "extra_code": "",
+            "imports": [],
+        },
+        "ext": {
+            "generate": True,
+            "module": "test.ext",
+            "class": "test.ext.TestExt",
+            "base-classes": [],
+            "extra_code": "",
+            "alias": "test",
+            "imports": [],
+        },
+        "api-blueprint": {
+            "generate": True,
+            "alias": "test",
+            "extra_code": "",
+            "module": "test.views.records.api",
+            "function": "test.views.records.api.create_api_blueprint",
+            "imports": [],
+        },
+        "app-blueprint": {
+            "generate": True,
+            "alias": "test",
+            "extra_code": "",
+            "module": "test.views.records.app",
+            "function": "test.views.records.app.create_app_blueprint",
+            "imports": [],
+        },
+        "facets": {
+            "generate": True,
+            "module": "test.services.records.facets",
+            "extra-code": "",
+        },
+        "record": {
+            "generate": True,
+            "module": "test.records.api",
+            "class": "test.records.api.TestRecord",
+            "base-classes": ["InvenioRecord"],
+            "imports": [
+                {
+                    "import": "invenio_records_resources.records.api.Record",
+                    "alias": "InvenioRecord",
+                }
+            ],
+            "extra-code": "",
+        },
+        "resource": {
+            "generate": True,
+            "config-key": "TEST_RECORD_RESOURCE_CLASS",
+            "module": "test.resources.records.resource",
+            "class": "test.resources.records.resource.TestResource",
+            "proxy": "current_resource",
+            "extra-code": "",
+            "base-classes": ["RecordResource"],
+            "imports": [
+                {"import": "invenio_records_resources.resources.RecordResource"}
+            ],
+        },
+        "resource-config": {
+            "generate": True,
+            "base-url": "/test/",
+            "config-key": "TEST_RECORD_RESOURCE_CONFIG",
+            "module": "test.resources.records.config",
+            "class": "test.resources.records.config.TestResourceConfig",
+            "extra-code": "",
+            "base-classes": ["RecordResourceConfig"],
+            "imports": [
+                {"import": "invenio_records_resources.resources.RecordResourceConfig"}
+            ],
+        },
+        "saved-model": {
+            "file": "test/models/records.json",
+            "module": "test.models",
+            "alias": "test",
+        },
+        "proxy": {"module": "test.proxies", "generate": True},
+        "json-schema-settings": {
+            "generate": True,
+            "alias": "test",
+            "version": "1.0.0",
+            "module": "test.records.jsonschemas",
+            "name": "test-1.0.0.json",
+            "file": "test/records/jsonschemas/test-1.0.0.json",
         },
         "pid": {
+            "generate": True,
+            "type": "test",
+            "module": "test.records.api",
+            "provider-class": "test.records.api.TestIdProvider",
+            "provider-base-classes": ["RecordIdProviderV2"],
+            "field-class": "PIDField",
             "context-class": "PIDFieldContext",
             "field-args": ["create=True"],
-            "field-class": "PIDField",
-            "generate": True,
             "imports": [
                 {
                     "import": "invenio_records_resources.records.systemfields.pid.PIDField"
@@ -480,178 +534,126 @@ def test_model_saver_invenio():
                 },
                 {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
             ],
-            "module": "test.records.api",
-            "provider-base-classes": ["RecordIdProviderV2"],
-            "provider-class": "test.records.api.TestIdProvider",
-            "type": "test",
-        },
-        "properties": {
-            "$schema": {
-                "facets": {"searchable": True},
-                "marshmallow": {"read": False, "write": False},
-                "sample": {"skip": True},
-                "type": "keyword",
-                "ui": {"marshmallow": {"read": False, "write": False}},
-            },
-            "created": {
-                "facets": {"searchable": True},
-                "marshmallow": {"read": False, "write": False},
-                "sample": {"skip": True},
-                "type": "datetime",
-                "ui": {"marshmallow": {"read": False, "write": False}},
-            },
-            "id": {
-                "facets": {"searchable": True},
-                "marshmallow": {"read": False, "write": False},
-                "sample": {"skip": True},
-                "type": "keyword",
-                "ui": {"marshmallow": {"read": False, "write": False}},
-            },
-            "updated": {
-                "facets": {"searchable": True},
-                "marshmallow": {"read": False, "write": False},
-                "sample": {"skip": True},
-                "type": "datetime",
-                "ui": {"marshmallow": {"read": False, "write": False}},
-            },
-        },
-        "proxy": {"module": "test.proxies", "generate": True},
-        "record": {
-            "base-classes": ["InvenioRecord"],
-            "class": "test.records.api.TestRecord",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {
-                    "alias": "InvenioRecord",
-                    "import": "invenio_records_resources.records.api.Record",
-                }
-            ],
-            "module": "test.records.api",
         },
         "record-dumper": {
-            "base-classes": ["SearchDumper"],
-            "class": "test.records.dumper.TestDumper",
-            "extensions": [],
-            "extra-code": "",
             "generate": True,
-            "imports": [{"import": "invenio_records.dumpers.SearchDumper"}],
             "module": "test.records.dumper",
+            "class": "test.records.dumper.TestDumper",
+            "base-classes": ["SearchDumper"],
+            "extra-code": "",
+            "extensions": [],
+            "imports": [{"import": "invenio_records.dumpers.SearchDumper"}],
         },
         "record-metadata": {
-            "alembic": "test.alembic",
-            "alias": "test",
-            "base-classes": ["db.Model", "RecordMetadataBase"],
-            "class": "test.records.models.TestMetadata",
-            "extra-code": "",
             "generate": True,
+            "module": "test.records.models",
+            "class": "test.records.models.TestMetadata",
+            "base-classes": ["db.Model", "RecordMetadataBase"],
+            "extra-code": "",
             "imports": [
                 {"import": "invenio_records.models.RecordMetadataBase"},
                 {"import": "invenio_db.db"},
             ],
-            "module": "test.records.models",
             "table": "test_metadata",
-        },
-        "resource": {
-            "base-classes": ["RecordResource"],
-            "class": "test.resources.records.resource.TestResource",
-            "config-key": "TEST_RECORD_RESOURCE_CLASS",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {"import": "invenio_records_resources.resources.RecordResource"}
-            ],
-            "module": "test.resources.records.resource",
-            "proxy": "current_resource",
-        },
-        "resource-config": {
-            "base-classes": ["RecordResourceConfig"],
-            "base-url": "/test/",
-            "class": "test.resources.records.config.TestResourceConfig",
-            "config-key": "TEST_RECORD_RESOURCE_CONFIG",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {"import": "invenio_records_resources.resources.RecordResourceConfig"}
-            ],
-            "module": "test.resources.records.config",
-        },
-        "sample": {"file": "data/sample_data.yaml"},
-        "saved-model": {
             "alias": "test",
-            "file": "test/models/records.json",
-            "module": "test.models",
-        },
-        "search-options": {
-            "base-classes": ["InvenioSearchOptions"],
-            "class": "test.services.records.search.TestSearchOptions",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {
-                    "alias": "InvenioSearchOptions",
-                    "import": "invenio_records_resources.services.SearchOptions",
-                }
-            ],
-            "module": "test.services.records.search",
-        },
-        "searchable": True,
-        "service": {
-            "base-classes": ["InvenioRecordService"],
-            "class": "test.services.records.service.TestService",
-            "config-key": "TEST_RECORD_SERVICE_CLASS",
-            "extra-code": "",
-            "generate": True,
-            "imports": [
-                {
-                    "alias": "InvenioRecordService",
-                    "import": "invenio_records_resources.services.RecordService",
-                }
-            ],
-            "module": "test.services.records.service",
-            "proxy": "current_service",
+            "use-versioning": True,
+            "alembic": "test.alembic",
         },
         "service-config": {
+            "generate": True,
+            "config-key": "TEST_RECORD_SERVICE_CONFIG",
+            "module": "test.services.records.config",
+            "class": "test.services.records.config.TestServiceConfig",
+            "extra-code": "",
+            "service-id": "test",
             "base-classes": [
                 "PermissionsPresetsConfigMixin",
                 "InvenioRecordServiceConfig",
             ],
-            "class": "test.services.records.config.TestServiceConfig",
             "components": [],
-            "config-key": "TEST_RECORD_SERVICE_CONFIG",
-            "extra-code": "",
-            "generate": True,
             "imports": [
                 {
-                    "alias": "InvenioRecordServiceConfig",
                     "import": "invenio_records_resources.services.RecordServiceConfig",
+                    "alias": "InvenioRecordServiceConfig",
                 },
                 {
                     "import": "oarepo_runtime.config.service.PermissionsPresetsConfigMixin"
                 },
             ],
-            "module": "test.services.records.config",
-            "service-id": "test",
         },
-        "type": "model",
-        "ui": {
-            "marshmallow": {
-                "base-classes": ["InvenioUISchema"],
-                "class": "test.services.records.ui_schema.TestUISchema",
-                "extra-code": "",
-                "generate": True,
-                "imports": [
-                    {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
-                ],
-                "module": "test.services.records.ui_schema",
-            }
-        },
-        "app-blueprint": {
-            "alias": "test",
-            "extra_code": "",
-            "function": "test.views.records.app.create_app_blueprint",
+        "service": {
             "generate": True,
-            "imports": [],
-            "module": "test.views.records.app",
+            "config-key": "TEST_RECORD_SERVICE_CLASS",
+            "proxy": "current_service",
+            "module": "test.services.records.service",
+            "class": "test.services.records.service.TestService",
+            "extra-code": "",
+            "base-classes": ["InvenioRecordService"],
+            "imports": [
+                {
+                    "import": "invenio_records_resources.services.RecordService",
+                    "alias": "InvenioRecordService",
+                }
+            ],
+        },
+        "json-serializer": {
+            "module": "test.resources.records.ui",
+            "class": "test.resources.records.ui.TestUIJSONSerializer",
+            "base-classes": ["MarshmallowSerializer"],
+            "imports": [
+                {"import": "flask_resources.BaseListSchema"},
+                {"import": "flask_resources.MarshmallowSerializer"},
+                {"import": "flask_resources.serializers.JSONSerializer"},
+            ],
+            "extra-code": "",
+            "generate": True,
+        },
+        "mapping-settings": {
+            "generate": True,
+            "alias": "test",
+            "module": "test.records.mappings",
+            "index": "test-test-1.0.0",
+            "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
+        },
+        "permissions": {
+            "generate": True,
+            "presets": ["everyone"],
+            "extra-code": "",
+            "module": "test.services.records.permissions",
+            "class": "test.services.records.permissions.TestPermissionPolicy",
+            "base-classes": ["RecordPermissionPolicy"],
+            "imports": [
+                {"import": "invenio_records_permissions.RecordPermissionPolicy"}
+            ],
+        },
+        "properties": {
+            "$schema": {
+                "sample": {"skip": True},
+                "facets": {"searchable": True},
+                "ui": {"marshmallow": {"read": False, "write": False}},
+                "type": "keyword",
+                "marshmallow": {"read": False, "write": False},
+            },
+            "created": {
+                "sample": {"skip": True},
+                "facets": {"searchable": True},
+                "ui": {"marshmallow": {"read": False, "write": False}},
+                "type": "datetime",
+                "marshmallow": {"read": False, "write": False},
+            },
+            "id": {
+                "sample": {"skip": True},
+                "facets": {"searchable": True},
+                "ui": {"marshmallow": {"read": False, "write": False}},
+                "type": "keyword",
+                "marshmallow": {"read": False, "write": False},
+            },
+            "updated": {
+                "sample": {"skip": True},
+                "facets": {"searchable": True},
+                "ui": {"marshmallow": {"read": False, "write": False}},
+                "type": "datetime",
+                "marshmallow": {"read": False, "write": False},
+            },
         },
     }

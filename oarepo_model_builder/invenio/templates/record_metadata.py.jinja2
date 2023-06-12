@@ -5,7 +5,9 @@ class {{ vars.record_metadata|class_header }}:
 
     __tablename__ = "{{ vars.record_metadata.table }}"
 
+    {% if vars.record_metadata.use_versioning %}
     # Enables SQLAlchemy-Continuum versioning
     __versioned__ = {}
+    {% endif %}
 
 {{ vars.record_metadata.extra_code }}
