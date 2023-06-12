@@ -323,7 +323,11 @@ class DataTypes:
         depsort_map = {}
 
         def get_dependent_component(component):
-            return dependency_remaps[component] if component in dependency_remaps else component
+            return (
+                dependency_remaps[component]
+                if component in dependency_remaps
+                else component
+            )
 
         for c in unsorted_components:
             dependencies_classes = depsort_map.setdefault(type(c), [])

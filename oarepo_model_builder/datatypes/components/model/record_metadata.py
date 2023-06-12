@@ -43,9 +43,8 @@ class RecordMetadataClassSchema(ma.Schema):
     )
     alembic = ma.fields.Str(metadata={"doc": "module where alembic files are stored"})
     use_versioning = ma.fields.Boolean(
-        attribute="use-versioning",
-        data_key="use-versioning",
-        load_default=True)
+        attribute="use-versioning", data_key="use-versioning", load_default=True
+    )
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
