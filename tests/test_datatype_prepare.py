@@ -196,6 +196,7 @@ def test_prepare_datatype():
             ],
             "module": "my.test.records.models",
             "table": "test_metadata",
+            "use-versioning": True,
         },
         "resource": {
             "base-classes": ["RecordResource"],

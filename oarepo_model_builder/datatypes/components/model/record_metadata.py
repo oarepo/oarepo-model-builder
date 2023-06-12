@@ -41,7 +41,14 @@ class RecordMetadataClassSchema(ma.Schema):
         data_key="table",
         metadata={"doc": "Name of the database table"},
     )
-    alembic = ma.fields.Str(metadata={"doc": "module where alembic files are stored"})
+    alembic = ma.fields.Str(
+        metadata={
+            "doc": (
+                "module where alembic files are stored. Used only for records profile, "
+                "ignored in other profiles as alembic is always stored inside a record"
+            )
+        }
+    )
     use_versioning = ma.fields.Boolean(
         attribute="use-versioning", data_key="use-versioning", load_default=True
     )
@@ -63,7 +70,7 @@ class RecordMetadataModelComponent(DataTypeComponent):
             metadata={"doc": "Record metadata settings"},
         )
 
-    def before_model_prepare(self, datatype, *, context, **kwargs):
+    def before_model_prepare(self, datatype, context, **kwargs):
         profile = context["profile"]
         records_module = parent_module(datatype.definition["record"]["module"])
         prefix = datatype.definition["module"]["prefix"]
@@ -83,8 +90,8 @@ class RecordMetadataModelComponent(DataTypeComponent):
             ],
         )
         metadata.setdefault("table", f"{prefix.lower()}_metadata")
-        metadata.setdefault("alembic", f"{records_module}.alembic")
         metadata.setdefault("alias", alias)
+        metadata.setdefault("use-versioning", True)
 
         if profile == "record":
             # only add alembic for records profile, do not add it for other profiles.
