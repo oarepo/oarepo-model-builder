@@ -292,6 +292,7 @@ class DataTypes:
     @lru_cache(maxsize=1024)
     def _get_components(self, datatype_class):
         datatype_components = []
+
         for component in self.components:
             if not component.eligible_datatypes:
                 datatype_components.append(component)
@@ -313,16 +314,27 @@ class DataTypes:
             if type(c) not in non_leaf_components:
                 unsorted_components.append(c)
 
+        dependency_remaps = {}
+        for c in unsorted_components:
+            remap = getattr(c, "dependency_remap", None)
+            if remap:
+                dependency_remaps[remap] = type(c)
         # sort by dependencies
         depsort_map = {}
+
+        def get_dependent_component(component):
+            return dependency_remaps[component] if component in dependency_remaps else component
+
         for c in unsorted_components:
             dependencies_classes = depsort_map.setdefault(type(c), [])
             depsort_map[type(c)] = dependencies_classes
             for depends_on in getattr(c, "depends_on", []):
+                depends_on = get_dependent_component(depends_on)
                 if isinstance(depends_on, str):
                     depends_on = import_class(depends_on)
                 dependencies_classes.append(depends_on)
             for affects in getattr(c, "affects", []):
+                affects = get_dependent_component(affects)
                 if isinstance(affects, str):
                     affects = import_class(affects)
                 depsort_map.setdefault(affects, []).append(type(c))

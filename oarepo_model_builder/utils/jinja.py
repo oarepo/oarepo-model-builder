@@ -89,8 +89,6 @@ def class_header(rec, class_name="class", base_classes_name="base-classes"):
         ]
     except KeyError:
         raise KeyError(f'Do not have "{class_name}" inside {rec}')
-    except Exception as e:
-        print(e)
     base_classes = rec[base_classes_name]
     if base_classes:
         ret.append("(")
