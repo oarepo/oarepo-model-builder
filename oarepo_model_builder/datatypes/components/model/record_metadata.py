@@ -42,10 +42,15 @@ class RecordMetadataClassSchema(ma.Schema):
         metadata={"doc": "Name of the database table"},
     )
     alembic = ma.fields.Str(metadata={"doc": "module where alembic files are stored"})
+    use_versioning = ma.fields.Boolean(
+        attribute="use-versioning",
+        data_key="use-versioning",
+        load_default=True)
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
     skip = ma.fields.Boolean()
+
 
 
 class RecordMetadataModelComponent(DataTypeComponent):
