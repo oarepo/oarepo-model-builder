@@ -142,7 +142,7 @@ def test_invenio_alembic_cfg_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 [options.entry_points]
-invenio_db.alembic = test = test.records:alembic
+invenio_db.alembic = test = test:alembic
         """
     )
 

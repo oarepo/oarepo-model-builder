@@ -20,11 +20,11 @@ def validate_regex(value):
 class StringDataType(DataType):
     ui = {
         "marshmallow": {
-            "field-class": "ma_fields.String",
+            "field-class": "ma.fields.String",
         }
     }
     marshmallow = {
-        "field-class": "ma_fields.String",
+        "field-class": "ma.fields.String",
     }
     json_schema = {"type": "string"}
 
@@ -61,7 +61,7 @@ class FulltextKeywordDataType(StringDataType):
     facets = {
         "facet-class": "TermsFacet",
         "keyword": True,
-        # "path": "_keyword",
+        "path": "keyword",
         "imports": [
             {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
         ],

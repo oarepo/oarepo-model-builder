@@ -35,13 +35,13 @@ def test_array_shortcuts():
     assert (
         strip_whitespaces(
             """
-class TestSchema(InvenioBaseRecordSchema):
+class TestSchema(BaseRecordSchema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    a = ma_fields.List(ma_fields.String())    
+    a = ma.fields.List(ma.fields.String())    
     """
         )
         in strip_whitespaces(data)

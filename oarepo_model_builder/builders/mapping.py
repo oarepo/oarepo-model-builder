@@ -14,10 +14,12 @@ def deep_searchable_enabled(dt):
         return False
     if mapping.item:
         return deep_searchable_enabled(mapping.item)
+    if not mapping.children:
+        return True
     for c in mapping.children.values():
-        if not deep_searchable_enabled(c):
-            return False
-    return True
+        if deep_searchable_enabled(c):
+            return True
+    return False
 
 
 class MappingBuilder(JSONBaseBuilder):
@@ -49,21 +51,24 @@ class MappingBuilder(JSONBaseBuilder):
         mapping: Section = node.section_mapping
         facets: Section = node.section_facets
         ret = {**mapping.config}
+        enabled_property = (
+            "enabled" if mapping.config.get("type") in ("object", "nested") else "index"
+        )
 
         searchable = facets.config.get("searchable")
         if searchable is not None:
-            ret.setdefault("enabled", searchable)
+            ret.setdefault(enabled_property, searchable)
 
         this_node_enabled = True
         if not isinstance(node, ModelDataType):
             if not deep_searchable_enabled(node):
-                ret.setdefault("enabled", False)
+                ret.setdefault(enabled_property, False)
                 return ret
 
             if not parent_enabled:
-                ret.setdefault("enabled", False)
+                ret.setdefault(enabled_property, False)
 
-            if ret.get("enabled") is False:
+            if ret.get(enabled_property) is False:
                 return ret
         else:
             this_node_enabled = deep_searchable_enabled(node)
@@ -80,6 +85,6 @@ class MappingBuilder(JSONBaseBuilder):
             v = self.generate(mapping.item, this_node_enabled)
             ret.pop("type", None)
             deepmerge(ret, v)
-        if ret.get("enabled") is True:  # keep only enabled: False there
-            ret.pop("enabled")
+        if ret.get(enabled_property) is True:  # keep only enabled: False there
+            ret.pop(enabled_property)
         return ret

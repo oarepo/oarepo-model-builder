@@ -2,7 +2,7 @@ from .datatypes import DataType
 
 
 class BaseDateDataType(DataType):
-    marshmallow = {"field-class": "ma_fields.String"}
+    marshmallow = {"field-class": "ma.fields.String"}
 
     facets = {
         "facet-class": "DateTimeFacet",
@@ -21,7 +21,7 @@ class DateDataType(BaseDateDataType):
         }
     }
     marshmallow = {
-        "field-class": "ma_fields.String",
+        "field-class": "ma.fields.String",
         "validators": ["validate_date('%Y-%m-%d')"],
         "imports": [{"import": "oarepo_runtime.validation.validate_date"}],
     }
@@ -39,7 +39,7 @@ class TimeDataType(BaseDateDataType):
         }
     }
     marshmallow = {
-        "field-class": "ma_fields.String",
+        "field-class": "ma.fields.String",
         "validators": ["validate_date('%H:%M:%S')"],
         "imports": [{"import": "oarepo_runtime.validation.validate_date"}],
     }
@@ -60,7 +60,7 @@ class DateTimeDataType(BaseDateDataType):
         }
     }
     marshmallow = {
-        "field-class": "ma_fields.String",
+        "field-class": "ma.fields.String",
         "validators": ["validate_datetime"],
         "imports": [{"import": "oarepo_runtime.validation.validate_datetime"}],
     }

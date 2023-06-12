@@ -208,7 +208,7 @@ def test_model_saver():
             "module": "test.records.dumper",
         },
         "record-metadata": {
-            "alembic": "test.records.alembic",
+            "alembic": "test.alembic",
             "alias": "test",
             "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "test.records.models.TestMetadata",
@@ -248,7 +248,7 @@ def test_model_saver():
         "sample": {"file": "data/sample_data.yaml"},
         "saved-model": {
             "alias": "test",
-            "file": "test/models/model.json",
+            "file": "test/models/records.json",
             "module": "test.models",
         },
         "search-options": {
@@ -329,7 +329,7 @@ def test_model_saver():
     assert (
         data[2].strip()
         == """[options.entry_points]
-oarepo.models = test = test.models:model.json"""
+oarepo.models = test = test.models:records.json"""
     )
 
 
@@ -364,7 +364,7 @@ def build(model, output_builder_components=None):
     )
     return (
         json5.load(
-            builder.filesystem.open(os.path.join("test", "models", "model.json"))
+            builder.filesystem.open(os.path.join("test", "models", "records.json"))
         ),
         builder.filesystem.read(os.path.join("test", "models", "__init__.py")),
         builder.filesystem.read("setup.cfg"),
@@ -433,7 +433,8 @@ def test_model_saver_invenio():
             "module": "test.records.mappings",
         },
         "marshmallow": {
-            "base-classes": ["InvenioBaseRecordSchema"],
+            "base-classes": ["BaseRecordSchema"],
+            "imports": [{"import": "oarepo_runtime.marshmallow.BaseRecordSchema"}],
             "class": "test.services.records.schema.TestSchema",
             "extra-code": "",
             "generate": True,
@@ -538,7 +539,7 @@ def test_model_saver_invenio():
             "module": "test.records.dumper",
         },
         "record-metadata": {
-            "alembic": "test.records.alembic",
+            "alembic": "test.alembic",
             "alias": "test",
             "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "test.records.models.TestMetadata",
@@ -578,7 +579,7 @@ def test_model_saver_invenio():
         "sample": {"file": "data/sample_data.yaml"},
         "saved-model": {
             "alias": "test",
-            "file": "test/models/model.json",
+            "file": "test/models/records.json",
             "module": "test.models",
         },
         "search-options": {

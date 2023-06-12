@@ -184,7 +184,7 @@ def test_prepare_datatype():
             "module": "my.test.records.dumper",
         },
         "record-metadata": {
-            "alembic": "my.test.records.alembic",
+            "alembic": "my.test.alembic",
             "alias": "my_test_record",
             "base-classes": ["db.Model", "RecordMetadataBase"],
             "class": "my.test.records.models.TestMetadata",
@@ -224,7 +224,7 @@ def test_prepare_datatype():
         "sample": {"file": "data/sample_data.yaml"},
         "saved-model": {
             "alias": "my_test_record",
-            "file": "my/test/models/model.json",
+            "file": "my/test/models/records.json",
             "module": "my.test.models",
         },
         "search-options": {

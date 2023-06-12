@@ -50,13 +50,13 @@ def test_enum():
     assert (
         strip_whitespaces(
             """
-class TestSchema(InvenioBaseRecordSchema):
+class TestSchema(BaseRecordSchema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    a = ma_fields.String(validate=[ma_validate.OneOf(['a', 'b', 'c'])])
+    a = ma.fields.String(validate=[ma_validate.OneOf(['a', 'b', 'c'])])
     """
         )
         in strip_whitespaces(data)

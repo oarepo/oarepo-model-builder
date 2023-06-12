@@ -6,11 +6,11 @@ class FlattenDataType(DataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma_fields.Raw",
+            "field-class": "ma.fields.Raw",
         }
     }
     marshmallow = {
-        "field-class": "ma_fields.Raw",
+        "field-class": "ma.fields.Raw",
     }
     json_schema = {"type": "object"}
     mapping = {"enabled": False, "type": "object"}
