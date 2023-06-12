@@ -58,7 +58,7 @@ def _test(fulltext_builder, string_type):
         os.path.join("test", "services", "records", "ui_schema.py")  # NOSONAR
     ) as f:
         data = f.read()
-    assert "a = ma_fields.String()" in data
+    assert "a = ma.fields.String()" in data
 
 
 def test_fulltext(fulltext_builder):
@@ -84,7 +84,7 @@ def test_simple_array(fulltext_builder):
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert "a = ma_fields.List(ma_fields.String())" in data
+    assert "a = ma.fields.List(ma.fields.String())" in data
 
 
 def test_array_of_objects(fulltext_builder):
@@ -112,7 +112,7 @@ class TestUISchema(InvenioUISchema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.List(ma_fields.Nested(lambda: AItemUISchema()))
+    a = ma.fields.List(ma.fields.Nested(lambda: AItemUISchema()))
 
 
 class AItemUISchema(ma.Schema):
@@ -121,7 +121,7 @@ class AItemUISchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    b = ma_fields.Integer() """
+    b = ma.fields.Integer() """
         )
         in strip_whitespaces(data)
     )
@@ -158,7 +158,7 @@ class TestUISchema(InvenioUISchema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.Nested(lambda: BUISchema())
+    a = ma.fields.Nested(lambda: BUISchema())
 
 
 class BUISchema(ma.Schema):
@@ -167,7 +167,7 @@ class BUISchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    b = ma_fields.String()    
+    b = ma.fields.String()    
     """
         )
         in strip_whitespaces(data)
@@ -211,7 +211,7 @@ from test.services.schema2 import BUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.Nested(lambda: BUISchema())
+    a = ma.fields.Nested(lambda: BUISchema())
     """
         )
         in strip_whitespaces(data)
@@ -250,7 +250,7 @@ class TestUISchema(InvenioUISchema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.Nested(lambda: BUISchema())
+    a = ma.fields.Nested(lambda: BUISchema())
 """
         )
         in strip_whitespaces(data)
@@ -290,7 +290,7 @@ from oarepo_runtime.ui.marshmallow import InvenioUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.Nested(lambda: BUISchema())
+    a = ma.fields.Nested(lambda: BUISchema())
 """
         )
         in strip_whitespaces(data)
@@ -328,13 +328,13 @@ def test_generate_nested_schema_array(fulltext_builder):
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.List(ma_fields.Nested(lambda: BUISchema()))
+    a = ma.fields.List(ma.fields.Nested(lambda: BUISchema()))
 
 
 class BUISchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
-    b = ma_fields.String()
+    b = ma.fields.String()
 """
         )
         in strip_whitespaces(data)
@@ -352,11 +352,10 @@ def test_extend_existing(fulltext_builder):
             '''
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
 import marshmallow as ma
-import marshmallow.fields as ma_fields
 import marshmallow.validate as ma_valid
 class TestUISchema(ma.Schema):
     """TestUISchema schema."""
-    a = ma_fields.String()'''
+    a = ma.fields.String()'''
         )
 
     fulltext_builder.build(
@@ -365,7 +364,7 @@ class TestUISchema(ma.Schema):
     data = fulltext_builder.filesystem.read(
         os.path.join("test", "services", "records", "ui_schema.py")
     )
-    assert "b = ma_fields.String()" in data
+    assert "b = ma.fields.String()" in data
 
 
 def test_generate_nested_schema_relative_same_package(fulltext_builder):
@@ -404,7 +403,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.Nested(lambda: BUISchema())
+    a = ma.fields.Nested(lambda: BUISchema())
 """
         )
         in strip_whitespaces(data)
@@ -420,7 +419,7 @@ class TestUISchema(InvenioUISchema):
 class BUISchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
-    b = ma_fields.String()
+    b = ma.fields.String()
 """
         )
         in strip_whitespaces(data)
@@ -464,12 +463,12 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.Nested(lambda: BUISchema())
+    a = ma.fields.Nested(lambda: BUISchema())
 
 class BUISchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
-    b = ma_fields.String()
+    b = ma.fields.String()
 """
         )
         in strip_whitespaces(data)
@@ -514,7 +513,7 @@ from test.services.records.schema2 import BUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.Nested(lambda: BUISchema())
+    a = ma.fields.Nested(lambda: BUISchema())
 """
         )
         in strip_whitespaces(data)
@@ -590,4 +589,4 @@ def test_metadata(fulltext_builder):
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert "metadata = ma_fields.Nested(lambda: TestMetadataUISchema())" in data
+    assert "metadata = ma.fields.Nested(lambda: TestMetadataUISchema())" in data

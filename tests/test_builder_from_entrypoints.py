@@ -42,7 +42,6 @@ def test_include_invenio():
 from marshmallow import ValidationError
 from marshmallow import validate as ma_validate
 import marshmallow as ma
-from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
 from oarepo_runtime.marshmallow import BaseRecordSchema
@@ -56,7 +55,7 @@ class TestSchema(BaseRecordSchema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.String()
+    a = ma.fields.String()
     """
         )
         == strip_whitespaces(data)
@@ -73,7 +72,7 @@ from oarepo_runtime.ui.marshmallow import InvenioUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.String()    """
+    a = ma.fields.String()    """
         )
         in strip_whitespaces(data)
     )

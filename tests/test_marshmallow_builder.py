@@ -50,7 +50,7 @@ def _test(fulltext_builder, string_type):
         os.path.join("test", "services", "records", "schema.py")  # NOSONAR
     ) as f:
         data = f.read()
-    assert "a = ma_fields.String()" in data
+    assert "a = ma.fields.String()" in data
 
 
 def test_fulltext(fulltext_builder):
@@ -76,7 +76,7 @@ def test_simple_array(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
-    assert "a = ma_fields.List(ma_fields.String())" in data
+    assert "a = ma.fields.List(ma.fields.String())" in data
 
 
 def test_array_of_objects(fulltext_builder):
@@ -101,12 +101,12 @@ def test_array_of_objects(fulltext_builder):
 class TestSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))
+    a = ma.fields.List(ma.fields.Nested(lambda: AItemSchema()))
 
 class AItemSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
-    b = ma_fields.Integer()
+    b = ma.fields.Integer()
 """
         )
         in strip_whitespaces(data)
@@ -143,7 +143,7 @@ class TestSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.Nested(lambda: BSchema())
+    a = ma.fields.Nested(lambda: BSchema())
 
 
 class BSchema(ma.Schema):
@@ -152,7 +152,7 @@ class BSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    b = ma_fields.String()        
+    b = ma.fields.String()        
         """
         )
         in strip_whitespaces(data)
@@ -192,7 +192,7 @@ from test.services.schema2 import BSchema
 class TestSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.Nested(lambda: BSchema())        
+    a = ma.fields.Nested(lambda: BSchema())        
         """
         )
         in strip_whitespaces(data)
@@ -210,7 +210,7 @@ class BSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
 
-    b = ma_fields.String()       
+    b = ma.fields.String()       
         """
         )
         in strip_whitespaces(data)
@@ -248,7 +248,7 @@ class TestSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.Nested(lambda: B())"""
+    a = ma.fields.Nested(lambda: B())"""
         )
         in strip_whitespaces(data)
     )
@@ -286,7 +286,7 @@ class TestSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.Nested(lambda: B())"""
+    a = ma.fields.Nested(lambda: B())"""
         )
         in strip_whitespaces(data)
     )
@@ -325,7 +325,7 @@ class TestSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.List(ma_fields.Nested(lambda: BSchema()))
+    a = ma.fields.List(ma.fields.Nested(lambda: BSchema()))
 
 
 class BSchema(ma.Schema):
@@ -334,7 +334,7 @@ class BSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    b = ma_fields.String()
+    b = ma.fields.String()
         """
         )
         in strip_whitespaces(data)
@@ -353,11 +353,10 @@ def test_extend_existing(fulltext_builder):
             '''
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
 import marshmallow as ma
-import marshmallow.fields as ma_fields
 import marshmallow.validate as ma_valid
 class TestSchema(ma.Schema):
     """TestSchema schema."""
-    a = ma_fields.String()'''
+    a = ma.fields.String()'''
         )
 
     fulltext_builder.build(
@@ -366,7 +365,7 @@ class TestSchema(ma.Schema):
     data = fulltext_builder.filesystem.read(
         os.path.join("test", "services", "records", "schema.py")
     )
-    assert "b = ma_fields.String()" in data
+    assert "b = ma.fields.String()" in data
 
 
 def test_generate_nested_schema_relative_same_package(fulltext_builder):
@@ -406,7 +405,7 @@ class TestSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.Nested(lambda: BSchema())        
+    a = ma.fields.Nested(lambda: BSchema())        
         """
         )
         in strip_whitespaces(data)
@@ -425,7 +424,7 @@ class BSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    b = ma_fields.String()        
+    b = ma.fields.String()        
         """
         )
         in strip_whitespaces(data)
@@ -466,7 +465,7 @@ class TestSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    a = ma_fields.Nested(lambda: BSchema())
+    a = ma.fields.Nested(lambda: BSchema())
 
 
 class BSchema(ma.Schema):
@@ -475,7 +474,7 @@ class BSchema(ma.Schema):
         unknown = ma.RAISE
 
 
-    b = ma_fields.String()
+    b = ma.fields.String()
             """
         )
         in strip_whitespaces(data)
@@ -515,7 +514,7 @@ class TestSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
 
-    a = ma_fields.Nested(lambda: BSchema())
+    a = ma.fields.Nested(lambda: BSchema())
         """
         )
         in strip_whitespaces(data)
@@ -533,7 +532,7 @@ class BSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
 
-    b = ma_fields.String()
+    b = ma.fields.String()
         """
         )
         in strip_whitespaces(data)

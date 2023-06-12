@@ -36,14 +36,13 @@ def test_raw_type():
 from marshmallow import ValidationError
 from marshmallow import validate as ma_validate
 import marshmallow as ma
-from marshmallow import fields as ma_fields
 from marshmallow_utils import fields as mu_fields
 from marshmallow_utils import schemas as mu_schemas
 from oarepo_runtime.marshmallow import BaseRecordSchema
 class TestSchema(BaseRecordSchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma_fields.Raw()
+    a = ma.fields.Raw()
     """
         )
         in strip_whitespaces(data)
