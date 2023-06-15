@@ -243,13 +243,17 @@ class DataType(AbstractDataType):
             datatypes.call_class_components(datatype=cls, method="model_schema")
         ) + list(datatypes.get_class_components(cls, "ModelSchema"))
         validators = [x for x in validators if x]
+        unique_validators = []
+        for v in validators:
+            if v not in unique_validators:
+                unique_validators.append(v)
 
         class Meta:
             unknown = ma.RAISE
 
         ret = type(
             f"{cls.__name__}ModelValidator",
-            (*validators, cls.ModelSchema),
+            (*unique_validators, cls.ModelSchema),
             {"Meta": Meta},
         )
         return ret
