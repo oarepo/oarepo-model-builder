@@ -81,9 +81,9 @@ class AppModelComponent(DataTypeComponent):
 
         ext.setdefault("generate", True)
         ext_module = ext.setdefault("module", f"{module}.ext")
-        ext.setdefault("class", f"{ext_module}.{prefix}Ext")
+        ext.setdefault("class", f"{ext_module}.{module.capitalize()}Ext")
         ext.setdefault("base-classes", [])
         ext.setdefault("extra_code", "")
-        ext.setdefault("alias", alias)
+        ext.setdefault("alias", module)
         ext.setdefault("imports", [])
         convert_config_to_qualified_name(ext)

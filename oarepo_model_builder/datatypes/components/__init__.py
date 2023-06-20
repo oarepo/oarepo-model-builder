@@ -31,7 +31,7 @@ from .model import (
     SearchOptionsModelComponent,
     ServiceModelComponent,
     UIMarshmallowModelComponent,
-    UIModelComponent,
+    UIModelComponent, ExtResourceModelComponent,
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
 from .ui import ObjectUIComponent, RegularUIComponent
@@ -72,4 +72,5 @@ DEFAULT_COMPONENTS = [
     NestedFacetsComponent,
     RegularFacetsComponent,
     ArrayFacetsComponent,
+    ExtResourceModelComponent,
 ]

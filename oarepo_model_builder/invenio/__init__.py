@@ -20,4 +20,5 @@ TEMPLATES = {
     "pid-provider": "templates/pid_provider.py.jinja2",
     # utils and included
     "imports": "templates/imports.py.jinja2",
+    "ext-resource": "templates/ext_resource.py.jinja2"
 }

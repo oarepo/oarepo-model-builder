@@ -1,6 +1,7 @@
 from .app import AppModelComponent
 from .blueprints import BlueprintsModelComponent
 from .defaults import DefaultsModelComponent
+from .ext_resource import ExtResourceModelComponent
 from .facets import FacetsModelComponent
 from .jsonschema import JSONSchemaModelComponent
 from .mapping import MappingModelComponent
@@ -40,4 +41,5 @@ __all__ = [
     "UIModelComponent",
     "DefaultsModelComponent",
     "ProxyModelComponent",
+    "ExtResourceModelComponent",
 ]
