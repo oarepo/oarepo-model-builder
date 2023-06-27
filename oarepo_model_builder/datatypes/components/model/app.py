@@ -66,9 +66,8 @@ class AppModelComponent(DataTypeComponent):
         )
 
     def before_model_prepare(self, datatype, **kwargs):
-        prefix = datatype.definition["module"]["prefix"]
-        alias = datatype.definition["module"]["alias"]
         module = datatype.definition["module"]["qualified"]
+        base_title = datatype.definition["module"]["base-title"]
 
         config = set_default(datatype, "config", {})
 
@@ -81,9 +80,9 @@ class AppModelComponent(DataTypeComponent):
 
         ext.setdefault("generate", True)
         ext_module = ext.setdefault("module", f"{module}.ext")
-        ext.setdefault("class", f"{ext_module}.{prefix}Ext")
+        ext.setdefault("class", f"{ext_module}.{base_title}Ext")
         ext.setdefault("base-classes", [])
         ext.setdefault("extra_code", "")
-        ext.setdefault("alias", alias)
+        ext.setdefault("alias", module)
         ext.setdefault("imports", [])
         convert_config_to_qualified_name(ext)

@@ -74,7 +74,7 @@ class MarshmallowModelComponent(MarshmallowModelMixin, ObjectMarshmallowComponen
         marshmallow_def = dict_get(datatype.definition, self.model_marshmallow_section)
         classes[marshmallow_def["class"]].append((True, datatype))
 
-    def before_model_prepare(self, datatype, **kwargs):
+    def before_model_prepare(self, datatype, *, context, **kwargs):
         prefix = datatype.definition["module"]["prefix"]
         services_module = parent_module(datatype.definition["service"]["module"])
 

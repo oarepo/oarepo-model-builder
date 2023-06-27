@@ -16,7 +16,7 @@ class FacetDefinition:
             # searchable not set up, so take it from argument
             self.searchable = facet_section.get("searchable", None)
 
-    def set_field(self, facet_section, arguments, field_class = None):
+    def set_field(self, facet_section, arguments, field_class=None):
         field = facet_section.get("field")
         if field:
             self.field = field

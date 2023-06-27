@@ -185,10 +185,8 @@ from test import config as config
 
 
 class TestExt:
+
     def __init__(self, app=None):
-        """Extension initialization."""
-        self.resource = None
-        self.service = None
         
         if app:
             self.init_app(app)
@@ -198,28 +196,18 @@ class TestExt:
         
         self.init_config(app)
         if not self.is_inherited():
-            self.init_resource(app)
             self.register_flask_extension(app)
 
     def register_flask_extension(self, app):
         
         app.extensions["test"] = self
 
-    def init_resource(self, app):
-        """Initialize vocabulary resources."""
-        self.service = app.config["TEST_RECORD_SERVICE_CLASS"](
-            config=app.config["TEST_RECORD_SERVICE_CONFIG"](),
-        )
-        self.resource = app.config["TEST_RECORD_RESOURCE_CLASS"](
-            service=self.service,
-            config=app.config["TEST_RECORD_RESOURCE_CONFIG"](),
-        )
-
     def init_config(self, app):
         """Initialize configuration."""
         for identifier in dir(config):
             if re.match('^[A-Z_0-9]*$', identifier) and not identifier.startswith('_'):
                 app.config.setdefault(identifier, getattr(config, identifier))
+
 
     def is_inherited(self):
         from importlib_metadata import entry_points
@@ -254,10 +242,10 @@ def _ext_proxy(attr):
     return LocalProxy(
         lambda: getattr(current_app.extensions["test"], attr))
 
-current_service = _ext_proxy('service')
+current_service = _ext_proxy('service_records')
 """Proxy to the instantiated vocabulary service."""
 
-current_resource = _ext_proxy('resource')
+current_resource = _ext_proxy('resource_records')
 """Proxy to the instantiated vocabulary resource."""
         '''
     )
@@ -432,7 +420,7 @@ from flask import Blueprint
 
 def create_api_blueprint(app):
     """Create TestRecord blueprint."""
-    blueprint = app.extensions["test"].resource.as_blueprint()
+    blueprint = app.extensions["test"].resource_records.as_blueprint()
     blueprint.record_once(init_create_api_blueprint)
 
     #calls record_once for all other functions starting with "init_addons_"
@@ -451,12 +439,12 @@ def init_create_api_blueprint(state):
 
     # register service
     sregistry = app.extensions["invenio-records-resources"].registry
-    sregistry.register(ext.service, service_id="test")
+    sregistry.register(ext.service_records, service_id=ext.service_records.config.service_id)
 
     # Register indexer
-    if hasattr(ext.service, "indexer"):
+    if hasattr(ext.service_records, "indexer"):
         iregistry = app.extensions["invenio-indexer"].registry
-        iregistry.register(ext.service.indexer, indexer_id="test")
+        iregistry.register(ext.service_records.indexer, indexer_id=ext.service_records.config.service_id)
         '''
     )
 

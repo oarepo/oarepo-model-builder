@@ -5,9 +5,6 @@ import re
 class {{ vars.ext|class_header }}:
 
     def __init__(self, app=None):
-        """Extension initialization."""
-        {% if not vars.resource.skip %}self.resource = None{% endif %}
-        {% if not vars.service.skip %}self.service = None{% endif %}
         {% if vars.ext.base_classes %}
         super().__init__(app=None)
         {% endif %}
@@ -21,7 +18,6 @@ class {{ vars.ext|class_header }}:
         {% endif %}
         self.init_config(app)
         if not self.is_inherited():
-            {% if not vars.resource.skip or not vars.service.skip %}self.init_resource(app){% endif %}
             self.register_flask_extension(app)
 
     def register_flask_extension(self, app):
@@ -30,28 +26,12 @@ class {{ vars.ext|class_header }}:
         {% endif %}
         app.extensions["{{ vars.ext.alias }}"] = self
 
-    def init_resource(self, app):
-        """Initialize vocabulary resources."""
-        {% if not vars.service.skip %}
-        self.service = app.config["{{ vars.service.config_key }}"](
-            config=app.config["{{ vars.service_config.config_key }}"](),
-            {% if vars.service.additional_args %}
-                {{ vars.service.additional_args|generate_list }}
-            {% endif %}
-        )
-        {% endif %}
-        {% if not vars.resource.skip %}
-        self.resource = app.config["{{ vars.resource.config_key }}"](
-            {% if not vars.service.skip %}service=self.service,{% endif %}
-            config=app.config["{{ vars.resource_config.config_key }}"](),
-        )
-        {% endif %}
-
     def init_config(self, app):
         """Initialize configuration."""
         for identifier in dir(config):
             if re.match('^[A-Z_0-9]*$', identifier) and not identifier.startswith('_'):
                 app.config.setdefault(identifier, getattr(config, identifier))
+
 
     def is_inherited(self):
         from importlib_metadata import entry_points

@@ -33,7 +33,11 @@ class ModuleSchema(ma.Schema):
         data_key="base-upper",
         metadata={"doc": "Uppercase of the base name"},
     )
-
+    base_title = ma.fields.String(
+        attribute="base-title",
+        data_key="base-title",
+        metadata={"doc": "Capitalized base name"},
+    )
     kebab_module = ma.fields.String(
         attribute="kebab-module",
         data_key="kebab-module",
@@ -94,6 +98,10 @@ class DefaultsModelComponent(DataTypeComponent):
         module_container.setdefault(
             "base-upper",
             module_base.upper(),
+        )
+        module_container.setdefault(
+            "base-title",
+            module_base.capitalize(),
         )
         module_container.setdefault(
             "kebab-module",

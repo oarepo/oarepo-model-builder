@@ -104,7 +104,6 @@ class ServiceModelComponent(DataTypeComponent):
         module = datatype.definition["module"]["qualified"]
         module_base_upper = datatype.definition["module"]["base-upper"]
         record_prefix = datatype.definition["module"]["prefix"]
-        flask_extension_name = datatype.definition["ext"]["alias"]
 
         service_package = f"{module}.services.{profile_module}"
 
@@ -124,7 +123,7 @@ class ServiceModelComponent(DataTypeComponent):
             f"{config_module}.{record_prefix}ServiceConfig",
         )
         config.setdefault("extra-code", "")
-        config.setdefault("service-id", flask_extension_name)
+        config.setdefault("service-id", datatype.definition["module"]["suffix-snake"])
         config.setdefault(
             "base-classes",
             ["PermissionsPresetsConfigMixin", "InvenioRecordServiceConfig"],

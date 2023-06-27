@@ -15,6 +15,7 @@ from .model import (
     AppModelComponent,
     BlueprintsModelComponent,
     DefaultsModelComponent,
+    ExtResourceModelComponent,
     FacetsModelComponent,
     JSONSchemaModelComponent,
     MappingModelComponent,
@@ -72,4 +73,5 @@ DEFAULT_COMPONENTS = [
     NestedFacetsComponent,
     RegularFacetsComponent,
     ArrayFacetsComponent,
+    ExtResourceModelComponent,
 ]

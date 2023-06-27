@@ -21,14 +21,14 @@ def init_{{ vars.app_blueprint.function|base_name }}(state):
     {%  if not vars.service_config.skip %}
     # register service
     sregistry = app.extensions["invenio-records-resources"].registry
-    sregistry.register(ext.service, service_id="{{ vars.service_config.service_id }}")
+    sregistry.register(ext.{{ ext.ext_service_name }}, service_id=ext.{{ ext.ext_service_name }}.config.service_id)
     {% endif  %}
 
     {%  if not vars.mapping_settings.skip %}
     # Register indexer
-    if hasattr(ext.service, "indexer"):
+    if hasattr(ext.{{ ext.ext_service_name }}, "indexer"):
         iregistry = app.extensions["invenio-indexer"].registry
-        iregistry.register(ext.service.indexer, indexer_id="{{ vars.ext.alias }}")
+        iregistry.register(ext.{{ ext.ext_service_name }}.indexer, indexer_id=ext.{{ ext.ext_service_name }}.config.service_id)
     {% endif  %}
 
 {{ vars.app_blueprint.extra_code }}

@@ -6,11 +6,11 @@ def _ext_proxy(attr):
         lambda: getattr(current_app.extensions["{{ vars.ext.alias }}"], attr))
 
 {% if not vars.service.skip %}
-{{ vars.service.proxy }} = _ext_proxy('service')
+{{ vars.service.proxy }} = _ext_proxy('{{ ext.ext_service_name }}')
 """Proxy to the instantiated vocabulary service."""
 {% endif %}
 
 {% if not vars.resource.skip %}
-{{ vars.resource.proxy }} = _ext_proxy('resource')
+{{ vars.resource.proxy }} = _ext_proxy('{{ ext.ext_resource_name }}')
 """Proxy to the instantiated vocabulary resource."""
 {% endif %}

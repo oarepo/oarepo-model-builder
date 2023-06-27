@@ -1,0 +1,23 @@
+from functools import cached_property
+{{ vars.config.module|generate_import(alias='config') }}
+
+class {{ vars.ext|class_header }}:
+    {% if not vars.service.skip %}
+    @cached_property
+    def {{ ext.ext_service_name }}(self):
+        return config.{{ vars.service.config_key }}(
+            config=config.{{ vars.service_config.config_key }}(),
+            {% if vars.service.additional_args %}
+                {{ vars.service.additional_args|generate_list }}
+            {% endif %}
+        )
+    {% endif %}
+
+    {% if not vars.resource.skip %}
+    @cached_property
+    def {{ ext.ext_resource_name }}(self):
+        return config.{{ vars.resource.config_key }}(
+            service=self.{{ ext.ext_service_name }},
+            config=config.{{ vars.resource_config.config_key }}(),
+        )
+    {% endif %}
