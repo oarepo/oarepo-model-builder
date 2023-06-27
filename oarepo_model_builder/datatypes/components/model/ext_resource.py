@@ -1,6 +1,6 @@
-from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
 import marshmallow as ma
 
+from oarepo_model_builder.datatypes import DataTypeComponent, ModelDataType
 from oarepo_model_builder.datatypes.components.model.utils import set_default
 
 
@@ -10,14 +10,18 @@ class ExtResourceSchema(ma.Schema):
 
     class Meta:
         unknown = ma.RAISE
+
+
 class ExtResourceModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
+
     class ModelSchema(ma.Schema):
         ext_resource = ma.fields.Nested(
             ExtResourceSchema,
             attribute="ext-resource",
             data_key="ext-resource",
         )
+
     def process_ext_resource(self, datatype, section, **kwargs):
         if self.is_record_profile:
             cfg = section.config
@@ -32,4 +36,3 @@ class ExtResourceModelComponent(DataTypeComponent):
 
         ext.setdefault("generate", True)
         ext.setdefault("skip", False)
-

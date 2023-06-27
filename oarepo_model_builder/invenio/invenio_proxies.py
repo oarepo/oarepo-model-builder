@@ -7,5 +7,5 @@ class InvenioProxiesBuilder(InvenioBaseClassPythonBuilder):
     template = "proxies"
 
     def finish(self, **extra_kwargs):
-        ext = getattr(self.current_model, "section_ext_resource").config
+        ext = self.current_model.section_ext_resource.config
         super().finish(ext=ext, **extra_kwargs)

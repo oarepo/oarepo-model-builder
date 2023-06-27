@@ -44,7 +44,7 @@ class MappingBuilder(JSONBaseBuilder):
         generated = self.generate(node)
         generated.pop("enabled", None)
         generated.pop("type", None)
-        node.section_global_mapping.config.pop('properties', None)
+        node.section_global_mapping.config.pop("properties", None)
 
         return {**node.section_global_mapping.config, "mappings": generated}
 

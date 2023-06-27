@@ -41,6 +41,7 @@ def test_model_saver():
         },
     )
     assert data[0]["model"] == {
+        "type": "model",
         "searchable": True,
         "module": {
             "qualified": "test",
@@ -48,6 +49,7 @@ def test_model_saver():
             "path": "test",
             "base": "test",
             "base-upper": "TEST",
+            "base-title": "Test",
             "kebab-module": "test",
             "prefix": "Test",
             "prefix-upper": "TEST",
@@ -56,9 +58,9 @@ def test_model_saver():
             "suffix-upper": "TEST",
             "suffix-snake": "test",
         },
-        "type": "model",
         "sample": {"file": "data/sample_data.yaml"},
         "model-name": "Test",
+        "ext-resource": {"generate": True, "skip": False},
         "search-options": {
             "generate": True,
             "module": "test.services.records.search",
@@ -378,26 +380,35 @@ def test_model_saver_invenio():
     )
     print(repr(data[0]))
     assert data[0]["model"] == {
+        "marshmallow": {
+            "imports": [{"import": "oarepo_runtime.marshmallow.BaseRecordSchema"}],
+            "base-classes": ["BaseRecordSchema"],
+            "generate": True,
+            "module": "test.services.records.schema",
+            "class": "test.services.records.schema.TestSchema",
+            "extra-code": "",
+        },
         "ui": {
             "marshmallow": {
-                "base-classes": ["InvenioUISchema"],
                 "imports": [
                     {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
                 ],
+                "base-classes": ["InvenioUISchema"],
                 "generate": True,
                 "module": "test.services.records.ui_schema",
                 "class": "test.services.records.ui_schema.TestUISchema",
                 "extra-code": "",
             }
         },
-        "type": "model",
         "searchable": True,
+        "type": "model",
         "module": {
             "qualified": "test",
             "alias": "test",
             "path": "test",
             "base": "test",
             "base-upper": "TEST",
+            "base-title": "Test",
             "kebab-module": "test",
             "prefix": "Test",
             "prefix-upper": "TEST",
@@ -406,16 +417,9 @@ def test_model_saver_invenio():
             "suffix-upper": "TEST",
             "suffix-snake": "test",
         },
-        "marshmallow": {
-            "base-classes": ["BaseRecordSchema"],
-            "imports": [{"import": "oarepo_runtime.marshmallow.BaseRecordSchema"}],
-            "generate": True,
-            "module": "test.services.records.schema",
-            "class": "test.services.records.schema.TestSchema",
-            "extra-code": "",
-        },
         "sample": {"file": "data/sample_data.yaml"},
         "model-name": "Test",
+        "ext-resource": {"generate": True, "skip": False},
         "search-options": {
             "generate": True,
             "module": "test.services.records.search",
@@ -628,32 +632,32 @@ def test_model_saver_invenio():
         },
         "properties": {
             "$schema": {
-                "sample": {"skip": True},
                 "facets": {"searchable": True},
-                "ui": {"marshmallow": {"read": False, "write": False}},
                 "type": "keyword",
-                "marshmallow": {"read": False, "write": False},
+                "sample": {"skip": True},
+                "marshmallow": {"write": False, "read": False},
+                "ui": {"marshmallow": {"write": False, "read": False}},
             },
             "created": {
-                "sample": {"skip": True},
                 "facets": {"searchable": True},
-                "ui": {"marshmallow": {"read": False, "write": False}},
                 "type": "datetime",
-                "marshmallow": {"read": False, "write": False},
+                "sample": {"skip": True},
+                "marshmallow": {"write": False, "read": False},
+                "ui": {"marshmallow": {"write": False, "read": False}},
             },
             "id": {
-                "sample": {"skip": True},
                 "facets": {"searchable": True},
-                "ui": {"marshmallow": {"read": False, "write": False}},
                 "type": "keyword",
-                "marshmallow": {"read": False, "write": False},
+                "sample": {"skip": True},
+                "marshmallow": {"write": False, "read": False},
+                "ui": {"marshmallow": {"write": False, "read": False}},
             },
             "updated": {
-                "sample": {"skip": True},
                 "facets": {"searchable": True},
-                "ui": {"marshmallow": {"read": False, "write": False}},
                 "type": "datetime",
-                "marshmallow": {"read": False, "write": False},
+                "sample": {"skip": True},
+                "marshmallow": {"write": False, "read": False},
+                "ui": {"marshmallow": {"write": False, "read": False}},
             },
         },
     }

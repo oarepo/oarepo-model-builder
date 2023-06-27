@@ -31,14 +31,6 @@ def test_prepare_datatype():
             "imports": [],
             "module": "my.test.views.records.api",
         },
-        "app-blueprint": {  # NOSONAR
-            "alias": "my_test_record",
-            "extra_code": "",
-            "function": "my.test.views.records.app.create_app_blueprint",
-            "generate": True,
-            "imports": [],
-            "module": "my.test.views.records.app",
-        },
         "config": {
             "extra_code": "",
             "generate": True,
@@ -46,13 +38,17 @@ def test_prepare_datatype():
             "module": "my.test.config",
         },
         "ext": {
-            "alias": "my_test_record",
+            "alias": "my.test",
             "base-classes": [],
             "class": "my.test.ext.TestExt",
             "extra_code": "",
             "generate": True,
             "imports": [],
             "module": "my.test.ext",
+        },
+        "ext-resource": {
+            "generate": True,
+            "skip": False,
         },
         "facets": {
             "extra-code": "",
@@ -98,6 +94,7 @@ def test_prepare_datatype():
             "alias": "my_test_record",
             "base": "test",
             "base-upper": "TEST",
+            "base-title": "Test",
             "kebab-module": "my-test",
             "path": "my/test",
             "prefix": "Test",
@@ -277,7 +274,7 @@ def test_prepare_datatype():
                 },
             ],
             "module": "my.test.services.records.config",
-            "service-id": "my_test_record",
+            "service-id": "test",
         },
         "type": "model",
         "ui": {

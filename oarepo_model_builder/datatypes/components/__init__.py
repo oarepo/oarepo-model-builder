@@ -15,6 +15,7 @@ from .model import (
     AppModelComponent,
     BlueprintsModelComponent,
     DefaultsModelComponent,
+    ExtResourceModelComponent,
     FacetsModelComponent,
     JSONSchemaModelComponent,
     MappingModelComponent,
@@ -31,7 +32,7 @@ from .model import (
     SearchOptionsModelComponent,
     ServiceModelComponent,
     UIMarshmallowModelComponent,
-    UIModelComponent, ExtResourceModelComponent,
+    UIModelComponent,
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
 from .ui import ObjectUIComponent, RegularUIComponent
