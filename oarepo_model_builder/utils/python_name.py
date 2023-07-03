@@ -45,6 +45,8 @@ def convert_name_to_python_class(name):
 
 
 def package_name(value):
+    if not value:
+        return None
     return value.rsplit(".", maxsplit=1)[0]
 
 
@@ -53,6 +55,8 @@ def split_package_name(value):
 
 
 def base_name(value):
+    if not value:
+        return None
     return value.rsplit(".", maxsplit=1)[-1]
 
 

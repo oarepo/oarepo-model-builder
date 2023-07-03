@@ -96,7 +96,7 @@ def sort_by_reference_count(classes_list: List[MarshmallowClass]):
 def collect_imports(current_module, classes_list: List[MarshmallowClass]):
     for cls in classes_list:
         for fld in cls.fields:
-            if not fld.reference:
+            if not fld.reference or not fld.reference.reference:
                 continue
             if fld.reference.accessor:
                 # local accessor handles its own imports inside the accessor
