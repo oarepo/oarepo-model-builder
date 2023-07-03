@@ -36,6 +36,7 @@ def test_include_invenio():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
     ).read()
+
     assert (
         strip_whitespaces(
             """
