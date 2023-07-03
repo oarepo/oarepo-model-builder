@@ -86,6 +86,8 @@ class EDTFDataType(BaseDateDataType):
         "imports": [
             {"import": "oarepo_runtime.validation.CachedMultilayerEDTFValidator"},
             {"import": "edtf.Date", "alias": "EDTFDate"},
+            {"import": "marshmallow_utils.fields.TrimmedString"},
+
         ],
     }
     mapping = {
@@ -110,6 +112,8 @@ class EDTFIntervalType(BaseDateDataType):
         "imports": [
             {"import": "oarepo_runtime.validation.CachedMultilayerEDTFValidator"},
             {"import": "edtf.Interval", "alias": "EDTFInterval"},
+            {"import": "marshmallow_utils.fields.TrimmedString"},
+
         ],
     }
     mapping = {
