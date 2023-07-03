@@ -104,6 +104,8 @@ class ObjectMarshmallowMixin:
                 if fingerprint not in classes:
                     classes[fingerprint] = schema_class
                 return
+        if marshmallow_config.get("field") and not schema_class and not generate:
+            return
 
         fingerprint_schema_class = classes.get(fingerprint)
         if fingerprint_schema_class:
@@ -255,7 +257,7 @@ class ObjectMarshmallowComponent(ObjectMarshmallowMixin, RegularMarshmallowCompo
         f = []
         super().marshmallow_field(datatype, fields=f)
         fld: MarshmallowField = f[0]
-        fld.reference = MarshmallowReference(reference=section.config["class"])
+        fld.reference = MarshmallowReference(reference=section.config.get("class"))
         fields.append(fld)
 
     def _marshmallow_field_arguments(self, datatype, section, marshmallow, field_name):
