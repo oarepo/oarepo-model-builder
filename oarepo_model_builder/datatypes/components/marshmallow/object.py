@@ -256,6 +256,8 @@ class ObjectMarshmallowComponent(ObjectMarshmallowMixin, RegularMarshmallowCompo
         section = datatype.section_marshmallow
         f = []
         super().marshmallow_field(datatype, fields=f)
+        if not f:
+            return
         fld: MarshmallowField = f[0]
         fld.reference = MarshmallowReference(reference=section.config.get("class"))
         fields.append(fld)

@@ -13,6 +13,25 @@ class SampleSchema(StrictSchema):
     )
     params = ma.fields.Raw(metadata={"doc": "Params for the faker"})
 
+    def load(
+        self,
+        data,
+        *,
+        many=None,
+        partial=None,
+        unknown=None,
+    ):
+        if isinstance(data, (list, tuple)):
+            return data
+        return super().load(data, many=many, partial=partial, unknown=unknown)
+
+    def dump(self, obj, *, many=None):
+        if many:
+            return [self.dump(x, many=False) for x in obj]
+        if isinstance(obj, (list, tuple)):
+            return obj
+        return super().dump(obj, many=False)
+
 
 class RegularSampleComponent(DataTypeComponent):
     class ModelSchema(ma.Schema):
