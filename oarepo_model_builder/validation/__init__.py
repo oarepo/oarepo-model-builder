@@ -28,6 +28,7 @@ def validate_model(model):
         for err, path in flatten_errors(e.messages_dict, ""):
             if path.endswith("._schema") and err == "Unknown field.":
                 continue
+            path = path.replace(".value.", ".")
             msg.append(f"{path}: {err}")
         msg = "\n    ".join(msg)
         raise InvalidModelException(f"Invalid model: \n    {msg}")
