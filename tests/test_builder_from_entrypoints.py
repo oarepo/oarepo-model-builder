@@ -20,7 +20,7 @@ def test_include_invenio():
             "record": {
                 "module": {"qualified": "test"},
                 OAREPO_USE: "invenio",
-                "properties": {"a": {"type": "keyword"}},
+                "properties": {"a": {"type": "keyword", "required": True}},
             },
         },
         isort=False,
@@ -56,7 +56,7 @@ class TestSchema(BaseRecordSchema):
         unknown = ma.RAISE
 
 
-    a = ma.fields.String()
+    a = ma.fields.String(required=True)
     """
         )
         == strip_whitespaces(data)
@@ -73,7 +73,7 @@ from oarepo_runtime.ui.marshmallow import InvenioUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.String()    """
+    a = ma.fields.String(required=True)    """
         )
         in strip_whitespaces(data)
     )

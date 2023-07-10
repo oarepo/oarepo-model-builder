@@ -41,7 +41,7 @@ class TestSchema(BaseRecordSchema):
         unknown = ma.RAISE
 
 
-    a = ma.fields.List(ma.fields.String())    
+    a = ma.fields.List(ma.fields.String(), required=True)    
     """
         )
         in strip_whitespaces(data)
