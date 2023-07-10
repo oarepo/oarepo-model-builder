@@ -60,7 +60,10 @@ class RecordProfile(Profile):
             3. the resulting model will be merged as if use: was used
         """
 
-        loaded_schema = {"record": {"use": [extended_schema]}}
+        loaded_schema = {
+            "record": {"use": [extended_schema]},
+            "settings": model.settings,
+        }
 
         extended_model = load_model(
             extended_schema.split("#", maxsplit=1)[0],
