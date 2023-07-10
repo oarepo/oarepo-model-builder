@@ -70,6 +70,9 @@ class RegularMarshmallowComponentMixin:
         self, datatype, section, marshmallow, field_name  # NOSONAR
     ):
         arguments = copy.copy(marshmallow.get("arguments", []))
+        required = datatype.definition.get('required', False)
+        if required:
+            arguments.append("required=True")
         read = marshmallow.get("read", True)
         write = marshmallow.get("write", True)
         if read and not write:
