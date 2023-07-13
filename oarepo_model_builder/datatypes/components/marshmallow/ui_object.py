@@ -62,6 +62,8 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
         section = datatype.section_ui
         f = []
         super().ui_marshmallow_field(datatype, fields=f)
+        if not f:
+            return
         fld: MarshmallowField = f[0]
         fld.reference = MarshmallowReference(
             reference=section.config["marshmallow"].get("class")
