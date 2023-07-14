@@ -45,10 +45,14 @@ class SetupCfgBuilder(OutputBuilder):
 
         if "runtime-dependencies" in self.schema:
             for dep, value in self.schema["runtime-dependencies"].items():
-                output.add_dependency(dep, ">=" + value)
+                if value[0] not in (">", "<", "="):
+                    value = ">=" + value
+                output.add_dependency(dep, value)
 
         if "dev-dependencies" in self.schema:
             for dep, value in self.schema["dev-dependencies"].items():
+                if value[0] not in (">", "<", "="):
+                    value = ">=" + value
                 output.add_dependency(
-                    dep, ">=" + value, group="options.extras_require", section="devs"
+                    dep, value, group="options.extras_require", section="devs"
                 )
