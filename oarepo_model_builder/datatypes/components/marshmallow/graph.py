@@ -137,7 +137,7 @@ def set_package_dependencies(classes_by_package):
                 if not fld.reference:
                     continue
                 referenced_package = package_name(fld.reference.reference)
-                if referenced_package in classes_by_package:
+                if referenced_package != p and referenced_package in classes_by_package:
                     pd.add_dependency(referenced_package)
     to_process = list(package_dependencies)
     processed_dependencies = set()
