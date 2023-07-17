@@ -112,7 +112,7 @@ class TestSearchOptions(InvenioSearchOptions):
       'created': facets.created,
       '_id': facets._id,
       'updated': facets.updated,
-      
+      **getattr(InvenioSearchOptions,'facets',{})
     }
     sort_options = {
         **InvenioSearchOptions.sort_options,
