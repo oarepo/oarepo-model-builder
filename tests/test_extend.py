@@ -3,6 +3,7 @@ import json5
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints
 from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.profiles.extend import ExtendProfile
+from oarepo_model_builder.profiles.record import RecordProfile
 from oarepo_model_builder.schema import ModelSchema
 
 
@@ -38,6 +39,54 @@ def test_extend_property_preprocessor():
     # assert that no class is generated in loaded_model
     check_marshmallow(loaded_model, "")
 
+
+def test_extend_in_model():
+    fs = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(
+        filesystem=fs,
+    )
+
+    model = ModelSchema(
+        "/tmp/test.json",  # NOSONAR: this is just a dummy path
+        content=extension_model,
+        included_models={"extended-model": lambda parent_schema: extended_model},
+        validate=True,
+    )
+    RecordProfile().build(model, "record", ["record"], "", builder)
+    schema = fs.read("test/services/records/schema.py")
+    assert "class TestSchema(aaa.BlahSchema)" in schema
+    assert "class TestMetadataSchema(aaa.BlahMetadataSchema)" in schema
+    assert "metadata = ma.fields.Nested(lambda: TestMetadataSchema())" in schema
+
+    schema = fs.read("test/services/records/ui_schema.py")
+    assert "class TestUISchema(aaa.BlahUISchema)" in schema
+    assert "class TestMetadataUISchema(aaa.BlahMetadataUISchema)" in schema
+    assert "metadata = ma.fields.Nested(lambda: TestMetadataUISchema())" in schema
+
+
+extension_model = {
+    "record": {
+        "module": {"qualified": "test"},
+        "extend": "extended-model",
+        "properties": {"metadata": {"properties": {}}},
+    },
+    "settings": {
+        "python": {"use-black": False, "use-isort": False, "use-autoflake": False}
+    },
+}
+
+extended_model = {
+    "marshmallow": {"class": "aaa.BlahSchema"},
+    "ui": {"marshmallow": {"class": "aaa.BlahUISchema"}},
+    "properties": {
+        "metadata": {
+            "type": "object",
+            "marshmallow": {"class": "aaa.BlahMetadataSchema"},
+            "ui": {"marshmallow": {"class": "aaa.BlahMetadataUISchema"}},
+            "properties": {},
+        }
+    },
+}
 
 nr_documents_model = {
     "record": {
