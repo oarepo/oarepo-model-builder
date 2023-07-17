@@ -117,6 +117,8 @@ class EDTFIntervalType(BaseDateDataType):
     mapping = {
         "type": "date_range",
         "format": "strict_date_time||strict_date_time_no_millis||strict_date||yyyy-MM||yyyy",
-        "search": False,  # it seems that facet on edtf is not supported in opensearch
+    }
+    facets = {
+        "searchable": False,  # it seems that facet on edtf is not supported in opensearch
     }
     json_schema = {"type": "string", "format": "date-time"}

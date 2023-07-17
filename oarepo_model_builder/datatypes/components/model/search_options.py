@@ -45,6 +45,8 @@ class SearchOptionsModelComponent(DataTypeComponent):
         search_options = ma.fields.Nested(
             RecordSearchOptionsSchema,
             required=False,
+            data_key="search-options",
+            attribute="search-options",
         )
 
     def before_model_prepare(self, datatype, *, context, **kwargs):
