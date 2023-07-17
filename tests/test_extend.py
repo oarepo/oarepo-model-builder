@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import json5
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints
@@ -54,13 +56,14 @@ def test_extend_in_model():
     )
     RecordProfile().build(model, "record", ["record"], "", builder)
     schema = fs.read("test/services/records/schema.py")
-    assert "class TestSchema(aaa.BlahSchema)" in schema
-    assert "class TestMetadataSchema(aaa.BlahMetadataSchema)" in schema
+    pprint(schema)
+    assert "class TestSchema(BlahSchema)" in schema
+    assert "class TestMetadataSchema(BlahMetadataSchema)" in schema
     assert "metadata = ma.fields.Nested(lambda: TestMetadataSchema())" in schema
 
     schema = fs.read("test/services/records/ui_schema.py")
-    assert "class TestUISchema(aaa.BlahUISchema)" in schema
-    assert "class TestMetadataUISchema(aaa.BlahMetadataUISchema)" in schema
+    assert "class TestUISchema(BlahUISchema)" in schema
+    assert "class TestMetadataUISchema(BlahMetadataUISchema)" in schema
     assert "metadata = ma.fields.Nested(lambda: TestMetadataUISchema())" in schema
 
 

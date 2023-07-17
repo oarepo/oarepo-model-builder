@@ -11,6 +11,7 @@ from oarepo_model_builder.profiles.extend import ExtendProfile
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.utils.deepmerge import deepmerge
 from oarepo_model_builder.utils.dict import dict_get
+from oarepo_model_builder.utils.python_name import base_name
 
 
 class RecordProfile(Profile):
@@ -114,10 +115,14 @@ def marshmallow_merge(target, source, stack):
         return None  # use default merging
 
     if "class" in source:
-        target.setdefault("base-classes", []).append(source["class"])
+        target.setdefault("base-classes", []).append(base_name(source["class"]))
         target.setdefault("imports", []).append({"import": source["class"]})
     elif "base-classes" in source:
-        target.setdefault("base-classes", []).extend(source["base-classes"])
+        target_base_classes = target.setdefault("base-classes", [])
+        target_imports = target.setdefault("imports", [])
         for bc in source["base-classes"]:
-            target.setdefault("imports", []).append({"import": bc})
+            target_base_classes.append(base_name(bc))
+            if "." in bc:
+                target_imports.append({"import": bc})
+        target_imports.extend(source.get("imports", []))
     return target

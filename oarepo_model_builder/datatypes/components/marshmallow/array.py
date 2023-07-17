@@ -13,6 +13,9 @@ class ArrayMarshmallowComponentMixin(RegularMarshmallowComponentMixin):
     ):
         f = []
         datatypes.call_components(section.item, field_accessor, fields=f)
+        if not f:
+            return
+
         item_field: MarshmallowField = f[0]
         f = []
         super()._create_marshmallow_field(
@@ -22,6 +25,9 @@ class ArrayMarshmallowComponentMixin(RegularMarshmallowComponentMixin):
             fields=f,
             item_field=item_field,
         )
+        if not f:
+            return
+
         fld: MarshmallowField = f[0]
         fld.imports.extend(item_field.imports)
         fld.reference = item_field.reference
