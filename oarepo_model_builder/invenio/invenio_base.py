@@ -30,25 +30,29 @@ class InvenioBaseClassPythonBuilder(PythonBuilder):
             return False
         return True
 
-    def finish(self, **extra_kwargs):
-        super().finish()
-        if not self.generate:
-            return
-        module = self._get_output_module()
-        python_path = Path(module_to_path(module) + ".py")
-
+    @property
+    def vars(self):
         section = getattr(
             self.current_model,
             f"section_mb_{self.TYPE.replace('-', '_')}",
         )
 
-        merged = MergedAttrDict(section.config, self.current_model.definition)
+        vars = MergedAttrDict(section.config, self.current_model.definition)
+        return vars
+
+    def finish(self, **extra_kwargs):
+        super().finish()
+        if not self.generate:
+            return
+
+        module = self._get_output_module()
+        python_path = Path(module_to_path(module) + ".py")
 
         self.process_template(
             python_path,
             self.template,
             current_module=module,
-            vars=merged,
+            vars=self.vars,
             **extra_kwargs,
         )
 
