@@ -26,6 +26,11 @@ class RecordProfile(Profile):
         **kwargs,
     ):
         current_model = dict_get(model.schema, model_path)
+
+        # record has type "model" if not explicitly stated otherwise
+        if "type" not in current_model:
+            current_model["type"] = "model"
+
         if "extend" in current_model:
             self.handle_extend(
                 current_model["extend"],
@@ -35,6 +40,7 @@ class RecordProfile(Profile):
                 current_model,
                 builder,
             )
+
         return super().build(
             model, profile, model_path, output_directory, builder, **kwargs
         )
@@ -87,4 +93,31 @@ class RecordProfile(Profile):
         ExtendProfile().build(extended_model, profile, model_path, "", builder)
 
         loaded_model = json5.loads(fs.read("model.json5"))
-        deepmerge(current_model, loaded_model)
+        # extension means that:
+        # 1. deep merge everything as usual, but
+        # 2. keep special attention to marshmallow - if parent defined inside schema, move
+        # extension's marshmallow class to base classes, add imports and do not merge
+
+        deepmerge(current_model, loaded_model, dictmerge=marshmallow_merge)
+
+
+def marshmallow_merge(target, source, stack):
+    # if target...marshmallow does not exist, source...marshmallow (that is, marshmallow from extended model)
+    # is copied automatically
+    if not stack or stack[-1] != "marshmallow":
+        if "properties" in target:
+            # it is an object, add marshmallow and ui/marshmallow sections, so that correct merging is performed
+            target.setdefault("marshmallow", {})
+            target.setdefault("ui", {}).setdefault("marshmallow", {})
+            # and use the default merging
+
+        return None  # use default merging
+
+    if "class" in source:
+        target.setdefault("base-classes", []).append(source["class"])
+        target.setdefault("imports", []).append({"import": source["class"]})
+    elif "base-classes" in source:
+        target.setdefault("base-classes", []).extend(source["base-classes"])
+        for bc in source["base-classes"]:
+            target.setdefault("imports", []).append({"import": bc})
+    return target
