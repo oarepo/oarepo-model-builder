@@ -115,14 +115,26 @@ def marshmallow_merge(target, source, stack):
         return None  # use default merging
 
     if "class" in source:
-        target.setdefault("base-classes", []).append(base_name(source["class"]))
+        extend_before_last(
+            target.setdefault("base-classes", []), [base_name(source["class"])]
+        )
         target.setdefault("imports", []).append({"import": source["class"]})
     elif "base-classes" in source:
-        target_base_classes = target.setdefault("base-classes", [])
         target_imports = target.setdefault("imports", [])
+        extra_base_classes = []
         for bc in source["base-classes"]:
-            target_base_classes.append(base_name(bc))
+            extra_base_classes.append(base_name(bc))
             if "." in bc:
                 target_imports.append({"import": bc})
+        extend_before_last(target.setdefault("base-classes", []), extra_base_classes)
         target_imports.extend(source.get("imports", []))
     return target
+
+
+def extend_before_last(target_list, source_list):
+    if not target_list:
+        target_list.extend(source_list)
+    else:
+        last = target_list.pop()
+        target_list.extend(source_list)
+        target_list.append(last)
