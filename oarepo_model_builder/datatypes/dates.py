@@ -66,7 +66,7 @@ class DateTimeDataType(BaseDateDataType):
     }
     mapping = {
         "type": "date",
-        "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date",
+        "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date||strict_date_hour_minute_second||strict_date_hour_minute_second_fraction",
     }
     json_schema = {"type": "string", "format": "date-time"}
 
