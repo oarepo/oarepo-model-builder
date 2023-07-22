@@ -265,7 +265,7 @@ def test_model_saver():
             "extra-code": "",
             "generate": True,
         },
-        "mapping-settings": {
+        "mapping": {
             "generate": True,
             "alias": "test",
             "module": "test.records.mappings",
@@ -612,7 +612,7 @@ def test_model_saver_invenio():
             "extra-code": "",
             "generate": True,
         },
-        "mapping-settings": {
+        "mapping": {
             "generate": True,
             "alias": "test",
             "module": "test.records.mappings",

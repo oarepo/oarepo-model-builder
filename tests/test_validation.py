@@ -41,7 +41,7 @@ def test_settings_on_model():
             "record": {
                 "module": {"qualified": "test"},
                 "json-schema-settings": {"file": "test"},
-                "mapping-settings": {"file": "test"},
+                "mapping": {"file": "test"},
                 "model-name": "test",
                 "resource-config": {"base-url": "test"},
             }
@@ -50,7 +50,7 @@ def test_settings_on_model():
     assert validated == {
         "record": {
             "json-schema-settings": {"file": "test"},
-            "mapping-settings": {"file": "test"},
+            "mapping": {"file": "test"},
             "model-name": "test",
             "module": {"qualified": "test"},
             "properties": {},

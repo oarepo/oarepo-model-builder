@@ -161,3 +161,18 @@ def test_deep_no_index_children():
             }
         }
     }
+
+
+def test_mapping_template():
+    model = {
+        "properties": {"a": {"type": "keyword"}},
+        "mapping": {
+            "template": {"settings": {"index.mapping.total_fields.limit": 3000}}
+        },
+    }
+    data = build_model(model)
+
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword"}}},
+        "settings": {"index.mapping.total_fields.limit": 3000},
+    }

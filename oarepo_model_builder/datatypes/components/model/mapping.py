@@ -47,8 +47,8 @@ class MappingModelComponent(DataTypeComponent):
     class ModelSchema(ma.Schema):
         mapping = ma.fields.Nested(
             ModelMappingSchema,
-            attribute="mapping-settings",
-            data_key="mapping-settings",
+            attribute="mapping",
+            data_key="mapping",
             metadata={"doc": "Mapping definition"},
         )
         searchable = ma.fields.Bool(
@@ -65,7 +65,7 @@ class MappingModelComponent(DataTypeComponent):
             parent_module(datatype.definition["record"]["module"])
         )
 
-        mapping = set_default(datatype, "mapping-settings", {})
+        mapping = set_default(datatype, "mapping", {})
         mapping.setdefault("generate", True)
         alias = mapping.setdefault("alias", alias)
         mapping.setdefault(
