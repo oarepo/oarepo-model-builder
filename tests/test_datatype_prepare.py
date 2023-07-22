@@ -76,7 +76,7 @@ def test_prepare_datatype():
             ],
             "module": f"{module}.resources.records.ui",
         },
-        "mapping-settings": {
+        "mapping": {
             "alias": "my_test_record",
             "file": "my/test/records/mappings/os-v2/my_test_record/test-1.0.0.json",
             "generate": True,
