@@ -35,6 +35,7 @@ from .model import (
     UIModelComponent,
 )
 from .sample import ArraySampleComponent, RegularSampleComponent
+from .sort import FieldSortComponent, RegularSortComponent
 from .ui import ObjectUIComponent, RegularUIComponent
 
 DEFAULT_COMPONENTS = [
@@ -74,4 +75,6 @@ DEFAULT_COMPONENTS = [
     RegularFacetsComponent,
     ArrayFacetsComponent,
     ExtResourceModelComponent,
+    RegularSortComponent,
+    FieldSortComponent,
 ]

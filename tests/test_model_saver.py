@@ -41,6 +41,7 @@ def test_model_saver():
         },
     )
     assert data[0]["model"] == {
+        "sortable": [],
         "type": "model",
         "searchable": True,
         "module": {
@@ -401,6 +402,7 @@ def test_model_saver_invenio():
             }
         },
         "searchable": True,
+        "sortable": [],
         "type": "model",
         "module": {
             "qualified": "test",
