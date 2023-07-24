@@ -16,5 +16,8 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
         search_data = []
         for f in facets:
             search_data.append({f.path: "facets." + f.path})
+        if "sortable" in self.current_model.definition:
+            sort_options = self.current_model.definition["sortable"]
         extra_kwargs["search_data"] = search_data
+        extra_kwargs["sort_definition"] = sort_options
         super().finish(**extra_kwargs)

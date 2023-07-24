@@ -17,6 +17,7 @@ from .resource import ResourceModelComponent
 from .sample import SampleModelComponent
 from .search_options import SearchOptionsModelComponent
 from .service import ServiceModelComponent
+from .sort import SortModelComponent
 from .ui import UIModelComponent
 from .ui_marshmallow import UIMarshmallowModelComponent
 
@@ -42,4 +43,5 @@ __all__ = [
     "DefaultsModelComponent",
     "ProxyModelComponent",
     "ExtResourceModelComponent",
+    "SortModelComponent",
 ]

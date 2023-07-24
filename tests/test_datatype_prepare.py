@@ -277,6 +277,7 @@ def test_prepare_datatype():
             "module": f"{module}.services.records.config",
             "service-id": "test",
         },
+        "sortable": [],
         "type": "model",
         "ui": {
             "marshmallow": {
