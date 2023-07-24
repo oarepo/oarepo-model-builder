@@ -13,4 +13,3 @@ class RegularSortComponent(DataTypeComponent):
             if sort_data[0]:
                 sort_options.extend(sort_data)
         datatype.definition["sortable"] = sort_options
-        print(sort_options)
