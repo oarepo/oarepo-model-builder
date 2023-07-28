@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict
 
 from oarepo_model_builder.datatypes import DataType
 
@@ -16,9 +16,7 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
         pass
 
     def finish(self, **extra_kwargs):
-        facets: List[FacetDefinition] = []
-        for node in self.current_model.deep_iter():
-            facets.extend(node.section_facets.config["facets"])
+        facets = get_distinct_facets(self.current_model)
         package = self.current_model.definition["facets"]["module"]
 
         imports = []
@@ -31,3 +29,13 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
             imports=imports,
             **extra_kwargs,
         )
+
+
+def get_distinct_facets(current_model):
+    facets_dict: Dict[str, FacetDefinition] = {}
+    for node in current_model.deep_iter():
+        facet: FacetDefinition
+        for facet in node.section_facets.config["facets"]:
+            if facet.path not in facets_dict:
+                facets_dict[facet.path] = facet
+    return list(facets_dict.values())
