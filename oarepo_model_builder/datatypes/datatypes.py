@@ -107,6 +107,7 @@ class AbstractDataType:
         self.model = model
         self.schema = schema
         self._sections = {}
+        self.skip_in_path = False
 
     def copy(self, without_children=False):
         ret = type(self)(
@@ -201,13 +202,19 @@ class AbstractDataType:
 
     @cached_property
     def path(self):
-        ret = []
-        p = self
-        while p:
-            if p.key:
-                ret.append(p.key)
-            p = p.parent
-        return ".".join(reversed(ret))
+        if not self.parent or not self.parent.path:
+            return self.path_element or ""
+
+        p = self.parent.path  # recursion
+        if self.path_element:
+            return p + f".{self.path_element}"
+        return p
+
+    @property
+    def path_element(self):
+        if self.skip_in_path:
+            return None
+        return self.key
 
     @cached_property
     def stack(self):

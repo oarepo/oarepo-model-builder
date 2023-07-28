@@ -1,4 +1,3 @@
-
 from .field import FieldSortComponent
 from .object import RegularSortComponent
 
