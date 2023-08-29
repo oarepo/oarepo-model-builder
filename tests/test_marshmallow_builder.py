@@ -57,7 +57,7 @@ def test_fulltext(fulltext_builder):
     _test(fulltext_builder, "fulltext")
 
 
-def test_fulltext_minLength(fulltext_builder):
+def test_fulltext_min_length(fulltext_builder):
     schema = get_test_schema(a={"type": "fulltext", "minLength": 10})
     fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(
@@ -73,7 +73,7 @@ def test_fulltext_minLength(fulltext_builder):
     ) in strip_whitespaces(data)
 
 
-def test_fulltext_maxLength(fulltext_builder):
+def test_fulltext_max_length(fulltext_builder):
     schema = get_test_schema(a={"type": "fulltext", "maxLength": 10})
     fulltext_builder.filesystem = InMemoryFileSystem()
     fulltext_builder.build(
