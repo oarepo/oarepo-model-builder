@@ -4,6 +4,7 @@ from .field import (
     PropertyMarshmallowSchema,
     RegularMarshmallowComponent,
 )
+from .numbers import NumberMarshmallowComponent
 from .object import (
     ExtraField,
     ObjectMarshmallowComponent,
@@ -11,6 +12,7 @@ from .object import (
     ObjectMarshmallowMixin,
     ObjectMarshmallowSchema,
 )
+from .strings import StringMarshmallowComponent
 from .ui_array import UIArrayMarshmallowComponent
 from .ui_field import UIMarshmallowComponent
 from .ui_object import UIObjectMarshmallowComponent
@@ -28,4 +30,6 @@ __all__ = [
     "UIMarshmallowComponent",
     "UIObjectMarshmallowComponent",
     "UIArrayMarshmallowComponent",
+    "StringMarshmallowComponent",
+    "NumberMarshmallowComponent",
 ]

@@ -57,12 +57,110 @@ def test_fulltext(fulltext_builder):
     _test(fulltext_builder, "fulltext")
 
 
+def test_fulltext_min_length(fulltext_builder):
+    schema = get_test_schema(a={"type": "fulltext", "minLength": 10})
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")  # NOSONAR
+    ) as f:
+        data = f.read()
+    assert strip_whitespaces(
+        "a = ma.fields.String(validate=[ma.validate.Length(min=10)])"
+    ) in strip_whitespaces(data)
+
+
+def test_fulltext_max_length(fulltext_builder):
+    schema = get_test_schema(a={"type": "fulltext", "maxLength": 10})
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")  # NOSONAR
+    ) as f:
+        data = f.read()
+    assert strip_whitespaces(
+        "a = ma.fields.String(validate=[ma.validate.Length(max=10)])"
+    ) in strip_whitespaces(data)
+
+
+def test_fulltext_length(fulltext_builder):
+    schema = get_test_schema(a={"type": "fulltext", "maxLength": 10, "minLength": 5})
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")  # NOSONAR
+    ) as f:
+        data = f.read()
+    assert strip_whitespaces(
+        "a = ma.fields.String(validate=[ma.validate.Length(min=5, max=10)])"
+    ) in strip_whitespaces(data)
+
+
 def test_keyword(fulltext_builder):
     _test(fulltext_builder, "keyword")
 
 
 def test_fulltext_keyword(fulltext_builder):
     _test(fulltext_builder, "fulltext+keyword")
+
+
+def test_integer(fulltext_builder):
+    schema = get_test_schema(a={"type": "integer", "minimum": 3})
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert strip_whitespaces(
+        "a = ma.fields.Integer(validate=[ma.validate.Range(min=3)])"
+    ) in strip_whitespaces(data)
+
+
+def test_integer_min_max(fulltext_builder):
+    schema = get_test_schema(a={"type": "integer", "minimum": 3, "maximum": 5})
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert strip_whitespaces(
+        "a = ma.fields.Integer(validate=[ma.validate.Range(min=3, max=5)])"
+    ) in strip_whitespaces(data)
+
+
+def test_integer_min_max_exclusive(fulltext_builder):
+    schema = get_test_schema(
+        a={"type": "integer", "exclusiveMinimum": 3, "exclusiveMaximum": 5}
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert strip_whitespaces(
+        "a = ma.fields.Integer(validate=[ma.validate.Range(min=3, min_inclusive=False, max=5, max_inclusive=False)])"
+    ) in strip_whitespaces(data)
 
 
 def test_simple_array(fulltext_builder):
@@ -77,6 +175,24 @@ def test_simple_array(fulltext_builder):
     ) as f:
         data = f.read()
     assert "a = ma.fields.List(ma.fields.String())" in data
+
+
+def test_simple_array_with_min_items(fulltext_builder):
+    schema = get_test_schema(
+        a={"type": "array", "items": {"type": "keyword"}, "minItems": 1}
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert strip_whitespaces(
+        "a = ma.fields.List(ma.fields.String(), validate=[ma.validate.Length(min=1)])"
+    ) in strip_whitespaces(data)
 
 
 def test_array_of_objects(fulltext_builder):

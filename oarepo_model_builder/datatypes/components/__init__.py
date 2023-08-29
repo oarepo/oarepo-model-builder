@@ -5,8 +5,10 @@ from .facets.nested import NestedFacetsComponent
 from .facets.object import ObjectFacetsComponent
 from .marshmallow import (
     ArrayMarshmallowComponent,
+    NumberMarshmallowComponent,
     ObjectMarshmallowComponent,
     RegularMarshmallowComponent,
+    StringMarshmallowComponent,
     UIArrayMarshmallowComponent,
     UIMarshmallowComponent,
     UIObjectMarshmallowComponent,
@@ -77,4 +79,6 @@ DEFAULT_COMPONENTS = [
     ExtResourceModelComponent,
     RegularSortComponent,
     FieldSortComponent,
+    StringMarshmallowComponent,
+    NumberMarshmallowComponent,
 ]
