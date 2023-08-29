@@ -19,7 +19,6 @@ class ArrayDataType(DataType):
 
     class ModelSchema(DataType.ModelSchema):
         items = fields.Nested(FieldSchema)
-        uniqueItems = fields.Boolean(required=False)
         minItems = fields.Integer(required=False)
         maxItems = fields.Integer(required=False)
 

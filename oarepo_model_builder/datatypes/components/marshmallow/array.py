@@ -31,6 +31,7 @@ class ArrayMarshmallowComponentMixin(RegularMarshmallowComponentMixin):
         fld: MarshmallowField = f[0]
         fld.imports.extend(item_field.imports)
         fld.reference = item_field.reference
+
         fields.append(fld)
 
     def _marshmallow_field_arguments(
@@ -68,3 +69,17 @@ class ArrayMarshmallowComponent(
             field_accessor="marshmallow_field",
             **kwargs,
         )
+
+    def prepare(self, datatype, *, context, **kwargs):
+        min_items = datatype.definition.get("minItems", None)
+        max_items = datatype.definition.get("maxItems", None)
+        if min_items is None and max_items is None:
+            return
+        m = datatype.definition.setdefault("marshmallow", {})
+        validators = m.setdefault("validators", [])
+        args = []
+        if min_items is not None:
+            args.append("min=%s" % min_items)
+        if max_items is not None:
+            args.append("max=%s" % max_items)
+        validators.append("ma.validate.Length(%s)" % ", ".join(args))
