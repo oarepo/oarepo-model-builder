@@ -13,7 +13,7 @@ def test_raw_type():
         model_content={
             "record": {
                 "use": "invenio",
-                "properties": {"a": {"type": "flattened"}},
+                "properties": {"a": {"type": "flat_object"}},
                 "module": {"qualified": "test"},
             },
         },
@@ -42,7 +42,7 @@ from oarepo_runtime.marshmallow import BaseRecordSchema
 class TestSchema(BaseRecordSchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.Raw()
+    a = ma.fields.Dict()
     """
         )
         in strip_whitespaces(data)
@@ -56,7 +56,7 @@ class TestSchema(BaseRecordSchema):
     assert data == {
         "mappings": {
             "properties": {
-                "a": {"type": "object", "enabled": False},
+                "a": {"type": "flat_object"},
                 "id": {"type": "keyword"},
                 "created": {
                     "type": "date",
