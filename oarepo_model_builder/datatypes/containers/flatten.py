@@ -1,16 +1,16 @@
 from ..datatypes import DataType
 
 
-class FlattenDataType(DataType):
-    model_type = "flattened"
+class FlatObjectDataType(DataType):
+    model_type = "flat_object"
 
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.Raw",
+            "field-class": "ma.fields.Dict",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.Raw",
+        "field-class": "ma.fields.Dict",
     }
     json_schema = {"type": "object"}
-    mapping = {"enabled": False, "type": "object"}
+    mapping = {"type": "flat_object"}

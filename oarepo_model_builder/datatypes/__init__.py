@@ -23,7 +23,7 @@ flatten:
 
 from .containers import (  # noqa
     ArrayDataType,
-    FlattenDataType,
+    FlatObjectDataType,
     NestedDataType,
     ObjectDataType,
 )
@@ -68,7 +68,7 @@ DEFAULT_DATATYPES = [
     UUIDDataType,
     ObjectDataType,
     NestedDataType,
-    FlattenDataType,
+    FlatObjectDataType,
     ArrayDataType,
     URLDataType,
     ModelDataType,
