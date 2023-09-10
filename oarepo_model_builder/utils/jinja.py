@@ -15,7 +15,8 @@ def sorted_imports(imports):
     imports_dict = {(x["import"], x.get("alias")): x for x in imports}
     imports = list(imports_dict.values())
     # sort them
-    imports.sort(key=lambda x: (x["import"], x.get("alias")))
+
+    imports.sort(key=lambda x: (x["import"], x.get("alias") or ""))
     return imports
 
 
@@ -42,20 +43,26 @@ def generate_import(ctx, import_object, imported_part="class", alias=None, skip=
             return ""
         return generate_import(ctx, import_object[imported_part], alias)
     import_name = import_object["import"]
-    if "." in import_name:
-        import_path, import_name = import_name.rsplit(".", maxsplit=1)
-    else:
-        import_path = None
     alias = import_object.get("alias")
     ret = []
-    if import_path:
-        if ctx["current_module"] == import_path:
-            return ""  # do not import from the same module
-        ret.append(f"from {import_path} import {import_name}")
-    else:
+
+    if import_name == alias:
+        # if import is the same as alias, keep just the import statement
         ret.append(f"import {import_name}")
-    if alias:
-        ret.append(f"as {alias}")
+    else:
+        # otherwise break the import to path and base name and alias if defined
+        if "." in import_name:
+            import_path, import_name = import_name.rsplit(".", maxsplit=1)
+        else:
+            import_path = None
+        if import_path:
+            if ctx["current_module"] == import_path:
+                return ""  # do not import from the same module
+            ret.append(f"from {import_path} import {import_name}")
+        else:
+            ret.append(f"import {import_name}")
+        if alias:
+            ret.append(f"as {alias}")
     return " ".join(ret)
 
 
