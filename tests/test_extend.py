@@ -35,7 +35,7 @@ def test_extend_marshmallow():
         "class": "test.services.records.schema.TestSchema",
         "extra-code": "",
         "generate": True,
-        "imports": [{"alias": "aaa.BlahSchema", "import": "aaa.BlahSchema"}],
+        "imports": [{"alias": "aaa", "import": "aaa"}],
         "module": "test.services.records.schema",
     }
     assert loaded_model["model"]["ui"]["marshmallow"] == {
@@ -43,7 +43,7 @@ def test_extend_marshmallow():
         "class": "test.services.records.ui_schema.TestUISchema",
         "extra-code": "",
         "generate": True,
-        "imports": [{"alias": "aaa.BlahUISchema", "import": "aaa.BlahUISchema"}],
+        "imports": [{"alias": "aaa", "import": "aaa"}],
         "module": "test.services.records.ui_schema",
     }
     # assert that "a" is read & write false
