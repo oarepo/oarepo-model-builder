@@ -149,7 +149,9 @@ def set_package_dependencies(classes_by_package):
             else:
                 processed_dependencies.add(c.package)
         if len(for_another_round) == len(to_process):
-            raise InvalidModelException("Cycle found in packages, code missing")
+            raise InvalidModelException(
+                f"Cycle found in packages, code missing: {to_process}"
+            )
         else:
             for c in for_another_round:
                 c.remove_dependencies(processed_dependencies)

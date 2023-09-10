@@ -6,7 +6,7 @@ from oarepo_model_builder.validation.utils import ImportSchema
 
 from .app import AppModelComponent
 from .defaults import DefaultsModelComponent
-from .utils import set_default, append_array
+from .utils import append_array, set_default
 
 
 class ServiceClassSchema(ma.Schema):
@@ -129,17 +129,21 @@ class ServiceModelComponent(DataTypeComponent):
             ["PermissionsPresetsConfigMixin", "InvenioRecordServiceConfig"],
         )
         config.setdefault("components", [])
-        append_array(datatype, "service-config", "imports",
-                     {
-                         "import": "invenio_records_resources.services.RecordServiceConfig",
-                         "alias": "InvenioRecordServiceConfig",
-                     },
-                     )
-        append_array(datatype, "service-config", "imports",
-                     {
-                         "import": "oarepo_runtime.config.service.PermissionsPresetsConfigMixin"
-                     }
-                     )
+        append_array(
+            datatype,
+            "service-config",
+            "imports",
+            {
+                "import": "invenio_records_resources.services.RecordServiceConfig",
+                "alias": "InvenioRecordServiceConfig",
+            },
+        )
+        append_array(
+            datatype,
+            "service-config",
+            "imports",
+            {"import": "oarepo_runtime.config.service.PermissionsPresetsConfigMixin"},
+        )
         convert_config_to_qualified_name(config)
 
         service = set_default(datatype, "service", {})

@@ -14,6 +14,7 @@ from .validation import validate_model
 class ModelSchema:
     USE_KEYWORD = "use"
     REF_KEYWORD = "$ref"
+    EXTEND_KEYWORD = "extend"
 
     def __init__(
         self,
@@ -24,6 +25,7 @@ class ModelSchema:
         loaders=None,
         validate=True,
         source_locations=None,
+        reference_processors=None,
     ):
         """
         Creates and parses model schema
@@ -40,6 +42,14 @@ class ModelSchema:
         self.source_locations = [*(source_locations or [])]
         self.source_locations.append(os.path.abspath(os.curdir))
         self.source_locations.append(os.path.dirname(os.path.abspath(self.file_path)))
+        self._reference_processors = deepmerge(
+            {
+                self.REF_KEYWORD: [],
+                self.USE_KEYWORD: [],
+                self.EXTEND_KEYWORD: [],
+            },
+            reference_processors,
+        )
 
         if content is not None:
             self.schema = content
@@ -166,35 +176,53 @@ class ModelSchema:
 
     def _resolve_references(self, element, stack):
         if isinstance(element, dict):
-            if self.USE_KEYWORD in element or self.REF_KEYWORD in element:
-                for key in element:
-                    if key in (self.USE_KEYWORD, self.REF_KEYWORD):
-                        break
-                included_name = element[key]
+            # find a reference and if there is one, resolve it
+            for key in list(element.keys()):
+                if key not in (self.USE_KEYWORD, self.REF_KEYWORD, self.EXTEND_KEYWORD):
+                    continue
+                self._resolve_reference_key(element, key, stack)
 
-                # if it is a dictionary, then probably it is a name of a property,
-                # so keep it
-                if isinstance(included_name, dict):
-                    return self._resolve_references(element, stack)
-
-                element.pop(self.USE_KEYWORD, None)
-                element.pop(self.REF_KEYWORD, None)
-
-                if not isinstance(included_name, list):
-                    included_name = [included_name]
-                for name in included_name:
-                    if not name:
-                        raise IncludedFileNotFoundException(
-                            f"No file for use at path {'/'.join(stack)}"
-                        )
-                    included_data = self._load_included_file(name)
-                    deepmerge(element, included_data, [], listmerge="keep")
-                return self._resolve_references(element, stack)
             for k, v in element.items():
                 self._resolve_references(v, stack + [k])
+
         elif isinstance(element, list):
             for v in element:
                 self._resolve_references(v, stack)
+
+    def _resolve_reference_key(self, element, key, stack):
+        included_name = element[key]
+
+        # if it is a dictionary, then probably it is a name of a property,
+        # so keep it
+        if isinstance(included_name, dict):
+            return self._resolve_references(element, stack)
+
+        # not a dict, so pop the key
+        element.pop(key)
+
+        if not isinstance(included_name, list):
+            included_name = [included_name]
+        for name in included_name:
+            if not name:
+                raise IncludedFileNotFoundException(
+                    f"No file for use at path {'/'.join(stack)}"
+                )
+            self._load_and_merge_reference(element, key, name, stack)
+
+    def _load_and_merge_reference(self, element, key, name, stack):
+        included_data = self._load_included_file(name)
+        self._resolve_references(included_data, stack)
+
+        context = {}
+        for rp in self._reference_processors[key]:
+            included_data = rp(
+                included_data,
+                element=element,
+                key=key,
+                name=name,
+                context=context,
+            )
+        deepmerge(element, included_data, [], listmerge="keep")
 
     @property
     def abs_path(self):

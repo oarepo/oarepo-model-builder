@@ -77,6 +77,8 @@ class ModelBuilder:
         :param path: relative path to output_dir, set in build()
         :return:    instance of FileBuilder for the path
         """
+        if path is None:
+            raise AssertionError("Can not have a null path in a builder output")
         if not isinstance(path, Path):
             path = Path(path)
         path = self.output_dir.joinpath(path)

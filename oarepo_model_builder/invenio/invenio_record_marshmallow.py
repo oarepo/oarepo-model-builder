@@ -80,7 +80,9 @@ class InvenioRecordMarshmallowBuilder(InvenioBaseClassPythonBuilder):
             for fld in cls.fields:
                 imports.extend(fld.imports)
 
-        imports = list(sorted(set(imports), key=lambda x: (x.import_path, x.alias)))
+        imports = list(
+            sorted(set(imports), key=lambda x: (x.import_path or "", x.alias or ""))
+        )
 
         self.process_template(
             python_path,
