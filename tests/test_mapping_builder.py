@@ -17,14 +17,18 @@ def test_simple_mapping_builder():
     model = {"properties": {"a": {"type": "keyword"}}}
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "keyword"}}}}
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword", "ignore_above": 1024}}}
+    }
 
 
 def test_simple_mapping_text_builder():
     model = {"properties": {"a": {"type": "keyword", "mapping": {"type": "text"}}}}
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "text", "ignore_above": 1024}}}
+    }  # does not make sense
 
 
 def test_array_mapping_builder():
@@ -38,7 +42,11 @@ def test_array_mapping_builder():
     }
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "text"}}}}
+    assert data == {
+        "mappings": {
+            "properties": {"a": {"type": "text", "ignore_above": 1024}}
+        }  # does not make sense
+    }
 
 
 def build_model(model):
@@ -81,7 +89,11 @@ def test_no_index():
     data = build_model(model)
 
     assert data == {
-        "mappings": {"properties": {"a": {"type": "keyword", "index": False}}}
+        "mappings": {
+            "properties": {
+                "a": {"type": "keyword", "ignore_above": 1024, "index": False}
+            }
+        }
     }
 
 
@@ -90,7 +102,11 @@ def test_no_index_on_model():
     data = build_model(model)
 
     assert data == {
-        "mappings": {"properties": {"a": {"type": "keyword", "index": False}}}
+        "mappings": {
+            "properties": {
+                "a": {"type": "keyword", "ignore_above": 1024, "index": False}
+            }
+        }
     }
 
 
@@ -101,7 +117,9 @@ def test_override_no_index_on_model():
     }
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "keyword"}}}}
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword", "ignore_above": 1024}}}
+    }
 
 
 def test_override_no_index_on_model():
@@ -111,7 +129,9 @@ def test_override_no_index_on_model():
     }
     data = build_model(model)
 
-    assert data == {"mappings": {"properties": {"a": {"type": "keyword"}}}}
+    assert data == {
+        "mappings": {"properties": {"a": {"type": "keyword", "ignore_above": 1024}}}
+    }
 
 
 def test_deep_no_index():
@@ -173,6 +193,6 @@ def test_mapping_template():
     data = build_model(model)
 
     assert data == {
-        "mappings": {"properties": {"a": {"type": "keyword"}}},
+        "mappings": {"properties": {"a": {"type": "keyword", "ignore_above": 1024}}},
         "settings": {"index.mapping.total_fields.limit": 3000},
     }
