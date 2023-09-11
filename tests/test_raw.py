@@ -57,7 +57,7 @@ class TestSchema(BaseRecordSchema):
         "mappings": {
             "properties": {
                 "a": {"type": "flat_object"},
-                "id": {"type": "keyword"},
+                "id": {"type": "keyword", "ignore_above": 1024},
                 "created": {
                     "type": "date",
                     "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date||strict_date_hour_minute_second||strict_date_hour_minute_second_fraction",
@@ -66,7 +66,7 @@ class TestSchema(BaseRecordSchema):
                     "type": "date",
                     "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date||strict_date_hour_minute_second||strict_date_hour_minute_second_fraction",
                 },
-                "$schema": {"type": "keyword"},
+                "$schema": {"type": "keyword", "ignore_above": 1024},
             },
         }
     }

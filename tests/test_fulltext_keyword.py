@@ -78,7 +78,7 @@ def test_keyword(fulltext_builder):
     assert data == {
         "mappings": {
             "properties": {
-                "a": {"type": "keyword"},
+                "a": {"type": "keyword", "ignore_above": 1024},
             }
         }
     }
@@ -100,7 +100,10 @@ def test_fulltext_keyword(fulltext_builder):
     assert data == {
         "mappings": {
             "properties": {
-                "a": {"fields": {"keyword": {"type": "keyword"}}, "type": "text"},
+                "a": {
+                    "fields": {"keyword": {"type": "keyword", "ignore_above": 256}},
+                    "type": "text",
+                },
             }
         }
     }

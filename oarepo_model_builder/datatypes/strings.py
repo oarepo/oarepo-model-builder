@@ -41,7 +41,7 @@ class FulltextDataType(StringDataType):
 
 class KeywordDataType(StringDataType):
     model_type = "keyword"
-    mapping = {"type": "keyword"}
+    mapping = {"type": "keyword", "ignore_above": 1024}
     facets = {
         "facet-class": "TermsFacet",
         "imports": [
@@ -57,7 +57,10 @@ class UUIDDataType(StringDataType):
 
 class FulltextKeywordDataType(StringDataType):
     model_type = "fulltext+keyword"
-    mapping = {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
+    mapping = {
+        "type": "text",
+        "fields": {"keyword": {"type": "keyword", "ignore_above": 256}},
+    }
     facets = {
         "facet-class": "TermsFacet",
         "keyword": True,
@@ -70,7 +73,7 @@ class FulltextKeywordDataType(StringDataType):
 
 class URLDataType(StringDataType):
     model_type = "url"
-    mapping = {"type": "keyword"}
+    mapping = {"type": "keyword", "ignore_above": 1024}
     facets = {
         "facet-class": "TermsFacet",
         "imports": [
