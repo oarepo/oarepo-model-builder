@@ -26,7 +26,7 @@ class {{ vars.record|class_header }}:
     )
 {% endif %}
 {% if not vars.record_dumper.skip %}
-    dumper_extensions = [ {{ vars.record.dumper_extensions|generate_list }} ]
+    dumper_extensions =  [ {{ vars.record_dumper.extensions|generate_list }} ]
     dumper = {{ vars.record_dumper.class|base_name }}(extensions=dumper_extensions)
 {% endif %}
 
