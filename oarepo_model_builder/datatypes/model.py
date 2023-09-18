@@ -5,6 +5,7 @@ import marshmallow as ma
 
 from ..datatypes import Import, Section, datatypes
 from .containers import ObjectDataType
+from ..utils.links import url_prefix2link
 
 
 @dataclasses.dataclass
@@ -47,12 +48,13 @@ class ModelDataType(ObjectDataType):
 
     @property
     def links(self):
+        url_prefix = url_prefix2link(self.definition["resource-config"]["base-url"])
         return {
             "links_item": [
                 Link(
                     name="self",
                     link_class="RecordLink",
-                    link_args=['"{self.url_prefix}{id}"'],
+                    link_args=[f'"{{+api}}{url_prefix}{{id}}"'],
                     imports=[Import("invenio_records_resources.services.RecordLink")],
                 ),
             ],
@@ -60,7 +62,7 @@ class ModelDataType(ObjectDataType):
                 Link(
                     name=None,
                     link_class="pagination_links",
-                    link_args=['"{self.url_prefix}{?args*}"'],
+                    link_args=[f'"{{+api}}{url_prefix}{{?args*}}"'],
                     imports=[
                         Import("invenio_records_resources.services.pagination_links")
                     ],
