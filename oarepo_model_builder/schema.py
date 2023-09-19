@@ -177,10 +177,20 @@ class ModelSchema:
     def _resolve_references(self, element, stack):
         if isinstance(element, dict):
             # find a reference and if there is one, resolve it
-            for key in list(element.keys()):
-                if key not in (self.USE_KEYWORD, self.REF_KEYWORD, self.EXTEND_KEYWORD):
-                    continue
-                self._resolve_reference_key(element, key, stack)
+            modified = True
+            while modified:
+                modified = False
+                for key in list(element.keys()):
+                    if key not in (
+                        self.USE_KEYWORD,
+                        self.REF_KEYWORD,
+                        self.EXTEND_KEYWORD,
+                    ):
+                        continue
+                    self._resolve_reference_key(element, key, stack)
+                    # it is possible that the reference introduced another reference,
+                    # so try it once again
+                    modified = True
 
             for k, v in element.items():
                 self._resolve_references(v, stack + [k])
@@ -211,7 +221,6 @@ class ModelSchema:
 
     def _load_and_merge_reference(self, element, key, name, stack):
         included_data = self._load_included_file(name)
-        self._resolve_references(included_data, stack)
 
         context = {}
         for rp in self._reference_processors[key]:
