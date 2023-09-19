@@ -393,14 +393,14 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     def links_item(self):
         return {
             
-            "self":RecordLink("{self.url_prefix}{id}"),
+            "self":RecordLink("{+api}/test/{id}"),
             
         }
     @property
     def links_search(self):
         return {
             
-            **pagination_links("{self.url_prefix}{?args*}"),
+            **pagination_links("{+api}/test/{?args*}"),
             
         }
 '''
