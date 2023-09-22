@@ -69,6 +69,8 @@ class ModelSchema:
 
         self._sections = {}
 
+        self._strip_ignored_elements()
+
         if validate:
             validate_model(self)
 
@@ -269,6 +271,25 @@ class ModelSchema:
         parsed_section.prepare(prepare_context)
         self._sections[key] = parsed_section
         return parsed_section
+
+    def _strip_ignored_elements(self):
+        extension_elements = self.schema.get("settings", {}).get("extension-elements")
+        if not extension_elements:
+            return
+
+        def remove_extension_elements(d):
+            if isinstance(d, dict):
+                for k, v in list(d.items()):
+                    if k in extension_elements:
+                        del d[k]
+                    elif isinstance(v, (dict, list)):
+                        remove_extension_elements(v)
+            elif isinstance(d, list):
+                for v in d:
+                    if isinstance(v, (dict, list)):
+                        remove_extension_elements(v)
+
+        remove_extension_elements(self.schema)
 
 
 def resolve_id(json, element_id):

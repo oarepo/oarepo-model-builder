@@ -94,3 +94,21 @@ def test_loading_external_by_id():
         "settings": {},
         "b": {"a": True},
     }
+
+
+def test_loading_extension_elements():
+    schema = ModelSchema(
+        DUMMY_PATH,
+        {
+            "record": {
+                "aaaa": "blah",
+                "properties": {"x": {"bbbb": "abc", "type": "keyword"}},
+            },
+            "settings": {"extension-elements": ["aaaa", "bbbb"]},
+        },
+        validate=False,
+    )
+    assert schema.schema == {
+        "settings": {"extension-elements": ["aaaa", "bbbb"]},
+        "record": {"properties": {"x": {"type": "keyword"}}},
+    }
