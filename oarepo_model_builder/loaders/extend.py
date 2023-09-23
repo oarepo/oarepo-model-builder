@@ -1,3 +1,4 @@
+from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.utils.python_name import package_name
 from oarepo_model_builder.validation import InvalidModelException
 
@@ -18,7 +19,10 @@ def extract_extended_record(included_data, *, context, **kwargs):
     elif "properties" in included_data:
         extended_object = included_data
     else:
-        raise InvalidModelException("Extended object must be an object")
+        context["props"] = included_data
+        # need to return shallow copy, as there might be a manipulation with the
+        # element and context would be corrupted
+        return {**included_data}
 
     context["props"] = extended_object
     return {
@@ -41,19 +45,21 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
         node_properties = ret.pop("properties", None)
         node_items = ret.pop("items", None)
 
-        if "marshmallow" not in ret:
+        if "marshmallow" in ret:
+            convert_marshmallow_class_to_base_class(ret["marshmallow"])
+        elif "properties" in ret:
             raise InvalidModelException(
-                f"marshmallow section not in {node}. "
-                f"Please pass generated model (records.json5), not the source model."
-            )
-        if "ui" not in ret or "marshmallow" not in ret["ui"]:
-            raise InvalidModelException(
-                f"ui.marshmallow section not in {node}. "
+                f"marshmallow section not in object {node}. "
                 f"Please pass generated model (records.json5), not the source model."
             )
 
-        convert_marshmallow_class_to_base_class(ret["marshmallow"])
-        convert_marshmallow_class_to_base_class(ret["ui"]["marshmallow"])
+        if "ui" in ret and "marshmallow" in ret["ui"]:
+            convert_marshmallow_class_to_base_class(ret["ui"]["marshmallow"])
+        elif "properties" in ret:
+            raise InvalidModelException(
+                f"ui.marshmallow section not in object {node}. "
+                f"Please pass generated model (records.json5), not the source model."
+            )
 
         if node_properties:
             properties = ret.setdefault("properties", {})
@@ -91,11 +97,33 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
             {"import": package_name(clz), "alias": package_name(clz)}
         )
 
+    def as_array(x):
+        if isinstance(x, list):
+            return x
+        if not x:
+            return []
+        return [x]
+
+    def replace_use_with_extend(data):
+        if isinstance(data, dict):
+            if ModelSchema.USE_KEYWORD in data:
+                data.setdefault(ModelSchema.EXTEND_KEYWORD, []).extend(
+                    as_array(data.pop(ModelSchema.USE_KEYWORD))
+                )
+            if ModelSchema.REF_KEYWORD in data:
+                data.setdefault(ModelSchema.EXTEND_KEYWORD, []).extend(
+                    as_array(data.pop(ModelSchema.REF_KEYWORD))
+                )
+            for v in data.values():
+                if isinstance(v, (dict, list)):
+                    replace_use_with_extend(v)
+        elif isinstance(data, list):
+            for v in data:
+                if isinstance(v, (dict, list)):
+                    replace_use_with_extend(v)
+
     included_data["marshmallow"] = context["props"].get("marshmallow", {})
     included_data["ui"] = context["props"].get("ui", {})
     ret = remove_marshmallow_from_children(included_data)
-    import yaml
-
-    with open("/tmp/test.yaml", "w") as f:
-        yaml.safe_dump(ret, f)
+    replace_use_with_extend(ret)
     return ret
