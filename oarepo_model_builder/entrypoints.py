@@ -1,4 +1,3 @@
-import importlib.resources
 import sys
 from functools import reduce
 from importlib import import_module
@@ -8,6 +7,7 @@ import importlib_metadata
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.schema import ModelSchema, remove_star_keys
+from oarepo_model_builder.validation import InvalidModelException
 
 
 def create_builder_from_entrypoints(profile="record", **kwargs):
@@ -63,17 +63,26 @@ def load_model_from_entrypoint(ep: importlib_metadata.EntryPoint):
         except:  # NOSONAR intentionally broad
             module = import_module(ep.module)
             split_attr = ep.attr.split(".")
-            fn = f"{split_attr[-2]}.{split_attr[-1]}"
-            if len(split_attr) > 2:
-                fn = reduce(lambda x, y: Path(x) / Path(y), split_attr[:-2]) / fn
-            module_path = getattr(module, "__path__", [])
-            if module_path:
-                full_fn = Path(module_path[0]) / fn
-            else:
-                full_fn = fn
-            content = importlib.resources.open_text(module, fn, encoding="utf-8").read()
-            loaded_schema = schema._load(full_fn, content=content)
+            for split_point in range(len(split_attr) - 1, -1, -1):
+                base_path = split_attr[:split_point]
+                file_name = ".".join(split_attr[split_point:])
+                if base_path:
+                    file_name = (
+                        reduce(lambda x, y: x / y, [Path(x) for x in base_path])
+                        / file_name
+                    )
 
+                module_path = getattr(module, "__path__", [])
+                if module_path:
+                    full_fn = Path(module_path[0]) / file_name
+                else:
+                    full_fn = Path(file_name)
+                if not full_fn.exists():
+                    continue
+                loaded_schema = schema._load(full_fn, content=full_fn.read_text())
+                break
+            else:
+                raise InvalidModelException(f"Could not load entry point {ep}")
         remove_star_keys(loaded_schema)
         return loaded_schema
 
