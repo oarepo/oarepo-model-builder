@@ -18,10 +18,14 @@ class SetupCfgBuilder(OutputBuilder):
         )
         version = self.schema.get("version", "1.0.0dev1")
         output.setdefault("metadata", "version", version)
-        if parse_version(output.get("metadata", "version").value) < parse_version(
-            version
-        ):
-            output.set("metadata", "version", version)
+        try:
+            if parse_version(output.get("metadata", "version").value) < parse_version(
+                version
+            ):
+                output.set("metadata", "version", version)
+        except:
+            # may be, for example, attr:..., so ignore exception
+            pass
         output.setdefault(
             "metadata",
             "description",
