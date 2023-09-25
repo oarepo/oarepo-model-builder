@@ -41,9 +41,8 @@ def test_model_saver():
         },
     )
     assert data[0]["model"] == {
-        "sortable": [],
-        "type": "model",
         "searchable": True,
+        "type": "model",
         "module": {
             "qualified": "test",
             "alias": "test",
@@ -139,6 +138,7 @@ def test_model_saver():
         "resource-config": {
             "generate": True,
             "base-url": "/test/",
+            "base-html-url": "/test/",
             "config-key": "TEST_RECORD_RESOURCE_CONFIG",
             "module": "test.resources.records.config",
             "class": "test.resources.records.config.TestResourceConfig",
@@ -291,14 +291,15 @@ def test_model_saver():
                 {"import": "invenio_records_permissions.RecordPermissionPolicy"}
             ],
         },
+        "sortable": [],
         "properties": {
             "a": {"type": "keyword"},
             "b": {
+                "type": "object",
                 "marshmallow": {
                     "generate": True,
                     "class": "test.services.records.schema.BSchema",
                 },
-                "type": "object",
                 "ui": {
                     "marshmallow": {
                         "generate": True,
@@ -381,29 +382,6 @@ def test_model_saver_invenio():
     )
     print(repr(data[0]))
     assert data[0]["model"] == {
-        "marshmallow": {
-            "imports": [{"import": "oarepo_runtime.marshmallow.BaseRecordSchema"}],
-            "base-classes": ["BaseRecordSchema"],
-            "generate": True,
-            "module": "test.services.records.schema",
-            "class": "test.services.records.schema.TestSchema",
-            "extra-code": "",
-        },
-        "ui": {
-            "marshmallow": {
-                "imports": [
-                    {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
-                ],
-                "base-classes": ["InvenioUISchema"],
-                "generate": True,
-                "module": "test.services.records.ui_schema",
-                "class": "test.services.records.ui_schema.TestUISchema",
-                "extra-code": "",
-            }
-        },
-        "searchable": True,
-        "sortable": [],
-        "type": "model",
         "module": {
             "qualified": "test",
             "alias": "test",
@@ -419,6 +397,28 @@ def test_model_saver_invenio():
             "suffix-upper": "TEST",
             "suffix-snake": "test",
         },
+        "marshmallow": {
+            "imports": [{"import": "oarepo_runtime.marshmallow.BaseRecordSchema"}],
+            "base-classes": ["BaseRecordSchema"],
+            "generate": True,
+            "module": "test.services.records.schema",
+            "class": "test.services.records.schema.TestSchema",
+            "extra-code": "",
+        },
+        "type": "model",
+        "ui": {
+            "marshmallow": {
+                "imports": [
+                    {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
+                ],
+                "base-classes": ["InvenioUISchema"],
+                "generate": True,
+                "module": "test.services.records.ui_schema",
+                "class": "test.services.records.ui_schema.TestUISchema",
+                "extra-code": "",
+            }
+        },
+        "searchable": True,
         "sample": {"file": "data/sample_data.yaml"},
         "model-name": "Test",
         "ext-resource": {"generate": True, "skip": False},
@@ -499,6 +499,7 @@ def test_model_saver_invenio():
         "resource-config": {
             "generate": True,
             "base-url": "/test/",
+            "base-html-url": "/test/",
             "config-key": "TEST_RECORD_RESOURCE_CONFIG",
             "module": "test.resources.records.config",
             "class": "test.resources.records.config.TestResourceConfig",
@@ -632,34 +633,35 @@ def test_model_saver_invenio():
                 {"import": "invenio_records_permissions.RecordPermissionPolicy"}
             ],
         },
+        "sortable": [],
         "properties": {
             "$schema": {
-                "facets": {"searchable": True},
-                "type": "keyword",
+                "ui": {"marshmallow": {"read": False, "write": False}},
+                "marshmallow": {"read": False, "write": False},
                 "sample": {"skip": True},
-                "marshmallow": {"write": False, "read": False},
-                "ui": {"marshmallow": {"write": False, "read": False}},
+                "type": "keyword",
+                "facets": {"searchable": True},
             },
             "created": {
-                "facets": {"searchable": True},
-                "type": "datetime",
+                "ui": {"marshmallow": {"read": False, "write": False}},
+                "marshmallow": {"read": False, "write": False},
                 "sample": {"skip": True},
-                "marshmallow": {"write": False, "read": False},
-                "ui": {"marshmallow": {"write": False, "read": False}},
+                "type": "datetime",
+                "facets": {"searchable": True},
             },
             "id": {
-                "facets": {"searchable": True},
-                "type": "keyword",
+                "ui": {"marshmallow": {"read": False, "write": False}},
+                "marshmallow": {"read": False, "write": False},
                 "sample": {"skip": True},
-                "marshmallow": {"write": False, "read": False},
-                "ui": {"marshmallow": {"write": False, "read": False}},
+                "type": "keyword",
+                "facets": {"searchable": True},
             },
             "updated": {
-                "facets": {"searchable": True},
-                "type": "datetime",
+                "ui": {"marshmallow": {"read": False, "write": False}},
+                "marshmallow": {"read": False, "write": False},
                 "sample": {"skip": True},
-                "marshmallow": {"write": False, "read": False},
-                "ui": {"marshmallow": {"write": False, "read": False}},
+                "type": "datetime",
+                "facets": {"searchable": True},
             },
         },
     }

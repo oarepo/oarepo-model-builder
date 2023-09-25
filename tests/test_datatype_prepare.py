@@ -211,6 +211,7 @@ def test_prepare_datatype():
         "resource-config": {
             "base-classes": ["RecordResourceConfig"],
             "base-url": "/my-test/",
+            "base-html-url": "/my-test/",
             "class": f"{module}.resources.records.config.TestResourceConfig",
             "config-key": "TEST_RECORD_RESOURCE_CONFIG",
             "extra-code": "",
