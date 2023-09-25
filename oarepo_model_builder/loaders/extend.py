@@ -125,5 +125,14 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
     included_data["marshmallow"] = context["props"].get("marshmallow", {})
     included_data["ui"] = context["props"].get("ui", {})
     ret = remove_marshmallow_from_children(included_data)
+
+    for ext in (
+        ModelSchema.EXTEND_KEYWORD,
+        ModelSchema.REF_KEYWORD,
+        ModelSchema.USE_KEYWORD,
+    ):
+        if ext in context["props"]:
+            ret[ext] = context["props"][ext]
+
     replace_use_with_extend(ret)
     return ret
