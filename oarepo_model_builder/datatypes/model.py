@@ -4,8 +4,8 @@ from typing import List
 import marshmallow as ma
 
 from ..datatypes import Import, Section, datatypes
-from .containers import ObjectDataType
 from ..utils.links import url_prefix2link
+from .containers import ObjectDataType
 
 
 @dataclasses.dataclass

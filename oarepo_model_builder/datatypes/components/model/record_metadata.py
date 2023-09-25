@@ -89,7 +89,9 @@ class RecordMetadataModelComponent(DataTypeComponent):
                 {"import": "invenio_db.db"},
             ],
         )
-        metadata.setdefault("table", f"{datatype.definition['module']['prefix-snake']}_metadata")
+        metadata.setdefault(
+            "table", f"{datatype.definition['module']['prefix-snake']}_metadata"
+        )
         metadata.setdefault("alias", alias)
         metadata.setdefault("use-versioning", True)
 

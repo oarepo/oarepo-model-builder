@@ -54,6 +54,12 @@ class ResourceConfigClassSchema(ma.Schema):
         metadata={"doc": "The base url of the resource"},
     )
 
+    base_html_url = ma.fields.String(
+        data_key="base-html-url",
+        attribute="base-html-url",
+        metadata={"doc": "The base html url of the resource"},
+    )
+
     generate = ma.fields.Bool(
         metadata={"doc": "Generate the resource config class (default)"}
     )
@@ -134,6 +140,7 @@ class ResourceModelComponent(DataTypeComponent):
         config = set_default(datatype, "resource-config", {})
         config.setdefault("generate", True)
         config.setdefault("base-url", f"/{module_container['kebab-module']}/")
+        config.setdefault("base-html-url", f"/{module_container['kebab-module']}/")
         config.setdefault(
             "config-key",
             f"{module_container['base-upper']}_{context['profile_upper']}_RESOURCE_CONFIG",
