@@ -102,7 +102,7 @@ def test_loading_extension_elements():
         {
             "record": {
                 "aaaa": "blah",
-                "properties": {"x": {"bbbb": "abc", "type": "keyword"}},
+                "properties": {"x": {"^bbbb": "abc", "type": "keyword"}},
             },
             "settings": {"extension-elements": ["aaaa", "bbbb"]},
         },
