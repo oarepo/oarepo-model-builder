@@ -1122,3 +1122,41 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
 
     """,
     )
+
+def test_facets_group():
+    schema = load_model(
+        "test.yaml",
+        model_content={
+            "record": {
+                "use": "invenio",
+                "module": {"qualified": "test"},
+                "properties": {
+                    "b": {
+                        "type": "keyword",
+                        "facets": {
+                            "facet_groups" : ["curator"]
+
+                        },
+                    },
+                    "c": "fulltext",
+                },
+            },
+        },
+        isort=False,
+        black=False,
+        autoflake=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "record", ["record"], "")
+
+    data = (
+        builder.filesystem.open(
+            os.path.join("test", "services", "records", "facets.py")
+        )
+        .read()
+        .replace("'", '"')
+    )
+    print(data)
+    

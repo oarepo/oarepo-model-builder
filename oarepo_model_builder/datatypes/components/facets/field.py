@@ -23,6 +23,7 @@ class FacetsSchema(ma.Schema):
     imports = fields.List(fields.Nested(ImportSchema), required=False)
     path = fields.String(required=False)
     keyword = fields.String(required=False)
+    facet_groups = fields.List(fields.String(), required=False)
 
 
 class RegularFacetsComponent(DataTypeComponent):

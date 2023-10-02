@@ -47,6 +47,10 @@ def test_sort():
         os.path.join("test", "services", "records", "search.py")
     ).read()
     print(data)
+    data2 = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data2)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
