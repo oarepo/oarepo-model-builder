@@ -1134,7 +1134,7 @@ def test_facets_group():
                     "b": {
                         "type": "keyword",
                         "facets": {
-                            "facet_groups" : ["curator"]
+                            "facet-groups" : ["curator"]
 
                         },
                     },
@@ -1159,4 +1159,31 @@ def test_facets_group():
         .replace("'", '"')
     )
     print(data)
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+\"""Facet definitions.\"""
 
+from invenio_search.engine import dsl
+from flask_babelex import lazy_gettext as _
+
+from invenio_records_resources.services.records.facets import TermsFacet
+from oarepo_runtime.facets.date import DateTimeFacet
+
+
+
+_schema = TermsFacet(field="$schema", label =_("$schema.label"))
+
+b = TermsFacet(field="b", label =_("b.label"))
+
+created = DateTimeFacet(field="created", label =_("created.label"))
+
+_id = TermsFacet(field="id", label =_("id.label"))
+
+updated = DateTimeFacet(field="updated", label =_("updated.label"))
+
+
+
+    """,
+    )

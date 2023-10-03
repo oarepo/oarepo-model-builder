@@ -220,7 +220,40 @@ def test_facet_groups():
                             "facet": False
 
                         },
-                    }
+                    },
+                    "d": {
+                        "type" : "keyword",
+                        "facets": {
+                            "searchable": False
+                        }
+                    },
+                    "g": {
+                        "type": "array",
+
+                        "items": {
+                            "type": "keyword",
+                            "facets": {
+                                "facet-groups": ["curator"]
+                            }
+                        }
+
+                    },
+                    "arr": {
+                        "type": "array",
+                        "facets": {"searchable": True},
+                        "items": {
+                            "type": "nested",
+                            "properties": {
+                                "d": {"type": "keyword", "facets" : {"facet": False}},
+                                "e": {
+                                    "type": "object",
+                                    "properties": {
+                                        "f": "keyword",
+                                    },
+                                },
+                            },
+                        },
+                    },
                 }
             },
         },
@@ -242,6 +275,12 @@ def test_facet_groups():
         os.path.join("test", "services", "records", "facets.py")
     ).read()
     print(data2)
+    data3 = builder.filesystem.read(
+        os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+    )
+    import json
+    data3 = json.loads(data3)
+    print(data3)
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from blah import BaseSearchOptions
