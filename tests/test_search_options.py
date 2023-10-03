@@ -22,7 +22,7 @@ def test_sort():
                     },
                     "b": {
                         "type": "keyword",
-                        "facets": {"field": 'TermsFacet(field="cosi")', "facet_groups": ["curator"]},
+                        "facets": {"field": 'TermsFacet(field="cosi")', "facet-groups": ["curator"]},
                         "sortable": {"key": "b_test", "order": "desc"},
                     },
                     "c": {
@@ -165,6 +165,83 @@ def test_search_options_base_class():
         os.path.join("test", "services", "records", "search.py")
     ).read()
     print(data)
+    assert strip_whitespaces(data) == strip_whitespaces(
+        """
+from blah import BaseSearchOptions
+from flask_babelex import lazy_gettext as _
+from . import facets
+
+class TestSearchOptions(BaseSearchOptions):
+    \"""TestRecord search options.\"""
+
+    facets = {
+        '_schema': facets._schema,
+        'created': facets.created,
+        '_id': facets._id,
+        'updated': facets.updated,
+        **getattr(BaseSearchOptions, 'facets', {})
+    }
+    sort_options = {
+        **BaseSearchOptions.sort_options,
+    }
+    """,
+    )
+
+
+def test_facet_groups():
+    schema = load_model(
+        DUMMY_YAML,
+        model_content={
+            "record": {
+                "use": "invenio",
+                "module": {"qualified": "test"},
+                "search-options": {
+                    "base-classes": ["BaseSearchOptions"],
+                    "imports": [{"import": "blah.BaseSearchOptions"}],
+                },
+                "properties": {
+                    "a": {
+                        "type": "keyword",
+                        "facets": {
+                            "facet-groups": ["curator", "user"]
+                        }
+                    },
+                    "b": {
+                        "type": "keyword",
+                        "facets": {
+                            "searchable": True,
+                            "facet-groups": []
+                        }
+                    },
+                    "c": {
+                        "type": "keyword",
+                        "facets": {
+                            "searchable": True,
+                            "facet": False
+
+                        },
+                    }
+                }
+            },
+        },
+        isort=False,
+        black=False,
+        autoflake=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "record", ["record"], "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "search.py")
+    ).read()
+    print(data)
+    data2 = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data2)
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from blah import BaseSearchOptions

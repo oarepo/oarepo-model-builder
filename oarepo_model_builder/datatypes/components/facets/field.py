@@ -23,8 +23,8 @@ class FacetsSchema(ma.Schema):
     imports = fields.List(fields.Nested(ImportSchema), required=False)
     path = fields.String(required=False)
     keyword = fields.String(required=False)
-    facet_groups = fields.List(fields.String(), required=False)
-
+    facet_groups = fields.List(fields.String(), required=False, data_key="facet-groups", attribute="facet-groups")
+    facet = ma.fields.Bool(required=False)
 
 class RegularFacetsComponent(DataTypeComponent):
     eligible_datatypes = []
@@ -53,7 +53,7 @@ class RegularFacetsComponent(DataTypeComponent):
             dot_path=datatype.path,
             searchable=facet_section.get("searchable"),
             imports=facet_section.get("imports", []),
-            facet_groups= facet_section.get("facet_groups", ["default"])
+            facet_groups= facet_section.get("facet-groups", ["default"])
         )
 
         # set the field on the definition
