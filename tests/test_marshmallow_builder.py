@@ -229,6 +229,95 @@ class AItemSchema(ma.Schema):
     )
 
 
+def test_strict_object(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "type": "object",
+            "properties": {"b": {"type": "integer"}},
+        }
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert (
+        strip_whitespaces(
+            """
+ class ASchema(ma.Schema):
+    class Meta:
+        unknown= ma.RAISE
+    b= ma.fields.Integer()
+"""
+        )
+        in strip_whitespaces(data)
+    )
+
+
+def test_permissive_object(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "type": "object",
+            "marshmallow": {"unknown": "INCLUDE"},
+            "properties": {"b": {"type": "integer"}},
+        }
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert (
+        strip_whitespaces(
+            """
+ class ASchema(ma.Schema):
+    class Meta:
+        unknown= ma.INCLUDE
+    b= ma.fields.Integer()
+"""
+        )
+        in strip_whitespaces(data)
+    )
+
+
+def test_excluding_object(fulltext_builder):
+    schema = get_test_schema(
+        a={
+            "type": "object",
+            "marshmallow": {"unknown": "EXCLUDE"},
+            "properties": {"b": {"type": "integer"}},
+        }
+    )
+    fulltext_builder.filesystem = InMemoryFileSystem()
+    fulltext_builder.build(
+        schema, profile="record", model_path=["record"], output_dir=""
+    )
+
+    with fulltext_builder.filesystem.open(
+        os.path.join("test", "services", "records", "schema.py")
+    ) as f:
+        data = f.read()
+    assert (
+        strip_whitespaces(
+            """
+ class ASchema(ma.Schema):
+    class Meta:
+        unknown= ma.EXCLUDE
+    b= ma.fields.Integer()
+"""
+        )
+        in strip_whitespaces(data)
+    )
+
+
 def test_generate_nested_schema_same_file(fulltext_builder):
     schema = get_test_schema(
         a={
