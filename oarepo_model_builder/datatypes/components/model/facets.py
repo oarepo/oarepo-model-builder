@@ -53,7 +53,7 @@ class FacetsModelComponent(ObjectFacetsComponent):
     ):
         if facet_definition.searchable is None:
             facet_definition.searchable = datatype.definition.get("searchable", True)
-        if facet_definition.searchable is not False:
+        if facet_definition.searchable is not False and facet_definition.facet is not False:
             return [facet_definition]
         else:
             # facet will not be generated

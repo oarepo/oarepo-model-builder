@@ -53,6 +53,7 @@ class RegularFacetsComponent(DataTypeComponent):
             dot_path=datatype.path,
             searchable=facet_section.get("searchable"),
             imports=facet_section.get("imports", []),
+            facet=facet_section.get("facet", None),
             facet_groups= facet_section.get("facet-groups", ["default"])
         )
 
