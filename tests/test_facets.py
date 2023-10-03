@@ -1159,4 +1159,4 @@ def test_facets_group():
         .replace("'", '"')
     )
     print(data)
-    
+

@@ -22,7 +22,7 @@ def test_sort():
                     },
                     "b": {
                         "type": "keyword",
-                        "facets": {"field": 'TermsFacet(field="cosi")'},
+                        "facets": {"field": 'TermsFacet(field="cosi")', "facet_groups": ["curator"]},
                         "sortable": {"key": "b_test", "order": "desc"},
                     },
                     "c": {

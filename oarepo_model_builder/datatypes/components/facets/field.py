@@ -53,6 +53,7 @@ class RegularFacetsComponent(DataTypeComponent):
             dot_path=datatype.path,
             searchable=facet_section.get("searchable"),
             imports=facet_section.get("imports", []),
+            facet_groups= facet_section.get("facet_groups", ["default"])
         )
 
         # set the field on the definition
