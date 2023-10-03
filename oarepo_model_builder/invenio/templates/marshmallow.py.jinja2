@@ -8,10 +8,8 @@ from marshmallow_utils import schemas as mu_schemas
 
 {% for cls in generated_classes %}
 class {{cls.class_name|base_name}}({% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{{bc}}{% endfor %}):
-{% if cls.strict %}
     class Meta:
-        unknown = ma.RAISE
-{% endif %}
+        unknown = ma.{{ cls.unknown }}
 {% for fld in cls.fields %}
     {{fld.key}} = {{fld.full_definition}}
 {% endfor %}
