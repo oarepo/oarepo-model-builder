@@ -46,11 +46,6 @@ def test_sort():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "search.py")
     ).read()
-    print(data)
-    data2 = builder.filesystem.open(
-        os.path.join("test", "services", "records", "facets.py")
-    ).read()
-    print(data2)
     assert re.sub(r"\s", "", data) == re.sub(
         r"\s",
         "",
@@ -59,24 +54,74 @@ from invenio_records_resources.services import SearchOptions as InvenioSearchOpt
 from flask_babelex import lazy_gettext as _
 from . import facets
 
+
 class TestSearchOptions(InvenioSearchOptions):
     \"""TestRecord search options.\"""
 
+    facet_groups ={
+        
+            'curator': {
+                
+                    'b' : facets.b,
+
+                
+            
+                **getattr((InvenioSearchOptions, 'facet_groups', {}).get('curator', {}))
+            
+            },
+        
+    }
+
     facets = {
+
+
     '_schema': facets._schema,
+
+
+
     'a': facets.a,
-    'b': facets.b,
+
+
+
     'c_d': facets.c_d,
+
+
+
     'created': facets.created,
+
+
+
     '_id': facets._id,
+
+
+
     'updated': facets.updated,
+
+
+
     **getattr(InvenioSearchOptions, 'facets', {})
+
     }
     sort_options = {
-        **InvenioSearchOptions.sort_options,
+        
+            
+                **InvenioSearchOptions.sort_options,
+            
+
+        
+
+
     'a_test': {'fields': ['a']},
+
+
+
     'b_test': {'fields': ['-b']},
+
+
+
     'c_d': {'fields': ['-c.d']},
+
+
     }
     """,
     )
@@ -111,6 +156,7 @@ def test_search_class():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "search.py")
     ).read()
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
@@ -121,17 +167,48 @@ from . import facets
 class TestSearchOptions(InvenioSearchOptions):
     \"""TestRecord search options.\"""
 
+    facet_groups ={
+        
+    }
+
     facets = {
-        '_schema': facets._schema,
-      'a': facets.a,
-      'b': facets.b,
-      'created': facets.created,
-      '_id': facets._id,
-      'updated': facets.updated,
-      **getattr(InvenioSearchOptions,'facets',{})
+
+
+    '_schema': facets._schema,
+
+
+
+    'a': facets.a,
+
+
+
+    'b': facets.b,
+
+
+
+    'created': facets.created,
+
+
+
+    '_id': facets._id,
+
+
+
+    'updated': facets.updated,
+
+
+
+    **getattr(InvenioSearchOptions, 'facets', {})
+
     }
     sort_options = {
-        **InvenioSearchOptions.sort_options,
+        
+            
+                **InvenioSearchOptions.sort_options,
+            
+
+        
+
     }
     """,
     )
@@ -171,18 +248,44 @@ from blah import BaseSearchOptions
 from flask_babelex import lazy_gettext as _
 from . import facets
 
+
 class TestSearchOptions(BaseSearchOptions):
     \"""TestRecord search options.\"""
 
+    facet_groups ={
+        
+    }
+
     facets = {
-        '_schema': facets._schema,
-        'created': facets.created,
-        '_id': facets._id,
-        'updated': facets.updated,
-        **getattr(BaseSearchOptions, 'facets', {})
+
+
+    '_schema': facets._schema,
+
+
+
+    'created': facets.created,
+
+
+
+    '_id': facets._id,
+
+
+
+    'updated': facets.updated,
+
+
+
+    **getattr(BaseSearchOptions, 'facets', {})
+
     }
     sort_options = {
-        **BaseSearchOptions.sort_options,
+        
+            
+                **BaseSearchOptions.sort_options,
+            
+
+        
+
     }
     """,
     )
@@ -287,18 +390,71 @@ from blah import BaseSearchOptions
 from flask_babelex import lazy_gettext as _
 from . import facets
 
+
 class TestSearchOptions(BaseSearchOptions):
     \"""TestRecord search options.\"""
 
+    facet_groups ={
+        
+            'curator': {
+                
+                    'a' : facets.a,
+
+                
+                    'g' : facets.g,
+
+                
+            
+                **getattr((BaseSearchOptions, 'facet_groups', {}).get('curator', {}))
+            
+            },
+        
+            'user': {
+                
+                    'a' : facets.a,
+
+                
+            
+                **getattr((BaseSearchOptions, 'facet_groups', {}).get('user', {}))
+            
+            },
+        
+    }
+
     facets = {
-        '_schema': facets._schema,
-        'created': facets.created,
-        '_id': facets._id,
-        'updated': facets.updated,
-        **getattr(BaseSearchOptions, 'facets', {})
+
+
+    '_schema': facets._schema,
+
+
+
+    'arr_e_f': facets.arr_e_f,
+
+
+
+    'created': facets.created,
+
+
+
+    '_id': facets._id,
+
+
+
+    'updated': facets.updated,
+
+
+
+    **getattr(BaseSearchOptions, 'facets', {})
+
     }
     sort_options = {
-        **BaseSearchOptions.sort_options,
+        
+            
+                **BaseSearchOptions.sort_options,
+            
+
+        
+
     }
     """,
     )
