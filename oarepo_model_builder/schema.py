@@ -273,7 +273,13 @@ class ModelSchema:
         return parsed_section
 
     def _strip_ignored_elements(self):
-        extension_elements = self.schema.get("settings", {}).get("extension-elements")
+        extension_elements = self.schema.get("settings", {}).get(
+            "extension-elements", []
+        )
+        extension_elements = [
+            *extension_elements,
+            *[f"^{x}" for x in extension_elements],
+        ]
         if not extension_elements:
             return
 

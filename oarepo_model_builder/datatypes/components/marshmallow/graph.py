@@ -47,7 +47,7 @@ class MarshmallowClass:
     base_classes: List[str]
     imports: List[Import]
     fields: List[MarshmallowField]
-    strict: bool
+    unknown: str
     order: Optional[int] = None
 
     references: List[MarshmallowReference] = dataclasses.field(default_factory=list)

@@ -1,6 +1,7 @@
 from typing import List
 
 import marshmallow as ma
+import marshmallow.validate
 from marshmallow import fields
 
 from oarepo_model_builder.datatypes import DataType, ObjectDataType, datatypes
@@ -63,6 +64,10 @@ class ObjectMarshmallowExtraSchema(ma.Schema):
         metadata={"doc": "Extra fields to generate into the marshmallow class"},
     )
     skip = fields.Boolean()
+    unknown = fields.Str(
+        validate=[marshmallow.validate.OneOf(["RAISE", "INCLUDE", "EXCLUDE"])],
+        default="RAISE",
+    )
 
 
 class ObjectMarshmallowSchema(PropertyMarshmallowSchema, ObjectMarshmallowExtraSchema):
@@ -195,7 +200,7 @@ class ObjectMarshmallowMixin:
                 base_classes=marshmallow.get("base-classes", []) or ["ma.Schema"],
                 imports=Import.from_config(marshmallow.get("imports", [])),
                 fields=fields,
-                strict=True,
+                unknown=marshmallow.get("unknown", "RAISE"),
             )
         )
 
