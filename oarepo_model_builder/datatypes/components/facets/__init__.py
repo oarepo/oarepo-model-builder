@@ -8,6 +8,8 @@ class FacetDefinition:
     dot_path: str
     searchable: bool
     imports: List[Dict[str, str]]
+    facet_groups: List[str]
+    facet: Optional[bool]
     field: Optional[str] = None
 
     def update(self, facet_section):

@@ -7,8 +7,22 @@ from . import facets
 class {{ vars.search_options| class_header }}:
     """{{ vars.record.class|base_name }} search options."""
 
+    facet_groups ={
+        {% for group in facet_groups %}
+            '{{ group }}': {
+                {% for dict in facet_groups[group].keys() %}
+                    '{{ dict}}' : {{ facet_groups[group][dict] }},
+
+                {%  endfor %}
+            {% for base_class in vars.search_options.base_classes %}
+                **getattr(({{ base_class|base_name }}, 'facet_groups', {}).get('{{group }}', {}))
+            {% endfor %}
+            },
+        {%  endfor %}
+    }
+
     facets = {
-{% for dict in search_data %}
+{% for dict in default_group %}
 {% for key, value in dict.items()%}
     '{{ key }}': {{ value }},
 {% endfor %}
