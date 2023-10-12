@@ -71,6 +71,8 @@ class ModelDataType(ObjectDataType):
         }
 
     def prepare(self, context):
+        if "profile" in context:
+            self.profile = context["profile"]
         datatypes.call_components(
             datatype=self, method="before_model_prepare", context=context
         )

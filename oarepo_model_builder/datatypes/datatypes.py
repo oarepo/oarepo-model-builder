@@ -225,6 +225,10 @@ class AbstractDataType:
             p = p.parent
         return tuple(reversed(ret))
 
+    @property
+    def root(self):
+        return self.stack[0]
+
 
 class DataType(AbstractDataType):
     model_type = None
