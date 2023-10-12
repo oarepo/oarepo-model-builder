@@ -23,14 +23,13 @@ class ExtResourceModelComponent(DataTypeComponent):
         )
 
     def process_ext_resource(self, datatype, section, **kwargs):
-        if self.is_record_profile:
+        if datatype.profile == "record":
             cfg = section.config
             cfg["ext-service-name"] = "service_records"
             cfg["ext-resource-name"] = "resource_records"
 
     def before_model_prepare(self, datatype, *, context, **kwargs):
-        self.is_record_profile = context["profile"] == "record"
-        if not self.is_record_profile:
+        if not datatype.profile == "record":
             return
         ext = set_default(datatype, "ext-resource", {})
 
