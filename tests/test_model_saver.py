@@ -73,6 +73,7 @@ def test_model_saver():
                     "alias": "InvenioSearchOptions",
                 }
             ],
+            "sort-options-field": "sort_options",
         },
         "config": {
             "generate": True,
@@ -435,6 +436,7 @@ def test_model_saver_invenio():
                     "alias": "InvenioSearchOptions",
                 }
             ],
+            "sort-options-field": "sort_options",
         },
         "config": {
             "generate": True,

@@ -31,14 +31,16 @@ class {{ vars.search_options| class_header }}:
     **getattr({{ base_class|base_name }}, 'facets', {})
 {% endfor %}
     }
-    sort_options = {
+
+{% if sort_definition %}
+    {{ vars.search_options.sort_options_field }} = {
         {% if vars.search_options.base_classes %}
             {% for base_class in vars.search_options.base_classes %}
-                **{{ base_class|base_name }}.sort_options,
+                **{{ base_class|base_name }}.{{ vars.search_options.sort_options_field }},
             {% endfor %}
 {#        **{{ vars.search_options_bases[0]|base_name }}.sort_options,#}
         {% else %}
-        **InvenioSearchOptions.sort_options,
+        **InvenioSearchOptions.{{ vars.search_options.sort_options_field }},
         {% endif %}
 {% for dict in sort_definition %}
 {% for key, value in dict.items()%}
@@ -46,5 +48,6 @@ class {{ vars.search_options| class_header }}:
 {% endfor %}
 {% endfor %}
     }
+{% endif %}
 
 {{ vars.search_options.extra_code }}
