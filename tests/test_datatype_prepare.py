@@ -121,6 +121,7 @@ def test_prepare_datatype():
             "context-class": "PIDFieldContext",
             "field-args": ["create=True"],
             "field-class": "PIDField",
+            "extra-code": "",
             "generate": True,
             "imports": [
                 {
