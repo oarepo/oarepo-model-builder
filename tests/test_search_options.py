@@ -22,7 +22,10 @@ def test_sort():
                     },
                     "b": {
                         "type": "keyword",
-                        "facets": {"field": 'TermsFacet(field="cosi")', "facet-groups": ["curator"]},
+                        "facets": {
+                            "field": 'TermsFacet(field="cosi")',
+                            "facet-groups": ["curator"],
+                        },
                         "sortable": {"key": "b_test", "order": "desc"},
                     },
                     "c": {
@@ -305,41 +308,23 @@ def test_facet_groups():
                 "properties": {
                     "a": {
                         "type": "keyword",
-                        "facets": {
-                            "facet-groups": ["curator", "user"]
-                        }
+                        "facets": {"facet-groups": ["curator", "user"]},
                     },
                     "b": {
                         "type": "keyword",
-                        "facets": {
-                            "searchable": True,
-                            "facet-groups": []
-                        }
+                        "facets": {"searchable": True, "facet-groups": []},
                     },
                     "c": {
                         "type": "keyword",
-                        "facets": {
-                            "searchable": True,
-                            "facet": False
-
-                        },
+                        "facets": {"searchable": True, "facet": False},
                     },
-                    "d": {
-                        "type" : "keyword",
-                        "facets": {
-                            "searchable": False
-                        }
-                    },
+                    "d": {"type": "keyword", "facets": {"searchable": False}},
                     "g": {
                         "type": "array",
-
                         "items": {
                             "type": "keyword",
-                            "facets": {
-                                "facet-groups": ["curator"]
-                            }
-                        }
-
+                            "facets": {"facet-groups": ["curator"]},
+                        },
                     },
                     "arr": {
                         "type": "array",
@@ -347,7 +332,7 @@ def test_facet_groups():
                         "items": {
                             "type": "nested",
                             "properties": {
-                                "d": {"type": "keyword", "facets" : {"facet": False}},
+                                "d": {"type": "keyword", "facets": {"facet": False}},
                                 "e": {
                                     "type": "object",
                                     "properties": {
@@ -357,7 +342,7 @@ def test_facet_groups():
                             },
                         },
                     },
-                }
+                },
             },
         },
         isort=False,
@@ -382,6 +367,7 @@ def test_facet_groups():
         os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
     )
     import json
+
     data3 = json.loads(data3)
     print(data3)
     assert strip_whitespaces(data) == strip_whitespaces(
