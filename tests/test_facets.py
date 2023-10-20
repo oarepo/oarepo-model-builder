@@ -1123,6 +1123,7 @@ updated = DateTimeFacet(field="updated", label=_("updated.label") )
     """,
     )
 
+
 def test_facets_group():
     schema = load_model(
         "test.yaml",
@@ -1133,10 +1134,7 @@ def test_facets_group():
                 "properties": {
                     "b": {
                         "type": "keyword",
-                        "facets": {
-                            "facet-groups" : ["curator"]
-
-                        },
+                        "facets": {"facet-groups": ["curator"]},
                     },
                     "c": "fulltext",
                 },

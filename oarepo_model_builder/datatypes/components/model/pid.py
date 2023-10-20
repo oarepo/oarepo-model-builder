@@ -56,6 +56,11 @@ class PIDSchema(ma.Schema):
         metadata={"doc": "Module where the pid provider will be placed"}
     )
     skip = ma.fields.Boolean()
+    extra_code = ma.fields.String(
+        attribute="extra-code",
+        data_key="extra-code",
+        metadata={"doc": "Extra code to be copied below the permission class"},
+    )
 
 
 class PIDModelComponent(DataTypeComponent):
@@ -98,6 +103,7 @@ class PIDModelComponent(DataTypeComponent):
                 {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
             ],
         )
+        pid.setdefault("extra-code", "")
 
 
 def process_pid_type(pid_base):

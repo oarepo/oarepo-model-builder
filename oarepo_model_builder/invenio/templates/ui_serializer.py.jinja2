@@ -12,3 +12,5 @@ class {{ vars.json_serializer|class_header }}:
             list_schema_cls=BaseListSchema,
             schema_context={"object_key": "ui"},
         )
+
+{{ vars.json_serializer.extra_code }}

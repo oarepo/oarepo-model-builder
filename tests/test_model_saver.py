@@ -180,6 +180,7 @@ def test_model_saver():
                 },
                 {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
             ],
+            "extra-code": "",
         },
         "record-dumper": {
             "generate": True,
@@ -541,6 +542,7 @@ def test_model_saver_invenio():
                 },
                 {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
             ],
+            "extra-code": "",
         },
         "record-dumper": {
             "generate": True,
