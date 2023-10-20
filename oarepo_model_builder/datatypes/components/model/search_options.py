@@ -36,6 +36,11 @@ class RecordSearchOptionsSchema(ma.Schema):
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
 
+    sort_options_field = ma.fields.Str(
+        attribute="sort-options-field",
+        data_key="sort-options-field",
+    )
+
 
 class SearchOptionsModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
@@ -74,3 +79,4 @@ class SearchOptionsModelComponent(DataTypeComponent):
                 }
             ],
         )
+        record_search_options.setdefault("sort-options-field", "sort_options")

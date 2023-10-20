@@ -204,15 +204,6 @@ class TestSearchOptions(InvenioSearchOptions):
     **getattr(InvenioSearchOptions, 'facets', {})
 
     }
-    sort_options = {
-        
-            
-                **InvenioSearchOptions.sort_options,
-            
-
-        
-
-    }
     """,
     )
 
@@ -279,15 +270,6 @@ class TestSearchOptions(BaseSearchOptions):
 
 
     **getattr(BaseSearchOptions, 'facets', {})
-
-    }
-    sort_options = {
-        
-            
-                **BaseSearchOptions.sort_options,
-            
-
-        
 
     }
     """,
@@ -376,71 +358,87 @@ from blah import BaseSearchOptions
 from flask_babelex import lazy_gettext as _
 from . import facets
 
-
 class TestSearchOptions(BaseSearchOptions):
     \"""TestRecord search options.\"""
-
     facet_groups ={
-        
             'curator': {
-                
                     'a' : facets.a,
-
-                
                     'g' : facets.g,
-
-                
-            
                 **getattr((BaseSearchOptions, 'facet_groups', {}).get('curator', {}))
-            
             },
-        
             'user': {
-                
                     'a' : facets.a,
-
-                
-            
                 **getattr((BaseSearchOptions, 'facet_groups', {}).get('user', {}))
-            
             },
-        
     }
 
     facets = {
-
-
     '_schema': facets._schema,
-
-
-
     'arr_e_f': facets.arr_e_f,
-
-
-
     'created': facets.created,
-
-
-
     '_id': facets._id,
-
-
-
     'updated': facets.updated,
-
-
-
     **getattr(BaseSearchOptions, 'facets', {})
-
     }
-    sort_options = {
-        
-            
-                **BaseSearchOptions.sort_options,
-            
+    """,
+    )
 
-        
 
+def test_replace_sort_options():
+    schema = load_model(
+        DUMMY_YAML,
+        model_content={
+            "record": {
+                "use": "invenio",
+                "module": {"qualified": "test"},
+                "search-options": {"sort-options-field": "extra_sort_options"},
+                "properties": {
+                    "a": {
+                        "type": "fulltext+keyword",
+                        "sortable": {"key": "a_test"},
+                    },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+        autoflake=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+    builder.build(schema, "record", ["record"], "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "search.py")
+    ).read()
+    print(data)
+    assert re.sub(r"\s", "", data) == re.sub(
+        r"\s",
+        "",
+        """
+from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
+from flask_babelex import lazy_gettext as _
+from . import facets
+
+
+class TestSearchOptions(InvenioSearchOptions):
+    \"""TestRecord search options.\"""
+
+    facet_groups ={
+    }
+
+    facets = {
+    '_schema': facets._schema,
+    'a': facets.a,
+    'created': facets.created,
+    '_id': facets._id,
+    'updated': facets.updated,
+    **getattr(InvenioSearchOptions, 'facets', {})
+    }
+    extra_sort_options = {
+                **InvenioSearchOptions.extra_sort_options,
+                'a_test': {'fields': ['a']},
     }
     """,
     )

@@ -240,6 +240,7 @@ def test_prepare_datatype():
                 }
             ],
             "module": f"{module}.services.records.search",
+            "sort-options-field": "sort_options",
         },
         "searchable": True,
         "service": {
