@@ -69,7 +69,7 @@ class TestSearchOptions(InvenioSearchOptions):
 
                 
             
-                **getattr((InvenioSearchOptions, 'facet_groups', {}).get('curator', {}))
+                **getattr(InvenioSearchOptions, 'facet_groups', {}).get('curator', {})
             
             },
         
@@ -364,11 +364,11 @@ class TestSearchOptions(BaseSearchOptions):
             'curator': {
                     'a' : facets.a,
                     'g' : facets.g,
-                **getattr((BaseSearchOptions, 'facet_groups', {}).get('curator', {}))
+                **getattr(BaseSearchOptions, 'facet_groups', {}).get('curator', {})
             },
             'user': {
                     'a' : facets.a,
-                **getattr((BaseSearchOptions, 'facet_groups', {}).get('user', {}))
+                **getattr(BaseSearchOptions, 'facet_groups', {}).get('user', {})
             },
     }
 
