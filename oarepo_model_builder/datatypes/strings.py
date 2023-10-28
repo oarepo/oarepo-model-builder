@@ -20,11 +20,11 @@ def validate_regex(value):
 class StringDataType(DataType):
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.String",
+            "field-class": "marshmallow.fields{ma_fields.String}",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.String",
+        "field-class": "marshmallow.fields{ma_fields.String}",
     }
     json_schema = {"type": "string"}
 

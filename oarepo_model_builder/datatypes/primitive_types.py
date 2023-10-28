@@ -17,11 +17,11 @@ class IntegerDataType(NumberDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.Integer",
+            "field-class": "marshmallow.fields{ma_fields.Integer}",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.Integer",
+        "field-class": "marshmallow.fields{ma_fields.Integer}",
     }
     json_schema = {"type": "integer"}
 
@@ -38,11 +38,11 @@ class FloatDataType(NumberDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.Float",  # NOSONAR
+            "field-class": "marshmallow.fields{ma_fields.Float}",  # NOSONAR
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.Float",
+        "field-class": "marshmallow.fields{ma_fields.Float}",
     }
     json_schema = {"type": "number"}
 
@@ -59,11 +59,11 @@ class DoubleDataType(NumberDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.Float",
+            "field-class": "marshmallow.fields{ma_fields.Float}",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.Float",
+        "field-class": "marshmallow.fields{ma_fields.Float}",
     }
     json_schema = {"type": "number"}
 
@@ -80,11 +80,11 @@ class BooleanDataType(DataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.Boolean",
+            "field-class": "marshmallow.fields{ma_fields.Boolean}",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.Boolean",
+        "field-class": "marshmallow.fields{ma_fields.Boolean}",
     }
     json_schema = {"type": "boolean"}
     facets = {

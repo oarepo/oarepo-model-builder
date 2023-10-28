@@ -3,7 +3,7 @@ import dataclasses
 import json
 from collections.abc import Mapping
 from functools import cached_property, lru_cache
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Type, Union
 
 import importlib_metadata
 import marshmallow as ma
@@ -13,25 +13,6 @@ from ..utils.deepmerge import deepmerge
 from ..utils.import_class import import_class
 from ..utils.properties import class_property
 from ..validation.utils import PermissiveSchema
-
-
-@dataclasses.dataclass
-class Import:
-    import_path: str
-    alias: Optional[str] = None
-
-    @staticmethod
-    def from_config(d):
-        if isinstance(d, dict):
-            return Import(d["import"], d.get("alias"))
-        elif isinstance(d, (tuple, list)):
-            return [Import.from_config(x) for x in d]
-
-    def __hash__(self):
-        return hash(self.import_path) ^ hash(self.alias)
-
-    def __eq__(self, o):
-        return self.import_path == o.import_path and self.alias == o.alias
 
 
 @dataclasses.dataclass

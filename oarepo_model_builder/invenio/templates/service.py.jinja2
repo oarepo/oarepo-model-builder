@@ -1,6 +1,6 @@
-{{ vars.service.imports|generate_import }}
+{{ vars.service|imports }}
 
 class {{ vars.service|class_header }}:
     """{{ vars.record.class|base_name }} service."""
 
-{{ vars.service.extra_code }}
+{{ vars.service|extra_code }}

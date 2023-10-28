@@ -55,15 +55,15 @@ def test_extend_marshmallow():
 
     schema = fs.read("test/services/records/schema.py")
     print(schema)
-    assert "class TestSchema(aaa.BlahSchema)" in schema
-    assert "class TestMetadataSchema(aaa.BlahMetadataSchema)" in schema
-    assert "metadata = ma.fields.Nested(lambda: TestMetadataSchema())" in schema
+    assert "class TestSchema(BlahSchema)" in schema
+    assert "class TestMetadataSchema(BlahMetadataSchema)" in schema
+    assert "metadata = ma_fields.Nested(lambda: TestMetadataSchema())" in schema
 
     schema = fs.read("test/services/records/ui_schema.py")
     print(schema)
-    assert "class TestUISchema(aaa.BlahUISchema)" in schema
-    assert "class TestMetadataUISchema(aaa.BlahMetadataUISchema)" in schema
-    assert "metadata = ma.fields.Nested(lambda: TestMetadataUISchema())" in schema
+    assert "class TestUISchema(BlahUISchema)" in schema
+    assert "class TestMetadataUISchema(BlahMetadataUISchema)" in schema
+    assert "metadata = ma_fields.Nested(lambda: TestMetadataUISchema())" in schema
 
 
 extension_model = {

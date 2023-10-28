@@ -1,13 +1,11 @@
-from marshmallow import ValidationError
-from marshmallow import validate as ma_validate
 import marshmallow as ma
-from marshmallow_utils import fields as mu_fields
-from marshmallow_utils import schemas as mu_schemas
-
-{{ imports|generate_import }}
+{{ imports|imports }}
+{% for cls in generated_classes %}
+{{ cls.base_classes|imports }}
+{% endfor %}
 
 {% for cls in generated_classes %}
-class {{cls.class_name|base_name}}({% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{{bc}}{% endfor %}):
+class {{cls.class_name|base_name}}({% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{{bc|base_name}}{% endfor %}):
     class Meta:
         unknown = ma.{{ cls.unknown }}
 {% for fld in cls.fields %}

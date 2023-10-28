@@ -3,10 +3,11 @@
 from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
-{{ imports|generate_import }}
-
+{{ facet_imports|imports }}
+{{ vars.facets|imports }}
 
 {% for facet in facets %}
 {{ facet.path }} = {{ facet.field }}
 {% endfor %}
 
+{{ vars.facets|extra_code }}

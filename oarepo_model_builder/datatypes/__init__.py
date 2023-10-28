@@ -27,7 +27,7 @@ from .containers import (  # noqa
     NestedDataType,
     ObjectDataType,
 )
-from .datatypes import DataType, DataTypeComponent, Import, Section, datatypes  # noqa
+from .datatypes import DataType, DataTypeComponent, Section, datatypes  # noqa
 from .dates import (  # noqa
     DateDataType,
     DateTimeDataType,

@@ -130,11 +130,11 @@ class ObjectDataType(DataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.Nested",
+            "field-class": "marshmallow.fields{ma_fields.Nested}",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.Nested",
+        "field-class": "marshmallow.fields{ma_fields.Nested}",
     }
     json_schema = {"type": "object"}
     mapping = {"type": "object"}

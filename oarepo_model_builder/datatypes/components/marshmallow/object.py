@@ -197,7 +197,8 @@ class ObjectMarshmallowMixin:
         classes.append(
             MarshmallowClass(
                 class_name=marshmallow["class"],
-                base_classes=marshmallow.get("base-classes", []) or ["ma.Schema"],
+                base_classes=marshmallow.get("base-classes", [])
+                or ["marshmallow.Schema"],
                 imports=Import.from_config(marshmallow.get("imports", [])),
                 fields=fields,
                 unknown=marshmallow.get("unknown", "RAISE"),

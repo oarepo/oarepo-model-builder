@@ -1,7 +1,9 @@
-{{ vars.service_config|generate_import }}
-{{ vars.service|generate_import }}
-{{ vars.resource_config|generate_import }}
-{{ vars.resource|generate_import }}
+{{ vars.config|imports }}
+
+{{ vars.service_config.class|imports }}
+{{ vars.service.class|imports }}
+{{ vars.resource_config.class|imports }}
+{{ vars.resource.class|imports }}
 
 {% if not vars.resource_config.skip %}
 {{ vars.resource_config.config_key }} = {{ vars.resource_config.class|base_name }}
@@ -18,4 +20,4 @@
 {{ vars.service.config_key }} = {{ vars.service.class|base_name }}
 {% endif  %}
 
-{{ vars.config.extra_code }}
+{{ vars.config|extra_code }}

@@ -36,10 +36,10 @@ class UIMarshmallowModelComponent(MarshmallowModelMixin, UIObjectMarshmallowComp
         module = marshmallow.setdefault("module", f"{services_module}.ui_schema")
         marshmallow.setdefault("class", f"{module}.{prefix}UISchema")
         marshmallow.setdefault("extra-code", "")
-        marshmallow.setdefault("base-classes", ["InvenioUISchema"])
         marshmallow.setdefault(
-            "imports", [{"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}]
+            "base-classes", ["oarepo_runtime.ui.marshmallow.InvenioUISchema"]
         )
+        marshmallow.setdefault("imports", [])
         convert_config_to_qualified_name(marshmallow)
 
         if "properties" in datatype.definition and "metadata" in (
@@ -54,5 +54,5 @@ class UIMarshmallowModelComponent(MarshmallowModelMixin, UIObjectMarshmallowComp
                 "class", f"{metadata_module}.{prefix}MetadataUISchema"
             )
             metadata_marshmallow.setdefault("extra-code", "")
-            metadata_marshmallow.setdefault("base-classes", ["ma.Schema"])
+            metadata_marshmallow.setdefault("base-classes", ["marshmallow.Schema"])
             convert_config_to_qualified_name(metadata_marshmallow)

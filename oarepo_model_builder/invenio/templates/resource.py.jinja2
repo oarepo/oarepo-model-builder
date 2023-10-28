@@ -1,4 +1,4 @@
-{{ vars.resource.imports|generate_import }}
+{{ vars.resource|imports }}
 
 
 class {{ vars.resource|class_header }}:
@@ -6,4 +6,4 @@ class {{ vars.resource|class_header }}:
     # here you can for example redefine
     # create_url_rules function to add your own rules
 
-{{ vars.resource.extra_code }}
+{{ vars.resource|extra_code }}

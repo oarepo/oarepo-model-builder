@@ -32,4 +32,4 @@ def init_{{ vars.api_blueprint.function|base_name }}(state):
         iregistry.register(ext.{{ ext.ext_service_name }}.indexer, indexer_id=ext.{{ ext.ext_service_name }}.config.service_id)
     {% endif  %}
 
-{{ vars.api_blueprint.extra_code }}
+{{ vars.api_blueprint|extra_code }}

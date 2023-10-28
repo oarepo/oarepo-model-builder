@@ -56,7 +56,7 @@ class TestSchema(BaseRecordSchema):
         unknown = ma.RAISE
 
 
-    a = ma.fields.String(validate=[ma_validate.OneOf(['a', 'b', 'c'])])
+    a = ma_fields.String(validate=[OneOf(['a', 'b', 'c'])])
     """
         )
         in strip_whitespaces(data)

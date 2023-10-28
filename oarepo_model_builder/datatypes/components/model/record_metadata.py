@@ -80,14 +80,17 @@ class RecordMetadataModelComponent(DataTypeComponent):
         metadata.setdefault("generate", True)
         metadata_module = metadata.setdefault("module", f"{records_module}.models")
         metadata.setdefault("class", f"{metadata_module}.{prefix}Metadata")
-        metadata.setdefault("base-classes", ["db.Model", "RecordMetadataBase"])
+        metadata.setdefault(
+            "base-classes",
+            [
+                "invenio_db.db.Model",
+                "invenio_records.models.RecordMetadataBase",
+            ],
+        )
         metadata.setdefault("extra-code", "")
         metadata.setdefault(
             "imports",
-            [
-                {"import": "invenio_records.models.RecordMetadataBase"},
-                {"import": "invenio_db.db"},
-            ],
+            [],
         )
         metadata.setdefault(
             "table", f"{datatype.definition['module']['prefix-snake']}_metadata"

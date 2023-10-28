@@ -5,10 +5,18 @@ import marshmallow as ma
 from marshmallow import fields
 
 from oarepo_model_builder.datatypes import DataTypeComponent
-from oarepo_model_builder.utils.python_name import convert_name_to_python
+from oarepo_model_builder.utils.jinja import (
+    extract_extra_code_imports,
+    generate_extra_code,
+)
+from oarepo_model_builder.utils.python_name import (
+    Import,
+    PythonQualifiedName,
+    convert_name_to_python,
+)
 from oarepo_model_builder.validation.utils import ImportSchema, StrictSchema
 
-from ...datatypes import DataType, Import
+from ...datatypes import DataType
 from .graph import MarshmallowField
 
 
@@ -52,8 +60,11 @@ class RegularMarshmallowComponentMixin:
             field_class = marshmallow.get("field-class")
             if not field_class:
                 return
+
+            field_class = PythonQualifiedName(field_class)
+            imports.extend(field_class.imports)
             field_decl = [
-                field_class,
+                field_class.local_name,
                 "(",
                 ", ".join(
                     self._marshmallow_field_arguments(
@@ -63,6 +74,11 @@ class RegularMarshmallowComponentMixin:
                 ")",
             ]
             field = "".join(field_decl)
+
+            validators = marshmallow.get("validators", [])
+            if validators:
+                for validator in validators:
+                    imports.extend(extract_extra_code_imports(validator))
 
         fields.append(MarshmallowField(field_name, field, imports))
 
@@ -88,6 +104,7 @@ class RegularMarshmallowComponentMixin:
 
         validators = marshmallow.get("validators", [])
         if validators:
+            validators = [generate_extra_code(x) for x in validators]
             arguments.append(f"validate=[{', '.join(validators)}]")
 
         return arguments

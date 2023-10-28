@@ -61,9 +61,7 @@ class RecordDumperModelComponent(DataTypeComponent):
 
         dumper_module = dumper.setdefault("module", f"{record_module}.dumper")
         dumper.setdefault("class", f"{dumper_module}.{prefix}Dumper")
-        dumper.setdefault("base-classes", ["SearchDumper"])
+        dumper.setdefault("base-classes", ["invenio_records.dumpers.SearchDumper"])
         dumper.setdefault("extra-code", "")
         dumper.setdefault("extensions", [])
-        dumper.setdefault(
-            "imports", [{"import": "invenio_records.dumpers.SearchDumper"}]
-        )
+        dumper.setdefault("imports", [])

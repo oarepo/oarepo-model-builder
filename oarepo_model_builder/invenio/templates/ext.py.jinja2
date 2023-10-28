@@ -1,6 +1,6 @@
 import re
 {{ vars.config.module|generate_import(alias='config') }}
-{{ vars.ext.imports|generate_import }}
+{{ vars.ext|imports }}
 
 class {{ vars.ext|class_header }}:
 
@@ -47,4 +47,4 @@ class {{ vars.ext|class_header }}:
                 return True
         return False
 
-{{ vars.ext.extra_code }}
+{{ vars.ext|extra_code }}

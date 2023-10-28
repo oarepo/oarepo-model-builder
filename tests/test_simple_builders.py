@@ -81,7 +81,6 @@ def test_record_builder():
         """
 from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.systemfields import IndexField
-from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
@@ -116,10 +115,10 @@ def test_record_pid_provider_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
-from invenio_records_resources.records.systemfields.pid import PIDField
-from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.systemfields import IndexField
+from invenio_records_resources.records.systemfields.pid import PIDField
+from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
 from test.records.dumper import TestDumper
 from invenio_records_resources.records.api import Record as InvenioRecord
@@ -154,13 +153,13 @@ def test_record_metadata_builder():
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from invenio_db import db
+from invenio_db.db import Model
 
 
 from invenio_records.models import RecordMetadataBase
 
 
-class TestMetadata(db.Model, RecordMetadataBase):
+class TestMetadata(Model, RecordMetadataBase):
     """Model for TestRecord metadata."""
 
     __tablename__ = "test_metadata"
@@ -181,7 +180,7 @@ def test_ext_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 import re
-from test import config as config
+from test import config
 
 
 class TestExt:
@@ -243,10 +242,10 @@ def _ext_proxy(attr):
         lambda: getattr(current_app.extensions["test"], attr))
 
 current_service = _ext_proxy('service_records')
-"""Proxy to the instantiated vocabulary service."""
+"""Proxy to the instantiated service."""
 
 current_resource = _ext_proxy('resource_records')
-"""Proxy to the instantiated vocabulary resource."""
+"""Proxy to the instantiated resource."""
         '''
     )
 
@@ -503,11 +502,11 @@ def test_ui_serializer_builder():
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from flask_resources import BaseListSchema
 from flask_resources import MarshmallowSerializer
-from flask_resources.serializers import JSONSerializer
 
 from test.services.records.ui_schema import TestUISchema
+from flask_resources.serializers import JSONSerializer
+from flask_resources import BaseListSchema
 
 class TestUIJSONSerializer(MarshmallowSerializer):
     """UI JSON serializer."""

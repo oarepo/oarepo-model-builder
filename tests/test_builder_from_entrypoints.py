@@ -40,13 +40,9 @@ def test_include_invenio():
     assert (
         strip_whitespaces(
             """
-from marshmallow import ValidationError
-from marshmallow import validate as ma_validate
 import marshmallow as ma
-from marshmallow_utils import fields as mu_fields
-from marshmallow_utils import schemas as mu_schemas
+from marshmallow import fields as ma_fields
 from oarepo_runtime.marshmallow import BaseRecordSchema
-
 
 
 
@@ -56,7 +52,7 @@ class TestSchema(BaseRecordSchema):
         unknown = ma.RAISE
 
 
-    a = ma.fields.String(required=True)
+    a = ma_fields.String(required=True)
     """
         )
         == strip_whitespaces(data)
@@ -69,11 +65,13 @@ class TestSchema(BaseRecordSchema):
     assert (
         strip_whitespaces(
             """
+import marshmallow as ma
+from marshmallow import fields as ma_fields
 from oarepo_runtime.ui.marshmallow import InvenioUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.String(required=True)    """
+    a = ma_fields.String(required=True)    """
         )
         in strip_whitespaces(data)
     )
