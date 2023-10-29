@@ -506,7 +506,7 @@ def test_edtf_interval_dumper_builder():
 from oarepo_runtime.records.dumpers.edtf_interval import EDTFIntervalDumperExt
 class TestEDTFIntervalDumperExt(EDTFIntervalDumperExt):
     """edtf interval dumper."""
-    paths=['/a']
+    paths=['a']
         '''
     )
 

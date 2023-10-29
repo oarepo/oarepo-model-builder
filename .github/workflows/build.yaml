@@ -47,16 +47,9 @@ jobs:
         with:
           plugins: analysis-icu
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip wheel setuptools
-          pip install -e '.[devs]'
-          pip list
-
-      - name: Test with pytest
+      - name: Run tests
         run: |
           ./run-tests.sh
-      
 
       - name: Build package to publish
         run: |
