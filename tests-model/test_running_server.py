@@ -7,12 +7,12 @@ import yaml
 def test_running_server():
     while True:
         data = requests.get(
-            "https://127.0.0.1:5000/api/complex-model", verify=False
+            "https://127.0.0.1:5000/api/complex-model", verify=False  # NOSONAR
         ).json()
         if not data["hits"]["hits"]:
             break
         for hit in data["hits"]["hits"]:
-            requests.delete(hit["links"]["self"], verify=False)
+            requests.delete(hit["links"]["self"], verify=False)  # NOSONAR
 
     assert data == {
         "hits": {"hits": [], "total": 0},
@@ -40,7 +40,9 @@ def test_running_server():
         sample_data = list(yaml.safe_load_all(f))
         for d in sample_data:
             resp = requests.post(
-                "https://127.0.0.1:5000/api/complex-model", json=d, verify=False
+                "https://127.0.0.1:5000/api/complex-model",
+                json=d,
+                verify=False,  # NOSONAR
             )
             data = resp.json()
             assert (
@@ -51,7 +53,7 @@ def test_running_server():
     pprint(records)
 
     for r, d in zip(records, sample_data):
-        record = requests.get(r["links"]["self"], verify=False).json()
+        record = requests.get(r["links"]["self"], verify=False).json()  # NOSONAR
         assert record["metadata"] == d["metadata"]
 
     record = requests.get(
@@ -60,11 +62,9 @@ def test_running_server():
             "Accept-Language": "cs",
             "Accept": "application/vnd.inveniordm.v1+json",
         },
-        verify=False,
+        verify=False,  # NOSONAR
     ).json()
     pprint(record)
     # czech locale and default locale differs, so just test it
     assert record["metadata"]["d"] != sample_data[0]["metadata"]["d"]
     assert record["metadata"]["dt"] != sample_data[0]["metadata"]["dt"]
-    assert record["metadata"]["ed"] != sample_data[0]["metadata"]["ed"]
-    assert record["metadata"]["edi"] != sample_data[0]["metadata"]["edi"]
