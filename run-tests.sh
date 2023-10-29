@@ -120,11 +120,13 @@ stop_server() {
   $SERVER_VENV/bin/invenio db destroy --yes-i-know || true
   $SERVER_VENV/bin/invenio index destroy --yes-i-know || true
 
+  set +e
+
   if [ -f .invenio.pid ] ; then
     kill "$(cat .invenio.pid)" || true
     sleep 2
     kill -9 "$(cat .invenio.pid)" || true
-    rm .invenio.pid
+    rm .invenio.pid || true
   fi
 }
 
@@ -155,6 +157,7 @@ if [ "$1" == "--server" ] ; then
   exit 0
 fi
 
+cat complex-model/data/sample_data.yaml
 $TEST_VENV/bin/pytest tests-model
 
 
