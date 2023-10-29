@@ -27,7 +27,6 @@ initialize_server_venv() {
   $SERVER_VENV/bin/pip install "oarepo>=$OAREPO_VERSION,<$OAREPO_VERSION_MAX"
   $SERVER_VENV/bin/pip install -e complex-model
   $SERVER_VENV/bin/pip install -U pytest
-  $SERVER_VENV/bin/pip install -e ../oarepo-runtime
 }
 
 initialize_builder_venv() {
