@@ -47,6 +47,11 @@ jobs:
         with:
           plugins: analysis-icu
 
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.7.0
+        with:
+          redis-version: ${{ matrix.redis-version }}
+
       - name: Run tests
         run: |
           ./run-tests.sh
