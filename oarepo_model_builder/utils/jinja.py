@@ -82,7 +82,7 @@ def generate_extra_code(obj, skip=False):
         extra_code = obj.get("extra-code", "")
     else:
         extra_code = obj
-    extra_code = (extra_code or "").strip()
+    extra_code = (extra_code or "").rstrip()
     if skip or not extra_code:
         return ""
 
