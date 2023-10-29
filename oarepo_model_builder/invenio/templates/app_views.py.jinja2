@@ -31,4 +31,4 @@ def init_{{ vars.app_blueprint.function|base_name }}(state):
         iregistry.register(ext.{{ ext.ext_service_name }}.indexer, indexer_id=ext.{{ ext.ext_service_name }}.config.service_id)
     {% endif  %}
 
-{{ vars.app_blueprint.extra_code }}
+{{ vars.app_blueprint|extra_code }}

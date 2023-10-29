@@ -59,11 +59,11 @@ class RecordDumperModelComponent(DataTypeComponent):
         dumper = set_default(datatype, "record-dumper", {})
         dumper.setdefault("generate", True)
 
-        dumper_module = dumper.setdefault("module", f"{record_module}.dumper")
+        dumper_module = dumper.setdefault("module", f"{record_module}.dumpers.dumper")
         dumper.setdefault("class", f"{dumper_module}.{prefix}Dumper")
-        dumper.setdefault("base-classes", ["SearchDumper"])
+        dumper.setdefault(
+            "base-classes", ["oarepo_runtime.records.dumpers.SearchDumper"]
+        )
         dumper.setdefault("extra-code", "")
         dumper.setdefault("extensions", [])
-        dumper.setdefault(
-            "imports", [{"import": "invenio_records.dumpers.SearchDumper"}]
-        )
+        dumper.setdefault("imports", [])

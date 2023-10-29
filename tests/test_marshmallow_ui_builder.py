@@ -58,7 +58,7 @@ def _test(fulltext_builder, string_type):
         os.path.join("test", "services", "records", "ui_schema.py")  # NOSONAR
     ) as f:
         data = f.read()
-    assert "a = ma.fields.String()" in data
+    assert "a = ma_fields.String()" in data
 
 
 def test_fulltext(fulltext_builder):
@@ -84,7 +84,7 @@ def test_simple_array(fulltext_builder):
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert "a = ma.fields.List(ma.fields.String())" in data
+    assert "a = ma_fields.List(ma_fields.String())" in data
 
 
 def test_array_of_objects(fulltext_builder):
@@ -112,16 +112,16 @@ class TestUISchema(InvenioUISchema):
         unknown = ma.RAISE
 
 
-    a = ma.fields.List(ma.fields.Nested(lambda: AItemUISchema()))
+    a = ma_fields.List(ma_fields.Nested(lambda: AItemUISchema()))
 
 
-class AItemUISchema(ma.Schema):
+class AItemUISchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    b = ma.fields.Integer() """
+    b = ma_fields.Integer() """
         )
         in strip_whitespaces(data)
     )
@@ -158,16 +158,16 @@ class TestUISchema(InvenioUISchema):
         unknown = ma.RAISE
 
 
-    a = ma.fields.Nested(lambda: BUISchema())
+    a = ma_fields.Nested(lambda: BUISchema())
 
 
-class BUISchema(ma.Schema):
+class BUISchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    b = ma.fields.String()    
+    b = ma_fields.String()    
     """
         )
         in strip_whitespaces(data)
@@ -207,11 +207,15 @@ def test_generate_nested_schema_different_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
+import marshmallow as ma
+from marshmallow import fields as ma_fields
 from test.services.schema2 import BUISchema
+
+from oarepo_runtime.services.schema.ui import InvenioUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.Nested(lambda: BUISchema())
+    a = ma_fields.Nested(lambda: BUISchema())
     """
         )
         in strip_whitespaces(data)
@@ -250,7 +254,7 @@ class TestUISchema(InvenioUISchema):
         unknown = ma.RAISE
 
 
-    a = ma.fields.Nested(lambda: BUISchema())
+    a = ma_fields.Nested(lambda: BUISchema())
 """
         )
         in strip_whitespaces(data)
@@ -285,12 +289,15 @@ def test_use_nested_schema_different_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
+import marshmallow as ma
 from c import BUISchema
-from oarepo_runtime.ui.marshmallow import InvenioUISchema
+from marshmallow import fields as ma_fields
+
+from oarepo_runtime.services.schema.ui import InvenioUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.Nested(lambda: BUISchema())
+    a = ma_fields.Nested(lambda: BUISchema())
 """
         )
         in strip_whitespaces(data)
@@ -328,13 +335,13 @@ def test_generate_nested_schema_array(fulltext_builder):
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.List(ma.fields.Nested(lambda: BUISchema()))
+    a = ma_fields.List(ma_fields.Nested(lambda: BUISchema()))
 
 
-class BUISchema(ma.Schema):
+class BUISchema(Schema):
     class Meta:
         unknown = ma.RAISE
-    b = ma.fields.String()
+    b = ma_fields.String()
 """
         )
         in strip_whitespaces(data)
@@ -355,7 +362,7 @@ import marshmallow as ma
 import marshmallow.validate as ma_valid
 class TestUISchema(ma.Schema):
     """TestUISchema schema."""
-    a = ma.fields.String()'''
+    a = ma_fields.String()'''
         )
 
     fulltext_builder.build(
@@ -364,7 +371,7 @@ class TestUISchema(ma.Schema):
     data = fulltext_builder.filesystem.read(
         os.path.join("test", "services", "records", "ui_schema.py")
     )
-    assert "b = ma.fields.String()" in data
+    assert "b = ma_fields.String()" in data
 
 
 def test_generate_nested_schema_relative_same_package(fulltext_builder):
@@ -403,7 +410,7 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.Nested(lambda: BUISchema())
+    a = ma_fields.Nested(lambda: BUISchema())
 """
         )
         in strip_whitespaces(data)
@@ -416,10 +423,10 @@ class TestUISchema(InvenioUISchema):
     assert (
         strip_whitespaces(
             """
-class BUISchema(ma.Schema):
+class BUISchema(Schema):
     class Meta:
         unknown = ma.RAISE
-    b = ma.fields.String()
+    b = ma_fields.String()
 """
         )
         in strip_whitespaces(data)
@@ -463,12 +470,12 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.Nested(lambda: BUISchema())
+    a = ma_fields.Nested(lambda: BUISchema())
 
-class BUISchema(ma.Schema):
+class BUISchema(Schema):
     class Meta:
         unknown = ma.RAISE
-    b = ma.fields.String()
+    b = ma_fields.String()
 """
         )
         in strip_whitespaces(data)
@@ -509,11 +516,15 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
     assert (
         strip_whitespaces(
             """
+import marshmallow as ma
+from marshmallow import fields as ma_fields
 from test.services.records.schema2 import BUISchema
+from oarepo_runtime.services.schema.ui import InvenioUISchema
+
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.Nested(lambda: BUISchema())
+    a = ma_fields.Nested(lambda: BUISchema())
 """
         )
         in strip_whitespaces(data)
@@ -537,15 +548,14 @@ def test_generate_json_serializer(fulltext_builder):
     assert (
         strip_whitespaces(
             '''
-from flask_resources import BaseListSchema
-from flask_resources import MarshmallowSerializer
-from flask_resources.serializers import JSONSerializer
-
+from oarepo_runtime.resources import LocalizedUIJSONSerializer
 from test.services.records.ui_schema import TestUISchema
+from flask_resources.serializers import JSONSerializer
+from flask_resources import BaseListSchema
 
 
 
-class TestUIJSONSerializer(MarshmallowSerializer):
+class TestUIJSONSerializer(LocalizedUIJSONSerializer):
     """UI JSON serializer."""
 
     def __init__(self):
@@ -573,7 +583,7 @@ def test_localized_date(fulltext_builder):
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert "a = l10n.LocalizedDate()" in data
+    assert "a = LocalizedDate()" in data
 
 
 def test_metadata(fulltext_builder):
@@ -589,4 +599,4 @@ def test_metadata(fulltext_builder):
         os.path.join("test", "services", "records", "ui_schema.py")
     ) as f:
         data = f.read()
-    assert "metadata = ma.fields.Nested(lambda: TestMetadataUISchema())" in data
+    assert "metadata = ma_fields.Nested(lambda: TestMetadataUISchema())" in data

@@ -45,9 +45,6 @@ class SettingsSchema(ma.Schema):
     schema_server = ma.fields.String(
         attribute="schema-server", data_key="schema-server", load_default="local://"
     )
-    oarepo_version = ma.fields.String(
-        attribute="oarepo-version", data_key="oarepo-version", load_default="11"
-    )
     extension_elements = ma.fields.List(
         ma.fields.String(),
         attribute="extension-elements",

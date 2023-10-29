@@ -1,11 +1,13 @@
 from invenio_records.systemfields import ConstantField
 from invenio_records_resources.records.systemfields import IndexField
 
-{{ vars.pid|generate_import('provider-class') }}
-{{ vars.pid.imports|generate_import }}
-{{ vars.record_metadata|generate_import }}
-{{ vars.record_dumper|generate_import }}
-{{ vars.record.imports|generate_import }}
+{{ vars.pid.provider_class|imports }}
+{{ vars.pid.field_class|imports }}
+{{ vars.pid.context_class|imports }}
+
+{{ vars.record_metadata.class|imports }}
+{{ vars.record_dumper.class|imports }}
+{{ vars.record|imports }}
 
 class {{ vars.record|class_header }}:
 {% if not vars.record_metadata.skip %}
@@ -18,16 +20,15 @@ class {{ vars.record|class_header }}:
     index = IndexField("{{ vars.mapping.index }}")
 {% endif %}
 {% if not vars.pid.skip %}
-    pid = {{ vars.pid.field_class }}(
+    pid = {{ vars.pid.field_class|base_name }}(
         provider={{ vars.pid.provider_class|base_name }},
-        context_cls={{ vars.pid.context_class }}{% if vars.pid.field_args %},
+        context_cls={{ vars.pid.context_class|base_name }}{% if vars.pid.field_args %},
         {{ vars.pid.field_args|generate_list }}
     {% endif %}
     )
 {% endif %}
 {% if not vars.record_dumper.skip %}
-    dumper_extensions =  [ {{ vars.record_dumper.extensions|generate_list }} ]
-    dumper = {{ vars.record_dumper.class|base_name }}(extensions=dumper_extensions)
+    dumper = {{ vars.record_dumper.class|base_name }}()
 {% endif %}
 
-{{ vars.record.extra_code }}
+{{ vars.record|extra_code }}

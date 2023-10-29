@@ -6,7 +6,7 @@ from oarepo_model_builder.validation.utils import ImportSchema
 
 from .app import AppModelComponent
 from .defaults import DefaultsModelComponent
-from .utils import append_array, set_default
+from .utils import set_default
 
 
 class ServiceClassSchema(ma.Schema):
@@ -126,24 +126,12 @@ class ServiceModelComponent(DataTypeComponent):
         config.setdefault("service-id", datatype.definition["module"]["suffix-snake"])
         config.setdefault(
             "base-classes",
-            ["PermissionsPresetsConfigMixin", "InvenioRecordServiceConfig"],
+            [
+                "oarepo_runtime.config.service.PermissionsPresetsConfigMixin",
+                "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
+            ],
         )
         config.setdefault("components", [])
-        append_array(
-            datatype,
-            "service-config",
-            "imports",
-            {
-                "import": "invenio_records_resources.services.RecordServiceConfig",
-                "alias": "InvenioRecordServiceConfig",
-            },
-        )
-        append_array(
-            datatype,
-            "service-config",
-            "imports",
-            {"import": "oarepo_runtime.config.service.PermissionsPresetsConfigMixin"},
-        )
         convert_config_to_qualified_name(config)
 
         service = set_default(datatype, "service", {})
@@ -157,14 +145,12 @@ class ServiceModelComponent(DataTypeComponent):
         service_module = service.setdefault("module", f"{service_package}.service")
         service.setdefault("class", f"{service_module}.{record_prefix}Service")
         service.setdefault("extra-code", "")
-        service.setdefault("base-classes", ["InvenioRecordService"])
+        service.setdefault(
+            "base-classes",
+            ["invenio_records_resources.services.RecordService{InvenioRecordService}"],
+        )
         service.setdefault(
             "imports",
-            [
-                {
-                    "import": "invenio_records_resources.services.RecordService",
-                    "alias": "InvenioRecordService",
-                }
-            ],
+            [],
         )
         convert_config_to_qualified_name(service)

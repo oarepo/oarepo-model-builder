@@ -69,14 +69,12 @@ class SearchOptionsModelComponent(DataTypeComponent):
         record_search_options.setdefault(
             "class", f"{module}.{record_search_prefix}SearchOptions"
         )
-        record_search_options.setdefault("base-classes", ["InvenioSearchOptions"])
+        record_search_options.setdefault(
+            "base-classes",
+            ["invenio_records_resources.services.SearchOptions{InvenioSearchOptions}"],
+        )
         record_search_options.setdefault(
             "imports",
-            [
-                {
-                    "import": "invenio_records_resources.services.SearchOptions",
-                    "alias": "InvenioSearchOptions",
-                }
-            ],
+            [],
         )
         record_search_options.setdefault("sort-options-field", "sort_options")

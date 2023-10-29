@@ -76,9 +76,9 @@ class PermissionsModelComponent(DataTypeComponent):
         )
         permissions.setdefault(
             "base-classes",
-            ["RecordPermissionPolicy"],
+            ["invenio_records_permissions.RecordPermissionPolicy"],
         )
         permissions.setdefault(
             "imports",
-            [{"import": "invenio_records_permissions.RecordPermissionPolicy"}],
+            [],
         )

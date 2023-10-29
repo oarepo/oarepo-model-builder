@@ -20,11 +20,11 @@ def validate_regex(value):
 class StringDataType(DataType):
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.String",
+            "field-class": "marshmallow.fields{ma_fields.String}",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.String",
+        "field-class": "marshmallow.fields{ma_fields.String}",
     }
     json_schema = {"type": "string"}
 
@@ -43,10 +43,7 @@ class KeywordDataType(StringDataType):
     model_type = "keyword"
     mapping = {"type": "keyword", "ignore_above": 1024}
     facets = {
-        "facet-class": "TermsFacet",
-        "imports": [
-            {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
-        ],
+        "facet-class": "invenio_records_resources.services.records.facets.TermsFacet",
     }
 
 
@@ -62,12 +59,9 @@ class FulltextKeywordDataType(StringDataType):
         "fields": {"keyword": {"type": "keyword", "ignore_above": 256}},
     }
     facets = {
-        "facet-class": "TermsFacet",
+        "facet-class": "invenio_records_resources.services.records.facets.TermsFacet",
         "keyword": True,
         "path": "keyword",
-        "imports": [
-            {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
-        ],
     }
 
 
@@ -75,8 +69,5 @@ class URLDataType(StringDataType):
     model_type = "url"
     mapping = {"type": "keyword", "ignore_above": 1024}
     facets = {
-        "facet-class": "TermsFacet",
-        "imports": [
-            {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
-        ],
+        "facet-class": "invenio_records_resources.services.records.facets.TermsFacet",
     }

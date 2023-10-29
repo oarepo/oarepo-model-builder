@@ -6,8 +6,5 @@ class NestedDataType(ObjectDataType):
 
     mapping = {"type": "nested"}
     facets = {
-        "facet-class": "NestedLabeledFacet",
-        "imports": [
-            {"import": "oarepo_runtime.facets.nested_facet.NestedLabeledFacet"}
-        ],
+        "facet-class": "oarepo_runtime.facets.nested_facet.NestedLabeledFacet",
     }

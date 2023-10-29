@@ -1,4 +1,4 @@
-{{ vars.permissions.imports|generate_import }}
+{{ vars.permissions|generate_import }}
 # from invenio_records_permissions.generators import SystemProcess, AnyUser
 
 class {{ vars.permissions|class_header }}:
@@ -15,4 +15,4 @@ class {{ vars.permissions|class_header }}:
     can_read_files = []
     can_update_files = []
 
-{{ vars.permissions.extra_code }}
+{{ vars.permissions|extra_code }}

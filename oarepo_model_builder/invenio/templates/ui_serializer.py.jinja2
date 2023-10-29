@@ -1,5 +1,8 @@
-{{ vars.json_serializer.imports|generate_import }}
-{{ vars.ui.marshmallow.class|generate_import }}
+{{ vars.json_serializer|imports }}
+{{ vars.ui.marshmallow.class|imports }}
+{{ vars.json_serializer.format_serializer_cls|imports }}
+{{ vars.json_serializer.list_schema_cls|imports }}
+
 
 class {{ vars.json_serializer|class_header }}:
     """UI JSON serializer."""
@@ -7,10 +10,10 @@ class {{ vars.json_serializer|class_header }}:
     def __init__(self):
         """Initialise Serializer."""
         super().__init__(
-            format_serializer_cls=JSONSerializer,
+            format_serializer_cls={{ vars.json_serializer.format_serializer_cls|base_name }},
             object_schema_cls={{vars.ui.marshmallow.class|base_name}},
-            list_schema_cls=BaseListSchema,
+            list_schema_cls={{ vars.json_serializer.list_schema_cls|base_name }},
             schema_context={"object_key": "ui"},
         )
 
-{{ vars.json_serializer.extra_code }}
+{{ vars.json_serializer|extra_code }}

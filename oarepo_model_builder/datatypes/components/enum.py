@@ -13,7 +13,7 @@ class EnumComponent(DataTypeComponent):
         enum = datatype.definition.get("enum")
         if enum:
             section.config.setdefault("validators", []).append(
-                f"ma_validate.OneOf({repr(enum)})"
+                f"{{{{marshmallow.validate.OneOf}}}}({repr(enum)})"
             )
 
     def process_ui(self, datatype, section, **kwargs):
@@ -21,4 +21,4 @@ class EnumComponent(DataTypeComponent):
         if enum:
             section.config.setdefault("marshmallow", {}).setdefault(
                 "validators", []
-            ).append(f"ma_validate.OneOf({repr(enum)})")
+            ).append(f"{{{{marshmallow.validate.OneOf}}}}({repr(enum)})")

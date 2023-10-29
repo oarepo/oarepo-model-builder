@@ -50,7 +50,7 @@ def _test(fulltext_builder, string_type):
         os.path.join("test", "services", "records", "schema.py")  # NOSONAR
     ) as f:
         data = f.read()
-    assert "a = ma.fields.String()" in data
+    assert "a = ma_fields.String()" in data
 
 
 def test_fulltext(fulltext_builder):
@@ -69,7 +69,7 @@ def test_fulltext_min_length(fulltext_builder):
     ) as f:
         data = f.read()
     assert strip_whitespaces(
-        "a = ma.fields.String(validate=[ma.validate.Length(min=10)])"
+        "a = ma_fields.String(validate=[ma.validate.Length(min=10)])"
     ) in strip_whitespaces(data)
 
 
@@ -85,7 +85,7 @@ def test_fulltext_max_length(fulltext_builder):
     ) as f:
         data = f.read()
     assert strip_whitespaces(
-        "a = ma.fields.String(validate=[ma.validate.Length(max=10)])"
+        "a = ma_fields.String(validate=[ma.validate.Length(max=10)])"
     ) in strip_whitespaces(data)
 
 
@@ -101,7 +101,7 @@ def test_fulltext_length(fulltext_builder):
     ) as f:
         data = f.read()
     assert strip_whitespaces(
-        "a = ma.fields.String(validate=[ma.validate.Length(min=5, max=10)])"
+        "a = ma_fields.String(validate=[ma.validate.Length(min=5, max=10)])"
     ) in strip_whitespaces(data)
 
 
@@ -125,7 +125,7 @@ def test_integer(fulltext_builder):
     ) as f:
         data = f.read()
     assert strip_whitespaces(
-        "a = ma.fields.Integer(validate=[ma.validate.Range(min=3)])"
+        "a = ma_fields.Integer(validate=[ma.validate.Range(min=3)])"
     ) in strip_whitespaces(data)
 
 
@@ -141,7 +141,7 @@ def test_integer_min_max(fulltext_builder):
     ) as f:
         data = f.read()
     assert strip_whitespaces(
-        "a = ma.fields.Integer(validate=[ma.validate.Range(min=3, max=5)])"
+        "a = ma_fields.Integer(validate=[ma.validate.Range(min=3, max=5)])"
     ) in strip_whitespaces(data)
 
 
@@ -159,7 +159,7 @@ def test_integer_min_max_exclusive(fulltext_builder):
     ) as f:
         data = f.read()
     assert strip_whitespaces(
-        "a = ma.fields.Integer(validate=[ma.validate.Range(min=3, min_inclusive=False, max=5, max_inclusive=False)])"
+        "a = ma_fields.Integer(validate=[ma.validate.Range(min=3, min_inclusive=False, max=5, max_inclusive=False)])"
     ) in strip_whitespaces(data)
 
 
@@ -174,7 +174,7 @@ def test_simple_array(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
-    assert "a = ma.fields.List(ma.fields.String())" in data
+    assert "a = ma_fields.List(ma_fields.String())" in data
 
 
 def test_simple_array_with_min_items(fulltext_builder):
@@ -191,7 +191,7 @@ def test_simple_array_with_min_items(fulltext_builder):
     ) as f:
         data = f.read()
     assert strip_whitespaces(
-        "a = ma.fields.List(ma.fields.String(), validate=[ma.validate.Length(min=1)])"
+        "a = ma_fields.List(ma_fields.String(), validate=[ma.validate.Length(min=1)])"
     ) in strip_whitespaces(data)
 
 
@@ -214,15 +214,15 @@ def test_array_of_objects(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.List(ma.fields.Nested(lambda: AItemSchema()))
+    a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))
 
-class AItemSchema(ma.Schema):
+class AItemSchema(Schema):
     class Meta:
         unknown = ma.RAISE
-    b = ma.fields.Integer()
+    b = ma_fields.Integer()
 """
         )
         in strip_whitespaces(data)
@@ -248,10 +248,10 @@ def test_strict_object(fulltext_builder):
     assert (
         strip_whitespaces(
             """
- class ASchema(ma.Schema):
+ class ASchema(Schema):
     class Meta:
         unknown= ma.RAISE
-    b= ma.fields.Integer()
+    b= ma_fields.Integer()
 """
         )
         in strip_whitespaces(data)
@@ -278,10 +278,10 @@ def test_permissive_object(fulltext_builder):
     assert (
         strip_whitespaces(
             """
- class ASchema(ma.Schema):
+ class ASchema(Schema):
     class Meta:
         unknown= ma.INCLUDE
-    b= ma.fields.Integer()
+    b= ma_fields.Integer()
 """
         )
         in strip_whitespaces(data)
@@ -308,10 +308,10 @@ def test_excluding_object(fulltext_builder):
     assert (
         strip_whitespaces(
             """
- class ASchema(ma.Schema):
+ class ASchema(Schema):
     class Meta:
         unknown= ma.EXCLUDE
-    b= ma.fields.Integer()
+    b= ma_fields.Integer()
 """
         )
         in strip_whitespaces(data)
@@ -342,22 +342,22 @@ def test_generate_nested_schema_same_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    a = ma.fields.Nested(lambda: BSchema())
+    a = ma_fields.Nested(lambda: BSchema())
 
 
-class BSchema(ma.Schema):
+class BSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    b = ma.fields.String()        
+    b = ma_fields.String()        
         """
         )
         in strip_whitespaces(data)
@@ -392,12 +392,15 @@ def test_generate_nested_schema_different_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
+import marshmallow as ma
+from marshmallow import fields as ma_fields
 from test.services.schema2 import BSchema
+from marshmallow import Schema
 
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.Nested(lambda: BSchema())        
+    a = ma_fields.Nested(lambda: BSchema())        
         """
         )
         in strip_whitespaces(data)
@@ -411,11 +414,11 @@ class TestSchema(ma.Schema):
     assert (
         strip_whitespaces(
             """
-class BSchema(ma.Schema):
+class BSchema(Schema):
     class Meta:
         unknown = ma.RAISE
 
-    b = ma.fields.String()       
+    b = ma_fields.String()       
         """
         )
         in strip_whitespaces(data)
@@ -447,13 +450,13 @@ def test_use_nested_schema_same_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    a = ma.fields.Nested(lambda: B())"""
+    a = ma_fields.Nested(lambda: B())"""
         )
         in strip_whitespaces(data)
     )
@@ -485,13 +488,13 @@ def test_use_nested_schema_different_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    a = ma.fields.Nested(lambda: B())"""
+    a = ma_fields.Nested(lambda: B())"""
         )
         in strip_whitespaces(data)
     )
@@ -524,22 +527,22 @@ def test_generate_nested_schema_array(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    a = ma.fields.List(ma.fields.Nested(lambda: BSchema()))
+    a = ma_fields.List(ma_fields.Nested(lambda: BSchema()))
 
 
-class BSchema(ma.Schema):
+class BSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    b = ma.fields.String()
+    b = ma_fields.String()
         """
         )
         in strip_whitespaces(data)
@@ -559,9 +562,9 @@ def test_extend_existing(fulltext_builder):
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
 import marshmallow as ma
 import marshmallow.validate as ma_valid
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
     """TestSchema schema."""
-    a = ma.fields.String()'''
+    a = ma_fields.String()'''
         )
 
     fulltext_builder.build(
@@ -570,7 +573,7 @@ class TestSchema(ma.Schema):
     data = fulltext_builder.filesystem.read(
         os.path.join("test", "services", "records", "schema.py")
     )
-    assert "b = ma.fields.String()" in data
+    assert "b = ma_fields.String()" in data
 
 
 def test_generate_nested_schema_relative_same_package(fulltext_builder):
@@ -601,16 +604,18 @@ def test_generate_nested_schema_relative_same_package(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-
+import marshmallow as ma
+from marshmallow import fields as ma_fields
 from test.services.records.schema2 import BSchema
+from marshmallow import Schema
 
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    a = ma.fields.Nested(lambda: BSchema())        
+    a = ma_fields.Nested(lambda: BSchema())        
         """
         )
         in strip_whitespaces(data)
@@ -623,13 +628,13 @@ class TestSchema(ma.Schema):
     assert (
         strip_whitespaces(
             """
-class BSchema(ma.Schema):
+class BSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    b = ma.fields.String()        
+    b = ma_fields.String()        
         """
         )
         in strip_whitespaces(data)
@@ -664,22 +669,22 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(ma.Schema):
+class TestSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    a = ma.fields.Nested(lambda: BSchema())
+    a = ma_fields.Nested(lambda: BSchema())
 
 
-class BSchema(ma.Schema):
+class BSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
 
-    b = ma.fields.String()
+    b = ma_fields.String()
             """
         )
         in strip_whitespaces(data)
@@ -714,12 +719,15 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
     assert (
         strip_whitespaces(
             """
+import marshmallow as ma
+from marshmallow import fields as ma_fields
 from test.services.schema2 import BSchema
-class TestSchema(ma.Schema):
+from marshmallow import Schema
+class TestSchema(Schema):
     class Meta:
         unknown = ma.RAISE
 
-    a = ma.fields.Nested(lambda: BSchema())
+    a = ma_fields.Nested(lambda: BSchema())
         """
         )
         in strip_whitespaces(data)
@@ -732,12 +740,12 @@ class TestSchema(ma.Schema):
     assert (
         strip_whitespaces(
             """
-class BSchema(ma.Schema):
+class BSchema(Schema):
 
     class Meta:
         unknown = ma.RAISE
 
-    b = ma.fields.String()
+    b = ma_fields.String()
         """
         )
         in strip_whitespaces(data)

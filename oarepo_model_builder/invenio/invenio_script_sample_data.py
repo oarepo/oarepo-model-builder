@@ -40,6 +40,28 @@ class Provider:
         rnd = self.generator.random.randrange(0, 2, 1)
         return rnd == 1
 
+    def datetime(self):
+        return self.generator.date_time_this_decade(
+            tzinfo=self.generator.pytimezone()
+        ).isoformat()
+
+    def edtf(self):
+        rnd = self.generator.random.randrange(0, 3)
+        if rnd == 0:
+            return self.generator.date()
+        if rnd == 1:
+            return self.generator.date("%Y")
+        if rnd == 2:
+            return self.generator.date("%Y-%m")
+
+    def edtf_interval(self):
+        a = [self.edtf(), self.edtf()]
+        a.sort()
+        return "/".join(a)
+
+    def time(self):
+        return self.generator.time()
+
     def sample_object(self):
         return {
             self.generator.word(): self.generator.word()
@@ -173,6 +195,14 @@ def faker_provider(faker, settings, node, params):
                 method = "random_boolean"
             elif data_type == "date":
                 method = "date"
+            elif data_type == "datetime":
+                method = "datetime"
+            elif data_type == "time":
+                method = "time"
+            elif data_type == "edtf":
+                method = "edtf"
+            elif data_type == "edtf-interval":
+                method = "edtf_interval"
             elif data_type == "object":
                 # it is an object with unknown properties, return a sample object
                 method = "sample_object"

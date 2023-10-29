@@ -2,11 +2,10 @@ from .datatypes import DataType
 
 
 class BaseDateDataType(DataType):
-    marshmallow = {"field-class": "ma.fields.String"}
+    marshmallow = {"field-class": "marshmallow.fields{ma_fields.String}"}
 
     facets = {
-        "facet-class": "DateTimeFacet",
-        "imports": [{"import": "oarepo_runtime.facets.date.DateTimeFacet"}],
+        "facet-class": "oarepo_runtime.facets.date.DateTimeFacet",
     }
 
 
@@ -14,16 +13,14 @@ class DateDataType(BaseDateDataType):
     model_type = "date"
     ui = {
         "marshmallow": {
-            "field-class": "l10n.LocalizedDate",
-            "imports": [
-                {"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"}  # NOSONAR
-            ],
+            "field-class": "oarepo_runtime.services.schema.ui.LocalizedDate",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.String",
-        "validators": ["validate_date('%Y-%m-%d')"],
-        "imports": [{"import": "oarepo_runtime.validation.validate_date"}],
+        "field-class": "marshmallow.fields{ma_fields.String}",
+        "validators": [
+            "{{oarepo_runtime.services.schema.validation.validate_date}}('%Y-%m-%d')"
+        ],
     }
     mapping = {"type": "date", "format": "basic_date||strict_date"}
     json_schema = {"type": "string", "format": "date"}
@@ -34,18 +31,18 @@ class TimeDataType(BaseDateDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "l10n.LocalizedTime",
-            "imports": [{"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"}],
+            "field-class": "oarepo_runtime.services.schema.ui.LocalizedTime",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.String",
-        "validators": ["validate_date('%H:%M:%S')"],
-        "imports": [{"import": "oarepo_runtime.validation.validate_date"}],
+        "field-class": "marshmallow.fields{ma_fields.String}",
+        "validators": [
+            "{{oarepo_runtime.services.schema.validation.validate_date}}('%H:%M:%S')"
+        ],
     }
     mapping = {
         "type": "date",
-        "format": "strict_time||strict_time_no_millis||basic_time||basic_time_no_millis",
+        "format": "strict_time||strict_time_no_millis||basic_time||basic_time_no_millis||hour_minute_second||hour||hour_minute",
     }
     json_schema = {"type": "string", "format": "time"}
 
@@ -55,14 +52,14 @@ class DateTimeDataType(BaseDateDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "l10n.LocalizedDateTime",
-            "imports": [{"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"}],
+            "field-class": "oarepo_runtime.services.schema.ui.LocalizedDateTime",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.String",
-        "validators": ["validate_datetime"],
-        "imports": [{"import": "oarepo_runtime.validation.validate_datetime"}],
+        "field-class": "marshmallow.fields{ma_fields.String}",
+        "validators": [
+            "{{oarepo_runtime.services.schema.validation.validate_datetime}}"
+        ],
     }
     mapping = {
         "type": "date",
@@ -76,17 +73,13 @@ class EDTFDataType(BaseDateDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "l10n.LocalizedEDTF",
-            "imports": [{"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"}],
+            "field-class": "oarepo_runtime.services.schema.ui.LocalizedEDTF",
         }
     }
     marshmallow = {
-        "field-class": "TrimmedString",
-        "validators": ["CachedMultilayerEDTFValidator(types=(EDTFDate,))"],
-        "imports": [
-            {"import": "oarepo_runtime.validation.CachedMultilayerEDTFValidator"},
-            {"import": "edtf.Date", "alias": "EDTFDate"},
-            {"import": "marshmallow_utils.fields.TrimmedString"},
+        "field-class": "marshmallow_utils.fields.TrimmedString",
+        "validators": [
+            "{{oarepo_runtime.services.schema.validation.CachedMultilayerEDTFValidator}}(types=({{edtf.Date{EDTFDate} }},))"
         ],
     }
     mapping = {
@@ -101,17 +94,13 @@ class EDTFIntervalType(BaseDateDataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "l10n.LocalizedEDTFInterval",
-            "imports": [{"import": "oarepo_runtime.ui.marshmallow", "alias": "l10n"}],
+            "field-class": "oarepo_runtime.services.schema.ui.LocalizedEDTFInterval",
         }
     }
     marshmallow = {
-        "field-class": "TrimmedString",
-        "validators": ["CachedMultilayerEDTFValidator(types=(EDTFInterval,))"],
-        "imports": [
-            {"import": "oarepo_runtime.validation.CachedMultilayerEDTFValidator"},
-            {"import": "edtf.Interval", "alias": "EDTFInterval"},
-            {"import": "marshmallow_utils.fields.TrimmedString"},
+        "field-class": "marshmallow_utils.fields.TrimmedString",
+        "validators": [
+            "{{oarepo_runtime.services.schema.validation.CachedMultilayerEDTFValidator}}(types=({{edtf.Interval{EDTFInterval} }},))"
         ],
     }
     mapping = {

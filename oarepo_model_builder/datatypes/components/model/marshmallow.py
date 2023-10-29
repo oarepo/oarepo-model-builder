@@ -83,7 +83,7 @@ class MarshmallowModelComponent(MarshmallowModelMixin, ObjectMarshmallowComponen
         module = marshmallow.setdefault("module", f"{services_module}.schema")
         marshmallow.setdefault("class", f"{module}.{prefix}Schema")
         marshmallow.setdefault("extra-code", "")
-        marshmallow.setdefault("base-classes", ["ma.Schema"])
+        marshmallow.setdefault("base-classes", ["marshmallow.Schema"])
         convert_config_to_qualified_name(marshmallow)
 
         if "properties" in datatype.definition and "metadata" in (
@@ -98,5 +98,5 @@ class MarshmallowModelComponent(MarshmallowModelMixin, ObjectMarshmallowComponen
                 "class", f"{metadata_module}.{prefix}MetadataSchema"
             )
             metadata_marshmallow.setdefault("extra-code", "")
-            metadata_marshmallow.setdefault("base-classes", ["ma.Schema"])
+            metadata_marshmallow.setdefault("base-classes", ["marshmallow.Schema"])
             convert_config_to_qualified_name(metadata_marshmallow)

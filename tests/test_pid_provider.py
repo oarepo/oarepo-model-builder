@@ -34,7 +34,7 @@ def test_simple():
     data = get_sources("test")
     data = clear_whitespaces(data)
     test_1 = """
-    class TestIdProvider(RecordIdProviderV2 ):
+    class TestIdProvider(RecordIdProviderV2):
         pid_type = "test"
     """
     test_2 = """
@@ -89,11 +89,8 @@ def test_import():
             "use": "invenio",
             "module": {"qualified": "test"},
             "pid": {
-                "provider-class": "MyVeryImportantCustomPidProvider",
+                "provider-class": "custom.pid_provider.MyVeryImportantCustomPidProvider",
                 "generate": False,
-                "imports": [
-                    {"import": "custom.pid_provider.MyVeryImportantCustomPidProvider"}
-                ],
             },
         },
     }

@@ -86,22 +86,22 @@ class PIDModelComponent(DataTypeComponent):
             "provider-class",
             f"{pid_module}.{prefix}IdProvider",
         )
-        pid.setdefault("provider-base-classes", ["RecordIdProviderV2"])
+        pid.setdefault(
+            "provider-base-classes",
+            ["invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"],
+        )
 
-        pid.setdefault("field-class", "PIDField")
-        pid.setdefault("context-class", "PIDFieldContext")
+        pid.setdefault(
+            "field-class", "invenio_records_resources.records.systemfields.pid.PIDField"
+        )
+        pid.setdefault(
+            "context-class",
+            "invenio_records_resources.records.systemfields.pid.PIDFieldContext",
+        )
         pid.setdefault("field-args", ["create=True"])
         pid.setdefault(
             "imports",
-            [
-                {
-                    "import": "invenio_records_resources.records.systemfields.pid.PIDField"
-                },
-                {
-                    "import": "invenio_records_resources.records.systemfields.pid.PIDFieldContext"
-                },
-                {"import": "invenio_pidstore.providers.recordid_v2.RecordIdProviderV2"},
-            ],
+            [],
         )
         pid.setdefault("extra-code", "")
 

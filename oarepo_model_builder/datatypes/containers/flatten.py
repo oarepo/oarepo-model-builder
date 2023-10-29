@@ -6,11 +6,11 @@ class FlatObjectDataType(DataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.Dict",
+            "field-class": "marshmallow.fields{ma_fields.Dict}",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.Dict",
+        "field-class": "marshmallow.fields{ma_fields.Dict}",
     }
     json_schema = {"type": "object"}
     mapping = {"type": "flat_object"}

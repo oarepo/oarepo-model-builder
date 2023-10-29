@@ -1,4 +1,4 @@
-{{ vars.record_metadata.imports|generate_import }}
+{{ vars.record_metadata|imports }}
 
 class {{ vars.record_metadata|class_header }}:
     """Model for {{ vars.record.class|base_name }} metadata."""
@@ -10,4 +10,4 @@ class {{ vars.record_metadata|class_header }}:
     __versioned__ = {}
     {% endif %}
 
-{{ vars.record_metadata.extra_code }}
+{{ vars.record_metadata|extra_code }}

@@ -3,8 +3,9 @@ from typing import List
 
 import marshmallow as ma
 
-from ..datatypes import Import, Section, datatypes
+from ..datatypes import Section, datatypes
 from ..utils.links import url_prefix2link
+from ..utils.python_name import Import
 from .containers import ObjectDataType
 
 

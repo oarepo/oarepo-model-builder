@@ -1,5 +1,5 @@
 
-{{ vars.search_options.imports|generate_import }}
+{{ vars.search_options|imports }}
 from flask_babelex import lazy_gettext as _
 from . import facets
 
@@ -50,4 +50,4 @@ class {{ vars.search_options| class_header }}:
     }
 {% endif %}
 
-{{ vars.search_options.extra_code }}
+{{ vars.search_options|extra_code }}

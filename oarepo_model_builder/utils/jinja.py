@@ -1,7 +1,10 @@
+import re
+
 from jinja2 import pass_context
 
-from ..datatypes import Import
 from .python_name import (  # noqa
+    Import,
+    PythonQualifiedName,
     base_name,
     package_name,
     split_base_name,
@@ -20,28 +23,76 @@ def sorted_imports(imports):
     return imports
 
 
-def to_import_dict(import_object):
+def to_import_list(import_object, alias=None, base_classes_name="base-classes"):
     if isinstance(import_object, Import):
-        return {"import": import_object.import_path, "alias": import_object.alias}
-    return import_object
+        return [{"import": import_object.import_path, "alias": import_object.alias}]
+    elif isinstance(import_object, str):
+        pn = PythonQualifiedName(import_object)
+        if "." in pn.qualified_name:
+            return to_import_list(pn.imports)
+        else:
+            return []
+    elif isinstance(import_object, (tuple, list)):
+        return [y for x in import_object for y in to_import_list(x)]
+    elif isinstance(import_object, dict):
+        ret = []
+        if "import" in import_object:
+            return [import_object]
+        if "imports" in import_object:
+            ret.extend(to_import_list(import_object["imports"]))
+        if base_classes_name in import_object:
+            ret.extend(to_import_list(import_object[base_classes_name]))
+        if "extra-code" in import_object:
+            ret.extend(
+                to_import_list(extract_extra_code_imports(import_object["extra-code"]))
+            )
+        return ret
+    return [import_object]
 
 
 @pass_context
-def generate_import(ctx, import_object, imported_part="class", alias=None, skip=False):
+def generate_import(
+    ctx, import_object, alias=None, skip=False, base_classes_name="base-classes"
+):
     if skip:
         return ""
-    import_object = to_import_dict(import_object)
-    if isinstance(import_object, list):
-        import_object = [to_import_dict(x) for x in import_object]
-        return "\n".join(
-            [generate_import(ctx, x, None) for x in sorted_imports(import_object)]
-        )
-    if isinstance(import_object, str):
-        return generate_import(ctx, {"import": import_object, "alias": alias}, None)
-    if imported_part:
-        if import_object.get("skip"):
-            return ""
-        return generate_import(ctx, import_object[imported_part], alias)
+    import_list = to_import_list(
+        import_object, alias=alias, base_classes_name=base_classes_name
+    )
+    return "\n".join(
+        [generate_import_string(ctx, x) for x in sorted_imports(import_list)]
+    )
+
+
+def extract_extra_code_imports(extra_code):
+    extra_code = (extra_code or "").strip()
+    ret = []
+    for match in re.finditer(r"{{(.*?)}}", extra_code):
+        ret.extend(PythonQualifiedName(match.groups()[0]).imports)
+    return ret
+
+
+@pass_context
+def generate_extra_code_imports(ctx, extra_code):
+    return generate_import(ctx, extract_extra_code_imports(extra_code))
+
+
+def generate_extra_code(obj, skip=False):
+    if isinstance(obj, dict):
+        extra_code = obj.get("extra-code", "")
+    else:
+        extra_code = obj
+    extra_code = (extra_code or "").strip()
+    if skip or not extra_code:
+        return ""
+
+    def replace_classes(matchobj):
+        return PythonQualifiedName(matchobj.group(1)).local_name
+
+    return re.sub(r"{{(.*?)}}", replace_classes, extra_code)
+
+
+def generate_import_string(ctx, import_object):
     import_name = import_object["import"]
     alias = import_object.get("alias")
     ret = []
@@ -61,7 +112,7 @@ def generate_import(ctx, import_object, imported_part="class", alias=None, skip=
             ret.append(f"from {import_path} import {import_name}")
         else:
             ret.append(f"import {import_name}")
-        if alias:
+        if alias and alias != import_name:
             ret.append(f"as {alias}")
     return " ".join(ret)
 
@@ -75,7 +126,7 @@ def generate_list(data, separator=", ", start=False, end=False):
     for di, d in enumerate(data):
         if di:
             ret.append(separator)
-        ret.append(d)
+        ret.append(generate_extra_code(d))
     if end:
         ret.append(separator)
     return "".join(ret)
@@ -100,8 +151,9 @@ def class_header(rec, class_name="class", base_classes_name="base-classes"):
     if base_classes:
         ret.append("(")
         for idx, cls in enumerate(base_classes):
+            pn = PythonQualifiedName(cls)
             if idx > 0:
                 ret.append(", ")
-            ret.append(cls)
+            ret.append(pn.local_name)
         ret.append(")")
     return "".join(ret)

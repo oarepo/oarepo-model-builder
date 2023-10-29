@@ -9,11 +9,11 @@ class ArrayDataType(DataType):
 
     ui = {
         "marshmallow": {
-            "field-class": "ma.fields.List",
+            "field-class": "marshmallow.fields{ma_fields.List}",
         }
     }
     marshmallow = {
-        "field-class": "ma.fields.List",
+        "field-class": "marshmallow.fields{ma_fields.List}",
     }
     json_schema = {"type": "array"}
 

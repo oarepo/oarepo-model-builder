@@ -1,6 +1,27 @@
+import dataclasses
 import keyword
 import os
 import re
+from typing import Optional
+
+
+@dataclasses.dataclass
+class Import:
+    import_path: str
+    alias: Optional[str] = None
+
+    @staticmethod
+    def from_config(d):
+        if isinstance(d, dict):
+            return Import(d["import"], d.get("alias"))
+        elif isinstance(d, (tuple, list)):
+            return [Import.from_config(x) for x in d]
+
+    def __hash__(self):
+        return hash(self.import_path) ^ hash(self.alias)
+
+    def __eq__(self, o):
+        return self.import_path == o.import_path and self.alias == o.alias
 
 
 def convert_name_to_python(name):
@@ -47,7 +68,7 @@ def convert_name_to_python_class(name):
 def package_name(value):
     if not value:
         return None
-    return value.rsplit(".", maxsplit=1)[0]
+    return PythonQualifiedName(value).package_name
 
 
 def split_package_name(value):
@@ -57,7 +78,7 @@ def split_package_name(value):
 def base_name(value):
     if not value:
         return None
-    return value.rsplit(".", maxsplit=1)[-1]
+    return PythonQualifiedName(value).local_name
 
 
 def split_base_name(value):
@@ -104,3 +125,55 @@ def module_to_path(module):
 
 def parent_module(module):
     return ".".join(module.split(".")[:-1])
+
+
+class PythonQualifiedName:
+    """
+    Helper class to parse python name in the format a.b.C or a.b.c{alias}.
+    Can be used anywhere python class can appear, for example:
+
+    base-classes: [invenio.records.Record{InvenioRecord}]
+    self.qualified_name = "invenio.records.Record"
+    self.local_name = InvenioRecord
+
+    base-classes: [invenio.records.Record]
+    self.qualified_name = "invenio.records.Record"
+    self.local_name = Record
+    """
+
+    def __init__(self, name):
+        name = name.strip()
+        match = re.match(
+            r"^([a-zA-Z_.][a-zA-Z0-9_.]*)({([a-zA-Z_][a-zA-Z0-9_.]*)})?$", name
+        )
+        if not match:
+            raise ValueError(f'Not a python qualified name "{name}"')
+        groups = match.groups()
+        self.qualified_name = groups[0]
+        if groups[2]:
+            self.local_name = groups[2]
+        else:
+            self.local_name = self.qualified_name.rsplit(".", maxsplit=1)[-1]
+
+    @property
+    def aliased(self):
+        return self.qualified_name.rsplit(".", maxsplit=1)[-1] != self.local_name
+
+    @property
+    def package_name(self):
+        return self.qualified_name.rsplit(".", maxsplit=1)[0]
+
+    def __str__(self):
+        return f"{self.qualified_name}{'{'}{self.local_name}{'}'}"
+
+    @property
+    def imports(self):
+        if "." not in self.qualified_name:
+            return []
+
+        return [
+            Import(
+                import_path=self.qualified_name,
+                alias=self.local_name.split(".")[0] if self.aliased else None,
+            )
+        ]

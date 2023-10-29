@@ -17,6 +17,7 @@ from .model import (
     AppModelComponent,
     BlueprintsModelComponent,
     DefaultsModelComponent,
+    EDTFIntervalDumperModelComponent,
     ExtResourceModelComponent,
     FacetsModelComponent,
     JSONSchemaModelComponent,
@@ -81,4 +82,5 @@ DEFAULT_COMPONENTS = [
     FieldSortComponent,
     StringMarshmallowComponent,
     NumberMarshmallowComponent,
+    EDTFIntervalDumperModelComponent,
 ]

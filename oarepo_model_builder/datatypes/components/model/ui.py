@@ -36,6 +36,16 @@ class JSONSerializerSchema(ma.Schema):
             "doc": "Extra code to be put below the generated ui serializer class"
         },
     )
+    list_schema_cls = ma.fields.Str(
+        attribute="list-schema-cls",
+        data_key="list-schema-cls",
+        metadata={"doc": "Marshmallow class for list serialization"},
+    )
+    format_serializer_cls = ma.fields.Str(
+        attribute="format-serializer-cls",
+        data_key="format-serializer-cls",
+        metadata={"doc": "Class for serializing the resulting json"},
+    )
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
@@ -70,14 +80,16 @@ class UIModelComponent(ObjectUIComponent):
         json = set_default(datatype, "json-serializer", {})
         json_module = json.setdefault("module", f"{resources_module}.ui")
         json.setdefault("class", f"{json_module}.{prefix}UIJSONSerializer")
-        json.setdefault("base-classes", ["MarshmallowSerializer"])
+        json.setdefault(
+            "base-classes", ["oarepo_runtime.resources.LocalizedUIJSONSerializer"]
+        )
         json.setdefault(
             "imports",
-            [
-                {"import": "flask_resources.BaseListSchema"},
-                {"import": "flask_resources.MarshmallowSerializer"},
-                {"import": "flask_resources.serializers.JSONSerializer"},
-            ],
+            [],
         )
         json.setdefault("extra-code", "")
         json.setdefault("generate", True)
+        json.setdefault("list_schema_cls", "flask_resources.BaseListSchema")
+        json.setdefault(
+            "format_serializer_cls", "flask_resources.serializers.JSONSerializer"
+        )

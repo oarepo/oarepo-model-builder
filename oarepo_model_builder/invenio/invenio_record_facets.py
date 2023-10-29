@@ -26,7 +26,7 @@ class InvenioRecordSearchFacetsBuilder(InvenioBaseClassPythonBuilder):
         return super().finish(
             current_package_name=package,
             facets=facets,
-            imports=imports,
+            facet_imports=imports,
             **extra_kwargs,
         )
 

@@ -33,16 +33,13 @@ def test_raw_type():
     assert (
         strip_whitespaces(
             """
-from marshmallow import ValidationError
-from marshmallow import validate as ma_validate
 import marshmallow as ma
-from marshmallow_utils import fields as mu_fields
-from marshmallow_utils import schemas as mu_schemas
+from marshmallow import fields as ma_fields
 from oarepo_runtime.marshmallow import BaseRecordSchema
 class TestSchema(BaseRecordSchema):
     class Meta:
         unknown = ma.RAISE
-    a = ma.fields.Dict()
+    a = ma_fields.Dict()
     """
         )
         in strip_whitespaces(data)

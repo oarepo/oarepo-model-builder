@@ -130,10 +130,12 @@ class ResourceModelComponent(DataTypeComponent):
             "current_resource",
         )
         resource.setdefault("extra-code", "")
-        resource.setdefault("base-classes", ["RecordResource"])
+        resource.setdefault(
+            "base-classes", ["invenio_records_resources.resources.RecordResource"]
+        )
         resource.setdefault(
             "imports",
-            [{"import": "invenio_records_resources.resources.RecordResource"}],
+            [],
         )
         convert_config_to_qualified_name(resource)
 
@@ -152,9 +154,11 @@ class ResourceModelComponent(DataTypeComponent):
         )
         config.setdefault("extra-code", "")
 
-        config.setdefault("base-classes", ["RecordResourceConfig"])
+        config.setdefault(
+            "base-classes", ["invenio_records_resources.resources.RecordResourceConfig"]
+        )
         config.setdefault(
             "imports",
-            [{"import": "invenio_records_resources.resources.RecordResourceConfig"}],
+            [],
         )
         convert_config_to_qualified_name(config)
