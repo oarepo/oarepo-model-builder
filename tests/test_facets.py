@@ -903,10 +903,7 @@ def test_enum():
                         "type": "keyword",
                         "enum": ["a", "b"],
                         "facets": {
-                            "facet-class": "EnumTermsFacet",
-                            "imports": [
-                                {"import": "oarepo_runtime.facets.enum.EnumTermsFacet"}
-                            ],
+                            "facet-class": "oarepo_runtime.facets.enum.EnumTermsFacet",
                         },
                     },
                     "b": {

@@ -1,6 +1,12 @@
 import dataclasses
 from typing import Dict, List, Optional
 
+from oarepo_model_builder.utils.jinja import (
+    extract_extra_code_imports,
+    generate_extra_code,
+)
+from oarepo_model_builder.utils.python_name import PythonQualifiedName
+
 
 @dataclasses.dataclass
 class FacetDefinition:
@@ -20,10 +26,17 @@ class FacetDefinition:
 
     def set_field(self, facet_section, arguments, field_class=None):
         field = facet_section.get("field")
+        extra_imports = None
         if field:
-            self.field = field
+            extra_imports = extract_extra_code_imports(field)
+            self.field = generate_extra_code(field)
         else:
             if not field_class:
                 field_class = facet_section.get("facet-class")
             if field_class:
-                self.field = f"{field_class}({', '.join(arguments)})"
+                field_class = PythonQualifiedName(field_class)
+                self.field = f"{field_class.local_name}({', '.join(arguments)})"
+                extra_imports = field_class.imports
+
+        if extra_imports:
+            self.imports = [*self.imports, *extra_imports]

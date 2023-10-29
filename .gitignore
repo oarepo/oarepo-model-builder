@@ -90,3 +90,8 @@ schema-dump.json5
 schema-dump.json5
 vocabulary-postprocessed-schema.json
 .model_venv
+
+complex-model
+.venv*
+
+.token

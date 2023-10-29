@@ -70,7 +70,7 @@ def test_prepare_datatype():
             "version": "1.0.0",
         },
         "json-serializer": {
-            "base-classes": ["flask_resources.MarshmallowSerializer"],
+            "base-classes": ["oarepo_runtime.resources.LocalizedUIJSONSerializer"],
             "class": "my.test.resources.records.ui.TestUIJSONSerializer",
             "extra-code": "",
             "format_serializer_cls": "flask_resources.serializers.JSONSerializer",
@@ -166,19 +166,32 @@ def test_prepare_datatype():
             "module": "my.test.records.api",
         },
         "record-dumper": {
-            "base-classes": ["invenio_records.dumpers.SearchDumper"],
-            "class": "my.test.records.dumper.TestDumper",
+            "base-classes": ["oarepo_runtime.records.dumpers.SearchDumper"],
+            "class": "my.test.records.dumpers.dumper.TestDumper",
+            "extensions": [
+                "{{my.test.records.dumpers.edtf.TestEDTFIntervalDumperExt}}()"
+            ],
+            "extra-code": "",
+            "generate": True,
+            "imports": [],
+            "module": "my.test.records.dumpers.dumper",
+        },
+        "edtf-interval-dumper": {
+            "base-classes": [
+                "oarepo_runtime.records.dumpers.edtf_interval.EDTFIntervalDumperExt"
+            ],
+            "class": "my.test.records.dumpers.edtf.TestEDTFIntervalDumperExt",
             "extensions": [],
             "extra-code": "",
             "generate": True,
             "imports": [],
-            "module": "my.test.records.dumper",
+            "module": "my.test.records.dumpers.edtf",
         },
         "record-metadata": {
             "alembic": "my.test.alembic",
             "alias": "my_test_record",
             "base-classes": [
-                "invenio_db.db.Model",
+                "invenio_db.db{db.Model}",
                 "invenio_records.models.RecordMetadataBase",
             ],
             "class": "my.test.records.models.TestMetadata",
@@ -259,7 +272,7 @@ def test_prepare_datatype():
         "type": "model",
         "ui": {
             "marshmallow": {
-                "base-classes": ["oarepo_runtime.ui.marshmallow.InvenioUISchema"],
+                "base-classes": ["oarepo_runtime.services.schema.ui.InvenioUISchema"],
                 "class": "my.test.services.records.ui_schema.TestUISchema",
                 "extra-code": "",
                 "generate": True,

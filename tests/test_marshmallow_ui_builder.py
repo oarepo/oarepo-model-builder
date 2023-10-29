@@ -211,7 +211,7 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from test.services.schema2 import BUISchema
 
-from oarepo_runtime.ui.marshmallow import InvenioUISchema
+from oarepo_runtime.services.schema.ui import InvenioUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
@@ -293,7 +293,7 @@ import marshmallow as ma
 from c import BUISchema
 from marshmallow import fields as ma_fields
 
-from oarepo_runtime.ui.marshmallow import InvenioUISchema
+from oarepo_runtime.services.schema.ui import InvenioUISchema
 class TestUISchema(InvenioUISchema):
     class Meta:
         unknown = ma.RAISE
@@ -519,7 +519,7 @@ def test_generate_nested_schema_relative_upper(fulltext_builder):
 import marshmallow as ma
 from marshmallow import fields as ma_fields
 from test.services.records.schema2 import BUISchema
-from oarepo_runtime.ui.marshmallow import InvenioUISchema
+from oarepo_runtime.services.schema.ui import InvenioUISchema
 
 class TestUISchema(InvenioUISchema):
     class Meta:
@@ -548,14 +548,14 @@ def test_generate_json_serializer(fulltext_builder):
     assert (
         strip_whitespaces(
             '''
-from flask_resources import MarshmallowSerializer
+from oarepo_runtime.resources import LocalizedUIJSONSerializer
 from test.services.records.ui_schema import TestUISchema
 from flask_resources.serializers import JSONSerializer
 from flask_resources import BaseListSchema
 
 
 
-class TestUIJSONSerializer(MarshmallowSerializer):
+class TestUIJSONSerializer(LocalizedUIJSONSerializer):
     """UI JSON serializer."""
 
     def __init__(self):

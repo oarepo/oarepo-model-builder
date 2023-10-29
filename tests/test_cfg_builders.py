@@ -73,9 +73,7 @@ authors =
 
 [options]
 python = >=3.9
-install_requires =
-    oarepo>=11,<12
-    oarepo-runtime>=1.0.0
+install_requires = oarepo-runtime>=1.0.0
 packages = find:
 
 

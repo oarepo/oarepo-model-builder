@@ -168,6 +168,9 @@ class PythonQualifiedName:
 
     @property
     def imports(self):
+        if "." not in self.qualified_name:
+            return []
+
         return [
             Import(
                 import_path=self.qualified_name,

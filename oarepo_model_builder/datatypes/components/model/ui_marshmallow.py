@@ -37,7 +37,7 @@ class UIMarshmallowModelComponent(MarshmallowModelMixin, UIObjectMarshmallowComp
         marshmallow.setdefault("class", f"{module}.{prefix}UISchema")
         marshmallow.setdefault("extra-code", "")
         marshmallow.setdefault(
-            "base-classes", ["oarepo_runtime.ui.marshmallow.InvenioUISchema"]
+            "base-classes", ["oarepo_runtime.services.schema.ui.InvenioUISchema"]
         )
         marshmallow.setdefault("imports", [])
         convert_config_to_qualified_name(marshmallow)

@@ -1,6 +1,7 @@
 from .app import AppModelComponent
 from .blueprints import BlueprintsModelComponent
 from .defaults import DefaultsModelComponent
+from .edtf_interval import EDTFIntervalDumperModelComponent
 from .ext_resource import ExtResourceModelComponent
 from .facets import FacetsModelComponent
 from .jsonschema import JSONSchemaModelComponent
@@ -44,4 +45,5 @@ __all__ = [
     "ProxyModelComponent",
     "ExtResourceModelComponent",
     "SortModelComponent",
+    "EDTFIntervalDumperModelComponent",
 ]

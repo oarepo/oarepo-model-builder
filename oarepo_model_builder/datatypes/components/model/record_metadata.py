@@ -83,7 +83,7 @@ class RecordMetadataModelComponent(DataTypeComponent):
         metadata.setdefault(
             "base-classes",
             [
-                "invenio_db.db.Model",
+                "invenio_db.db{db.Model}",
                 "invenio_records.models.RecordMetadataBase",
             ],
         )

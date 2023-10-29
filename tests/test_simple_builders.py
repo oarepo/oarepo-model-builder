@@ -2,6 +2,7 @@ import os
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
+from oarepo_model_builder.invenio.edtf_interval_dumper import EDTFIntervalDumperBuilder
 from oarepo_model_builder.invenio.invenio_api_views import InvenioAPIViewsBuilder
 from oarepo_model_builder.invenio.invenio_config import InvenioConfigBuilder
 from oarepo_model_builder.invenio.invenio_ext import InvenioExtBuilder
@@ -84,7 +85,7 @@ from invenio_records_resources.records.systemfields import IndexField
 from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
-from test.records.dumper import TestDumper
+from test.records.dumpers.dumper import TestDumper
 from invenio_records_resources.records.api import Record as InvenioRecord
 class TestRecord(InvenioRecord):
     model_cls = TestMetadata
@@ -96,8 +97,7 @@ class TestRecord(InvenioRecord):
         create=True
     
     )
-    dumper_extensions = []
-    dumper = TestDumper(extensions=dumper_extensions)
+    dumper = TestDumper()
 """
     )
 
@@ -120,7 +120,7 @@ from invenio_records_resources.records.systemfields import IndexField
 from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
-from test.records.dumper import TestDumper
+from test.records.dumpers.dumper import TestDumper
 from invenio_records_resources.records.api import Record as InvenioRecord
 
 class TestIdProvider(RecordIdProviderV2):
@@ -136,8 +136,7 @@ class TestRecord(InvenioRecord):
         create=True
     
     )
-    dumper_extensions = []
-    dumper = TestDumper(extensions=dumper_extensions)
+    dumper = TestDumper()
 """
     )
 
@@ -153,13 +152,13 @@ def test_record_metadata_builder():
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from invenio_db.db import Model
+from invenio_db import db
 
 
 from invenio_records.models import RecordMetadataBase
 
 
-class TestMetadata(Model, RecordMetadataBase):
+class TestMetadata(db.Model, RecordMetadataBase):
     """Model for TestRecord metadata."""
 
     __tablename__ = "test_metadata"
@@ -480,16 +479,35 @@ def test_dumper_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},
         [InvenioRecordDumperBuilder],
-        os.path.join("test", "records", "dumper.py"),
+        os.path.join("test", "records", "dumpers", "dumper.py"),
     )
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from invenio_records.dumpers import SearchDumper
+from oarepo_runtime.records.dumpers import SearchDumper
+from test.records.dumpers.edtf import TestEDTFIntervalDumperExt
 
 class TestDumper(SearchDumper):
     """TestRecord opensearch dumper."""
+    extensions=[ TestEDTFIntervalDumperExt()]
 '''
+    )
+
+
+def test_edtf_interval_dumper_builder():
+    data = build_python_model(
+        {"properties": {"a": {"type": "edtf-interval"}}},
+        [EDTFIntervalDumperBuilder],
+        os.path.join("test", "records", "dumpers", "edtf.py"),
+    )
+
+    assert strip_whitespaces(data) == strip_whitespaces(
+        '''
+from oarepo_runtime.records.dumpers.edtf_interval import EDTFIntervalDumperExt
+class TestEDTFIntervalDumperExt(EDTFIntervalDumperExt):
+    """edtf interval dumper."""
+    paths=['/a']
+        '''
     )
 
 
@@ -502,13 +520,13 @@ def test_ui_serializer_builder():
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from flask_resources import MarshmallowSerializer
+from oarepo_runtime.resources import LocalizedUIJSONSerializer
 
 from test.services.records.ui_schema import TestUISchema
 from flask_resources.serializers import JSONSerializer
 from flask_resources import BaseListSchema
 
-class TestUIJSONSerializer(MarshmallowSerializer):
+class TestUIJSONSerializer(LocalizedUIJSONSerializer):
     """UI JSON serializer."""
 
     def __init__(self):

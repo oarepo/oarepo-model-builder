@@ -34,11 +34,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault("metadata", "authors", "")
 
         output.setdefault("options", "python", ">=3.9")
-        try:
-            ov = int(self.settings["oarepo-version"])
-            output.add_dependency("oarepo", f">={ov},<{ov+1}")
-        except ValueError:
-            output.add_dependency("oarepo", self.settings["oarepo-version"])
+
         output.add_dependency("oarepo-runtime", ">=1.0.0")
 
         output.setdefault("options", "packages", "find:")

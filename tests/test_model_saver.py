@@ -87,7 +87,7 @@ def test_model_saver():
             "version": "1.0.0",
         },
         "json-serializer": {
-            "base-classes": ["flask_resources.MarshmallowSerializer"],
+            "base-classes": ["oarepo_runtime.resources.LocalizedUIJSONSerializer"],
             "class": "test.resources.records.ui.TestUIJSONSerializer",
             "extra-code": "",
             "format_serializer_cls": "flask_resources.serializers.JSONSerializer",
@@ -197,19 +197,30 @@ def test_model_saver():
             "module": "test.records.api",
         },
         "record-dumper": {
-            "base-classes": ["invenio_records.dumpers.SearchDumper"],
-            "class": "test.records.dumper.TestDumper",
+            "base-classes": ["oarepo_runtime.records.dumpers.SearchDumper"],
+            "class": "test.records.dumpers.dumper.TestDumper",
+            "extensions": ["{{test.records.dumpers.edtf.TestEDTFIntervalDumperExt}}()"],
+            "extra-code": "",
+            "generate": True,
+            "imports": [],
+            "module": "test.records.dumpers.dumper",
+        },
+        "edtf-interval-dumper": {
+            "base-classes": [
+                "oarepo_runtime.records.dumpers.edtf_interval.EDTFIntervalDumperExt"
+            ],
+            "class": "test.records.dumpers.edtf.TestEDTFIntervalDumperExt",
             "extensions": [],
             "extra-code": "",
             "generate": True,
             "imports": [],
-            "module": "test.records.dumper",
+            "module": "test.records.dumpers.edtf",
         },
         "record-metadata": {
             "alembic": "test.alembic",
             "alias": "test",
             "base-classes": [
-                "invenio_db.db.Model",
+                "invenio_db.db{db.Model}",
                 "invenio_records.models.RecordMetadataBase",
             ],
             "class": "test.records.models.TestMetadata",
@@ -290,7 +301,7 @@ def test_model_saver():
         "type": "model",
         "ui": {
             "marshmallow": {
-                "base-classes": ["oarepo_runtime.ui.marshmallow.InvenioUISchema"],
+                "base-classes": ["oarepo_runtime.services.schema.ui.InvenioUISchema"],
                 "class": "test.services.records.ui_schema.TestUISchema",
                 "extra-code": "",
                 "generate": True,
@@ -398,7 +409,7 @@ def test_model_saver_invenio():
             "version": "1.0.0",
         },
         "json-serializer": {
-            "base-classes": ["flask_resources.MarshmallowSerializer"],
+            "base-classes": ["oarepo_runtime.resources.LocalizedUIJSONSerializer"],
             "class": "test.resources.records.ui.TestUIJSONSerializer",
             "extra-code": "",
             "format_serializer_cls": "flask_resources.serializers.JSONSerializer",
@@ -415,11 +426,11 @@ def test_model_saver_invenio():
             "module": "test.records.mappings",
         },
         "marshmallow": {
-            "base-classes": ["BaseRecordSchema"],
+            "base-classes": ["oarepo_runtime.marshmallow.BaseRecordSchema"],
             "class": "test.services.records.schema.TestSchema",
             "extra-code": "",
             "generate": True,
-            "imports": [{"import": "oarepo_runtime.marshmallow.BaseRecordSchema"}],
+            "imports": [],
             "module": "test.services.records.schema",
         },
         "model-name": "Test",
@@ -503,19 +514,30 @@ def test_model_saver_invenio():
             "module": "test.records.api",
         },
         "record-dumper": {
-            "base-classes": ["invenio_records.dumpers.SearchDumper"],
-            "class": "test.records.dumper.TestDumper",
+            "base-classes": ["oarepo_runtime.records.dumpers.SearchDumper"],
+            "class": "test.records.dumpers.dumper.TestDumper",
+            "extensions": ["{{test.records.dumpers.edtf.TestEDTFIntervalDumperExt}}()"],
+            "extra-code": "",
+            "generate": True,
+            "imports": [],
+            "module": "test.records.dumpers.dumper",
+        },
+        "edtf-interval-dumper": {
+            "base-classes": [
+                "oarepo_runtime.records.dumpers.edtf_interval.EDTFIntervalDumperExt"
+            ],
+            "class": "test.records.dumpers.edtf.TestEDTFIntervalDumperExt",
             "extensions": [],
             "extra-code": "",
             "generate": True,
             "imports": [],
-            "module": "test.records.dumper",
+            "module": "test.records.dumpers.edtf",
         },
         "record-metadata": {
             "alembic": "test.alembic",
             "alias": "test",
             "base-classes": [
-                "invenio_db.db.Model",
+                "invenio_db.db{db.Model}",
                 "invenio_records.models.RecordMetadataBase",
             ],
             "class": "test.records.models.TestMetadata",
@@ -596,13 +618,11 @@ def test_model_saver_invenio():
         "type": "model",
         "ui": {
             "marshmallow": {
-                "base-classes": ["InvenioUISchema"],
+                "base-classes": ["oarepo_runtime.services.schema.ui.InvenioUISchema"],
                 "class": "test.services.records.ui_schema.TestUISchema",
                 "extra-code": "",
                 "generate": True,
-                "imports": [
-                    {"import": "oarepo_runtime.ui.marshmallow.InvenioUISchema"}
-                ],
+                "imports": [],
                 "module": "test.services.records.ui_schema",
             }
         },

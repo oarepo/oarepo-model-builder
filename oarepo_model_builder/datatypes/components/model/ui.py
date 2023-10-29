@@ -80,7 +80,9 @@ class UIModelComponent(ObjectUIComponent):
         json = set_default(datatype, "json-serializer", {})
         json_module = json.setdefault("module", f"{resources_module}.ui")
         json.setdefault("class", f"{json_module}.{prefix}UIJSONSerializer")
-        json.setdefault("base-classes", ["flask_resources.MarshmallowSerializer"])
+        json.setdefault(
+            "base-classes", ["oarepo_runtime.resources.LocalizedUIJSONSerializer"]
+        )
         json.setdefault(
             "imports",
             [],

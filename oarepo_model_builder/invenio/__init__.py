@@ -20,4 +20,5 @@ TEMPLATES = {
     "pid-provider": "templates/pid_provider.py.jinja2",
     # utils and included
     "ext-resource": "templates/ext_resource.py.jinja2",
+    "edtf-interval-record-dumper": "templates/edtf_interval_record_dumper.py.jinja2",
 }

@@ -1,6 +1,10 @@
 {{ vars.record_dumper|imports }}
+{% for ext in vars.record_dumper.extensions %}
+{{ ext|code_imports }}
+{% endfor %}
 
 class {{ vars.record_dumper|class_header }}:
     """{{ vars.record.class|base_name }} opensearch dumper."""
+    extensions =  [ {{ vars.record_dumper.extensions|generate_list }} ]
 
 {{ vars.record_dumper|extra_code }}

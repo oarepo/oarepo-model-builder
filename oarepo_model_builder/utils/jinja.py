@@ -29,10 +29,7 @@ def to_import_list(import_object, alias=None, base_classes_name="base-classes"):
     elif isinstance(import_object, str):
         pn = PythonQualifiedName(import_object)
         if "." in pn.qualified_name:
-            if pn.aliased:
-                return [{"import": pn.qualified_name, "alias": alias or pn.local_name}]
-            else:
-                return [{"import": pn.qualified_name}]
+            return to_import_list(pn.imports)
         else:
             return []
     elif isinstance(import_object, (tuple, list)):
@@ -73,6 +70,11 @@ def extract_extra_code_imports(extra_code):
     for match in re.finditer(r"{{(.*?)}}", extra_code):
         ret.extend(PythonQualifiedName(match.groups()[0]).imports)
     return ret
+
+
+@pass_context
+def generate_extra_code_imports(ctx, extra_code):
+    return generate_import(ctx, extract_extra_code_imports(extra_code))
 
 
 def generate_extra_code(obj, skip=False):
@@ -124,7 +126,7 @@ def generate_list(data, separator=", ", start=False, end=False):
     for di, d in enumerate(data):
         if di:
             ret.append(separator)
-        ret.append(d)
+        ret.append(generate_extra_code(d))
     if end:
         ret.append(separator)
     return "".join(ret)

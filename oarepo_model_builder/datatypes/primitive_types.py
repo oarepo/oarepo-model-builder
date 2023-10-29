@@ -5,10 +5,7 @@ from .datatypes import DataType
 
 class NumberDataType(DataType):
     facets = {
-        "facet-class": "TermsFacet",
-        "imports": [
-            {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
-        ],
+        "facet-class": "invenio_records_resources.services.records.facets.TermsFacet",
     }
 
 
@@ -88,8 +85,5 @@ class BooleanDataType(DataType):
     }
     json_schema = {"type": "boolean"}
     facets = {
-        "facet-class": "TermsFacet",
-        "imports": [
-            {"import": "invenio_records_resources.services.records.facets.TermsFacet"}
-        ],
+        "facet-class": "invenio_records_resources.services.records.facets.TermsFacet",
     }

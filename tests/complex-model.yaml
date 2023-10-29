@@ -1,0 +1,31 @@
+record:
+  use: [invenio]
+  module:
+    qualified: complex_model
+  permissions:
+    presets: [everyone]
+  record:
+    extra-code: |
+      print({{datetime.datetime}}.now())
+  properties:
+    metadata:
+      properties:
+        kw:
+          type: keyword
+        i:
+          type: integer
+        f:
+          type: float
+        tx:
+          type: fulltext
+        d:
+          type: date
+        t:
+          type: time
+        dt:
+          type: datetime
+        ed:
+          type: edtf
+        edi:
+          type: edtf-interval
+
