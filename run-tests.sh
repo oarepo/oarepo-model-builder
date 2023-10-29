@@ -133,8 +133,8 @@ stop_server() {
 # entrypoint here
 #
 
-# initialize_builder_venv
-# run_builder_tests
+initialize_builder_venv
+run_builder_tests
 
 create_server
 
