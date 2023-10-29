@@ -50,7 +50,7 @@ initialize_client_test_venv() {
   python3 -m venv $TEST_VENV
 
   $TEST_VENV/bin/pip install -U setuptools pip wheel
-  $TEST_VENV/bin/pip install requests PyYAML
+  $TEST_VENV/bin/pip install requests PyYAML pytest
 }
 
 run_builder_tests() {
@@ -154,9 +154,6 @@ if [ "$1" == "--server" ] ; then
   read -r
   exit 0
 fi
-
-
-stop_server &>/dev/null
 
 $TEST_VENV/bin/pytest tests-model
 
