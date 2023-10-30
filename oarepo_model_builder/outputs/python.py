@@ -16,6 +16,7 @@ from oarepo_model_builder.utils.jinja import (
     generate_list,
     in_different_package,
     package_name,
+    repr_filter,
 )
 from oarepo_model_builder.utils.verbose import log
 
@@ -125,6 +126,7 @@ class PythonOutput(OutputBase):
                 context["current_module"], value
             )
         )
+        env.filters["repr"] = repr_filter
 
 
 class AttrDict(dict):
