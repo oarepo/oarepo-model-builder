@@ -77,6 +77,12 @@ def generate_extra_code_imports(ctx, extra_code):
     return generate_import(ctx, extract_extra_code_imports(extra_code))
 
 
+def repr_filter(obj):
+    if isinstance(obj, str):
+        return obj
+    return repr(obj)
+
+
 def generate_extra_code(obj, skip=False):
     if isinstance(obj, dict):
         extra_code = obj.get("extra-code", "")
