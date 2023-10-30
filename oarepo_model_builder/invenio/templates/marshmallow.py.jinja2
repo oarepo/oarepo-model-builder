@@ -2,13 +2,17 @@ import marshmallow as ma
 {{ imports|imports }}
 {% for cls in generated_classes %}
 {{ cls.base_classes|imports }}
+{% for fld in cls.fields %}
+{{fld.full_definition|code_imports}}
 {% endfor %}
+{% endfor %}
+
 
 {% for cls in generated_classes %}
 class {{cls.class_name|base_name}}({% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{{bc|base_name}}{% endfor %}):
     class Meta:
         unknown = ma.{{ cls.unknown }}
 {% for fld in cls.fields %}
-    {{fld.key}} = {{fld.full_definition}}
+    {{fld.key}} = {{fld.full_definition|extra_code}}
 {% endfor %}
 {% endfor %}
