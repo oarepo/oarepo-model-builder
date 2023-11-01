@@ -5,9 +5,8 @@
 {{ vars.marshmallow.class|imports }}
 {{ vars.search_options.class|imports }}
 {% for c in vars.service_config.components %}
-{{ c|generate_import }}
+{{ c|code_imports }}
 {% endfor %}
-
 
 class {{ vars.service_config|class_header }}:
     """{{ vars.record.class|base_name }} service config."""
@@ -30,7 +29,7 @@ class {{ vars.service_config|class_header }}:
     service_id = "{{ vars.service_config.service_id }}"
     {% endif %}
 
-    components = [ {% for b in vars.service_config.base_classes %}*{{ b|base_name }}.components{% if not loop.last %}, {% endif %}{% endfor %}{% for c in vars.service_config.components %}, {{ c|base_name }} {% endfor %}]
+    components = [ {% for b in vars.service_config.base_classes %}*{{ b|base_name }}.components{% if not loop.last %}, {% endif %}{% endfor %}{% for c in vars.service_config.components %}, {{ c|extra_code }} {% endfor %}]
 
     model = "{{ vars.module.qualified }}"
 
