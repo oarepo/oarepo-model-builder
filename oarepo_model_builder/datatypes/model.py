@@ -50,12 +50,23 @@ class ModelDataType(ObjectDataType):
     @property
     def links(self):
         url_prefix = url_prefix2link(self.definition["resource-config"]["base-url"])
+        html_url_prefix = url_prefix2link(
+            self.definition["resource-config"]["base-html-url"]
+        )
         return {
             "links_item": [
                 Link(
                     name="self",
                     link_class="RecordLink",
                     link_args=[f'"{{+api}}{url_prefix}{{id}}"'],
+                    imports=[Import("invenio_records_resources.services.RecordLink")],
+                ),
+                Link(
+                    name="self_html",
+                    link_class="RecordLink",
+                    link_args=[
+                        f'"{{+ui}}{html_url_prefix}{{id}}"',
+                    ],
                     imports=[Import("invenio_records_resources.services.RecordLink")],
                 ),
             ],
