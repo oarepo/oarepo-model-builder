@@ -393,6 +393,8 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
             
             "self":RecordLink("{+api}/test/{id}"),
             
+            "self_html":RecordLink("{+ui}/test/{id}"),
+            
         }
     @property
     def links_search(self):
