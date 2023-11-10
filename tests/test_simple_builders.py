@@ -366,7 +366,7 @@ def test_service_config():
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
-from oarepo_runtime.config.service import PermissionsPresetsConfigMixin
+from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 from invenio_records_resources.services import RecordLink
 from invenio_records_resources.services import pagination_links
 from test.records.api import TestRecord

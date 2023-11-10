@@ -127,7 +127,7 @@ class ServiceModelComponent(DataTypeComponent):
         config.setdefault(
             "base-classes",
             [
-                "oarepo_runtime.config.service.PermissionsPresetsConfigMixin",
+                "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
         )

@@ -286,7 +286,7 @@ def test_model_saver():
         },
         "service-config": {
             "base-classes": [
-                "oarepo_runtime.config.service.PermissionsPresetsConfigMixin",
+                "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
             "class": "test.services.records.config.TestServiceConfig",
@@ -426,7 +426,7 @@ def test_model_saver_invenio():
             "module": "test.records.mappings",
         },
         "marshmallow": {
-            "base-classes": ["oarepo_runtime.marshmallow.BaseRecordSchema"],
+            "base-classes": ["oarepo_runtime.services.schema.marshmallow.BaseRecordSchema"],
             "class": "test.services.records.schema.TestSchema",
             "extra-code": "",
             "generate": True,
@@ -603,7 +603,7 @@ def test_model_saver_invenio():
         },
         "service-config": {
             "base-classes": [
-                "oarepo_runtime.config.service.PermissionsPresetsConfigMixin",
+                "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
             "class": "test.services.records.config.TestServiceConfig",
