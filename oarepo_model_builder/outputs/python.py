@@ -10,6 +10,7 @@ from oarepo_model_builder.utils.cst import PythonContext, merge
 from oarepo_model_builder.utils.jinja import (
     base_name,
     class_header,
+    generate_dict,
     generate_extra_code,
     generate_extra_code_imports,
     generate_import,
@@ -118,6 +119,7 @@ class PythonOutput(OutputBase):
         env.filters["extra_code"] = generate_extra_code
         env.filters["code_imports"] = generate_extra_code_imports
         env.filters["generate_list"] = generate_list
+        env.filters["generate_dict"] = generate_dict
         env.filters["class_header"] = class_header
         env.filters["package_name"] = package_name
         env.filters["base_name"] = pass_context(lambda context, value: base_name(value))
