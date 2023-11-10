@@ -123,19 +123,77 @@ def generate_import_string(ctx, import_object):
     return " ".join(ret)
 
 
-def generate_list(data, separator=", ", start=False, end=False):
+def escape_string(str):
+    if str[0] != '"':
+        str = f'"{str}'
+    if str[-1] != '"':
+        str = f'{str}"'
+    return str
+
+
+def dict_generator(entry, assure_str_value):
+    if not assure_str_value:
+        return f"{generate_extra_code(entry[0])}: {generate_extra_code(entry[1])}"
+    else:
+        return f"{escape_string(generate_extra_code(entry[0]))}: {escape_string(generate_extra_code(entry[1]))}"
+
+
+def list_generator(entry, assure_str_value):
+    if not assure_str_value:
+        return generate_extra_code(entry)
+    else:
+        return escape_string(generate_extra_code(entry))
+
+
+def generate_iterable(
+    data,
+    string_generator,
+    iter_function,
+    separator=", ",
+    start=False,
+    end=False,
+    assure_str_values=False,
+):
     if not data:
         return ""
     ret = []
     if start:
         ret.append(separator)
-    for di, d in enumerate(data):
+    for di, d in enumerate(iter_function(data)):
         if di:
             ret.append(separator)
-        ret.append(generate_extra_code(d))
+        ret.append(string_generator(d, assure_str_values))
     if end:
         ret.append(separator)
     return "".join(ret)
+
+
+def generate_dict(
+    data, separator=", ", start=False, end=False, assure_str_values=False
+):
+    return generate_iterable(
+        data,
+        dict_generator,
+        lambda x: x.items(),
+        separator=separator,
+        start=start,
+        end=end,
+        assure_str_values=assure_str_values,
+    )
+
+
+def generate_list(
+    data, separator=", ", start=False, end=False, assure_str_values=False
+):
+    return generate_iterable(
+        data,
+        list_generator,
+        lambda x: x,
+        separator=separator,
+        start=start,
+        end=end,
+        assure_str_values=assure_str_values,
+    )
 
 
 def in_different_package(current_module, value):
