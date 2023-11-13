@@ -1,6 +1,6 @@
 {
   "marshmallow": {
-    "base-classes": ["oarepo_runtime.marshmallow.BaseRecordSchema"],
+    "base-classes": ["oarepo_runtime.services.schema.marshmallow.BaseRecordSchema"],
       "imports": []
   },
   "ui": {

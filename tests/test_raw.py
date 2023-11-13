@@ -35,7 +35,7 @@ def test_raw_type():
             """
 import marshmallow as ma
 from marshmallow import fields as ma_fields
-from oarepo_runtime.marshmallow import BaseRecordSchema
+from oarepo_runtime.services.schema.marshmallow import BaseRecordSchema
 class TestSchema(BaseRecordSchema):
     class Meta:
         unknown = ma.RAISE

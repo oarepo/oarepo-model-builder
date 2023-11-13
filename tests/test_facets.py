@@ -69,8 +69,8 @@ from flask_babelex import lazy_gettext as _
 from invenio_records_resources.services.records.facets import TermsFacet
 from invenio_records_resources.services.records.facets import TermsFacet2
 
-from oarepo_runtime.facets.date import DateTimeFacet
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
 
 
 
@@ -157,8 +157,8 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
@@ -245,7 +245,7 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
@@ -340,8 +340,8 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
 
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
@@ -427,7 +427,7 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
@@ -521,8 +521,8 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
@@ -607,8 +607,8 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
@@ -694,8 +694,8 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
 
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
@@ -785,8 +785,8 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
-from oarepo_runtime.facets.nested_facet import NestedLabeledFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
 
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
@@ -869,7 +869,7 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
 
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
@@ -903,7 +903,7 @@ def test_enum():
                         "type": "keyword",
                         "enum": ["a", "b"],
                         "facets": {
-                            "facet-class": "oarepo_runtime.facets.enum.EnumTermsFacet",
+                            "facet-class": "oarepo_runtime.services.facets.enum.EnumTermsFacet",
                         },
                     },
                     "b": {
@@ -940,8 +940,8 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
-from oarepo_runtime.facets.enum import EnumTermsFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.enum import EnumTermsFacet
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
@@ -1018,7 +1018,7 @@ from flask_babelex import lazy_gettext as _
 
 from blah import MyFacetClass
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
 
@@ -1095,7 +1095,7 @@ from blah import MyFacetClass
 
 from invenio_records_resources.services.records.facets import TermsFacet
 
-from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
 
 
 _schema = TermsFacet(field="$schema", label=_("$schema.label") )
@@ -1164,7 +1164,7 @@ from invenio_search.engine import dsl
 from flask_babelex import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
-from oarepo_runtime.facets.date import DateTimeFacet
+from oarepo_runtime.services.facets.date import DateTimeFacet
 
 
 

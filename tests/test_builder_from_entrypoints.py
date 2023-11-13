@@ -42,7 +42,7 @@ def test_include_invenio():
             """
 import marshmallow as ma
 from marshmallow import fields as ma_fields
-from oarepo_runtime.marshmallow import BaseRecordSchema
+from oarepo_runtime.services.schema.marshmallow import BaseRecordSchema
 
 
 

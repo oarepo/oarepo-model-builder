@@ -257,7 +257,7 @@ def test_prepare_datatype():
         },
         "service-config": {
             "base-classes": [
-                "oarepo_runtime.config.service.PermissionsPresetsConfigMixin",
+                "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
             "class": "my.test.services.records.config.TestServiceConfig",
