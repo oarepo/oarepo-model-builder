@@ -58,11 +58,7 @@ class FulltextKeywordDataType(StringDataType):
         "type": "text",
         "fields": {"keyword": {"type": "keyword", "ignore_above": 256}},
     }
-    facets = {
-        "facet-class": "invenio_records_resources.services.records.facets.TermsFacet",
-        "keyword": True,
-        "path": "keyword",
-    }
+    facets = {"facet": False}
 
 
 class URLDataType(StringDataType):
