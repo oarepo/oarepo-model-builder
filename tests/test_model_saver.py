@@ -426,7 +426,9 @@ def test_model_saver_invenio():
             "module": "test.records.mappings",
         },
         "marshmallow": {
-            "base-classes": ["oarepo_runtime.services.schema.marshmallow.BaseRecordSchema"],
+            "base-classes": [
+                "oarepo_runtime.services.schema.marshmallow.BaseRecordSchema"
+            ],
             "class": "test.services.records.schema.TestSchema",
             "extra-code": "",
             "generate": True,
@@ -474,28 +476,28 @@ def test_model_saver_invenio():
         },
         "properties": {
             "$schema": {
-                "facets": {"searchable": True},
+                "facets": {"searchable": True, "facet": False},
                 "marshmallow": {"read": False, "write": False},
                 "sample": {"skip": True},
                 "type": "keyword",
                 "ui": {"marshmallow": {"read": False, "write": False}},
             },
             "created": {
-                "facets": {"searchable": True},
+                "facets": {"searchable": True, "facet": False},
                 "marshmallow": {"read": False, "write": False},
                 "sample": {"skip": True},
                 "type": "datetime",
                 "ui": {"marshmallow": {"read": False, "write": False}},
             },
             "id": {
-                "facets": {"searchable": True},
+                "facets": {"searchable": True, "facet": False},
                 "marshmallow": {"read": False, "write": False},
                 "sample": {"skip": True},
                 "type": "keyword",
                 "ui": {"marshmallow": {"read": False, "write": False}},
             },
             "updated": {
-                "facets": {"searchable": True},
+                "facets": {"searchable": True, "facet": False},
                 "marshmallow": {"read": False, "write": False},
                 "sample": {"skip": True},
                 "type": "datetime",
