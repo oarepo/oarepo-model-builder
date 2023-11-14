@@ -17,9 +17,6 @@ def test_running_server():
     assert data == {
         "hits": {"hits": [], "total": 0},
         "aggregations": {
-            "_schema": {"buckets": [], "label": "$schema.label"},
-            "created": {"buckets": [], "label": "created.label"},
-            "_id": {"buckets": [], "label": "id.label"},
             "metadata_d": {"buckets": [], "label": "metadata/d.label"},
             "metadata_dt": {"buckets": [], "label": "metadata/dt.label"},
             "metadata_ed": {"buckets": [], "label": "metadata/ed.label"},
@@ -27,7 +24,6 @@ def test_running_server():
             "metadata_i": {"buckets": [], "label": "metadata/i.label"},
             "metadata_kw": {"buckets": [], "label": "metadata/kw.label"},
             "metadata_t": {"buckets": [], "label": "metadata/t.label"},
-            "updated": {"buckets": [], "label": "updated.label"},
         },
         "sortBy": "newest",
         "links": {

@@ -1,5 +1,4 @@
 import os
-import re
 
 from oarepo_model_builder.entrypoints import create_builder_from_entrypoints, load_model
 from oarepo_model_builder.fs import InMemoryFileSystem
@@ -49,9 +48,7 @@ def test_sort():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "search.py")
     ).read()
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
 from flask_babelex import lazy_gettext as _
@@ -77,30 +74,7 @@ class TestSearchOptions(InvenioSearchOptions):
 
     facets = {
 
-
-    '_schema': facets._schema,
-
-
-
-    'a': facets.a,
-
-
-
     'c_d': facets.c_d,
-
-
-
-    'created': facets.created,
-
-
-
-    '_id': facets._id,
-
-
-
-    'updated': facets.updated,
-
-
 
     **getattr(InvenioSearchOptions, 'facets', {})
 
@@ -176,30 +150,7 @@ class TestSearchOptions(InvenioSearchOptions):
 
     facets = {
 
-
-    '_schema': facets._schema,
-
-
-
-    'a': facets.a,
-
-
-
     'b': facets.b,
-
-
-
-    'created': facets.created,
-
-
-
-    '_id': facets._id,
-
-
-
-    'updated': facets.updated,
-
-
 
     **getattr(InvenioSearchOptions, 'facets', {})
 
@@ -251,22 +202,6 @@ class TestSearchOptions(BaseSearchOptions):
     }
 
     facets = {
-
-
-    '_schema': facets._schema,
-
-
-
-    'created': facets.created,
-
-
-
-    '_id': facets._id,
-
-
-
-    'updated': facets.updated,
-
 
 
     **getattr(BaseSearchOptions, 'facets', {})
@@ -373,11 +308,7 @@ class TestSearchOptions(BaseSearchOptions):
     }
 
     facets = {
-    '_schema': facets._schema,
     'arr_e_f': facets.arr_e_f,
-    'created': facets.created,
-    '_id': facets._id,
-    'updated': facets.updated,
     **getattr(BaseSearchOptions, 'facets', {})
     }
     """,
@@ -394,7 +325,7 @@ def test_replace_sort_options():
                 "search-options": {"sort-options-field": "extra_sort_options"},
                 "properties": {
                     "a": {
-                        "type": "fulltext+keyword",
+                        "type": "keyword",
                         "sortable": {"key": "a_test"},
                     },
                 },
@@ -413,9 +344,7 @@ def test_replace_sort_options():
         os.path.join("test", "services", "records", "search.py")
     ).read()
     print(data)
-    assert re.sub(r"\s", "", data) == re.sub(
-        r"\s",
-        "",
+    assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
 from flask_babelex import lazy_gettext as _
@@ -429,11 +358,7 @@ class TestSearchOptions(InvenioSearchOptions):
     }
 
     facets = {
-    '_schema': facets._schema,
     'a': facets.a,
-    'created': facets.created,
-    '_id': facets._id,
-    'updated': facets.updated,
     **getattr(InvenioSearchOptions, 'facets', {})
     }
     extra_sort_options = {

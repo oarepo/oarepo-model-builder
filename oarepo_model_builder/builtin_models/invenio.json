@@ -20,7 +20,8 @@
         "write": false
       },
       "facets": {
-        "searchable": true
+        "searchable": true,
+        "facet": false
       },
       "ui": {
         "marshmallow": {
@@ -39,7 +40,8 @@
         "read": false
       },
       "facets": {
-        "searchable": true
+        "searchable": true,
+        "facet": false
       },
       "ui": {
         "marshmallow": {
@@ -58,7 +60,8 @@
         "read": false
       },
       "facets": {
-        "searchable": true
+        "searchable": true,
+        "facet": false
       },
       "ui": {
         "marshmallow": {
@@ -77,7 +80,8 @@
         "skip": true
       },
       "facets": {
-        "searchable": true
+        "searchable": true,
+        "facet": false
       },
       "ui": {
         "marshmallow": {
