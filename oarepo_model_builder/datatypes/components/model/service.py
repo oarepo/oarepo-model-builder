@@ -81,6 +81,10 @@ class ServiceConfigClassSchema(ma.Schema):
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
+    result_list_class = ma.fields.List(
+        ma.fields.String(attribute="result-list-class", data_key="result-list-class"),
+        metadata={"doc": "Class of service result list"},
+    )
     skip = ma.fields.Boolean()
 
 
@@ -132,6 +136,9 @@ class ServiceModelComponent(DataTypeComponent):
             ],
         )
         config.setdefault("components", [])
+        config.setdefault(
+            "result-list-class", "oarepo_runtime.services.results.RecordList"
+        )
         convert_config_to_qualified_name(config)
 
         service = set_default(datatype, "service", {})
