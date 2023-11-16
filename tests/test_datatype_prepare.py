@@ -267,6 +267,7 @@ def test_prepare_datatype():
             "generate": True,
             "module": "my.test.services.records.config",
             "service-id": "test",
+            "result-list-class": "oarepo_runtime.services.results.RecordList",
         },
         "sortable": [],
         "type": "model",
