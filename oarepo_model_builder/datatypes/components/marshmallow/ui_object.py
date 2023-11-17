@@ -54,6 +54,9 @@ class UIObjectMarshmallowComponent(ObjectMarshmallowMixin, UIMarshmallowComponen
             datatype.section_ui.children,
             "ui_marshmallow_field",
             classes,
+            default_base_class=datatype.schema.settings["marshmallow"][
+                "ui-schema-base-class"
+            ],
         )
 
     def ui_marshmallow_field(

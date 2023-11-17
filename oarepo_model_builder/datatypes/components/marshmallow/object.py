@@ -183,7 +183,13 @@ class ObjectMarshmallowMixin:
         )
 
     def _build_class(
-        self, datatype, marshmallow, children, field_generator, classes  # NOSONAR
+        self,
+        datatype,
+        marshmallow,
+        children,
+        field_generator,
+        classes,
+        default_base_class,  # NOSONAR
     ):
         fields = []
         for _, c in sorted(children.items()):
@@ -194,11 +200,13 @@ class ObjectMarshmallowMixin:
         ]
         fields = [*fields, *extra_fields]
         fields.sort(key=lambda x: (not x.key.startswith("_"), x.key))
+        base_classes = marshmallow.get("base-classes", [])
+        if not base_classes:
+            base_classes = [default_base_class]
         classes.append(
             MarshmallowClass(
                 class_name=marshmallow["class"],
-                base_classes=marshmallow.get("base-classes", [])
-                or ["marshmallow.Schema"],
+                base_classes=base_classes,
                 imports=Import.from_config(marshmallow.get("imports", [])),
                 fields=fields,
                 unknown=marshmallow.get("unknown", "RAISE"),
@@ -254,6 +262,9 @@ class ObjectMarshmallowComponent(ObjectMarshmallowMixin, RegularMarshmallowCompo
             datatype.section_marshmallow.children,
             "marshmallow_field",
             classes,
+            default_base_class=datatype.schema.settings["marshmallow"][
+                "schema-base-class"
+            ],
         )
 
     def marshmallow_field(

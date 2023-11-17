@@ -3,29 +3,37 @@ from marshmallow.exceptions import ValidationError
 
 from oarepo_model_builder.validation.model_validation import model_validator
 
+default_settings = {
+    "schema-server": "local://",
+    "marshmallow": {
+        "schema-base-class": "oarepo_runtime.services.schema.marshmallow.DictOnlySchema",
+        "ui-schema-base-class": "oarepo_runtime.services.schema.marshmallow.DictOnlySchema",
+    },
+}
+
 
 def test_empty_model_validation():
     assert model_validator.validate({}) == {
         "version": "1.0.0",
-        "settings": {"schema-server": "local://"},  # NOSONAR
+        "settings": default_settings,
     }
     assert model_validator.validate({"record": {}}) == {
         "record": {"type": "model", "properties": {}, "searchable": True},
-        "settings": {"schema-server": "local://"},
+        "settings": default_settings,
         "version": "1.0.0",
     }
     with pytest.raises(ValidationError, match="Must be equal to model"):
         model_validator.validate({"record": {"type": "blah"}})
     assert model_validator.validate({"record": {"properties": {}}}) == {
         "record": {"type": "model", "properties": {}, "searchable": True},
-        "settings": {"schema-server": "local://"},
+        "settings": default_settings,
         "version": "1.0.0",
     }
     assert model_validator.validate(
         {"record": {"type": "model", "properties": None}}
     ) == {
         "record": {"type": "model", "properties": {}, "searchable": True},
-        "settings": {"schema-server": "local://"},
+        "settings": default_settings,
         "version": "1.0.0",
     }
 
@@ -58,7 +66,7 @@ def test_settings_on_model():
             "type": "model",
             "searchable": True,
         },
-        "settings": {"schema-server": "local://"},
+        "settings": default_settings,
         "version": "1.0.0",
     }
 
@@ -88,7 +96,7 @@ def test_inline_props_on_model():
             },
             "searchable": True,
         },
-        "settings": {"schema-server": "local://"},
+        "settings": default_settings,
     }
 
 
@@ -113,7 +121,7 @@ def test_validate_defs():
             "d": "double",
         },
         "record": {"properties": {}, "type": "model", "searchable": True},
-        "settings": {"schema-server": "local://"},
+        "settings": default_settings,
     }
 
 
@@ -124,8 +132,8 @@ def test_settings():
     assert validation_result == {
         "version": "1.0.0",
         "settings": {
+            **default_settings,
             "python": {"use-black": True, "use-isort": True, "use-autoflake": True},
-            "schema-server": "local://",
         },
         "record": {"properties": {}, "type": "model", "searchable": True},
     }
