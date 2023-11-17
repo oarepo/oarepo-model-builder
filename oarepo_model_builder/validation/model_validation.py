@@ -37,6 +37,11 @@ class SettingsOpenSearchSchema(ma.Schema):
     version = ma.fields.String(load_default="os-v2")
 
 
+class MarshmallowSettingsSchema(ma.Schema):
+    schema_base_class = ma.fields.String()
+    ui_schema_base_class = ma.fields.String()
+
+
 class SettingsSchema(ma.Schema):
     python = ma.fields.Nested(ExtensibleSchema("settings.python", SettingsPythonSchema))
     opensearch = ma.fields.Nested(
@@ -49,6 +54,13 @@ class SettingsSchema(ma.Schema):
         ma.fields.String(),
         attribute="extension-elements",
         data_key="extension-elements",
+    )
+    marshmallow = ma.fields.Nested(
+        MarshmallowSettingsSchema,
+        load_default=lambda: {
+            "schema-base-class": "oarepo_runtime.services.schema.marshmallow.DictOnlySchema",
+            "ui-schema-base-class": "oarepo_runtime.services.schema.marshmallow.DictOnlySchema",
+        },
     )
 
     class Meta:

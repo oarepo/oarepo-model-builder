@@ -115,7 +115,7 @@ class TestUISchema(InvenioUISchema):
     a = ma_fields.List(ma_fields.Nested(lambda: AItemUISchema()))
 
 
-class AItemUISchema(Schema):
+class AItemUISchema(DictOnlySchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -161,7 +161,7 @@ class TestUISchema(InvenioUISchema):
     a = ma_fields.Nested(lambda: BUISchema())
 
 
-class BUISchema(Schema):
+class BUISchema(DictOnlySchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -338,7 +338,7 @@ class TestUISchema(InvenioUISchema):
     a = ma_fields.List(ma_fields.Nested(lambda: BUISchema()))
 
 
-class BUISchema(Schema):
+class BUISchema(DictOnlySchema):
     class Meta:
         unknown = ma.RAISE
     b = ma_fields.String()
@@ -423,7 +423,7 @@ class TestUISchema(InvenioUISchema):
     assert (
         strip_whitespaces(
             """
-class BUISchema(Schema):
+class BUISchema(DictOnlySchema):
     class Meta:
         unknown = ma.RAISE
     b = ma_fields.String()
@@ -472,7 +472,7 @@ class TestUISchema(InvenioUISchema):
         unknown = ma.RAISE
     a = ma_fields.Nested(lambda: BUISchema())
 
-class BUISchema(Schema):
+class BUISchema(DictOnlySchema):
     class Meta:
         unknown = ma.RAISE
     b = ma_fields.String()

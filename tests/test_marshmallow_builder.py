@@ -219,7 +219,7 @@ class TestSchema(Schema):
         unknown = ma.RAISE
     a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))
 
-class AItemSchema(Schema):
+class AItemSchema(DictOnlySchema):
     class Meta:
         unknown = ma.RAISE
     b = ma_fields.Integer()
@@ -248,7 +248,7 @@ def test_strict_object(fulltext_builder):
     assert (
         strip_whitespaces(
             """
- class ASchema(Schema):
+ class ASchema(DictOnlySchema):
     class Meta:
         unknown= ma.RAISE
     b= ma_fields.Integer()
@@ -278,7 +278,7 @@ def test_permissive_object(fulltext_builder):
     assert (
         strip_whitespaces(
             """
- class ASchema(Schema):
+ class ASchema(DictOnlySchema):
     class Meta:
         unknown= ma.INCLUDE
     b= ma_fields.Integer()
@@ -308,7 +308,7 @@ def test_excluding_object(fulltext_builder):
     assert (
         strip_whitespaces(
             """
- class ASchema(Schema):
+ class ASchema(DictOnlySchema):
     class Meta:
         unknown= ma.EXCLUDE
     b= ma_fields.Integer()
@@ -351,7 +351,7 @@ class TestSchema(Schema):
     a = ma_fields.Nested(lambda: BSchema())
 
 
-class BSchema(Schema):
+class BSchema(DictOnlySchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -414,7 +414,7 @@ class TestSchema(Schema):
     assert (
         strip_whitespaces(
             """
-class BSchema(Schema):
+class BSchema(DictOnlySchema):
     class Meta:
         unknown = ma.RAISE
 
@@ -536,7 +536,7 @@ class TestSchema(Schema):
     a = ma_fields.List(ma_fields.Nested(lambda: BSchema()))
 
 
-class BSchema(Schema):
+class BSchema(DictOnlySchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -628,7 +628,7 @@ class TestSchema(Schema):
     assert (
         strip_whitespaces(
             """
-class BSchema(Schema):
+class BSchema(DictOnlySchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -678,7 +678,7 @@ class TestSchema(Schema):
     a = ma_fields.Nested(lambda: BSchema())
 
 
-class BSchema(Schema):
+class BSchema(DictOnlySchema):
 
     class Meta:
         unknown = ma.RAISE
@@ -740,7 +740,7 @@ class TestSchema(Schema):
     assert (
         strip_whitespaces(
             """
-class BSchema(Schema):
+class BSchema(DictOnlySchema):
 
     class Meta:
         unknown = ma.RAISE
