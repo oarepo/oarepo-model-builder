@@ -48,6 +48,7 @@ def test_sort():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "search.py")
     ).read()
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
@@ -74,11 +75,20 @@ class TestSearchOptions(InvenioSearchOptions):
 
     facets = {
 
+
+    'b': facets.b,
+
+
+
     'c_d': facets.c_d,
+
+
 
     **getattr(InvenioSearchOptions, 'facets', {})
 
     }
+
+
     sort_options = {
         
             
@@ -231,6 +241,14 @@ def test_facet_groups():
                         "type": "keyword",
                         "facets": {"searchable": True, "facet-groups": []},
                     },
+                    "b2": {
+                        "type": "keyword",
+                        "facets": {"searchable": True},
+                    },
+                    "b3": {
+                        "type": "keyword",
+                        "facets": {"searchable": True, "facet-groups": ['default']},
+                    },
                     "c": {
                         "type": "keyword",
                         "facets": {"searchable": True, "facet": False},
@@ -293,23 +311,72 @@ from blah import BaseSearchOptions
 from flask_babelex import lazy_gettext as _
 from . import facets
 
+
 class TestSearchOptions(BaseSearchOptions):
     \"""TestRecord search options.\"""
+
     facet_groups ={
+        
             'curator': {
+                
                     'a' : facets.a,
+
+                
                     'g' : facets.g,
+
+                
+            
                 **getattr(BaseSearchOptions, 'facet_groups', {}).get('curator', {})
+            
             },
+        
             'user': {
+                
                     'a' : facets.a,
+
+                
+            
                 **getattr(BaseSearchOptions, 'facet_groups', {}).get('user', {})
+            
             },
+        
+            'default': {
+                
+                    'b3' : facets.b3,
+
+                
+            
+                **getattr(BaseSearchOptions, 'facet_groups', {}).get('default', {})
+            
+            },
+        
     }
 
     facets = {
+
+
+    'a': facets.a,
+
+
+
     'arr_e_f': facets.arr_e_f,
+
+
+
+    'b2': facets.b2,
+
+
+
+    'b3': facets.b3,
+
+
+
+    'g': facets.g,
+
+
+
     **getattr(BaseSearchOptions, 'facets', {})
+
     }
     """,
     )
