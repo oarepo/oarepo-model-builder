@@ -63,7 +63,7 @@ def test_include_invenio():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 
 from invenio_records_resources.services.records.facets import TermsFacet
@@ -124,7 +124,7 @@ def test_nested():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
@@ -185,7 +185,7 @@ def test_object():
         \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 
@@ -255,7 +255,7 @@ def test_nest_obj():
         \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
@@ -312,7 +312,7 @@ def test_array():
         \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 
@@ -384,7 +384,7 @@ def test_array_object():
  \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
@@ -453,7 +453,7 @@ def test_array_nested():
         \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
@@ -523,7 +523,7 @@ def test_not_searchable():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
@@ -592,7 +592,7 @@ def test_top_facets():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 from oarepo_runtime.services.facets.nested_facet import NestedLabeledFacet
@@ -650,7 +650,7 @@ def test_searchable_true():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 
@@ -703,7 +703,7 @@ def test_enum():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 from oarepo_runtime.services.facets.enum import EnumTermsFacet
@@ -757,7 +757,7 @@ def test_customizations_args_class():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from blah import MyFacetClass
 
@@ -808,7 +808,7 @@ def test_customizations_field():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from blah import MyFacetClass
 
@@ -856,7 +856,7 @@ def test_facets_group():
 \"""Facet definitions.\"""
 
 from invenio_search.engine import dsl
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from invenio_records_resources.services.records.facets import TermsFacet
 

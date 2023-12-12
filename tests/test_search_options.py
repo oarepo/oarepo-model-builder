@@ -52,7 +52,7 @@ def test_sort():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 from . import facets
 
 
@@ -147,7 +147,7 @@ def test_search_class():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 from . import facets
 
 
@@ -200,7 +200,7 @@ def test_search_options_base_class():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from blah import BaseSearchOptions
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 from . import facets
 
 
@@ -247,7 +247,7 @@ def test_facet_groups():
                     },
                     "b3": {
                         "type": "keyword",
-                        "facets": {"searchable": True, "facet-groups": ['default']},
+                        "facets": {"searchable": True, "facet-groups": ["default"]},
                     },
                     "c": {
                         "type": "keyword",
@@ -308,7 +308,7 @@ def test_facet_groups():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from blah import BaseSearchOptions
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 from . import facets
 
 
@@ -414,7 +414,7 @@ def test_replace_sort_options():
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records_resources.services import SearchOptions as InvenioSearchOptions
-from flask_babelex import lazy_gettext as _
+from oarepo_runtime.i18n import lazy_gettext as _
 from . import facets
 
 
