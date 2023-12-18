@@ -11,7 +11,6 @@ export TEST_VENV=.venv-tests
 export SERVER_VENV=.venv-server
 
 OAREPO_VERSION=${OAREPO_VERSION:-11}
-OAREPO_VERSION_MAX=$((OAREPO_VERSION+1))
 
 
 initialize_server_venv() {
@@ -24,7 +23,7 @@ initialize_server_venv() {
   source $SERVER_VENV/bin/activate
 
   $SERVER_VENV/bin/pip install -U setuptools pip wheel
-  $SERVER_VENV/bin/pip install "oarepo>=$OAREPO_VERSION,<$OAREPO_VERSION_MAX"
+  $SERVER_VENV/bin/pip install "oarepo[tests]==${OAREPO_VERSION}.*"
   $SERVER_VENV/bin/pip install -e complex-model
   $SERVER_VENV/bin/pip install -U pytest
 }
