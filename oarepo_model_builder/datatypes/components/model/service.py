@@ -85,6 +85,10 @@ class ServiceConfigClassSchema(ma.Schema):
         ma.fields.String(attribute="result-list-class", data_key="result-list-class"),
         metadata={"doc": "Class of service result list"},
     )
+    result_list_class = ma.fields.List(
+        ma.fields.String(attribute="result-item-class", data_key="result-item-class"),
+        metadata={"doc": "Class of service result item"},
+    )
     skip = ma.fields.Boolean()
 
 
@@ -138,6 +142,10 @@ class ServiceModelComponent(DataTypeComponent):
         config.setdefault("components", [])
         config.setdefault(
             "result-list-class", "oarepo_runtime.services.results.RecordList"
+        )
+        config.setdefault(
+            "result-item-class",
+            "invenio_records_resources.services.records.results.RecordItem",
         )
         convert_config_to_qualified_name(config)
 
