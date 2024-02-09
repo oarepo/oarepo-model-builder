@@ -374,10 +374,12 @@ from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
 from test.services.records.search import TestSearchOptions
 from oarepo_runtime.services.results import RecordList
+from invenio_records_resources.services.records.results import RecordItem
 
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
+    result_item_cls = RecordItem
     result_list_cls = RecordList
     PERMISSIONS_PRESETS = ["everyone"]
     url_prefix = "/test/"
@@ -529,6 +531,7 @@ from oarepo_runtime.resources import LocalizedUIJSONSerializer
 from test.services.records.ui_schema import TestUISchema
 from flask_resources.serializers import JSONSerializer
 from flask_resources import BaseListSchema
+from flask import g
 
 class TestUIJSONSerializer(LocalizedUIJSONSerializer):
     """UI JSON serializer."""
@@ -539,7 +542,7 @@ class TestUIJSONSerializer(LocalizedUIJSONSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=TestUISchema,
             list_schema_cls=BaseListSchema,
-            schema_context={"object_key": "ui"},
+            schema_context={ "object_key": "ui", "identity": g.identity }
         )
 '''
     )

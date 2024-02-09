@@ -101,5 +101,5 @@ class UIModelComponent(ObjectUIComponent):
             "format_serializer_cls", "flask_resources.serializers.JSONSerializer"
         )
         json.setdefault(
-            "schema_context_args", {'"object_key"': '"ui"', '"identity"': "{{ flask.g{g.identity} }}"}
+            "schema-context-args", {'"object_key"': '"ui"', '"identity"': "{{ flask.g{g.identity} }}"}
         )

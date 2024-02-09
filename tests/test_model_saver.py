@@ -205,6 +205,7 @@ def test_model_saver():
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
             "components": [],
+            "result-item-class": "invenio_records_resources.services.records.results.RecordItem",
             "result-list-class": "oarepo_runtime.services.results.RecordList",
         },
         "service": {
@@ -238,6 +239,7 @@ def test_model_saver():
             "generate": True,
             "list_schema_cls": "flask_resources.BaseListSchema",
             "format_serializer_cls": "flask_resources.serializers.JSONSerializer",
+            "schema-context-args": {'"identity"': '{{ flask.g{g.identity} }}', '"object_key"': '"ui"'},
         },
         "mapping": {
             "generate": True,
@@ -548,6 +550,7 @@ def test_model_saver_invenio():
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
             "components": [],
+            "result-item-class": "invenio_records_resources.services.records.results.RecordItem",
             "result-list-class": "oarepo_runtime.services.results.RecordList",
         },
         "service": {
@@ -571,6 +574,7 @@ def test_model_saver_invenio():
             "generate": True,
             "list_schema_cls": "flask_resources.BaseListSchema",
             "format_serializer_cls": "flask_resources.serializers.JSONSerializer",
+            "schema-context-args": {'"identity"': '{{ flask.g{g.identity} }}', '"object_key"': '"ui"'},
         },
         "mapping": {
             "generate": True,

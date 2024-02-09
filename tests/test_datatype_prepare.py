@@ -1,6 +1,5 @@
 from oarepo_model_builder.schema import ModelSchema
 
-
 def test_prepare_datatype():
     module = "my.test"
     model = ModelSchema(
@@ -23,6 +22,7 @@ def test_prepare_datatype():
         },
     )
     record_section = model.get_schema_section(profile="record", section="record")
+
     assert record_section.definition == {
         "api-blueprint": {
             "alias": "my_test_record",
@@ -78,6 +78,7 @@ def test_prepare_datatype():
             "imports": [],
             "list_schema_cls": "flask_resources.BaseListSchema",
             "module": "my.test.resources.records.ui",
+            "schema-context-args": {'"object_key"': '"ui"', '"identity"': "{{ flask.g{g.identity} }}"}
         },
         "mapping": {
             "alias": "my_test_record",
@@ -267,6 +268,7 @@ def test_prepare_datatype():
             "generate": True,
             "module": "my.test.services.records.config",
             "service-id": "test",
+            "result-item-class": "invenio_records_resources.services.records.results.RecordItem",
             "result-list-class": "oarepo_runtime.services.results.RecordList",
         },
         "sortable": [],
