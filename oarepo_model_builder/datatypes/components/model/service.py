@@ -85,7 +85,7 @@ class ServiceConfigClassSchema(ma.Schema):
         ma.fields.String(attribute="result-list-class", data_key="result-list-class"),
         metadata={"doc": "Class of service result list"},
     )
-    result_list_class = ma.fields.List(
+    result_item_class = ma.fields.List(
         ma.fields.String(attribute="result-item-class", data_key="result-item-class"),
         metadata={"doc": "Class of service result item"},
     )
