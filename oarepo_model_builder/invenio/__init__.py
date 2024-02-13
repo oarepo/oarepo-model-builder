@@ -21,4 +21,6 @@ TEMPLATES = {
     # utils and included
     "ext-resource": "templates/ext_resource.py.jinja2",
     "edtf-interval-record-dumper": "templates/edtf_interval_record_dumper.py.jinja2",
+    "record-item": "templates/record_item.py.jinja2",
+    "record-list": "templates/record_list.py.jinja2",
 }

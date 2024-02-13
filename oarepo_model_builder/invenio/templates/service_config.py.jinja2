@@ -4,17 +4,20 @@
 {{ vars.permissions.class|imports }}
 {{ vars.marshmallow.class|imports }}
 {{ vars.search_options.class|imports }}
-{{ vars.service_config.result_list_class|imports }}
-{{ vars.service_config.result_item_class|imports }}
+{{ vars.record_item.class|imports }}
+{{ vars.record_list.class|imports }}
 {% for c in vars.service_config.components %}
 {{ c|code_imports }}
 {% endfor %}
 
 class {{ vars.service_config|class_header }}:
     """{{ vars.record.class|base_name }} service config."""
-    result_item_cls = {{ vars.service_config.result_item_class|base_name }}
-    result_list_cls = {{ vars.service_config.result_list_class|base_name }}
-
+    {% if not vars.record_item.skip %}
+    result_item_cls = {{ vars.record_item.class|base_name }}
+    {% endif %}
+    {% if not vars.record_list.skip %}
+    result_list_cls = {{ vars.record_list.class|base_name }}
+    {% endif %}
     PERMISSIONS_PRESETS = [{% for p in vars.permissions.presets %}"{{ p }}"{{ ", " if not loop.last else "" }} {% endfor %}]
 
     url_prefix = "{{ vars.resource_config.base_url }}"

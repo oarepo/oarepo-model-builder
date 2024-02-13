@@ -373,14 +373,14 @@ from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
 from test.services.records.search import TestSearchOptions
-from oarepo_runtime.services.results import RecordList
-from invenio_records_resources.services.records.results import RecordItem
+from test.services.records.results import TestRecordItem
+from test.services.records.results import TestRecordList
 
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
-    result_item_cls = RecordItem
-    result_list_cls = RecordList
+    result_item_cls = TestRecordItem
+    result_list_cls = TestRecordList
     PERMISSIONS_PRESETS = ["everyone"]
     url_prefix = "/test/"
     base_permission_policy_cls = TestPermissionPolicy

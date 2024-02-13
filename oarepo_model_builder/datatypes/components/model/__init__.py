@@ -13,6 +13,8 @@ from .pid import PIDModelComponent
 from .proxy import ProxyModelComponent
 from .record import RecordModelComponent
 from .record_dumper import RecordDumperModelComponent
+from .record_item import RecordItemModelComponent
+from .record_list import RecordListModelComponent
 from .record_metadata import RecordMetadataModelComponent
 from .resource import ResourceModelComponent
 from .sample import SampleModelComponent
@@ -46,4 +48,6 @@ __all__ = [
     "ExtResourceModelComponent",
     "SortModelComponent",
     "EDTFIntervalDumperModelComponent",
+    "RecordListModelComponent",
+    "RecordItemModelComponent",
 ]
