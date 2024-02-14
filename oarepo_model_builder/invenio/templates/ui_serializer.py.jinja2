@@ -2,6 +2,9 @@
 {{ vars.ui.marshmallow.class|imports }}
 {{ vars.json_serializer.format_serializer_cls|imports }}
 {{ vars.json_serializer.list_schema_cls|imports }}
+{% for arg in vars.json_serializer.schema_context_args.values() %}
+{{arg|code_imports}}
+{% endfor %}
 
 
 class {{ vars.json_serializer|class_header }}:
@@ -13,7 +16,6 @@ class {{ vars.json_serializer|class_header }}:
             format_serializer_cls={{ vars.json_serializer.format_serializer_cls|base_name }},
             object_schema_cls={{vars.ui.marshmallow.class|base_name}},
             list_schema_cls={{ vars.json_serializer.list_schema_cls|base_name }},
-            schema_context={"object_key": "ui"},
+            schema_context={ {{ vars.json_serializer.schema_context_args|generate_dict }} }
         )
-
 {{ vars.json_serializer|extra_code }}

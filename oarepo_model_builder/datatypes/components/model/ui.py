@@ -46,6 +46,11 @@ class JSONSerializerSchema(ma.Schema):
         data_key="format-serializer-cls",
         metadata={"doc": "Class for serializing the resulting json"},
     )
+    schema_context_args = ma.fields.Dict(
+        attribute="schema-context-args",
+        data_key="schema-context-args",
+        metadata={"doc": "Extra args for ui marshmallow schema context"},
+    )
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
@@ -92,4 +97,8 @@ class UIModelComponent(ObjectUIComponent):
         json.setdefault("list_schema_cls", "flask_resources.BaseListSchema")
         json.setdefault(
             "format_serializer_cls", "flask_resources.serializers.JSONSerializer"
+        )
+        json.setdefault(
+            "schema-context-args",
+            {'"object_key"': '"ui"', '"identity"': "{{ flask.g{g.identity} }}"},
         )

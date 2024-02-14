@@ -11,6 +11,8 @@ from oarepo_model_builder.invenio.invenio_record import InvenioRecordBuilder
 from oarepo_model_builder.invenio.invenio_record_dumper import (
     InvenioRecordDumperBuilder,
 )
+from oarepo_model_builder.invenio.invenio_record_item import InvenioRecordItemBuilder
+from oarepo_model_builder.invenio.invenio_record_list import InvenioRecordListBuilder
 from oarepo_model_builder.invenio.invenio_record_metadata import (
     InvenioRecordMetadataBuilder,
 )
@@ -373,12 +375,14 @@ from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
 from test.services.records.search import TestSearchOptions
-from oarepo_runtime.services.results import RecordList
+from test.services.records.results import TestRecordItem
+from test.services.records.results import TestRecordList
 
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
-    result_list_cls = RecordList
+    result_item_cls = TestRecordItem
+    result_list_cls = TestRecordList
     PERMISSIONS_PRESETS = ["everyone"]
     url_prefix = "/test/"
     base_permission_policy_cls = TestPermissionPolicy
@@ -529,6 +533,7 @@ from oarepo_runtime.resources import LocalizedUIJSONSerializer
 from test.services.records.ui_schema import TestUISchema
 from flask_resources.serializers import JSONSerializer
 from flask_resources import BaseListSchema
+from flask import g
 
 class TestUIJSONSerializer(LocalizedUIJSONSerializer):
     """UI JSON serializer."""
@@ -539,7 +544,41 @@ class TestUIJSONSerializer(LocalizedUIJSONSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=TestUISchema,
             list_schema_cls=BaseListSchema,
-            schema_context={"object_key": "ui"},
+            schema_context={ "object_key": "ui", "identity": g.identity }
         )
 '''
+    )
+
+
+def test_record_item_builder():
+    data = build_python_model(
+        {"properties": {"a": {"type": "keyword"}}},
+        [InvenioRecordItemBuilder],
+        os.path.join("test", "services", "records", "results.py"),
+    )
+
+    assert strip_whitespaces(data) == strip_whitespaces(
+        '''
+from oarepo_runtime.services.results import RecordItem
+ class TestRecordItem(RecordItem):
+ """TestRecord record item."""
+ components=[*RecordItem.components]
+        '''
+    )
+
+
+def test_record_list_builder():
+    data = build_python_model(
+        {"properties": {"a": {"type": "keyword"}}},
+        [InvenioRecordListBuilder],
+        os.path.join("test", "services", "records", "results.py"),
+    )
+
+    assert strip_whitespaces(data) == strip_whitespaces(
+        '''
+from oarepo_runtime.services.results import RecordList
+ class TestRecordList(RecordList):
+ """TestRecord record list."""
+ components=[*RecordList.components]
+        '''
     )

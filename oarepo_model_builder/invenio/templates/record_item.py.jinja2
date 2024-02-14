@@ -1,0 +1,10 @@
+{{ vars.record_item|imports }}
+{% for c in vars.record_item.components %}
+{{ c|code_imports }}
+{% endfor %}
+
+class {{ vars.record_item|class_header }}:
+    """{{ vars.record.class|base_name }} record item."""
+    components = [ {% for b in vars.record_item.base_classes %}*{{ b|base_name }}.components{% if not loop.last %}, {% endif %}{% endfor %}{% for c in vars.record_item.components %}, {{ c|extra_code }} {% endfor %}]
+
+{{ vars.record_item|extra_code }}

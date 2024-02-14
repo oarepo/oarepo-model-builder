@@ -27,6 +27,8 @@ from .model import (
     PIDModelComponent,
     ProxyModelComponent,
     RecordDumperModelComponent,
+    RecordItemModelComponent,
+    RecordListModelComponent,
     RecordMetadataModelComponent,
     RecordModelComponent,
     ResourceModelComponent,
@@ -83,4 +85,6 @@ DEFAULT_COMPONENTS = [
     StringMarshmallowComponent,
     NumberMarshmallowComponent,
     EDTFIntervalDumperModelComponent,
+    RecordListModelComponent,
+    RecordItemModelComponent,
 ]

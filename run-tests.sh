@@ -25,7 +25,6 @@ initialize_server_venv() {
   $SERVER_VENV/bin/pip install -U setuptools pip wheel
   $SERVER_VENV/bin/pip install "oarepo[tests]==${OAREPO_VERSION}.*"
   $SERVER_VENV/bin/pip install -e complex-model
-  $SERVER_VENV/bin/pip install -U pytest
 }
 
 initialize_builder_venv() {
