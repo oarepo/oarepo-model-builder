@@ -213,8 +213,6 @@ def test_prepare_datatype():
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
             "components": [],
-            "result-list-class": "oarepo_runtime.services.results.RecordList",
-            "result-item-class": "invenio_records_resources.services.records.results.RecordItem",
         },
         "service": {
             "generate": True,

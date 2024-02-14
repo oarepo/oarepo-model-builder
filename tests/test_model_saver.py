@@ -205,8 +205,6 @@ def test_model_saver():
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
             "components": [],
-            "result-list-class": "oarepo_runtime.services.results.RecordList",
-            "result-item-class": "invenio_records_resources.services.records.results.RecordItem",
         },
         "service": {
             "generate": True,
@@ -571,8 +569,6 @@ def test_model_saver_invenio():
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
             "components": [],
-            "result-list-class": "oarepo_runtime.services.results.RecordList",
-            "result-item-class": "invenio_records_resources.services.records.results.RecordItem",
         },
         "service": {
             "generate": True,
