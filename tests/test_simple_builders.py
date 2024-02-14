@@ -566,6 +566,7 @@ from oarepo_runtime.services.results import RecordItem
         '''
     )
 
+
 def test_record_list_builder():
     data = build_python_model(
         {"properties": {"a": {"type": "keyword"}}},

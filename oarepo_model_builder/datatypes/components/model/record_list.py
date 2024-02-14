@@ -17,11 +17,11 @@ class RecordListClassSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
 
-    generate = ma.fields.Bool(metadata={"doc": "Generate the service config"})
+    generate = ma.fields.Bool(metadata={"doc": "Generate the record list class"})
     class_ = ma.fields.Str(
         attribute="class",
         data_key="class",
-        metadata={"doc": "Qualified name of the service config class"},
+        metadata={"doc": "Qualified name of the record list class"},
     )
     base_classes = ma.fields.List(
         ma.fields.Str(),
@@ -32,10 +32,10 @@ class RecordListClassSchema(ma.Schema):
     extra_code = ma.fields.Str(
         attribute="extra-code",
         data_key="extra-code",
-        metadata={"doc": "Extra code to be put below the service config class"},
+        metadata={"doc": "Extra code to be put below the record list class"},
     )
     components = ma.fields.List(
-        ma.fields.String(), metadata={"doc": "List of service components"}
+        ma.fields.String(), metadata={"doc": "List of record list components"}
     )
     module = ma.fields.String(metadata={"doc": "Class module"})
     imports = ma.fields.List(

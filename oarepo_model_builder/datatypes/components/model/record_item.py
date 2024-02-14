@@ -8,9 +8,6 @@ from oarepo_model_builder.utils.python_name import (
 from oarepo_model_builder.validation.utils import ImportSchema
 
 from .service import ServiceModelComponent
-
-# from .app import AppModelComponent
-# from .defaults import DefaultsModelComponent
 from .utils import set_default
 
 
@@ -18,11 +15,11 @@ class RecordItemClassSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
 
-    generate = ma.fields.Bool(metadata={"doc": "Generate the service config"})
+    generate = ma.fields.Bool(metadata={"doc": "Generate the record item class"})
     class_ = ma.fields.Str(
         attribute="class",
         data_key="class",
-        metadata={"doc": "Qualified name of the service config class"},
+        metadata={"doc": "Qualified name of the record item class"},
     )
     base_classes = ma.fields.List(
         ma.fields.Str(),
@@ -33,10 +30,10 @@ class RecordItemClassSchema(ma.Schema):
     extra_code = ma.fields.Str(
         attribute="extra-code",
         data_key="extra-code",
-        metadata={"doc": "Extra code to be put below the service config class"},
+        metadata={"doc": "Extra code to be put below the record item class"},
     )
     components = ma.fields.List(
-        ma.fields.String(), metadata={"doc": "List of service components"}
+        ma.fields.String(), metadata={"doc": "List of record item components"}
     )
     module = ma.fields.String(metadata={"doc": "Class module"})
     imports = ma.fields.List(
