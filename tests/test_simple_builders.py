@@ -11,6 +11,8 @@ from oarepo_model_builder.invenio.invenio_record import InvenioRecordBuilder
 from oarepo_model_builder.invenio.invenio_record_dumper import (
     InvenioRecordDumperBuilder,
 )
+from oarepo_model_builder.invenio.invenio_record_item import InvenioRecordItemBuilder
+from oarepo_model_builder.invenio.invenio_record_list import InvenioRecordListBuilder
 from oarepo_model_builder.invenio.invenio_record_metadata import (
     InvenioRecordMetadataBuilder,
 )
@@ -545,4 +547,37 @@ class TestUIJSONSerializer(LocalizedUIJSONSerializer):
             schema_context={ "object_key": "ui", "identity": g.identity }
         )
 '''
+    )
+
+
+def test_record_item_builder():
+    data = build_python_model(
+        {"properties": {"a": {"type": "keyword"}}},
+        [InvenioRecordItemBuilder],
+        os.path.join("test", "services", "records", "results.py"),
+    )
+
+    assert strip_whitespaces(data) == strip_whitespaces(
+        '''
+from oarepo_runtime.services.results import RecordItem
+ class TestRecordItem(RecordItem):
+ """TestRecord record item."""
+ components=[*RecordItem.components]
+        '''
+    )
+
+def test_record_list_builder():
+    data = build_python_model(
+        {"properties": {"a": {"type": "keyword"}}},
+        [InvenioRecordListBuilder],
+        os.path.join("test", "services", "records", "results.py"),
+    )
+
+    assert strip_whitespaces(data) == strip_whitespaces(
+        '''
+from oarepo_runtime.services.results import RecordList
+ class TestRecordList(RecordList):
+ """TestRecord record list."""
+ components=[*RecordList.components]
+        '''
     )
