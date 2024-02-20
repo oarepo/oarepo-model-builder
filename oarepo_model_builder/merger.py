@@ -52,9 +52,11 @@ def merger(source, destination, result, destination_first, overwrite):
             merge_file(
                 fn,
                 destination.joinpath(relative_fn),
-                result.joinpath(relative_fn)
-                if result
-                else destination.joinpath(relative_fn),
+                (
+                    result.joinpath(relative_fn)
+                    if result
+                    else destination.joinpath(relative_fn)
+                ),
                 destination_first,
                 overwrite,
             )

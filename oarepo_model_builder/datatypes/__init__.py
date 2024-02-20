@@ -20,7 +20,6 @@ flatten:
   object represented as flatten type in elasticsearch
 """
 
-
 from .containers import (  # noqa
     ArrayDataType,
     FlatObjectDataType,

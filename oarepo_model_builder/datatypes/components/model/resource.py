@@ -41,6 +41,14 @@ class ResourceClassSchema(ma.Schema):
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
+    additional_args = ma.fields.List(
+        ma.fields.String(),
+        attribute="additional-args",
+        data_key="additional-args",
+        metadata={
+            "doc": "List of additional arguments that will be passed to the resource constructor"
+        },
+    )
     skip = ma.fields.Boolean()
 
 
@@ -87,6 +95,14 @@ class ResourceConfigClassSchema(ma.Schema):
     module = ma.fields.String(metadata={"doc": "Class module"})
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
+    )
+    additional_args = ma.fields.List(
+        ma.fields.String(),
+        attribute="additional-args",
+        data_key="additional-args",
+        metadata={
+            "doc": "List of additional arguments that will be passed to the resource config constructor"
+        },
     )
     skip = ma.fields.Boolean()
 
@@ -137,6 +153,7 @@ class ResourceModelComponent(DataTypeComponent):
             "imports",
             [],
         )
+        resource.setdefault("additional-args", [])
         convert_config_to_qualified_name(resource)
 
         config = set_default(datatype, "resource-config", {})
@@ -161,4 +178,5 @@ class ResourceModelComponent(DataTypeComponent):
             "imports",
             [],
         )
+        config.setdefault("additional-args", [])
         convert_config_to_qualified_name(config)

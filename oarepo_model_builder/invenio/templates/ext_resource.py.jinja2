@@ -6,7 +6,10 @@ class {{ vars.ext|class_header }}:
     @cached_property
     def {{ ext.ext_service_name }}(self):
         return config.{{ vars.service.config_key }}(
-            config=config.{{ vars.service_config.config_key }}(),
+            config=config.{{ vars.service_config.config_key }}(
+            {% if vars.service_config.additional_args %}
+                {{ vars.service_config.additional_args|generate_list }}
+            {% endif %}),
             {% if vars.service.additional_args %}
                 {{ vars.service.additional_args|generate_list }}
             {% endif %}
@@ -18,6 +21,12 @@ class {{ vars.ext|class_header }}:
     def {{ ext.ext_resource_name }}(self):
         return config.{{ vars.resource.config_key }}(
             service=self.{{ ext.ext_service_name }},
-            config=config.{{ vars.resource_config.config_key }}(),
+            config=config.{{ vars.resource_config.config_key }}(
+            {% if vars.resource_config.additional_args %}
+                {{ vars.resource_config.additional_args|generate_list }}
+            {% endif %}),
+            {% if vars.resource.additional_args %}
+                {{ vars.resource.additional_args|generate_list }}
+            {% endif %}
         )
     {% endif %}
