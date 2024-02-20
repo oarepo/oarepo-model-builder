@@ -132,6 +132,7 @@ def test_prepare_datatype():
             "proxy": "current_resource",
             "extra-code": "",
             "base-classes": ["invenio_records_resources.resources.RecordResource"],
+            "additional-args": [],
             "imports": [],
         },
         "resource-config": {
@@ -145,6 +146,7 @@ def test_prepare_datatype():
             "base-classes": [
                 "invenio_records_resources.resources.RecordResourceConfig"
             ],
+            "additional-args": [],
             "imports": [],
         },
         "saved-model": {
@@ -212,6 +214,7 @@ def test_prepare_datatype():
                 "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
+            "additional-args": [],
             "components": [],
         },
         "service": {
@@ -224,6 +227,7 @@ def test_prepare_datatype():
             "base-classes": [
                 "invenio_records_resources.services.RecordService{InvenioRecordService}"
             ],
+            "additional-args": [],
             "imports": [],
         },
         "ui": {
