@@ -126,6 +126,7 @@ def test_model_saver():
             "proxy": "current_resource",
             "extra-code": "",
             "base-classes": ["invenio_records_resources.resources.RecordResource"],
+            "additional-args": [],
             "imports": [],
         },
         "resource-config": {
@@ -139,6 +140,7 @@ def test_model_saver():
             "base-classes": [
                 "invenio_records_resources.resources.RecordResourceConfig"
             ],
+            "additional-args": [],
             "imports": [],
         },
         "saved-model": {
@@ -204,6 +206,7 @@ def test_model_saver():
                 "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
+            "additional-args": [],
             "components": [],
         },
         "service": {
@@ -216,6 +219,7 @@ def test_model_saver():
             "base-classes": [
                 "invenio_records_resources.services.RecordService{InvenioRecordService}"
             ],
+            "additional-args": [],
             "imports": [],
         },
         "ui": {
@@ -490,6 +494,7 @@ def test_model_saver_invenio():
             "proxy": "current_resource",
             "extra-code": "",
             "base-classes": ["invenio_records_resources.resources.RecordResource"],
+            "additional-args": [],
             "imports": [],
         },
         "resource-config": {
@@ -503,6 +508,7 @@ def test_model_saver_invenio():
             "base-classes": [
                 "invenio_records_resources.resources.RecordResourceConfig"
             ],
+            "additional-args": [],
             "imports": [],
         },
         "saved-model": {
@@ -568,6 +574,7 @@ def test_model_saver_invenio():
                 "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
+            "additional-args": [],
             "components": [],
         },
         "service": {
@@ -580,6 +587,7 @@ def test_model_saver_invenio():
             "base-classes": [
                 "invenio_records_resources.services.RecordService{InvenioRecordService}"
             ],
+            "additional-args": [],
             "imports": [],
         },
         "json-serializer": {

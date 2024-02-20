@@ -40,6 +40,14 @@ class ServiceClassSchema(ma.Schema):
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
+    additional_args = ma.fields.List(
+        ma.fields.String(),
+        attribute="additional-args",
+        data_key="additional-args",
+        metadata={
+            "doc": "List of additional arguments that will be passed to the service constructor"
+        },
+    )
     skip = ma.fields.Boolean()
 
 
@@ -80,6 +88,14 @@ class ServiceConfigClassSchema(ma.Schema):
     module = ma.fields.String(metadata={"doc": "Class module"})
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
+    )
+    additional_args = ma.fields.List(
+        ma.fields.String(),
+        attribute="additional-args",
+        data_key="additional-args",
+        metadata={
+            "doc": "List of additional arguments that will be passed to the service config constructor"
+        },
     )
     skip = ma.fields.Boolean()
 
@@ -132,6 +148,7 @@ class ServiceModelComponent(DataTypeComponent):
             ],
         )
         config.setdefault("components", [])
+        config.setdefault("additional-args", [])
         convert_config_to_qualified_name(config)
 
         service = set_default(datatype, "service", {})
@@ -153,4 +170,5 @@ class ServiceModelComponent(DataTypeComponent):
             "imports",
             [],
         )
+        service.setdefault("additional-args", [])
         convert_config_to_qualified_name(service)
