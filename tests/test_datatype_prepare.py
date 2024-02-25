@@ -123,6 +123,7 @@ def test_prepare_datatype():
             ],
             "imports": [],
             "extra-code": "",
+            "fields": {},
         },
         "resource": {
             "generate": True,

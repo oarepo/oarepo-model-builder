@@ -117,6 +117,7 @@ def test_model_saver():
             ],
             "imports": [],
             "extra-code": "",
+            "fields": {},
         },
         "resource": {
             "generate": True,
@@ -485,6 +486,7 @@ def test_model_saver_invenio():
             ],
             "imports": [],
             "extra-code": "",
+            "fields": {},
         },
         "resource": {
             "generate": True,
