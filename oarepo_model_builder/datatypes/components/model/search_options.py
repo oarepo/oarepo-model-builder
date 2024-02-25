@@ -41,6 +41,12 @@ class RecordSearchOptionsSchema(ma.Schema):
         data_key="sort-options-field",
     )
 
+    fields = ma.fields.Dict(
+        keys=ma.fields.Str(),
+        values=ma.fields.Str(),
+        metadata={"doc": "Fields to be used in search options"},
+    )
+
 
 class SearchOptionsModelComponent(DataTypeComponent):
     eligible_datatypes = [ModelDataType]
@@ -76,5 +82,9 @@ class SearchOptionsModelComponent(DataTypeComponent):
         record_search_options.setdefault(
             "imports",
             [],
+        )
+        record_search_options.setdefault(
+            "fields",
+            {},
         )
         record_search_options.setdefault("sort-options-field", "sort_options")

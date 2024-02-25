@@ -70,6 +70,7 @@ def test_model_saver():
                 "invenio_records_resources.services.SearchOptions{InvenioSearchOptions}"
             ],
             "imports": [],
+            "fields": {},
             "sort-options-field": "sort_options",
         },
         "config": {
@@ -439,6 +440,7 @@ def test_model_saver_invenio():
                 "invenio_records_resources.services.SearchOptions{InvenioSearchOptions}"
             ],
             "imports": [],
+            "fields": {},
             "sort-options-field": "sort_options",
         },
         "config": {
