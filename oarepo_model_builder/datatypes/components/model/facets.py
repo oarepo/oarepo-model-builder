@@ -24,6 +24,16 @@ class FacetsSchema(ma.Schema):
     )
     generate = ma.fields.Boolean()
     skip = ma.fields.Boolean()
+    facet_groups = ma.fields.Dict(
+        attribute="facet-groups",
+        data_key="facet-groups",
+        keys=ma.fields.String(),
+        values=ma.fields.Dict(keys=ma.fields.String(), values=ma.fields.Integer()),
+        metadata={
+            "doc": "Groups of facets in the form of {group_name: {facet_path: priority}}. Will merge with facet "
+            "groups declared on the individual fields."
+        },
+    )
 
 
 class FacetsModelComponent(ObjectFacetsComponent):
@@ -45,6 +55,7 @@ class FacetsModelComponent(ObjectFacetsComponent):
         facets.setdefault("module", f"{module}.services.{profile_module}.facets")
 
         facets.setdefault("extra-code", "")
+        facets.setdefault("groups", True)
 
     def build_facet_definition(
         self,
