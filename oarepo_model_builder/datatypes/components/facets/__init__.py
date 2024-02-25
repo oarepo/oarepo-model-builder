@@ -14,7 +14,7 @@ class FacetDefinition:
     dot_path: str
     searchable: bool
     imports: List[Dict[str, str]]
-    facet_groups: List[str]
+    facet_groups: Dict[str, int]
     facet: Optional[bool]
     field: Optional[str] = None
 
