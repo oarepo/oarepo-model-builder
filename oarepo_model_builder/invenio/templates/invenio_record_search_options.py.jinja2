@@ -3,6 +3,10 @@
 from oarepo_runtime.i18n import lazy_gettext as _
 from . import facets
 
+{% for extra_field_value in vars.search_options.fields.values() %}
+{{ extra_field_value|code_imports }}
+{% endfor %}
+
 
 class {{ vars.search_options| class_header }}:
     """{{ vars.record.class|base_name }} search options."""
@@ -49,5 +53,8 @@ class {{ vars.search_options| class_header }}:
 {% endfor %}
     }
 {% endif %}
+{% for extra_field_name, extra_field_value in vars.search_options.fields.items() %}
+    {{ extra_field_name }} = {{ extra_field_value|extra_code }}
+{% endfor %}
 
 {{ vars.search_options|extra_code }}

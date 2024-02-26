@@ -316,40 +316,19 @@ class TestSearchOptions(BaseSearchOptions):
     \"""TestRecord search options.\"""
 
     facet_groups ={
-        
             'curator': {
-                
                     'a' : facets.a,
-
-                
                     'g' : facets.g,
-
-                
-            
                 **getattr(BaseSearchOptions, 'facet_groups', {}).get('curator', {})
-            
             },
-        
-            'user': {
-                
-                    'a' : facets.a,
-
-                
-            
-                **getattr(BaseSearchOptions, 'facet_groups', {}).get('user', {})
-            
-            },
-        
             'default': {
-                
                     'b3' : facets.b3,
-
-                
-            
                 **getattr(BaseSearchOptions, 'facet_groups', {}).get('default', {})
-            
             },
-        
+            'user': {
+                    'a' : facets.a,
+                **getattr(BaseSearchOptions, 'facet_groups', {}).get('user', {})
+            },
     }
 
     facets = {
@@ -379,6 +358,140 @@ class TestSearchOptions(BaseSearchOptions):
 
     }
     """,
+    )
+
+
+def test_facet_groups_ordering():
+    schema = load_model(
+        DUMMY_YAML,
+        model_content={
+            "record": {
+                "use": "invenio",
+                "module": {"qualified": "test"},
+                "search-options": {
+                    "base-classes": ["BaseSearchOptions"],
+                    "imports": [{"import": "blah.BaseSearchOptions"}],
+                },
+                "properties": {
+                    "a": {
+                        "type": "keyword",
+                        "facets": {"facet-groups": {"curator": 2}},
+                    },
+                    "b": {
+                        "type": "keyword",
+                        "facets": {"facet-groups": {"curator": 3}},
+                    },
+                    "c": {
+                        "type": "keyword",
+                        "facets": {"facet-groups": {"curator": 1}},
+                    },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+        autoflake=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "record", ["record"], "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "search.py")
+    ).read()
+    print(data)
+    data2 = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data2)
+    data3 = builder.filesystem.read(
+        os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+    )
+    import json
+
+    data3 = json.loads(data3)
+    print(data3)
+    assert (
+        strip_whitespaces(
+            """
+                 'c': facets.c,
+                 'a': facets.a,
+                 'b': facets.b,
+    """
+        )
+        in strip_whitespaces(data)
+    )
+
+
+def test_top_level_facet_groups_ordering():
+    schema = load_model(
+        DUMMY_YAML,
+        model_content={
+            "record": {
+                "use": "invenio",
+                "module": {"qualified": "test"},
+                "search-options": {
+                    "base-classes": ["BaseSearchOptions"],
+                    "imports": [{"import": "blah.BaseSearchOptions"}],
+                },
+                "facets": {
+                    "facet-groups": {
+                        "curator": {
+                            "a": 2,
+                            "b": 3,
+                            "c": 1,
+                        }
+                    }
+                },
+                "properties": {
+                    "a": {
+                        "type": "keyword",
+                    },
+                    "b": {
+                        "type": "keyword",
+                    },
+                    "c": {
+                        "type": "keyword",
+                    },
+                },
+            },
+        },
+        isort=False,
+        black=False,
+        autoflake=False,
+    )
+
+    filesystem = InMemoryFileSystem()
+    builder = create_builder_from_entrypoints(filesystem=filesystem)
+
+    builder.build(schema, "record", ["record"], "")
+
+    data = builder.filesystem.open(
+        os.path.join("test", "services", "records", "search.py")
+    ).read()
+    print(data)
+    data2 = builder.filesystem.open(
+        os.path.join("test", "services", "records", "facets.py")
+    ).read()
+    print(data2)
+    data3 = builder.filesystem.read(
+        os.path.join("test", "records", "mappings", "os-v2", "test", "test-1.0.0.json")
+    )
+    import json
+
+    data3 = json.loads(data3)
+    print(data3)
+    assert (
+        strip_whitespaces(
+            """
+                 'c': facets.c,
+                 'a': facets.a,
+                 'b': facets.b,
+    """
+        )
+        in strip_whitespaces(data)
     )
 
 

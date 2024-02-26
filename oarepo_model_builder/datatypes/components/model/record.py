@@ -36,6 +36,11 @@ class RecordClassSchema(ma.Schema):
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
     )
     skip = ma.fields.Boolean()
+    fields = ma.fields.Dict(
+        attribute="fields",
+        data_key="fields",
+        metadata={"doc": "Extra fields to add to the class"},
+    )
 
 
 class RecordModelComponent(DataTypeComponent):
@@ -65,4 +70,5 @@ class RecordModelComponent(DataTypeComponent):
             [],
         )
         record.setdefault("extra-code", "")
+        record.setdefault("fields", {})
         convert_config_to_qualified_name(record)

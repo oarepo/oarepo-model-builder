@@ -9,6 +9,11 @@ from invenio_records_resources.records.systemfields import IndexField
 {{ vars.record_dumper.class|imports }}
 {{ vars.record|imports }}
 
+{% for extra_field_value in vars.record.fields.values() %}
+{{ extra_field_value|code_imports }}
+{% endfor %}
+
+
 class {{ vars.record|class_header }}:
 {% if not vars.record_metadata.skip %}
     model_cls = {{ vars.record_metadata.class|base_name }}
@@ -30,5 +35,8 @@ class {{ vars.record|class_header }}:
 {% if not vars.record_dumper.skip %}
     dumper = {{ vars.record_dumper.class|base_name }}()
 {% endif %}
+{% for extra_field_name, extra_field_value in vars.record.fields.items() %}
+    {{ extra_field_name }} = {{ extra_field_value|extra_code }}
+{% endfor %}
 
 {{ vars.record|extra_code }}

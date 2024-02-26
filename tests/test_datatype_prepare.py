@@ -76,6 +76,7 @@ def test_prepare_datatype():
                 "invenio_records_resources.services.SearchOptions{InvenioSearchOptions}"
             ],
             "imports": [],
+            "fields": {},
             "sort-options-field": "sort_options",
         },
         "config": {
@@ -112,6 +113,7 @@ def test_prepare_datatype():
         "facets": {
             "generate": True,
             "module": "my.test.services.records.facets",
+            'groups': True,
             "extra-code": "",
         },
         "record": {
@@ -123,6 +125,7 @@ def test_prepare_datatype():
             ],
             "imports": [],
             "extra-code": "",
+            "fields": {},
         },
         "resource": {
             "generate": True,

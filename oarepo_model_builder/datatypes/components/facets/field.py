@@ -9,6 +9,20 @@ from ...datatypes import DataTypeComponent
 from . import FacetDefinition
 
 
+class FacetGroupsDict(fields.Dict):
+    def _deserialize(self, value, attr, data, **kwargs):
+        transformed_value = {}
+        if isinstance(value, list):
+            for val in value:
+                if isinstance(val, str):
+                    transformed_value[val] = 100000
+                else:
+                    transformed_value.update(val)
+        else:
+            transformed_value = value
+        return super()._deserialize(transformed_value, attr, data, **kwargs)
+
+
 class FacetsSchema(ma.Schema):
     class Meta:
         unknown = ma.RAISE
@@ -23,8 +37,9 @@ class FacetsSchema(ma.Schema):
     imports = fields.List(fields.Nested(ImportSchema), required=False)
     path = fields.String(required=False)
     keyword = fields.String(required=False)
-    facet_groups = fields.List(
-        fields.String(),
+    facet_groups = FacetGroupsDict(
+        keys=fields.String(),
+        values=fields.Integer(),
         required=False,
         data_key="facet-groups",
         attribute="facet-groups",
@@ -60,7 +75,7 @@ class RegularFacetsComponent(DataTypeComponent):
             searchable=facet_section.get("searchable"),
             imports=facet_section.get("imports", []),
             facet=facet_section.get("facet", None),
-            facet_groups=facet_section.get("facet-groups", ["_default"]),
+            facet_groups=facet_section.get("facet-groups", {"_default": 100000}),
         )
 
         # set the field on the definition

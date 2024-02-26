@@ -70,6 +70,7 @@ def test_model_saver():
                 "invenio_records_resources.services.SearchOptions{InvenioSearchOptions}"
             ],
             "imports": [],
+            "fields": {},
             "sort-options-field": "sort_options",
         },
         "config": {
@@ -106,6 +107,7 @@ def test_model_saver():
         "facets": {
             "generate": True,
             "module": "test.services.records.facets",
+            'groups': True,
             "extra-code": "",
         },
         "record": {
@@ -117,6 +119,7 @@ def test_model_saver():
             ],
             "imports": [],
             "extra-code": "",
+            "fields": {},
         },
         "resource": {
             "generate": True,
@@ -438,6 +441,7 @@ def test_model_saver_invenio():
                 "invenio_records_resources.services.SearchOptions{InvenioSearchOptions}"
             ],
             "imports": [],
+            "fields": {},
             "sort-options-field": "sort_options",
         },
         "config": {
@@ -474,6 +478,7 @@ def test_model_saver_invenio():
         "facets": {
             "generate": True,
             "module": "test.services.records.facets",
+            "groups": True,
             "extra-code": "",
         },
         "record": {
@@ -485,6 +490,7 @@ def test_model_saver_invenio():
             ],
             "imports": [],
             "extra-code": "",
+            "fields": {},
         },
         "resource": {
             "generate": True,
