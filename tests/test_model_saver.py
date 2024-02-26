@@ -107,6 +107,7 @@ def test_model_saver():
         "facets": {
             "generate": True,
             "module": "test.services.records.facets",
+            'groups': True,
             "extra-code": "",
         },
         "record": {
