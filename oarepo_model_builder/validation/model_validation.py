@@ -38,8 +38,16 @@ class SettingsOpenSearchSchema(ma.Schema):
 
 
 class MarshmallowSettingsSchema(ma.Schema):
-    schema_base_class = ma.fields.String()
-    ui_schema_base_class = ma.fields.String()
+    schema_base_class = ma.fields.String(
+        attribute="schema-base-class",
+        data_key="schema-base-class",
+        default="oarepo_runtime.services.schema.marshmallow.DictOnlySchema",
+    )
+    ui_schema_base_class = ma.fields.String(
+        attribute="ui-schema-base-class",
+        data_key="ui-schema-base-class",
+        default="oarepo_runtime.services.schema.marshmallow.DictOnlySchema",
+    )
 
 
 class SettingsSchema(ma.Schema):
