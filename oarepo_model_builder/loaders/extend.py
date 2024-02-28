@@ -12,7 +12,11 @@ def extract_extended_record(included_data, *, context, **kwargs):
     and keep those in "other_properties" inside the context so that other processors
     can add some of those selectively.
     """
-    if "record" in included_data:
+    if (
+        "record" in included_data
+        and "properties" in included_data["record"]
+        and "properties" not in included_data
+    ):
         extended_object = included_data["record"]
     elif "properties" in included_data:
         extended_object = included_data
