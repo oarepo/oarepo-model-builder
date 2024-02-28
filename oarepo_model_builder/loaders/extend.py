@@ -39,7 +39,7 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
     generated again.
     """
 
-    def remove_marshmallow_from_children(node, top_level=False):
+    def remove_marshmallow_from_children(node):
         ret = {**node}
         node_properties = ret.pop("properties", None)
         node_items = ret.pop("items", None)
