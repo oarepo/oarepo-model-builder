@@ -127,7 +127,7 @@ def post_extend_modify_marshmallow(*, element, **kwargs):
 
             if "items" in node:
                 # array itself does not have a marshmallow, so no need to modify this
-                new_marshmallow.update(base_marshmallow)
+                _update_non_existing(new_marshmallow, base_marshmallow)
                 return
 
             if "properties" not in node:
@@ -160,11 +160,12 @@ def post_extend_modify_marshmallow(*, element, **kwargs):
             elif contains_only_inherited_properties:
                 # keep the base class marshmallow, but do not generate the class as it has been generated
                 # in the extended library
+                new_marshmallow.clear()
                 new_marshmallow.update(base_marshmallow)
                 new_marshmallow["generate"] = False
 
             else:
-                new_marshmallow.update(base_marshmallow)
+                _update_non_existing(new_marshmallow, base_marshmallow)
 
         update_marshmallow(node.setdefault("marshmallow", {}), base_class_marshmallow)
         update_marshmallow(
@@ -175,3 +176,9 @@ def post_extend_modify_marshmallow(*, element, **kwargs):
         return contains_only_inherited_properties
 
     convert_schema_classes(element)
+
+
+def _update_non_existing(target, source):
+    for k, v in source.items():
+        if k not in target:
+            target[k] = v
