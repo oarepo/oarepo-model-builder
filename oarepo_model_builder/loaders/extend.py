@@ -1,6 +1,5 @@
 from oarepo_model_builder.schema import ModelSchema
 from oarepo_model_builder.utils.python_name import package_name
-from oarepo_model_builder.validation import InvalidModelException
 
 
 def extract_extended_record(included_data, *, context, **kwargs):
@@ -40,26 +39,11 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
     generated again.
     """
 
-    def remove_marshmallow_from_children(node):
+    def remove_marshmallow_from_children(node, top_level=False):
         ret = {**node}
         node_properties = ret.pop("properties", None)
         node_items = ret.pop("items", None)
-
-        if "marshmallow" in ret:
-            convert_marshmallow_class_to_base_class(ret["marshmallow"])
-        elif "properties" in ret:
-            raise InvalidModelException(
-                f"marshmallow section not in object {node}. "
-                f"Please pass generated model (records.json5), not the source model."
-            )
-
-        if "ui" in ret and "marshmallow" in ret["ui"]:
-            convert_marshmallow_class_to_base_class(ret["ui"]["marshmallow"])
-        elif "properties" in ret:
-            raise InvalidModelException(
-                f"ui.marshmallow section not in object {node}. "
-                f"Please pass generated model (records.json5), not the source model."
-            )
+        ret["from-base-class"] = True
 
         if node_properties:
             properties = ret.setdefault("properties", {})
@@ -70,6 +54,10 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
         if node_items:
             remove_marshmallow_from_child(node.item)
             ret["items"] = remove_marshmallow_from_children(node.item)
+        ret["base-class-marshmallow"] = ret.pop("marshmallow", {})
+        ret["base-class-ui-marshmallow"] = ret.setdefault("ui", {}).pop(
+            "marshmallow", {}
+        )
         return ret
 
     def remove_marshmallow_from_child(child):
@@ -83,6 +71,13 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
 
             ui_marshmallow = child.setdefault("ui", {}).setdefault("marshmallow", {})
             ui_marshmallow.update({"read": False, "write": False})
+        elif "properties" in child:
+            # if there are properties, mark the object to not generate the class
+            marshmallow = child.setdefault("marshmallow", {})
+            marshmallow.update({"generate": False})
+
+            ui_marshmallow = child.setdefault("ui", {}).setdefault("marshmallow", {})
+            ui_marshmallow.update({"generate": False})
 
     def convert_marshmallow_class_to_base_class(marshmallow):
         # pop module & package
@@ -124,7 +119,7 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
 
     included_data["marshmallow"] = context["props"].get("marshmallow", {})
     included_data["ui"] = context["props"].get("ui", {})
-    ret = remove_marshmallow_from_children(included_data)
+    ret = remove_marshmallow_from_children(included_data, True)
 
     for ext in (
         ModelSchema.EXTEND_KEYWORD,
@@ -136,3 +131,67 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
 
     replace_use_with_extend(ret)
     return ret
+
+
+def post_extend_modify_marshmallow(*, element, context, **kwargs):
+    def convert_schema_classes(node):
+        node_properties = node.get("properties", None)
+        node_items = node.get("items", None)
+
+        was_inherited = "from-base-class" in node
+        if not was_inherited:
+            return False
+
+        contains_only_inherited_properties = node.pop("from-base-class", False)
+        if node_properties:
+            for k, v in node_properties.items():
+                prop_contains_only_inherited_properties = convert_schema_classes(v)
+                if not prop_contains_only_inherited_properties:
+                    contains_only_inherited_properties = False
+        elif node_items:
+            contains_only_inherited_properties = (
+                convert_schema_classes(node_items)
+                and contains_only_inherited_properties
+            )
+        base_class_marshmallow = node.pop("base-class-marshmallow", {})
+        base_class_ui_marshmallow = node.pop("base-class-ui-marshmallow", {})
+
+        def update_marshmallow(new_marshmallow, base_marshmallow):
+            if new_marshmallow.get("generate", True) is False:
+                return
+
+            is_object = "properties" in node
+            if not is_object:
+                new_marshmallow.update(base_marshmallow)
+                return
+
+            convert_to_base_classes = (
+                node_properties and not contains_only_inherited_properties
+            )
+            if "class" in new_marshmallow:
+                # someone added class to the new_marshmallow, so we do not want to change it
+                convert_to_base_classes = True
+
+            if convert_to_base_classes:
+                if "class" in base_marshmallow:
+                    new_marshmallow.setdefault("base-classes", []).insert(
+                        0, base_marshmallow["class"]
+                    )
+                new_marshmallow["generate"] = True
+
+            elif contains_only_inherited_properties:
+                new_marshmallow.update(base_marshmallow)
+                new_marshmallow["generate"] = False
+
+            else:
+                new_marshmallow.update(base_marshmallow)
+
+        update_marshmallow(node.setdefault("marshmallow", {}), base_class_marshmallow)
+        update_marshmallow(
+            node.setdefault("ui", {}).setdefault("marshmallow", {}),
+            base_class_ui_marshmallow,
+        )
+
+        return contains_only_inherited_properties
+
+    convert_schema_classes(element)
