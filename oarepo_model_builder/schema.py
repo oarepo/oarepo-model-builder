@@ -26,6 +26,7 @@ class ModelSchema:
         validate=True,
         source_locations=None,
         reference_processors=None,
+        post_reference_processors=None,
     ):
         """
         Creates and parses model schema
@@ -48,7 +49,15 @@ class ModelSchema:
                 self.USE_KEYWORD: [],
                 self.EXTEND_KEYWORD: [],
             },
-            reference_processors,
+            reference_processors or {},
+        )
+        self._post_reference_processors = deepmerge(
+            {
+                self.REF_KEYWORD: [],
+                self.USE_KEYWORD: [],
+                self.EXTEND_KEYWORD: [],
+            },
+            post_reference_processors or {},
         )
 
         if content is not None:
@@ -234,6 +243,13 @@ class ModelSchema:
                 context=context,
             )
         deepmerge(element, included_data, [], listmerge="keep")
+        for rp in self._post_reference_processors[key]:
+            rp(
+                element=element,
+                key=key,
+                name=name,
+                context=context,
+            )
 
     @property
     def abs_path(self):

@@ -5,6 +5,7 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.loaders.extend import (
     extend_modify_marshmallow,
     extract_extended_record,
+    post_extend_modify_marshmallow,
 )
 from oarepo_model_builder.schema import ModelSchema
 
@@ -26,24 +27,28 @@ def test_extend_marshmallow():
                 extend_modify_marshmallow,
             ]
         },
+        post_reference_processors={
+            ModelSchema.EXTEND_KEYWORD: [
+                post_extend_modify_marshmallow,
+            ]
+        },
     )
     builder.build(model, "record", ["record"], "")
 
     loaded_model = json5.loads(fs.read("test/models/records.json"))
     assert loaded_model["model"]["marshmallow"] == {
-        "base-classes": ["aaa.BlahSchema"],
-        "class": "test.services.records.schema.TestSchema",
+        "base-classes": ["marshmallow.Schema"],
+        "class": "aaa.BlahSchema",
         "extra-code": "",
-        "generate": True,
-        "imports": [{"alias": "aaa", "import": "aaa"}],
+        "generate": False,
         "module": "test.services.records.schema",
     }
     assert loaded_model["model"]["ui"]["marshmallow"] == {
-        "base-classes": ["aaa.BlahUISchema"],
-        "class": "test.services.records.ui_schema.TestUISchema",
+        "base-classes": ["oarepo_runtime.services.schema.ui.InvenioUISchema"],
+        "class": "aaa.BlahUISchema",
         "extra-code": "",
-        "generate": True,
-        "imports": [{"alias": "aaa", "import": "aaa"}],
+        "generate": False,
+        "imports": [],
         "module": "test.services.records.ui_schema",
     }
     # assert that "a" is read & write false
@@ -53,17 +58,10 @@ def test_extend_marshmallow():
     assert property_a["ui"]["marshmallow"]["read"] is False
     assert property_a["ui"]["marshmallow"]["write"] is False
 
-    schema = fs.read("test/services/records/schema.py")
-    print(schema)
-    assert "class TestSchema(BlahSchema)" in schema
-    assert "class TestMetadataSchema(BlahMetadataSchema)" in schema
-    assert "metadata = ma_fields.Nested(lambda: TestMetadataSchema())" in schema
-
-    schema = fs.read("test/services/records/ui_schema.py")
-    print(schema)
-    assert "class TestUISchema(BlahUISchema)" in schema
-    assert "class TestMetadataUISchema(BlahMetadataUISchema)" in schema
-    assert "metadata = ma_fields.Nested(lambda: TestMetadataUISchema())" in schema
+    service_config = fs.read("test/services/records/config.py")
+    print(service_config)
+    assert "from aaa import BlahSchema" in service_config
+    assert "schema = BlahSchema" in service_config
 
 
 extension_model = {
