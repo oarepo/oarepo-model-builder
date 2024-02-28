@@ -1,5 +1,4 @@
 from oarepo_model_builder.schema import ModelSchema
-from oarepo_model_builder.utils.python_name import package_name
 
 
 def extract_extended_record(included_data, *, context, **kwargs):
@@ -31,15 +30,11 @@ def extract_extended_record(included_data, *, context, **kwargs):
 
 def extend_modify_marshmallow(included_data, *, context, **kwargs):
     """
-    This processor modified marshmallow of the extended object. At first, it puts
-    marshmallow and ui back to the included data. Then, for the top-level marshmallow & ui.marshmallow
-    it converts class -> base-classes and adds import for that.
-    For the properties, it marks them as read=False and write=False and for each object, it marks it as
-    generate=False - this way, the classes will be reused from the already existing library and not
-    generated again.
+    This processor moves the marshmallow section of the base record to base-class-marshmallow
+    and base-class-ui-marshmallow. It also sets the from-base-class flag to True.
     """
 
-    def remove_marshmallow_from_children(node):
+    def mark_as_from_base_class(node):
         ret = {**node}
         node_properties = ret.pop("properties", None)
         node_items = ret.pop("items", None)
@@ -48,49 +43,15 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
         if node_properties:
             properties = ret.setdefault("properties", {})
             for k, v in node_properties.items():
-                remove_marshmallow_from_child(v)
-                v = remove_marshmallow_from_children(v)
+                v = mark_as_from_base_class(v)
                 properties[k] = v
         if node_items:
-            remove_marshmallow_from_child(node.item)
-            ret["items"] = remove_marshmallow_from_children(node.item)
+            ret["items"] = mark_as_from_base_class(node.item)
         ret["base-class-marshmallow"] = ret.pop("marshmallow", {})
         ret["base-class-ui-marshmallow"] = ret.setdefault("ui", {}).pop(
             "marshmallow", {}
         )
         return ret
-
-    def remove_marshmallow_from_child(child):
-        # for object/nested, do not set the read & write to False because
-        # the extending schema might add more properties.
-        # This will generate unnecessary classes, but these might be dealt
-        # on later in marshmallow generator
-        if "properties" not in child and "items" not in child:
-            marshmallow = child.setdefault("marshmallow", {})
-            marshmallow.update({"read": False, "write": False})
-
-            ui_marshmallow = child.setdefault("ui", {}).setdefault("marshmallow", {})
-            ui_marshmallow.update({"read": False, "write": False})
-        elif "properties" in child:
-            # if there are properties, mark the object to not generate the class
-            marshmallow = child.setdefault("marshmallow", {})
-            marshmallow.update({"generate": False})
-
-            ui_marshmallow = child.setdefault("ui", {}).setdefault("marshmallow", {})
-            ui_marshmallow.update({"generate": False})
-
-    def convert_marshmallow_class_to_base_class(marshmallow):
-        # pop module & package
-        marshmallow.pop("module", None)
-        marshmallow.pop("package", None)
-
-        if "class" not in marshmallow:
-            return
-        clz = marshmallow.pop("class")
-        marshmallow.setdefault("base-classes", []).insert(0, clz)
-        marshmallow.setdefault("imports", []).append(
-            {"import": package_name(clz), "alias": package_name(clz)}
-        )
 
     def as_array(x):
         if isinstance(x, list):
@@ -119,7 +80,7 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
 
     included_data["marshmallow"] = context["props"].get("marshmallow", {})
     included_data["ui"] = context["props"].get("ui", {})
-    ret = remove_marshmallow_from_children(included_data)
+    ret = mark_as_from_base_class(included_data)
 
     for ext in (
         ModelSchema.EXTEND_KEYWORD,
@@ -133,7 +94,7 @@ def extend_modify_marshmallow(included_data, *, context, **kwargs):
     return ret
 
 
-def post_extend_modify_marshmallow(*, element, context, **kwargs):
+def post_extend_modify_marshmallow(*, element, **kwargs):
     def convert_schema_classes(node):
         node_properties = node.get("properties", None)
         node_items = node.get("items", None)
@@ -158,28 +119,47 @@ def post_extend_modify_marshmallow(*, element, context, **kwargs):
 
         def update_marshmallow(new_marshmallow, base_marshmallow):
             if new_marshmallow.get("generate", True) is False:
+                # the class is set to not generate -> if there is a class, do not change it,
+                # if not, set it to the base class
+                if not new_marshmallow.get("class") and base_marshmallow.get("class"):
+                    new_marshmallow["class"] = base_marshmallow["class"]
                 return
 
-            is_object = "properties" in node
-            if not is_object:
+            if "items" in node:
+                # array itself does not have a marshmallow, so no need to modify this
                 new_marshmallow.update(base_marshmallow)
                 return
 
+            if "properties" not in node:
+                # primitive data type -> set it not to be generated unless the field says otherwise
+                if "read" not in new_marshmallow:
+                    new_marshmallow["read"] = False
+                if "write" not in new_marshmallow:
+                    new_marshmallow["write"] = False
+                for k, v in base_marshmallow.items():
+                    if k not in new_marshmallow:
+                        new_marshmallow[k] = v
+                return
+
+            # now we have an object to modify - convert to base classes only if there are extra properties
             convert_to_base_classes = (
                 node_properties and not contains_only_inherited_properties
             )
+
             if "class" in new_marshmallow:
                 # someone added class to the new_marshmallow, so we do not want to change it
                 convert_to_base_classes = True
 
             if convert_to_base_classes:
-                if "class" in base_marshmallow:
+                if base_marshmallow.get("class"):
                     new_marshmallow.setdefault("base-classes", []).insert(
                         0, base_marshmallow["class"]
                     )
                 new_marshmallow["generate"] = True
 
             elif contains_only_inherited_properties:
+                # keep the base class marshmallow, but do not generate the class as it has been generated
+                # in the extended library
                 new_marshmallow.update(base_marshmallow)
                 new_marshmallow["generate"] = False
 
