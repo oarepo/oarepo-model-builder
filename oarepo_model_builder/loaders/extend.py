@@ -152,9 +152,7 @@ def post_extend_modify_marshmallow(*, element, **kwargs):
 
             if convert_to_base_classes:
                 if base_marshmallow.get("class"):
-                    new_marshmallow.setdefault("base-classes", []).insert(
-                        0, base_marshmallow["class"]
-                    )
+                    new_marshmallow["base-classes"] = [base_marshmallow["class"]]
                 new_marshmallow["generate"] = True
 
             elif contains_only_inherited_properties:
