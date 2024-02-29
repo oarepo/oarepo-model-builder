@@ -67,7 +67,23 @@ class ModelSchema:
             for fp in merged_models or []:
                 self.schema = deepmerge(self.schema, copy.deepcopy(self._load(fp)))
 
-        self._resolve_references(self.schema, [])
+        reference_count = 1
+        while reference_count:
+            reference_count = self._resolve_references(
+                self.schema,
+                [],
+                {
+                    self.REF_KEYWORD,
+                    self.USE_KEYWORD,
+                },
+            )
+            reference_count += self._resolve_references(
+                self.schema,
+                [],
+                {
+                    self.EXTEND_KEYWORD,
+                },
+            )
 
         self._resolve_shortcuts(self.schema)
 
@@ -185,38 +201,38 @@ class ModelSchema:
             for v in element:
                 self._resolve_shortcuts(v)
 
-    def _resolve_references(self, element, stack):
+    def _resolve_references(self, element, stack, only_keys):
+        resolved_count = 0
         if isinstance(element, dict):
             # find a reference and if there is one, resolve it
             modified = True
             while modified:
                 modified = False
                 for key in list(element.keys()):
-                    if key not in (
-                        self.USE_KEYWORD,
-                        self.REF_KEYWORD,
-                        self.EXTEND_KEYWORD,
-                    ):
+                    if key not in only_keys:
                         continue
-                    self._resolve_reference_key(element, key, stack)
+                    resolved_count += self._resolve_reference_key(
+                        element, key, stack, only_keys
+                    )
                     # it is possible that the reference introduced another reference,
                     # so try it once again
                     modified = True
 
             for k, v in element.items():
-                self._resolve_references(v, stack + [k])
+                resolved_count += self._resolve_references(v, stack + [k], only_keys)
 
         elif isinstance(element, list):
             for v in element:
-                self._resolve_references(v, stack)
+                resolved_count += self._resolve_references(v, stack, only_keys)
+        return resolved_count
 
-    def _resolve_reference_key(self, element, key, stack):
+    def _resolve_reference_key(self, element, key, stack, only_keys):
         included_name = element[key]
 
         # if it is a dictionary, then probably it is a name of a property,
         # so keep it
         if isinstance(included_name, dict):
-            return self._resolve_references(element, stack)
+            return self._resolve_references(element, stack, only_keys)
 
         # not a dict, so pop the key
         element.pop(key)
@@ -229,6 +245,8 @@ class ModelSchema:
                     f"No file for use at path {'/'.join(stack)}"
                 )
             self._load_and_merge_reference(element, key, name, stack)
+        # it was resolved => return number of resolved references (1)
+        return 1
 
     def _load_and_merge_reference(self, element, key, name, stack):
         included_data = self._load_included_file(name)
