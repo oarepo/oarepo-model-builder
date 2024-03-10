@@ -14,7 +14,7 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.outputs.cfg import CFGOutput
 from oarepo_model_builder.outputs.json import JSONOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 try:
     import json5
@@ -107,7 +107,7 @@ def test_model_saver():
         "facets": {
             "generate": True,
             "module": "test.services.records.facets",
-            'groups': True,
+            "groups": True,
             "extra-code": "",
         },
         "record": {

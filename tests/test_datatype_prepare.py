@@ -1,4 +1,4 @@
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 
 def test_prepare_datatype():
@@ -113,7 +113,7 @@ def test_prepare_datatype():
         "facets": {
             "generate": True,
             "module": "my.test.services.records.facets",
-            'groups': True,
+            "groups": True,
             "extra-code": "",
         },
         "record": {

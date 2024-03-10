@@ -7,7 +7,7 @@ from oarepo_model_builder.loaders.extend import (
     extract_extended_record,
     post_extend_modify_marshmallow,
 )
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 
 def test_extend_marshmallow():

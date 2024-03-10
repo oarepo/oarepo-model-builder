@@ -1,4 +1,4 @@
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 
 def extract_extended_record(included_data, *, context, **kwargs):
