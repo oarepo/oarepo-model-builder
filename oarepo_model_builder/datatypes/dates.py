@@ -67,6 +67,49 @@ class DateTimeDataType(BaseDateDataType):
     }
     json_schema = {"type": "string", "format": "date-time"}
 
+class EDTFTimeDataType(BaseDateDataType):
+    model_type = "edtf-time"
+
+    ui = {
+        "marshmallow": {
+            "field-class": "oarepo_runtime.services.schema.ui.LocalizedEDTFTime",
+        }
+    }
+    marshmallow = {
+        "field-class": "marshmallow_utils.fields.TrimmedString",
+        "validators": [
+            "{{oarepo_runtime.services.schema.validation.CachedMultilayerEDTFValidator}}(types=({{edtf.DateAndTime{EDTFDateAndTime} }},))"
+        ],
+    }
+    mapping = {
+        "type": "date",
+        "format": "strict_date_time||strict_date_time_no_millis||strict_date||yyyy-MM||yyyy",
+    }
+    json_schema = {"type": "string", "format": "date-time"}
+
+
+class EDTFTimeIntervalType(BaseDateDataType):
+    model_type = "edtf-time-interval"
+
+    ui = {
+        "marshmallow": {
+            "field-class": "oarepo_runtime.services.schema.ui.LocalizedEDTFTimeInterval",
+        }
+    }
+    marshmallow = {
+        "field-class": "marshmallow_utils.fields.TrimmedString",
+        "validators": [
+            "{{oarepo_runtime.services.schema.validation.CachedMultilayerEDTFValidator}}(types=({{edtf.DateAndTime{EDTFDateAndTime} }},))"
+        ],
+    }
+    mapping = {
+        "type": "date_range",
+        "format": "strict_date_time||strict_date_time_no_millis||strict_date||yyyy-MM||yyyy",
+    }
+    facets = {
+        "searchable": False,  # it seems that facet on edtf is not supported in opensearch
+    }
+    json_schema = {"type": "string", "format": "date-time"}
 
 class EDTFDataType(BaseDateDataType):
     model_type = "edtf"
@@ -84,9 +127,9 @@ class EDTFDataType(BaseDateDataType):
     }
     mapping = {
         "type": "date",
-        "format": "strict_date_time||strict_date_time_no_millis||strict_date||yyyy-MM||yyyy",
+        "format": "strict_date||yyyy-MM||yyyy",
     }
-    json_schema = {"type": "string", "format": "date-time"}
+    json_schema = {"type": "string", "format": "date"}
 
 
 class EDTFIntervalType(BaseDateDataType):
@@ -105,9 +148,9 @@ class EDTFIntervalType(BaseDateDataType):
     }
     mapping = {
         "type": "date_range",
-        "format": "strict_date_time||strict_date_time_no_millis||strict_date||yyyy-MM||yyyy",
+        "format": "strict_date||yyyy-MM||yyyy",
     }
     facets = {
         "searchable": False,  # it seems that facet on edtf is not supported in opensearch
     }
-    json_schema = {"type": "string", "format": "date-time"}
+    json_schema = {"type": "string", "format": "date"}
