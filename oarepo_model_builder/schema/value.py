@@ -31,6 +31,12 @@ class SourcePart:
     def __hash__(self):
         return hash((self.reference_type, self.path, self.include))
 
+    def __str__(self):
+        return f"{self.reference_type.name} {self.path or self.include}"
+
+    def __repr__(self):
+        return str(self)
+
 
 class Source(tuple):
     def __new__(cls, *args):
@@ -55,6 +61,10 @@ class Source(tuple):
     @property
     def content(self):
         return self[-1].content
+
+    @property
+    def is_extended(self):
+        return bool(any(part.reference_type == ReferenceType.EXTEND for part in self))
 
     def append(self, reference_type, path=None, include=None, content=None):
         if not self:
@@ -100,7 +110,7 @@ class SchemaValue:
     def __init__(self, value, source, parent):
         self._parent = parent
         self._value = value
-        assert isinstance(source, tuple)
+        assert isinstance(source, Source)
         self._source = source
 
     @property
@@ -121,12 +131,13 @@ class SchemaValue:
         return self._parent
 
     @property
-    def line(self):
-        return self._line
-
-    @property
-    def column(self):
-        return self._column
+    def ancestors(self):
+        ret = []
+        p = self._parent
+        while p:
+            ret.append(p)
+            p = p._parent
+        return ret
 
     @property
     def source(self):
@@ -153,8 +164,38 @@ class SchemaValue:
     def __getitem__(self, item):
         return self._value[item]
 
+    def setdefault(self, key, value):
+        if key in self:
+            return self[key]
+        self._value[key] = SchemaValue(value, self._source, self)
+        return self._value[key]
+
+    def __setitem__(self, key, value):
+        if not self.is_dict:
+            raise ValueError(f"Can not set item {key} in {self} - not a dict")
+        if isinstance(value, SchemaValue):
+            self._value[key] = value
+            value._parent = self
+        else:
+            self._value[key] = SchemaValue.from_json(value, self._source, self)
+
+    def values(self):
+        if not self.is_dict:
+            raise ValueError(f"Can not get values from {self} - not a dict")
+        return self._value.values()
+
     def pop(self, key, default=None):
         return self._value.pop(key, default)
+
+    def append(self, value):
+        if not self.is_list:
+            raise ValueError(f"Can not append to {self} - not a list")
+
+        if isinstance(value, SchemaValue):
+            self._value.append(value)
+            value._parent = self
+        else:
+            self._value.append(SchemaValue.from_json(value, self._source, self))
 
     def merge_in(self, other, reference=None, **opts):
         if isinstance(self._value, dict):
@@ -180,10 +221,12 @@ class SchemaValue:
             plain_other_key = plain_key(other_key)
             if f"!{plain_other_key}" in self.value:
                 # my value overrides the one from the imported
+                # TODO: store the imported value somewhere
                 continue
 
             if plain_other_key not in plain_to_key:
                 self._value[other_key] = other_value.duplicate()
+                self._value[other_key]._parent = self
                 continue
 
             my_key = plain_to_key[plain_other_key]
@@ -204,6 +247,8 @@ class SchemaValue:
             raise ValueError(f"Can not merge {other} into {self} - types do not match")
 
         duplicated = [v.duplicate() for v in other.value]
+        for v in duplicated:
+            v._parent = self
 
         if my_options.get("append"):
             self._value = duplicated + self._value
@@ -262,17 +307,20 @@ class SchemaValue:
                     return r
         return None
 
+    def __str__(self):
+        return repr(self)
+
     def __repr__(self):
         src = ", ".join(str(x) for x in self._source)
         if isinstance(self._value, dict):
             ret = [f"{k}: {v}" for k, v in self._value.items()]
             ret = indent("\n".join(ret), "  ")
-            return f"[{src} @ {self._line}:{self._column}]\n{ret}"
+            return f"[{src}]\n{ret}"
         elif isinstance(self._value, list):
             ret = [f"{v}" for v in self._value]
             ret = indent("\n".join(ret), "  ")
-            return f"[{src} @ {self._line}:{self._column}]\n{ret}"
-        return f"[{src} @ {self._line}:{self._column}] {repr(self._value)}"
+            return f"[{src}]\n{ret}"
+        return f"[{src}] {repr(self._value)}"
 
     @classmethod
     def from_json(cls, data, source: Source, parent: Optional["SchemaValue"]):

@@ -1,10 +1,8 @@
-import os
 from pathlib import Path
 from typing import Callable, Dict
 
 from oarepo_model_builder.schema.loader import SchemaLoader
 from oarepo_model_builder.schema.value import Source
-from oarepo_model_builder.utils.deepmerge import deepmerge
 from oarepo_model_builder.validation import validate_model
 
 
@@ -20,9 +18,7 @@ class ModelSchema:
         included_models: Dict[str, Callable] = None,
         loaders=None,
         validate=True,
-        source_locations=None,
-        reference_processors=None,
-        post_reference_processors=None,
+        schema_preprocessors=None,
     ):
         """
         Creates and parses model schema
@@ -36,30 +32,13 @@ class ModelSchema:
         self.file_path = file_path
         self.included_schemas = included_models or {}
         self.loaders = loaders
-        self.source_locations = [*(source_locations or [])]
-        self.source_locations.append(os.path.abspath(os.curdir))
-        self.source_locations.append(os.path.dirname(os.path.abspath(self.file_path)))
-        self._reference_processors = deepmerge(
-            {
-                self.REF_KEYWORD: [],
-                self.USE_KEYWORD: [],
-                self.EXTEND_KEYWORD: [],
-            },
-            reference_processors or {},
-        )
-        self._post_reference_processors = deepmerge(
-            {
-                self.REF_KEYWORD: [],
-                self.USE_KEYWORD: [],
-                self.EXTEND_KEYWORD: [],
-            },
-            post_reference_processors or {},
-        )
+        self._schema_preprocessors = schema_preprocessors or []
 
         loader = SchemaLoader(self.loaders, self.included_schemas)
         raw_schema = loader.load(Source.create(file_path, content=content))
 
-        # TODO: preprocess the raw schema
+        for preprocessor in self._schema_preprocessors:
+            preprocessor(data=raw_schema, schema=self, loader=loader)
 
         self.schema = raw_schema.dump()
 

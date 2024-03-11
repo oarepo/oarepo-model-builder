@@ -113,28 +113,9 @@ def load_model(
         content=model_content,
         loaders=loaders,
         included_models=included_models,
-        reference_processors={
-            ModelSchema.REF_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.ref", None
-            ),
-            ModelSchema.USE_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.use", None
-            ),
-            ModelSchema.EXTEND_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.extend", None
-            ),
-        },
-        post_reference_processors={
-            ModelSchema.REF_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.post.ref", None
-            ),
-            ModelSchema.USE_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.post.use", None
-            ),
-            ModelSchema.EXTEND_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.post.extend", None
-            ),
-        },
+        schema_preprocessors=load_entry_points_list(
+            "oarepo_model_builder.schema_preprocessors", None
+        ),
     )
     for config in configs:
         load_config(schema, config, loaders)
