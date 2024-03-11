@@ -44,7 +44,16 @@ def convert_to_base_class(marshmallow):
         if not marshmallow["class"].source.is_extended:
             # the class has been overwritten by a local one,
             # we want to add the previous class as a base class
-            raise Exception("The class has been overwritten by a local one")
+            if (
+                marshmallow["class"].previous
+                and marshmallow["class"].previous.source.is_extended
+            ):
+                new_base_class = marshmallow["class"].previous
+            else:
+                raise NotImplementedError(
+                    "The class has been overwritten by a local class, "
+                    "but the previous class is not present or is not extended:\n{marshmallow}"
+                )
         else:
             # the class comes from the extension, so pop it out
             # and use it inside base classes

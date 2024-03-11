@@ -288,6 +288,79 @@ def test_extend_preprocessor_only_inherited_schema_arrays(loaders):
     }
 
 
+def test_extend_preprocessor_two_classes(loaders):
+    data = _get_data_with_extension(
+        loaders,
+        main_schema={
+            "record": {
+                "module": {"qualified": "test"},
+                "extend": "extended-model",
+                "properties": {
+                    "metadata": {
+                        "marshmallow": {
+                            "class": "OverridenClass"  # this class should be based on BlahMetadataSchema
+                        },
+                        "properties": {},
+                    }
+                },
+            },
+            "settings": {
+                "python": {
+                    "use-black": False,
+                    "use-isort": False,
+                    "use-autoflake": False,
+                }
+            },
+        },
+        extended_model={
+            "marshmallow": {"class": "aaa.BlahSchema"},
+            "ui": {"marshmallow": {"class": "aaa.BlahUISchema"}},
+            "properties": {
+                "metadata": {
+                    "type": "object",
+                    "marshmallow": {"class": "aaa.BlahMetadataSchema"},
+                    "ui": {"marshmallow": {"class": "aaa.BlahMetadataUISchema"}},
+                    "properties": {
+                        "a": {"type": "array", "items": {"type": "keyword"}}
+                    },
+                }
+            },
+        },
+    )
+    extend_modify_marshmallow(data)
+    assert data.dump()["record"] == {
+        "marshmallow": {"base-classes": ["aaa.BlahSchema"], "generate": True},
+        "module": {"qualified": "test"},
+        "properties": {
+            "metadata": {
+                "marshmallow": {
+                    "base-classes": ["aaa.BlahMetadataSchema"],
+                    "class": "OverridenClass",
+                    "generate": True,
+                },
+                "properties": {
+                    "a": {
+                        "items": {
+                            "marshmallow": {"read": False, "write": False},
+                            "type": "keyword",
+                            "ui": {"marshmallow": {"read": False, "write": False}},
+                        },
+                        "type": "array",
+                    }
+                },
+                "type": "object",
+                "ui": {
+                    "marshmallow": {
+                        "base-classes": ["aaa.BlahMetadataUISchema"],
+                        "generate": True,
+                    }
+                },
+            }
+        },
+        "ui": {"marshmallow": {"base-classes": ["aaa.BlahUISchema"], "generate": True}},
+    }
+
+
 def _get_data_with_extension(loaders, main_schema=None, extended_model=None):
     if not extended_model:
         extended_model = {

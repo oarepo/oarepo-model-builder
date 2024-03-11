@@ -112,6 +112,7 @@ class SchemaValue:
         self._value = value
         assert isinstance(source, Source)
         self._source = source
+        self._previous = None
 
     @property
     def value(self):
@@ -158,6 +159,10 @@ class SchemaValue:
             d = d._parent
         return d
 
+    @property
+    def previous(self):
+        return self._previous
+
     def __contains__(self, item):
         return item in self._value
 
@@ -202,6 +207,9 @@ class SchemaValue:
             self._merge_dict(other, reference, **opts)
         elif isinstance(self._value, list):
             self._merge_list(other, reference, **opts)
+        else:
+            # do not overwrite the local value with the other value, but put it to the _previous
+            self._previous = other
 
     def _merge_dict(self, other, reference, **opts):
         if not other.is_dict:
