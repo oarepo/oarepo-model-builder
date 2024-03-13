@@ -20,6 +20,7 @@ def test_running_server():
             "metadata_d": {"buckets": [], "label": "metadata/d.label"},
             "metadata_dt": {"buckets": [], "label": "metadata/dt.label"},
             "metadata_ed": {"buckets": [], "label": "metadata/ed.label"},
+            "metadata_edt": {"buckets": [], "label": "metadata/ed.label"},
             "metadata_f": {"buckets": [], "label": "metadata/f.label"},
             "metadata_i": {"buckets": [], "label": "metadata/i.label"},
             "metadata_kw": {"buckets": [], "label": "metadata/kw.label"},
