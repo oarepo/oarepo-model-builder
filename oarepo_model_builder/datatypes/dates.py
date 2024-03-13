@@ -79,7 +79,7 @@ class EDTFTimeDataType(BaseDateDataType):
     marshmallow = {
         "field-class": "marshmallow_utils.fields.TrimmedString",
         "validators": [
-            "{{oarepo_runtime.services.schema.validation.CachedMultilayerEDTFValidator}}(types=({{edtf.DateAndTime{EDTFDateAndTime} }},))"
+            "{{oarepo_runtime.services.schema.validation.CachedMultilayerEDTFValidator}}(types=({{edtf.DateAndTime{EDTFDateAndTime} }}, {{edtf.Date{EDTFDate} }},))"
         ],
     }
     mapping = {
@@ -100,7 +100,7 @@ class EDTFTimeIntervalType(BaseDateDataType):
     marshmallow = {
         "field-class": "marshmallow_utils.fields.TrimmedString",
         "validators": [
-            "{{oarepo_runtime.services.schema.validation.CachedMultilayerEDTFValidator}}(types=({{edtf.DateAndTime{EDTFDateAndTime} }},))"
+            "{{oarepo_runtime.services.schema.validation.CachedMultilayerEDTFValidator}}(types=({{edtf.DateAndTime{EDTFDateAndTime} }}, {{edtf.Date{EDTFDate} }},))"
         ],
     }
     mapping = {
