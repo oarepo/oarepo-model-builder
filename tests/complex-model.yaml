@@ -28,4 +28,8 @@ record:
           type: edtf
         edi:
           type: edtf-interval
+        edt:
+          type: edtf-time
+        edti:
+          type: edtf-time-interval
 

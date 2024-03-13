@@ -113,7 +113,7 @@ def test_prepare_datatype():
         "facets": {
             "generate": True,
             "module": "my.test.services.records.facets",
-            'groups': True,
+            "groups": True,
             "extra-code": "",
         },
         "record": {
