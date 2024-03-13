@@ -59,6 +59,20 @@ class Provider:
         a.sort()
         return "/".join(a)
 
+    def edtf_time(self):
+        rnd = self.generator.random.randrange(0, 3)
+        if rnd == 0:
+            return self.generator.date()
+        if rnd == 1:
+            return self.generator.date("%Y")
+        if rnd == 2:
+            return self.generator.date("%Y-%m-%d")
+
+    def edtf_time_interval(self):
+        a = [self.edtf(), self.edtf()]
+        a.sort()
+        return "/".join(a)
+
     def time(self):
         return self.generator.time()
 
@@ -203,6 +217,10 @@ def faker_provider(faker, settings, node, params):
                 method = "edtf"
             elif data_type == "edtf-interval":
                 method = "edtf_interval"
+            elif data_type == "edtf-time-interval":
+                method = "edtf_time_interval"
+            elif data_type == "edtf-time":
+                method = "edtf_time"
             elif data_type == "object":
                 # it is an object with unknown properties, return a sample object
                 method = "sample_object"
