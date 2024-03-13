@@ -66,7 +66,7 @@ class Provider:
         if rnd == 1:
             return self.generator.date("%Y")
         if rnd == 2:
-            return self.generator.date("%Y-%m-%d")
+            return self.generator.date("%Y-%m")
 
     def edtf_time_interval(self):
         a = [self.edtf(), self.edtf()]
