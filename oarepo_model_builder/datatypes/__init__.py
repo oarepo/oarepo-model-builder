@@ -32,9 +32,9 @@ from .dates import (  # noqa
     DateTimeDataType,
     EDTFDataType,
     EDTFIntervalType,
-    TimeDataType,
+    EDTFTimeDataType,
     EDTFTimeIntervalType,
-    EDTFTimeDataType
+    TimeDataType,
 )
 from .model import ModelDataType  # noqa
 from .primitive_types import NumberDataType  # noqa , just for export

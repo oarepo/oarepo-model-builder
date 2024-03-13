@@ -67,6 +67,7 @@ class DateTimeDataType(BaseDateDataType):
     }
     json_schema = {"type": "string", "format": "date-time"}
 
+
 class EDTFTimeDataType(BaseDateDataType):
     model_type = "edtf-time"
 
@@ -110,6 +111,7 @@ class EDTFTimeIntervalType(BaseDateDataType):
         "searchable": False,  # it seems that facet on edtf is not supported in opensearch
     }
     json_schema = {"type": "string", "format": "date-time"}
+
 
 class EDTFDataType(BaseDateDataType):
     model_type = "edtf"
