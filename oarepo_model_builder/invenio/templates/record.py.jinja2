@@ -22,7 +22,9 @@ class {{ vars.record|class_header }}:
     schema = ConstantField("$schema", "{{ settings.schema_server }}{{ vars.json_schema_settings.name }}")
 {% endif %}
 {% if not vars.mapping.skip %}
-    index = IndexField("{{ vars.mapping.index }}")
+    index = IndexField("{{ vars.mapping.index }}", {% if vars.mapping.index_field_args %}
+                {{ vars.mapping.index_field_args|generate_list }}
+            {% endif %})
 {% endif %}
 {% if not vars.pid.skip %}
     pid = {{ vars.pid.field_class|base_name }}(
