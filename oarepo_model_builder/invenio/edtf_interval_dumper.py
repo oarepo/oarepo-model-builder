@@ -17,7 +17,10 @@ class EDTFIntervalDumperBuilder(InvenioBaseClassPythonBuilder):
         children = parent_node
         for c in children:
             node = children[c]
-            if node.model_type == "edtf-interval" or node.model_type == "edtf-time-interval":
+            if (
+                node.model_type == "edtf-interval"
+                or node.model_type == "edtf-time-interval"
+            ):
                 yield self.to_path(node.path)
             elif node.children != {}:
                 yield from self.get_paths(node.children)
