@@ -11,7 +11,7 @@ from . import facets
 class {{ vars.search_options| class_header }}:
     """{{ vars.record.class|base_name }} search options."""
 
-    facet_groups ={
+    facet_groups = {
         {% for group in facet_groups %}
             '{{ group }}': {
                 {% for dict in facet_groups[group].keys() %}
