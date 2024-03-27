@@ -6,7 +6,7 @@ from oarepo_model_builder.datatypes import datatypes
 from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 from tests.multilang import MultilingualDataType, UIDataTypeComponent
 
 try:

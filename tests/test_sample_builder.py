@@ -4,7 +4,7 @@ from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.invenio.invenio_script_sample_data import SampleDataBuilder
 from oarepo_model_builder.outputs.yaml import YAMLOutput
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 
 def test_sample_builder_string():

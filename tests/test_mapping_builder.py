@@ -5,7 +5,7 @@ from oarepo_model_builder.builders.mapping import MappingBuilder
 from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 try:
     import json5

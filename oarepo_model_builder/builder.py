@@ -4,7 +4,7 @@ from typing import Any, Dict, Iterable, List, Type, Union
 from .builders import OutputBuilder
 from .fs import AbstractFileSystem, FileSystem
 from .outputs import OutputBase
-from .schema import ModelSchema
+from .schema.schema import ModelSchema
 from .utils.import_class import import_class
 
 
