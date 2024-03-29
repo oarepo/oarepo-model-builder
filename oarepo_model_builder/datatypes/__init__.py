@@ -10,7 +10,7 @@ boolean:
 date, time, datetime
   no constraints supported
 
-edtf, edtf-interval
+edtf, edtf-time, edtf-time-interval, edtf-interval
   no constraints supported
 
 fulltext, keyword, fulltext+keyword:
@@ -32,6 +32,8 @@ from .dates import (  # noqa
     DateTimeDataType,
     EDTFDataType,
     EDTFIntervalType,
+    EDTFTimeDataType,
+    EDTFTimeIntervalType,
     TimeDataType,
 )
 from .model import ModelDataType  # noqa
@@ -61,6 +63,8 @@ DEFAULT_DATATYPES = [
     DateTimeDataType,
     EDTFDataType,
     EDTFIntervalType,
+    EDTFTimeIntervalType,
+    EDTFTimeDataType,
     FulltextDataType,
     KeywordDataType,
     FulltextKeywordDataType,

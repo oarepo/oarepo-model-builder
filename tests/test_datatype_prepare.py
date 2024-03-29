@@ -263,6 +263,7 @@ def test_prepare_datatype():
             "module": "my.test.records.mappings",
             "index": "my_test_record-test-1.0.0",
             "file": "my/test/records/mappings/os-v2/my_test_record/test-1.0.0.json",
+            "index-field-args": [],
         },
         "marshmallow": {
             "generate": True,

@@ -255,6 +255,7 @@ def test_model_saver():
             "module": "test.records.mappings",
             "index": "test-test-1.0.0",
             "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
+            "index-field-args": [],
         },
         "marshmallow": {
             "generate": True,
@@ -616,6 +617,7 @@ def test_model_saver_invenio():
             "module": "test.records.mappings",
             "index": "test-test-1.0.0",
             "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
+            "index-field-args": [],
         },
         "permissions": {
             "generate": True,

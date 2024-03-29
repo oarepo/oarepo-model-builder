@@ -31,6 +31,12 @@ class ModelMappingSchema(ma.Schema):
         metadata={"doc": "Mapping template, merged with generated mapping"},
     )
     skip = ma.fields.Boolean()
+    index_field_arguments = ma.fields.List(
+        ma.fields.String(),
+        data_key="index-field-arguments",
+        attribute="index-field-arguments",
+        metadata={"doc": "Other arguments for index field"},
+    )
 
     class Meta:
         unknown = ma.RAISE
@@ -89,3 +95,4 @@ class MappingModelComponent(DataTypeComponent):
                 f"{short_index_name}.json",
             ),
         )
+        mapping.setdefault("index-field-args", [])
