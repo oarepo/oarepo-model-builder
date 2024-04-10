@@ -43,7 +43,7 @@ def test_running_server():
             )
             data = resp.json()
 
-            assert data == sample_data
+            assert data["metadata"] == sample_data
             # assert (
             #     resp.status_code == 201
             # ), f"Bad status code {resp.status_code} {data}, {d}"
