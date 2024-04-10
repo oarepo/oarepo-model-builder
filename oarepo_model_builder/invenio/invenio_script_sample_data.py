@@ -46,7 +46,7 @@ class Provider:
         while i < 4:
             tag = random.choice(["<p>", "<div>", "<span>"])
             content = ''.join(Faker().sentence())
-            html += f"{tag}{content}{tag[0]}/{tag[1:]}\n"
+            html += f"{tag}{content}{tag[0]}/{tag[1:]}"
             i = i + 1
         return html
 
