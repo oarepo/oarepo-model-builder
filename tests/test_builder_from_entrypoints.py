@@ -9,11 +9,14 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
 
 from .utils import strip_whitespaces
-from faker import Faker
+import yaml
 
 OAREPO_USE = "use"
 
-
+# def test_diff():
+#     with open("complex-model/data/sample_data.yaml") as f:
+#         sample_data = list(yaml.safe_load_all(f))
+#         print(sample_data)
 def test_include_invenio():
     schema = load_model(
         "test.yaml",  # NOSONAR

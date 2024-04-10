@@ -42,10 +42,11 @@ def test_running_server():
                 verify=False,  # NOSONAR
             )
             data = resp.json()
-            assert (
-                resp.status_code == 201
-            ), f"Bad status code {resp.status_code} {data}, {d}"
-            records.append(data)
+            assert data == "xy"
+            # assert (
+            #     resp.status_code == 201
+            # ), f"Bad status code {resp.status_code} {data}, {d}"
+            # records.append(data)
 
     pprint(records)
 
