@@ -42,7 +42,8 @@ def test_running_server():
                 verify=False,  # NOSONAR
             )
             data = resp.json()
-            assert data == "xy"
+
+            assert data == sample_data
             # assert (
             #     resp.status_code == 201
             # ), f"Bad status code {resp.status_code} {data}, {d}"
