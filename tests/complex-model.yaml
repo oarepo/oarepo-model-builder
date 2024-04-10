@@ -12,6 +12,8 @@ record:
       properties:
         kw:
           type: keyword
+        ht:
+          type: html
         i:
           type: integer
         f:

@@ -1,5 +1,6 @@
 import json
 import os
+import random
 import sys
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
 
 from .utils import strip_whitespaces
+from faker import Faker
 
 OAREPO_USE = "use"
 
