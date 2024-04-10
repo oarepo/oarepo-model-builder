@@ -41,14 +41,13 @@ class Provider:
         return rnd == 1
 
     def random_html(self):
-        html = "<html>\n<head>\n</head>\n<body>\n"
+        html = ""
         i = 0
         while i < 4:
             tag = random.choice(["<p>", "<div>", "<span>"])
             content = ''.join(Faker().sentence())
             html += f"{tag}{content}{tag[0]}/{tag[1:]}\n"
             i = i + 1
-        html += "</body>\n</html>"
         return html
 
     def datetime(self):

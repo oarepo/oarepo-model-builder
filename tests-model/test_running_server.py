@@ -42,12 +42,10 @@ def test_running_server():
                 verify=False,  # NOSONAR
             )
             data = resp.json()
-
-            assert data["metadata"] == sample_data
-            # assert (
-            #     resp.status_code == 201
-            # ), f"Bad status code {resp.status_code} {data}, {d}"
-            # records.append(data)
+            assert (
+                resp.status_code == 201
+            ), f"Bad status code {resp.status_code} {data}, {d}"
+            records.append(data)
 
     pprint(records)
 
