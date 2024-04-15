@@ -1,6 +1,6 @@
 import json
 from typing import Callable
-
+import random
 import faker
 import faker.providers
 from faker import Faker
@@ -39,6 +39,16 @@ class Provider:
     def random_boolean(self):
         rnd = self.generator.random.randrange(0, 2, 1)
         return rnd == 1
+
+    def random_html(self):
+        html = ""
+        i = 0
+        while i < 4:
+            tag = random.choice(["<p>", "<div>", "<span>"])
+            content = ''.join(Faker().sentence())
+            html += f"{tag}{content}{tag[0]}/{tag[1:]}"
+            i = i + 1
+        return html
 
     def datetime(self):
         return self.generator.date_time_this_decade(
@@ -201,6 +211,8 @@ def faker_provider(faker, settings, node, params):
                 method = "random_int"
             elif data_type == "number":
                 method = "random_float"
+            elif data_type == "html":
+                method = "random_html"
             elif data_type == "double":
                 method = "random_float"
             elif data_type == "float":

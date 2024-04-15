@@ -51,6 +51,7 @@ from .strings import (  # noqa
     KeywordDataType,
     URLDataType,
     UUIDDataType,
+    HtmlDataType
 )
 
 DEFAULT_DATATYPES = [
@@ -75,4 +76,5 @@ DEFAULT_DATATYPES = [
     ArrayDataType,
     URLDataType,
     ModelDataType,
+    HtmlDataType
 ]
