@@ -13,12 +13,15 @@ class InvenioRecordSearchOptionsBuilder(InvenioBaseClassPythonBuilder):
 
     def finish(self, **extra_kwargs):
         facets: List[FacetDefinition] = get_distinct_facets(self.current_model)
-        facet_groups, default_group, sort_options = facet_data(facets, self.current_model)
+        facet_groups, default_group, sort_options = facet_data(
+            facets, self.current_model
+        )
 
         extra_kwargs["facet_groups"] = facet_groups
         extra_kwargs["default_group"] = default_group
         extra_kwargs["sort_definition"] = sort_options
         super().finish(**extra_kwargs)
+
 
 def facet_data(facets, current_model):
     facet_groups = {}

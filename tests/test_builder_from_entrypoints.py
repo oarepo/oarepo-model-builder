@@ -1,6 +1,5 @@
 import json
 import os
-import random
 import sys
 from pathlib import Path
 
@@ -9,9 +8,9 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from tests.utils import assert_python_equals
 
 from .utils import strip_whitespaces
-import yaml
 
 OAREPO_USE = "use"
+
 
 # def test_diff():
 #     with open("complex-model/data/sample_data.yaml") as f:
