@@ -40,6 +40,7 @@ def test_include_invenio():
     assert (
         strip_whitespaces(
             """
+from oarepo_runtime.schema import consistent_resolution
 import marshmallow as ma
 from marshmallow import fields as ma_fields
 from oarepo_runtime.services.schema.marshmallow import BaseRecordSchema

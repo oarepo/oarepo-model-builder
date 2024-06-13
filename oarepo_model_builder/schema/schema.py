@@ -34,11 +34,11 @@ class ModelSchema:
         self.loaders = loaders
         self._schema_preprocessors = schema_preprocessors or []
 
-        loader = SchemaLoader(self.loaders, self.included_schemas)
-        raw_schema = loader.load(Source.create(file_path, content=content))
+        self.loader = SchemaLoader(self.loaders, self.included_schemas)
+        raw_schema = self.loader.load(Source.create(file_path, content=content))
 
         for preprocessor in self._schema_preprocessors:
-            preprocessor(data=raw_schema, schema=self, loader=loader)
+            preprocessor(data=raw_schema, schema=self, loader=self.loader)
 
         self.schema = raw_schema.dump()
 

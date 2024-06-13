@@ -71,6 +71,10 @@ class SchemaLoader:
                 else:
                     resolved = self._load_data_from_file(reference.source)
                 resolved = reference.extract_fragment(resolved)
+                if resolved is None:
+                    raise ValueError(
+                        f"Can not resolve {reference.fragment} in {reference.source}"
+                    )
                 value.merge_in(resolved)
 
             if references:

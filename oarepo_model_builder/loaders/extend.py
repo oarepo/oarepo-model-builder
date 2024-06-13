@@ -5,6 +5,7 @@ def extend_modify_marshmallow(data: SchemaValue, **kwargs):
     roots = find_extend_roots(data)
     if not roots:
         return
+
     cache = {}
     for root in roots:
         # only object can be extended, so root has to point to object
@@ -154,9 +155,16 @@ def find_extend_roots(data: SchemaValue):
     extended_elements = list(find_extended_elements(data))
     if not extended_elements:
         return
-    parents = set(x.parent for x in extended_elements)
+    parents = set(find_object_parent(x) for x in extended_elements)
     parents = [x for x in parents if not any(y in x.ancestors for y in parents)]
     return parents
+
+
+def find_object_parent(data: SchemaValue):
+    parent = data.parent
+    while parent.parent and "properties" not in parent.value:
+        parent = parent.parent
+    return parent
 
 
 def find_extended_elements(data: SchemaValue):

@@ -62,7 +62,7 @@ class ModelDataType(ObjectDataType):
                     imports=[Import("invenio_records_resources.services.RecordLink")],
                 ),
                 Link(
-                    name="self_html",
+                    name="=self_html",
                     link_class="RecordLink",
                     link_args=[
                         f'"{{+ui}}{html_url_prefix}{{id}}"',
