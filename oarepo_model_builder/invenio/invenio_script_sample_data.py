@@ -1,6 +1,7 @@
 import json
-from typing import Callable
 import random
+from typing import Callable
+
 import faker
 import faker.providers
 from faker import Faker
@@ -45,7 +46,7 @@ class Provider:
         i = 0
         while i < 4:
             tag = random.choice(["<p>", "<div>", "<span>"])
-            content = ''.join(Faker().sentence())
+            content = "".join(Faker().sentence())
             html += f"{tag}{content}{tag[0]}/{tag[1:]}"
             i = i + 1
         return html

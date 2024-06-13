@@ -10,7 +10,7 @@ export BUILDER_VENV=.venv
 export TEST_VENV=.venv-tests
 export SERVER_VENV=.venv-server
 
-OAREPO_VERSION=${OAREPO_VERSION:-11}
+OAREPO_VERSION=${OAREPO_VERSION:-12}
 
 
 initialize_server_venv() {

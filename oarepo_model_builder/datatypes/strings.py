@@ -68,6 +68,7 @@ class URLDataType(StringDataType):
         "facet-class": "invenio_records_resources.services.records.facets.TermsFacet",
     }
 
+
 class HtmlDataType(FulltextDataType):
     model_type = "html"
     marshmallow = {

@@ -48,10 +48,10 @@ from .strings import StringDataType  # noqa , just for export
 from .strings import (  # noqa
     FulltextDataType,
     FulltextKeywordDataType,
+    HtmlDataType,
     KeywordDataType,
     URLDataType,
     UUIDDataType,
-    HtmlDataType
 )
 
 DEFAULT_DATATYPES = [
@@ -76,5 +76,5 @@ DEFAULT_DATATYPES = [
     ArrayDataType,
     URLDataType,
     ModelDataType,
-    HtmlDataType
+    HtmlDataType,
 ]
