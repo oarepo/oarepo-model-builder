@@ -3,7 +3,7 @@ from typing import List, Union
 
 from oarepo_model_builder.builder import ModelBuilder
 from oarepo_model_builder.profiles import Profile
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 from oarepo_model_builder.utils.dict import dict_get
 
 

@@ -10,7 +10,7 @@ from oarepo_model_builder.fs import InMemoryFileSystem
 from oarepo_model_builder.outputs.jsonschema import JSONSchemaOutput
 from oarepo_model_builder.outputs.mapping import MappingOutput
 from oarepo_model_builder.outputs.python import PythonOutput
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 
 def get_model_schema(field_type):

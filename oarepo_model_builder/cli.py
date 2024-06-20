@@ -87,16 +87,12 @@ from oarepo_model_builder.utils.verbose import log
     multiple=True,
 )
 @click.argument("model_filename", type=click.Path(exists=True), required=True)
-@click.argument(
-    "included_models", nargs=-1, type=click.Path(exists=True), required=False
-)
 def run(
     output_directory,  # NOSONAR
     package,
     sets,
     configs,
     model_filename,
-    included_models,
     verbosity,
     isort,
     black,
@@ -113,7 +109,6 @@ def run(
         run_internal(
             output_directory,
             model_filename,
-            included_models,
             package,
             configs,
             sets,
@@ -141,7 +136,6 @@ def run(
 def run_internal(
     output_directory,  # NOSONAR
     model_filename,
-    included_models,
     package,
     configs,
     sets,
@@ -183,13 +177,14 @@ def run_internal(
         0,
         "\n\n%s\n\nProcessing model(s) %s into output directory %s",
         datetime.datetime.now(),
-        [model_filename, *included_models],
+        model_filename,
         output_directory,
     )
 
     includes = {
         x.split("=", maxsplit=1)[0]: x.split("=", maxsplit=1)[1] for x in includes
     }
+    includes = {k: str(Path(v).resolve()) for k, v in includes.items()}
 
     # load model (and resolve includes) and optionally save it before the processing (for debugging)
     model = load_model(
@@ -199,7 +194,6 @@ def run_internal(
         isort,
         autoflake,
         sets,
-        merged_models=included_models,
         extra_included=includes,
     )
     if save_model:

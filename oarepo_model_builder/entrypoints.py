@@ -6,7 +6,7 @@ from pathlib import Path
 import importlib_metadata
 
 from oarepo_model_builder.builder import ModelBuilder
-from oarepo_model_builder.schema import ModelSchema, remove_star_keys
+from oarepo_model_builder.schema.schema import ModelSchema
 from oarepo_model_builder.validation import InvalidModelException
 
 
@@ -57,7 +57,7 @@ def load_from_entry_point_internal(name, group_name, loaded_keys, loaded_entries
 
 
 def load_model_from_entrypoint(ep: importlib_metadata.EntryPoint):
-    def load(schema):
+    def load(loader):
         try:
             loaded_schema = ep.load()
         except:  # NOSONAR intentionally broad
@@ -79,12 +79,10 @@ def load_model_from_entrypoint(ep: importlib_metadata.EntryPoint):
                     full_fn = Path(file_name)
                 if not full_fn.exists():
                     continue
-                loaded_schema = schema._load(full_fn, content=full_fn.read_text())
-                break
+
+                return loader._load_raw_data_from_file(full_fn)
             else:
                 raise InvalidModelException(f"Could not load entry point {ep}")
-        remove_star_keys(loaded_schema)
-        return loaded_schema
 
     return load
 
@@ -105,7 +103,6 @@ def load_model(
     sets=(),
     model_content=None,
     extra_included=None,
-    merged_models=None,
 ):
     loaders = load_entry_points_dict("oarepo_model_builder.loaders")
     included_models = load_included_models_from_entry_points()
@@ -116,29 +113,9 @@ def load_model(
         content=model_content,
         loaders=loaders,
         included_models=included_models,
-        merged_models=merged_models,
-        reference_processors={
-            ModelSchema.REF_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.ref", None
-            ),
-            ModelSchema.USE_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.use", None
-            ),
-            ModelSchema.EXTEND_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.extend", None
-            ),
-        },
-        post_reference_processors={
-            ModelSchema.REF_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.post.ref", None
-            ),
-            ModelSchema.USE_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.post.use", None
-            ),
-            ModelSchema.EXTEND_KEYWORD: load_entry_points_list(
-                "oarepo_model_builder.loaders.post.extend", None
-            ),
-        },
+        schema_preprocessors=load_entry_points_list(
+            "oarepo_model_builder.schema_preprocessors", None
+        ),
     )
     for config in configs:
         load_config(schema, config, loaders)

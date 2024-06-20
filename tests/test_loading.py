@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from oarepo_model_builder.loaders import json_loader
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 DUMMY_PATH = "/tmp/path.json"  # NOSONAR checking as it is a virtual path
 
@@ -77,7 +77,7 @@ def test_loading_current_by_id():
     assert schema.schema == {
         "settings": {},
         "b": {"a": True},
-        "a": {"$id": "id", "a": True},
+        "a": {"a": True},
     }
 
 

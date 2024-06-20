@@ -1,30 +1,13 @@
-try:
-    import json5
-except ImportError:
-    import json as json5
+from pathlib import Path
+
+import json5
+import yaml
 
 
-def json_loader(
-    file_path, schema, content=None  # NOSONAR schema kept for extensibility
-):
-    if content:
-        return json5.loads(content)
-    with open(file_path) as f:
-        return json5.load(f)
+def json_loader(path: Path):
+    return json5.loads(path.read_text(encoding="utf-8"))
 
 
-def yaml_loader(
-    file_path, schema, content=None  # NOSONAR schema kept for extensibility
-):
-    try:
-        import yaml
-    except ImportError:
-        raise RuntimeError(
-            "Loader for yaml not found. Please install pyyaml library to use yaml files"
-        )
-
-    if content:
-        return yaml.full_load(content)
-
-    with open(file_path) as f:
-        return yaml.full_load(f)
+def yaml_loader(path: Path):
+    with path.open(encoding="utf-8") as stream:
+        return yaml.safe_load(stream)

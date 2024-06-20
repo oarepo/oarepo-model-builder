@@ -1,3 +1,4 @@
+from oarepo_runtime.services.schema import consistent_resolution
 import marshmallow as ma
 {{ imports|imports }}
 {% for cls in generated_classes %}
@@ -9,7 +10,7 @@ import marshmallow as ma
 
 
 {% for cls in generated_classes %}
-class {{cls.class_name|base_name}}({% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{{bc|base_name}}{% endfor %}):
+class {{cls.class_name|base_name}}({% if cls.base_classes|length>1 %}consistent_resolution({% endif %}{% for bc in cls.base_classes %}{% if not loop.first%}, {% endif %}{{bc|base_name}}{% endfor %}{% if cls.base_classes|length>1 %}){% endif %}):
     class Meta:
         unknown = ma.{{ cls.unknown }}
 {% for fld in cls.fields %}

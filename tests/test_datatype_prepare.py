@@ -1,4 +1,4 @@
-from oarepo_model_builder.schema import ModelSchema
+from oarepo_model_builder.schema.schema import ModelSchema
 
 
 def test_prepare_datatype():
