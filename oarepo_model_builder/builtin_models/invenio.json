@@ -77,27 +77,53 @@
     "pid": {
       "type": "object",
       "marshmallow": {
+        "generate": false,
         "write": false,
-        "read": false
+        "read": false,
+        "skip": true,
+        "class": "FakePIDSchema"
       },
       "ui": {
         "marshmallow": {
+          "generate": false,
           "write": false,
-          "read": false
+          "read": false,
+          "skip": true,
+          "class": "FakeUIPIDSchema"
         }
+      },
+      "facets": {
+        "searchable": true,
+        "facet": false
       },
       "properties": {
         "obj_type": {
-          "type": "keyword"
+          "type": "keyword",
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
         },
         "pid_type": {
-          "type": "keyword"
+          "type": "keyword",
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
         },
         "pk": {
-          "type": "integer"
+          "type": "integer",
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
         },
         "status": {
-          "type": "keyword"
+          "type": "keyword",
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
         }
       }
     },

@@ -55,6 +55,15 @@ class TestSchema(BaseRecordSchema):
             "properties": {
                 "a": {"type": "flat_object"},
                 "id": {"type": "keyword", "ignore_above": 1024},
+                "pid": {
+                    "properties": {
+                        "obj_type": {"ignore_above": 1024, "type": "keyword"},
+                        "pid_type": {"ignore_above": 1024, "type": "keyword"},
+                        "pk": {"type": "integer"},
+                        "status": {"ignore_above": 1024, "type": "keyword"},
+                    },
+                    "type": "object",
+                },
                 "created": {
                     "type": "date",
                     "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date||strict_date_hour_minute_second||strict_date_hour_minute_second_fraction",
@@ -76,6 +85,15 @@ class TestSchema(BaseRecordSchema):
         "properties": {
             "a": {"type": "object"},
             "id": {"type": "string"},
+            "pid": {
+                "properties": {
+                    "obj_type": {"type": "string"},
+                    "pid_type": {"type": "string"},
+                    "pk": {"type": "integer"},
+                    "status": {"type": "string"},
+                },
+                "type": "object",
+            },
             "created": {"type": "string", "format": "date-time"},
             "updated": {"type": "string", "format": "date-time"},
             "$schema": {"type": "string"},
