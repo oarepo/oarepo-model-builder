@@ -680,6 +680,45 @@ def test_model_saver_invenio():
                 "ui": {"marshmallow": {"read": False, "write": False}},
                 "sample": {"skip": True},
             },
+            "pid": {
+                "facets": {"facet": False, "searchable": True},
+                "marshmallow": {
+                    "class": "test.services.records.schema.FakePIDSchema",
+                    "generate": False,
+                    "read": False,
+                    "skip": True,
+                    "write": False,
+                },
+                "sample": {"skip": True},
+                "properties": {
+                    "obj_type": {
+                        "facets": {"facet": False, "searchable": True},
+                        "type": "keyword",
+                    },
+                    "pid_type": {
+                        "facets": {"facet": False, "searchable": True},
+                        "type": "keyword",
+                    },
+                    "pk": {
+                        "facets": {"facet": False, "searchable": True},
+                        "type": "integer",
+                    },
+                    "status": {
+                        "facets": {"facet": False, "searchable": True},
+                        "type": "keyword",
+                    },
+                },
+                "type": "object",
+                "ui": {
+                    "marshmallow": {
+                        "class": "test.services.records.ui_schema.FakeUIPIDSchema",
+                        "generate": False,
+                        "read": False,
+                        "skip": True,
+                        "write": False,
+                    }
+                },
+            },
             "updated": {
                 "type": "datetime",
                 "facets": {"searchable": True, "facet": False},

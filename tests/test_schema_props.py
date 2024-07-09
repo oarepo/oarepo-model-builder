@@ -72,6 +72,15 @@ class TestSchema(BaseRecordSchema):
             "a": {"type": "string"},
             "created": {"format": "date-time", "type": "string"},
             "id": {"type": "string"},
+            "pid": {
+                "properties": {
+                    "obj_type": {"type": "string"},
+                    "pid_type": {"type": "string"},
+                    "pk": {"type": "integer"},
+                    "status": {"type": "string"},
+                },
+                "type": "object",
+            },
             "updated": {"format": "date-time", "type": "string"},
         },
         "type": "object",
@@ -91,6 +100,15 @@ class TestSchema(BaseRecordSchema):
                     "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date||strict_date_hour_minute_second||strict_date_hour_minute_second_fraction",
                 },
                 "id": {"type": "keyword", "ignore_above": 1024},
+                "pid": {
+                    "properties": {
+                        "obj_type": {"ignore_above": 1024, "type": "keyword"},
+                        "pid_type": {"ignore_above": 1024, "type": "keyword"},
+                        "pk": {"type": "integer"},
+                        "status": {"ignore_above": 1024, "type": "keyword"},
+                    },
+                    "type": "object",
+                },
                 "updated": {
                     "type": "date",
                     "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date||strict_date_hour_minute_second||strict_date_hour_minute_second_fraction",
