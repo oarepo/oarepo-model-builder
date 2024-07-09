@@ -96,6 +96,9 @@
         "searchable": true,
         "facet": false
       },
+      "sample": {
+        "skip": true
+      },
       "properties": {
         "obj_type": {
           "type": "keyword",

@@ -689,6 +689,7 @@ def test_model_saver_invenio():
                     "skip": True,
                     "write": False,
                 },
+                "sample": {"skip": True},
                 "properties": {
                     "obj_type": {
                         "facets": {"facet": False, "searchable": True},
