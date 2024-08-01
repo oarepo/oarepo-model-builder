@@ -4,6 +4,8 @@
 {{ vars.service.class|imports }}
 {{ vars.resource_config.class|imports }}
 {{ vars.resource.class|imports }}
+{{ vars.record.class|imports }}
+
 
 {% if not vars.resource_config.skip %}
 {{ vars.resource_config.config_key }} = {{ vars.resource_config.class|base_name }}
@@ -19,5 +21,9 @@
 {% if not vars.service.skip %}
 {{ vars.service.config_key }} = {{ vars.service.class|base_name }}
 {% endif  %}
+
+OAREPO_PRIMARY_RECORD_SERVICE = {
+    {{ vars.record.class|base_name }}: "{{ vars.service_config.service_id }}"
+}
 
 {{ vars.config|extra_code }}
