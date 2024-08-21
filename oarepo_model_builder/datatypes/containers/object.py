@@ -34,7 +34,7 @@ class FieldSchema(OneOfSchema):
 
     def load(self, data, *, many=None, partial=None, unknown=None, **kwargs):
         # OneOfSchema does not call pre-load actions, so add it here explicitly
-        if self._has_processors(ma.decorators.PRE_LOAD):
+        if ma.decorators.PRE_LOAD in self._hooks:
             try:
                 processed_data = self._invoke_load_processors(
                     ma.decorators.PRE_LOAD,
