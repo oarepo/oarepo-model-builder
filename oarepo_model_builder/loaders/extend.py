@@ -31,6 +31,11 @@ def extract_extended_record(included_data, *, context, **kwargs):
         "properties": extended_object.get("properties", {}),
     }
 
+def add_record_to_included_data(included_data, *, context, **kwargs):
+    if "props" in context and "record" in context["props"]:
+        included_data["record"] = context["props"]["record"]
+    return included_data
+
 
 def extend_modify_marshmallow(included_data, *, context, **kwargs):
     """
