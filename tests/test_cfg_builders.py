@@ -73,7 +73,9 @@ authors =
 
 [options]
 python = >=3.9
-install_requires = oarepo-runtime>=1.0.0
+install_requires =
+oarepo-runtime>=1.0.0
+oarepo-global-search>=1.0.23
 packages = find:
 
 

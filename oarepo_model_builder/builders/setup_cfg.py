@@ -36,6 +36,7 @@ class SetupCfgBuilder(OutputBuilder):
         output.setdefault("options", "python", ">=3.9")
 
         output.add_dependency("oarepo-runtime", ">=1.0.0")
+        output.add_dependency("oarepo-global-search", ">=1.0.23")
 
         output.setdefault("options", "packages", "find:")
 
