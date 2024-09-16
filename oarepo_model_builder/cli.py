@@ -191,6 +191,17 @@ def run_internal(
         x.split("=", maxsplit=1)[0]: x.split("=", maxsplit=1)[1] for x in includes
     }
 
+    for entrypoint in load_entry_points_dict(
+        "oarepo_model_builder.events.before_model_loaded"
+    ).values():
+        entrypoint(
+            model_filename=model_filename,
+            configs=configs,
+            sets=sets,
+            included_models=included_models,
+            includes=includes,
+        )
+
     # load model (and resolve includes) and optionally save it before the processing (for debugging)
     model = load_model(
         model_filename,
@@ -202,6 +213,19 @@ def run_internal(
         merged_models=included_models,
         extra_included=includes,
     )
+
+    for entrypoint in load_entry_points_dict(
+        "oarepo_model_builder.events.after_model_loaded"
+    ).values():
+        entrypoint(
+            model=model,
+            model_filename=model_filename,
+            configs=configs,
+            sets=sets,
+            included_models=included_models,
+            includes=includes,
+        )
+
     if save_model:
         with open(save_model, "w") as f:
             yaml.dump(json.loads(json.dumps(model.schema)), f)
