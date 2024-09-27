@@ -1,0 +1,7 @@
+{
+  "service-config": {
+    "components": [
+      "{{oarepo_doi.services.components.DoiComponent}}"
+    ]
+  }
+}
