@@ -1,6 +1,6 @@
 {
   "service-config": {
-    "components": [
+    "extend:components": [
       "{{oarepo_doi.services.components.DoiComponent}}"
     ]
   }
