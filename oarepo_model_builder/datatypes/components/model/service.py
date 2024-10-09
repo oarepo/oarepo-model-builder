@@ -85,6 +85,10 @@ class ServiceConfigClassSchema(ma.Schema):
     components = ma.fields.List(
         ma.fields.String(), metadata={"doc": "List of service components"}
     )
+    extend_components = ma.fields.List(
+        ma.fields.String(), metadata={"doc": "List of service components"}, attribute="extend:components",
+        data_key="extend:components"
+    )
     module = ma.fields.String(metadata={"doc": "Class module"})
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema), metadata={"doc": "List of python imports"}
