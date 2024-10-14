@@ -1,6 +1,17 @@
 import copy
 from typing import Union
 
+def remove_colon_prefix(data):
+
+    if isinstance(data, dict):
+        new_data = {}
+        for k, v in data.items():
+            if ':' in k:
+                k = k.split(':', 1)[1]
+            new_data[k] = remove_colon_prefix(v)
+        return new_data
+    else:
+        return data
 
 def deepmerge(
     target,
@@ -23,13 +34,20 @@ def deepmerge(
             else:
                 merged = None
             if merged is None:
-                for k, v in source.items():
+                for k, v in list(source.items()):
+                    _source = source
+                    if ':' in k:
+                        key = k
+                        k = key.split(':')[1]
+                        listmerge = key.split(':')[0]
+                        _source[k] = _source.pop(key)
+
                     if k not in target:
-                        target[k] = source[k]
+                        target[k] = remove_colon_prefix(source[k])
                     else:
                         target[k] = deepmerge(
                             target[k],
-                            source[k],
+                            _source[k],
                             stack + [k],
                             listmerge=listmerge,
                             dictmerge=dictmerge,
@@ -53,6 +71,8 @@ def deepmerge(
                     target.append(source[idx])
             elif listmerge == "extend":
                 target.extend(source)
+            elif listmerge == "prepend":
+                target = source + target
             elif listmerge == "keep":
                 if len(source) > len(target):
                     target.extend(source[len(target) :])
