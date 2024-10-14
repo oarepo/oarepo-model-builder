@@ -41,8 +41,7 @@ def deepmerge(
                         k = key.split(':')[1]
                         listmerge = key.split(':')[0]
                         _source[k] = _source.pop(key)
-                    else:
-                        k = k
+
                     if k not in target:
                         target[k] = remove_colon_prefix(source[k])
                     else:
@@ -72,6 +71,8 @@ def deepmerge(
                     target.append(source[idx])
             elif listmerge == "extend":
                 target.extend(source)
+            elif listmerge == "prepend":
+                target = source + target
             elif listmerge == "keep":
                 if len(source) > len(target):
                     target.extend(source[len(target) :])
