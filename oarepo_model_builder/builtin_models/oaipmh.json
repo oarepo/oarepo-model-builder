@@ -1,0 +1,9 @@
+{
+    "service-config": {
+      "extend:components": [
+        "{{oarepo_oaipmh_harvester.components.OaiSectionComponent}}"
+      ]
+    }
+  }
+  
+  
