@@ -18,7 +18,7 @@ def test_include_invenio():
 
             "record": {
                 "module": {"qualified": "test"},
-                OAREPO_USE: ["invenio", "doi"],
+                OAREPO_USE: ["invenio", "doi", "oaipmh"],
                 "properties": {"a": {"type": "keyword", "required": True}},
             },
         },
@@ -36,4 +36,4 @@ def test_include_invenio():
         os.path.join("test", "services", "records", "config.py")
     ).read()
     data = str(data)
-    assert "components=[*PermissionsPresetsConfigMixin.components,*InvenioRecordServiceConfig.components,DoiComponent]" in re.sub(r"\s", "", data)
+    assert "components=[*PermissionsPresetsConfigMixin.components,*InvenioRecordServiceConfig.components,DoiComponent,OaiSectionComponent]" in re.sub(r"\s", "", data)
