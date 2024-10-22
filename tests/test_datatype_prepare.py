@@ -120,9 +120,7 @@ def test_prepare_datatype():
             "generate": True,
             "module": "my.test.records.api",
             "class": "my.test.records.api.TestRecord",
-            "base-classes": [
-                "invenio_records_resources.records.api.Record{InvenioRecord}"
-            ],
+            "base-classes": ['invenio_rdm_records.records.api.RDMRecord'],
             "imports": [],
             "extra-code": "",
             "fields": {},
@@ -200,7 +198,8 @@ def test_prepare_datatype():
                 "invenio_records.models.RecordMetadataBase",
             ],
             "extra-code": "",
-            "imports": [],
+            "imports": [{'import': 'invenio_rdm_records.records.systemfields.deletion_status.RecordDeletionStatusEnum'},
+                                 {'import': 'sqlalchemy_utils.types.ChoiceType'}],
             "table": "test_metadata",
             "alias": "my_test_record",
             "use-versioning": True,
@@ -227,9 +226,7 @@ def test_prepare_datatype():
             "module": "my.test.services.records.service",
             "class": "my.test.services.records.service.TestService",
             "extra-code": "",
-            "base-classes": [
-                "invenio_records_resources.services.RecordService{InvenioRecordService}"
-            ],
+            "base-classes": ['invenio_rdm_records.services.services.RDMRecordService'],
             "additional-args": [],
             "imports": [],
         },
@@ -270,7 +267,8 @@ def test_prepare_datatype():
             "module": "my.test.services.records.schema",
             "class": "my.test.services.records.schema.TestSchema",
             "extra-code": "",
-            "base-classes": ["marshmallow.Schema"],
+            "base-classes": ['marshmallow.Schema',
+                                  'oarepo_runtime.services.schema.rdm.RDMRecordMixin'],
         },
         "permissions": {
             "generate": True,

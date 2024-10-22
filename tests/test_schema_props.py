@@ -50,7 +50,7 @@ def test_enum():
     assert (
         strip_whitespaces(
             """
-class TestSchema(BaseRecordSchema):
+class TestSchema(BaseRecordSchema, RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE
