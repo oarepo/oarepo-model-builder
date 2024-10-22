@@ -90,7 +90,8 @@ class RecordMetadataModelComponent(DataTypeComponent):
         metadata.setdefault("extra-code", "")
         metadata.setdefault(
             "imports",
-            [],
+            [{"import": "invenio_rdm_records.records.systemfields.deletion_status.RecordDeletionStatusEnum"},
+             {"import": "sqlalchemy_utils.types.ChoiceType"}],
         )
         metadata.setdefault(
             "table", f"{datatype.definition['module']['prefix-snake']}_metadata"

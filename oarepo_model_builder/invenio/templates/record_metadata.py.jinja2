@@ -10,4 +10,9 @@ class {{ vars.record_metadata|class_header }}:
     __versioned__ = {}
     {% endif %}
 
+    deletion_status = db.Column(
+        ChoiceType(RecordDeletionStatusEnum, impl=db.String(1)),
+        nullable=False,
+        default=RecordDeletionStatusEnum.PUBLISHED.value,
+    )
 {{ vars.record_metadata|extra_code }}

@@ -63,11 +63,12 @@ class RecordModelComponent(DataTypeComponent):
         record.setdefault("class", f"{records_module}.{record_prefix}Record")
         record.setdefault(
             "base-classes",
-            ["invenio_records_resources.records.api.Record{InvenioRecord}"],
+            ["invenio_rdm_records.records.api.RDMRecord"],
         )
         record.setdefault(
             "imports",
             [],
+
         )
         record.setdefault("extra-code", "")
         record.setdefault("fields", {})

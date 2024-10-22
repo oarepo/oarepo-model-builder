@@ -47,10 +47,10 @@ def test_include_invenio():
 import marshmallow as ma
 from marshmallow import fields as ma_fields
 from oarepo_runtime.services.schema.marshmallow import BaseRecordSchema
+from oarepo_runtime.services.schema.rdm import RDMRecordMixin
 
 
-
-class TestSchema(BaseRecordSchema):
+class TestSchema(BaseRecordSchema, RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE

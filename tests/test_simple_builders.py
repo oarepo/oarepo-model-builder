@@ -88,8 +88,8 @@ from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
 from test.records.dumpers.dumper import TestDumper
-from invenio_records_resources.records.api import Record as InvenioRecord
-class TestRecord(InvenioRecord):
+from invenio_rdm_records.records.api import RDMRecord
+class TestRecord(RDMRecord):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
     index = IndexField("test-test-1.0.0",)
@@ -123,12 +123,11 @@ from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
 from test.records.dumpers.dumper import TestDumper
-from invenio_records_resources.records.api import Record as InvenioRecord
-
+from invenio_rdm_records.records.api import RDMRecord
 class TestIdProvider(RecordIdProviderV2):
     pid_type = "test"
 
-class TestRecord(InvenioRecord):
+class TestRecord(RDMRecord):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
     index = IndexField("test-test-1.0.0",)
@@ -151,13 +150,13 @@ def test_record_metadata_builder():
         ],
         os.path.join("test", "records", "models.py"),
     )
-
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from invenio_db import db
-
-
+from invenio_rdm_records.records.systemfields.deletion_status import RecordDeletionStatusEnum
 from invenio_records.models import RecordMetadataBase
+from sqlalchemy_utils.types import ChoiceType
 
 
 class TestMetadata(db.Model, RecordMetadataBase):
@@ -167,6 +166,12 @@ class TestMetadata(db.Model, RecordMetadataBase):
 
     # Enables SQLAlchemy-Continuum versioning
     __versioned__ = {}
+    
+    deletion_status = db.Column(
+        ChoiceType(RecordDeletionStatusEnum, impl=db.String(1)),
+        nullable=False,
+        default=RecordDeletionStatusEnum.PUBLISHED.value,
+    )
 '''
     )
 
@@ -361,9 +366,9 @@ def test_service_builder():
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from invenio_records_resources.services import RecordService as InvenioRecordService
+from invenio_rdm_records.services.services import RDMRecordService
 
-class TestService(InvenioRecordService):
+class TestService(RDMRecordService):
     """TestRecord service."""        
 '''
     )

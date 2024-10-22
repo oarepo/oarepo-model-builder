@@ -36,7 +36,9 @@ def test_raw_type():
 import marshmallow as ma
 from marshmallow import fields as ma_fields
 from oarepo_runtime.services.schema.marshmallow import BaseRecordSchema
-class TestSchema(BaseRecordSchema):
+from oarepo_runtime.services.schema.rdm import RDMRecordMixin
+
+class TestSchema(BaseRecordSchema, RDMRecordMixin):
     class Meta:
         unknown = ma.RAISE
     a = ma_fields.Dict()

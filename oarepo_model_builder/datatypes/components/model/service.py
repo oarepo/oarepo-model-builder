@@ -164,7 +164,7 @@ class ServiceModelComponent(DataTypeComponent):
         service.setdefault("extra-code", "")
         service.setdefault(
             "base-classes",
-            ["invenio_records_resources.services.RecordService{InvenioRecordService}"],
+            ["invenio_rdm_records.services.services.RDMRecordService"],
         )
         service.setdefault(
             "imports",
