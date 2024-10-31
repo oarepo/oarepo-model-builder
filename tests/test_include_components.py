@@ -9,17 +9,29 @@ from .utils import strip_whitespaces
 OAREPO_USE = "use"
 
 
-
 def test_include_invenio():
     schema = load_model(
         "test.yaml",  # NOSONAR
         model_content={
             "version": "1.0.0",
-
             "record": {
                 "module": {"qualified": "test"},
                 OAREPO_USE: ["invenio", "doi", "oaipmh"],
-                "properties": {"a": {"type": "keyword", "required": True}},
+                "properties": {
+                    "a": {"type": "keyword", "required": True},
+                    "harvest": {
+                        "properties": {
+                            "identifier": {
+                                "type": "keyword",
+                                "required": True
+                            },
+                            "datestamp": {
+                                "type": "keyword",
+                                "required": True
+                            },
+                        }
+                    },
+                },
             },
         },
         isort=False,
@@ -36,4 +48,7 @@ def test_include_invenio():
         os.path.join("test", "services", "records", "config.py")
     ).read()
     data = str(data)
-    assert "components=[*PermissionsPresetsConfigMixin.components,*InvenioRecordServiceConfig.components,DoiComponent,OaiSectionComponent]" in re.sub(r"\s", "", data)
+    assert (
+        "components=[*PermissionsPresetsConfigMixin.components,*InvenioRecordServiceConfig.components,DoiComponent,OaiSectionComponent]"
+        in re.sub(r"\s", "", data)
+    )
