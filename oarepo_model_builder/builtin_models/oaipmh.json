@@ -5,18 +5,10 @@
         "harvest": {
           "properties": {
             "identifier": {
-              "type": "keyword",
-              "label": {
-                "cs": "OAI identifikátor",
-                "en": "OAI identifier"
-              }
+              "type": "keyword"
             },
             "datestamp": {
-              "type": "keyword",
-              "label": {
-                "cs": "Datum poslední změny",
-                "en": "Datestamp"
-              }
+              "type": "keyword"
             }
           }
         }
