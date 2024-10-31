@@ -1,9 +1,31 @@
 {
-    "service-config": {
-      "extend:components": [
-        "{{oarepo_oaipmh_harvester.components.OaiSectionComponent}}"
-      ]
+  "properties": {
+    "oai": {
+      "properties": {
+        "harvest": {
+          "properties": {
+            "identifier": {
+              "type": "keyword",
+              "label": {
+                "cs": "OAI identifikátor",
+                "en": "OAI identifier"
+              }
+            },
+            "datestamp": {
+              "type": "keyword",
+              "label": {
+                "cs": "Datum poslední změny",
+                "en": "Datestamp"
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  "service-config": {
+    "extend:components": [
+      "{{oarepo_oaipmh_harvester.components.OaiSectionComponent}}"
+    ]
   }
-  
-  
+}
