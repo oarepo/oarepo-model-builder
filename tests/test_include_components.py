@@ -21,8 +21,14 @@ def test_include_invenio():
                     "a": {"type": "keyword", "required": True},
                     "harvest": {
                         "properties": {
-                            "identifier": "oai:invenio.nusl.cz:203122",
-                            "datestamp": "2024-07-17T07:04:25Z"
+                            "identifier": {
+                                "type": "keyword",
+                                "required": True
+                            },
+                            "datestamp": {
+                                "type": "keyword",
+                                "required": True
+                            },
                         }
                     },
                 },

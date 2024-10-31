@@ -5,10 +5,13 @@
         "harvest": {
           "properties": {
             "identifier": {
-              "type": "keyword"
+              "type": "keyword",
+              "required": true
             },
             "datestamp": {
-              "type": "keyword"
+              "type": "keyword",
+              "required": true
+
             }
           }
         }
