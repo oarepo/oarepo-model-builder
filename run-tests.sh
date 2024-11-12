@@ -156,6 +156,13 @@ if [ "$1" == "--server" ] ; then
 fi
 
 cat complex-model/data/sample_data.yaml
+
+$TEST_VENV/bin/nrp-devtools proxy 120 &
+
+pip install "oarepo[tests,rdm]==${OAREPO_VERSION}.*" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
+
+
+pip install "./build-tests/${MODEL}[tests]" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
 $TEST_VENV/bin/pytest tests-model
 
 
