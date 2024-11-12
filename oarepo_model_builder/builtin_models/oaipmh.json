@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "oai": {
+      "properties": {
+        "harvest": {
+          "properties": {
+            "identifier": {
+              "type": "keyword",
+              "required": true
+            },
+            "datestamp": {
+              "type": "keyword",
+              "required": true
+
+            }
+          }
+        }
+      }
+    }
+  },
+  "service-config": {
+    "extend:components": [
+      "{{oarepo_oaipmh_harvester.components.OaiSectionComponent}}"
+    ]
+  }
+}
