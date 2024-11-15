@@ -19,12 +19,18 @@ initialize_server_venv() {
     rm -rf $SERVER_VENV
   fi
 
-  python3 -m venv $SERVER_VENV
+  python3.12 -m venv $SERVER_VENV
   source $SERVER_VENV/bin/activate
 
-  $SERVER_VENV/bin/pip install -U setuptools pip wheel
-  $SERVER_VENV/bin/pip install "oarepo[tests]==${OAREPO_VERSION}.*"
-  $SERVER_VENV/bin/pip install -e complex-model
+
+
+
+  .venv-server/bin/pip install -U setuptools pip wheel nrp-devtools ~/cesnet/nr/temp/oarepo-runtime/
+  .venv-server/bin/nrp-devtools proxy 120 &
+  .venv-server/bin/pip install "oarepo[tests,rdm]==12.*" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
+
+
+  .venv-server/bin/pip install -e complex-model --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
 }
 
 initialize_builder_venv() {
@@ -33,7 +39,7 @@ initialize_builder_venv() {
     rm -rf $BUILDER_VENV
   fi
 
-  python3 -m venv $BUILDER_VENV
+  python3.12 -m venv $BUILDER_VENV
   . $BUILDER_VENV/bin/activate
   $BUILDER_VENV/bin/pip install -U setuptools pip wheel
   $BUILDER_VENV/bin/pip install -e '.[tests]'
@@ -45,10 +51,11 @@ initialize_client_test_venv() {
     rm -rf $TEST_VENV
   fi
 
-  python3 -m venv $TEST_VENV
+  python3.12 -m venv $TEST_VENV
 
   $TEST_VENV/bin/pip install -U setuptools pip wheel
   $TEST_VENV/bin/pip install requests PyYAML pytest
+
 }
 
 run_builder_tests() {
@@ -157,12 +164,7 @@ fi
 
 cat complex-model/data/sample_data.yaml
 
-$TEST_VENV/bin/nrp-devtools proxy 120 &
 
-pip install "oarepo[tests,rdm]==${OAREPO_VERSION}.*" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
-
-
-pip install "./build-tests/${MODEL}[tests]" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
 $TEST_VENV/bin/pytest tests-model
 
 

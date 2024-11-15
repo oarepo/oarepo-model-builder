@@ -198,8 +198,9 @@ class TestExt:
 
     def init_app(self, app):
         """Flask application initialization."""
-        
+        self.app= app
         self.init_config(app)
+        
         if not self.is_inherited():
             self.register_flask_extension(app)
 
