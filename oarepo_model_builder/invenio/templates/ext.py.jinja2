@@ -1,4 +1,6 @@
 import re
+
+from invenio_rdm_records.services.pids import PIDsService, PIDManager
 {{ vars.config.module|generate_import(alias='config') }}
 {{ vars.ext|imports }}
 
@@ -29,6 +31,8 @@ class {{ vars.ext|class_header }}:
 
     def init_config(self, app):
         """Initialize configuration."""
+        {{ vars.service }}
+        {{ vars.ext }}
         for identifier in dir(config):
             if re.match('^[A-Z_0-9]*$', identifier) and not identifier.startswith('_'):
                 if isinstance(app.config.get(identifier), list):
@@ -54,5 +58,19 @@ class {{ vars.ext|class_header }}:
             if loaded is not ext_class and issubclass(ext_class, loaded):
                 return True
         return False
+
+    @cached_property
+    def service_records(self):
+        {{ vars.service_config.class|generate_import }}
+        {{ vars.service.class|generate_import }}
+        config_class = {{ vars.service_config.class|base_name }}.build(self.app)
+        return {{ vars.service.class|base_name }}(
+            config=config_class,
+            pids_service=PIDsService(config_class, PIDManager),
+            {% if vars.service.additional_args %}
+                {{ vars.service.additional_args|generate_list }}
+            {% endif %}
+        )
+
 
 {{ vars.ext|extra_code }}
