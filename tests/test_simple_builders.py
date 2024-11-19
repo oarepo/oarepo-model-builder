@@ -40,6 +40,7 @@ from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
 from oarepo_model_builder.invenio.invenio_version import InvenioVersionBuilder
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
+
 from .utils import strip_whitespaces
 
 
