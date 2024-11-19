@@ -217,6 +217,7 @@ def test_prepare_datatype():
                 "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
                 "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
             ],
+            "search-item-links-template-cls": "invenio_records_resources.services.LinksTemplate",
             "additional-args": [],
             "components": [],
         },

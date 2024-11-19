@@ -211,6 +211,7 @@ def test_model_saver():
             ],
             "additional-args": [],
             "components": [],
+            "search-item-links-template-cls": "invenio_records_resources.services.LinksTemplate",
         },
         "service": {
             "generate": True,
@@ -583,6 +584,7 @@ def test_model_saver_invenio():
             ],
             "additional-args": [],
             "components": [],
+            "search-item-links-template-cls": "invenio_records_resources.services.LinksTemplate",
         },
         "service": {
             "generate": True,

@@ -388,6 +388,7 @@ from test.services.records.schema import TestSchema
 from test.services.records.search import TestSearchOptions
 from test.services.records.results import TestRecordItem
 from test.services.records.results import TestRecordList
+from invenio_records_resources.services import LinksTemplate
 
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
@@ -416,6 +417,7 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     service_id = "test"
     
+    search_item_links_template = LinksTemplate
 
     components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]
 
