@@ -382,6 +382,7 @@ from invenio_records_resources.services import RecordServiceConfig as InvenioRec
 from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 from invenio_records_resources.services import RecordLink
 from invenio_records_resources.services import pagination_links
+from oarepo_runtime.records import has_permission
 from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
@@ -392,27 +393,46 @@ from test.services.records.results import TestRecordList
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
+    
     result_item_cls = TestRecordItem
+    
+    
     result_list_cls = TestRecordList
-    PERMISSIONS_PRESETS = ["everyone"]
+    
+    PERMISSIONS_PRESETS = ["everyone" ]
+
     url_prefix = "/test/"
+    
     base_permission_policy_cls = TestPermissionPolicy
+    
+    
     schema = TestSchema
+    
+    
     search = TestSearchOptions
+    
+    
     record_cls = TestRecord
+    
+    
     service_id = "test"
+    
+
     components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]
+
     model = "test"
+
     
     @property
     def links_item(self):
         return {
             
-            "self":RecordLink("{+api}/test/{id}"),
+            "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
             
-            "self_html":RecordLink("{+ui}/test/{id}"),
+            "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
             
         }
+    
     @property
     def links_search(self):
         return {
