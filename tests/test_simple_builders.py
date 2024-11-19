@@ -40,7 +40,6 @@ from oarepo_model_builder.invenio.invenio_record_ui_serializer import (
 from oarepo_model_builder.invenio.invenio_version import InvenioVersionBuilder
 from oarepo_model_builder.outputs.python import PythonOutput
 from oarepo_model_builder.schema import ModelSchema
-
 from .utils import strip_whitespaces
 
 
@@ -425,6 +424,16 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     @property
     def links_item(self):
+        return {
+            
+            "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
+            
+            "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
+            
+        }
+    
+    @property
+    def links_search_item(self):
         return {
             
             "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
