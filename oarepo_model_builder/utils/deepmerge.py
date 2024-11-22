@@ -54,10 +54,12 @@ def deepmerge(
                         )
     elif isinstance(target, list):
         if source is not None:
-            if not isinstance(source, list):
+            if isinstance(source, dict):
                 raise AttributeError(
                     f"Incompatible source and target on path {stack}: source {source}, target {target}"
                 )
+            if not isinstance(source, list):
+                return target
             if listmerge == "overwrite":
                 for idx in range(min(len(source), len(target))):
                     target[idx] = deepmerge(
