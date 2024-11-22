@@ -217,7 +217,7 @@ class DataType(AbstractDataType):
     class ModelSchema(ma.Schema):
         type = fields.String(required=True)
         required = fields.Bool()
-        jsonschema = fields.Nested(PermissiveSchema)
+        json_schema = fields.Nested(PermissiveSchema, attribute="json-schema", data_key="json-schema")
         mapping = fields.Nested(PermissiveSchema)
         id = fields.String(
             metadata={
