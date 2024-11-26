@@ -58,34 +58,52 @@ class ModelDataType(ObjectDataType):
                 Link(
                     name="self",
                     link_class="RecordLink",
-                    link_args=[f'"{{+api}}{url_prefix}{{id}}"', 'when=has_permission("read")'],
-                    imports=[Import("invenio_records_resources.services.RecordLink"), Import("oarepo_runtime.records.has_permission")],
+                    link_args=[
+                        f'"{{+api}}{url_prefix}{{id}}"',
+                        'when=has_permission("read")',
+                    ],
+                    imports=[
+                        Import("invenio_records_resources.services.RecordLink"),
+                        Import("oarepo_runtime.records.has_permission"),
+                    ],
                 ),
                 Link(
                     name="self_html",
                     link_class="RecordLink",
                     link_args=[
-                        f'"{{+ui}}{html_url_prefix}{{id}}"', 'when=has_permission("read")'
+                        f'"{{+ui}}{html_url_prefix}{{id}}"',
+                        'when=has_permission("read")',
                     ],
-                    imports=[Import("invenio_records_resources.services.RecordLink"), Import("oarepo_runtime.records.has_permission")],
+                    imports=[
+                        Import("invenio_records_resources.services.RecordLink"),
+                        Import("oarepo_runtime.records.has_permission"),
+                    ],
                 ),
             ],
             "links_search_item": [
                 Link(
                     name="self",
                     link_class="RecordLink",
-                    link_args=[f'"{{+api}}{url_prefix}{{id}}"', 'when=has_permission("read")'],
-                    imports=[Import("invenio_records_resources.services.RecordLink"),
-                             Import("oarepo_runtime.records.has_permission")],
+                    link_args=[
+                        f'"{{+api}}{url_prefix}{{id}}"',
+                        'when=has_permission("read")',
+                    ],
+                    imports=[
+                        Import("invenio_records_resources.services.RecordLink"),
+                        Import("oarepo_runtime.records.has_permission"),
+                    ],
                 ),
                 Link(
                     name="self_html",
                     link_class="RecordLink",
                     link_args=[
-                        f'"{{+ui}}{html_url_prefix}{{id}}"', 'when=has_permission("read")'
+                        f'"{{+ui}}{html_url_prefix}{{id}}"',
+                        'when=has_permission("read")',
                     ],
-                    imports=[Import("invenio_records_resources.services.RecordLink"),
-                             Import("oarepo_runtime.records.has_permission")],
+                    imports=[
+                        Import("invenio_records_resources.services.RecordLink"),
+                        Import("oarepo_runtime.records.has_permission"),
+                    ],
                 ),
             ],
             "links_search": [
