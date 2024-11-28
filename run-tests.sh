@@ -22,7 +22,7 @@ initialize_server_venv() {
   python3 -m venv $SERVER_VENV
   source $SERVER_VENV/bin/activate
 
-  $SERVER_VENV/bin/pip install -U setuptools pip wheel
+  $SERVER_VENV/bin/pip install -U setuptools pip wheel nrp-devtools
   $SERVER_VENV/bin/nrp-devtools proxy 240 &
   $SERVER_VENV/bin/pip install "oarepo[tests, rdm]==${OAREPO_VERSION}.*" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
   $SERVER_VENV/bin/pip install -e complex-model --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
