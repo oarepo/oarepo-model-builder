@@ -64,7 +64,7 @@ class ModelDataType(ObjectDataType):
                     ],
                     imports=[
                         Import("invenio_records_resources.services.RecordLink"),
-                        Import("oarepo_runtime.records.has_permission"),
+                        Import("oarepo_runtime.services.config.has_permission"),
                     ],
                 ),
                 Link(
@@ -76,7 +76,7 @@ class ModelDataType(ObjectDataType):
                     ],
                     imports=[
                         Import("invenio_records_resources.services.RecordLink"),
-                        Import("oarepo_runtime.records.has_permission"),
+                        Import("oarepo_runtime.services.config.has_permission"),
                     ],
                 ),
             ],
@@ -90,7 +90,7 @@ class ModelDataType(ObjectDataType):
                     ],
                     imports=[
                         Import("invenio_records_resources.services.RecordLink"),
-                        Import("oarepo_runtime.records.has_permission"),
+                        Import("oarepo_runtime.services.config.has_permission"),
                     ],
                 ),
                 Link(
@@ -102,7 +102,7 @@ class ModelDataType(ObjectDataType):
                     ],
                     imports=[
                         Import("invenio_records_resources.services.RecordLink"),
-                        Import("oarepo_runtime.records.has_permission"),
+                        Import("oarepo_runtime.services.config.has_permission"),
                     ],
                 ),
             ],
