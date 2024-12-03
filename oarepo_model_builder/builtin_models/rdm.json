@@ -1,0 +1,73 @@
+{
+  "properties": {
+    "access": {
+      "marshmallow": {
+        "generate": false,
+        "class": "invenio_rdm_records.services.schemas.access.AccessSchema"
+      },
+      "sample": {
+        "skip": true
+      },
+      "properties": {
+        "record": {
+          "type": "keyword",
+          "sample": {
+            "skip": true
+          }
+        },
+        "files": {
+          "type": "keyword",
+          "sample": {
+            "skip": true
+          }
+        },
+        "embargo": {
+          "properties": {
+            "active": {
+              "type": "boolean",
+              "sample": {
+                "skip": true
+              },
+              "json-schema": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            },
+            "until": {
+              "type": "date",
+              "sample": {
+                "skip": true
+              },
+              "json-schema": {
+                "type": [
+                  "date",
+                  "null"
+                ]
+              }
+            },
+            "reason": {
+              "type": "fulltext",
+              "sample": {
+                "skip": true
+              },
+              "json-schema": {
+                "type": [
+                  "fulltext",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "status": {
+          "type": "keyword",
+          "sample": {
+            "skip": true
+          }
+        }
+      }
+    }
+  }
+}
