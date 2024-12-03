@@ -79,6 +79,14 @@ class ModelDataType(ObjectDataType):
                         Import("invenio_records_resources.services.pagination_links")
                     ],
                 ),
+                Link(
+                    name=None,
+                    link_class="pagination_links_html",
+                    link_args=[f'"{{+ui}}{url_prefix}{{?args*}}"'],
+                    imports=[
+                        Import("oarepo_runtime.services.records.pagination_links_html")
+                    ],
+                ),
             ],
         }
 
