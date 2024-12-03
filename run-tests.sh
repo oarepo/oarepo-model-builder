@@ -135,7 +135,7 @@ stop_server() {
 #
 
 initialize_builder_venv
-#run_builder_tests
+run_builder_tests
 
 create_server
 

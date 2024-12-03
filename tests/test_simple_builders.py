@@ -193,6 +193,7 @@ class TestExt:
 
     def init_app(self, app):
         """Flask application initialization."""
+        self.app = app
         
         self.init_config(app)
         if not self.is_inherited():
@@ -389,6 +390,7 @@ from test.services.records.search import TestSearchOptions
 from test.services.records.results import TestRecordItem
 from test.services.records.results import TestRecordList
 
+from oarepo_runtime.services.components import process_service_configs
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
@@ -401,7 +403,13 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     search = TestSearchOptions
     record_cls = TestRecord
     service_id = "test"
-    components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]
+    @property
+    def components(self):
+        components_list = []
+        components_list.extend(process_service_configs(type(self).mro()[2:]))
+        additional_components = []
+        components_list.extend(additional_components)
+        return components_list
     model = "test"
     
     @property

@@ -47,8 +47,7 @@ def test_include_invenio():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "config.py")
     ).read()
-    data = str(data)
-    assert (
-        "components=[*PermissionsPresetsConfigMixin.components,*InvenioRecordServiceConfig.components,DoiComponent,OaiSectionComponent]"
-        in re.sub(r"\s", "", data)
-    )
+    data = re.sub(r"\s", "", str(data))
+    additional_components = "additional_components=[DoiComponent,OaiSectionComponent]"  # Remove whitespace from expected substring
+
+    assert additional_components in data
