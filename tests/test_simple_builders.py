@@ -79,7 +79,6 @@ def test_record_builder():
         [InvenioRecordBuilder],
         os.path.join("test", "records", "api.py"),  # NOSONAR
     )
-
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from invenio_records.systemfields import ConstantField
@@ -88,8 +87,8 @@ from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
 from test.records.dumpers.dumper import TestDumper
-from invenio_records_resources.records.api import Record as InvenioRecord
-class TestRecord(InvenioRecord):
+from invenio_rdm_records.records.api import RDMRecord
+class TestRecord(RDMRecord):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
     index = IndexField("test-test-1.0.0",)
@@ -123,12 +122,12 @@ from invenio_records_resources.records.systemfields.pid import PIDField
 from invenio_records_resources.records.systemfields.pid import PIDFieldContext
 from test.records.models import TestMetadata
 from test.records.dumpers.dumper import TestDumper
-from invenio_records_resources.records.api import Record as InvenioRecord
+from invenio_rdm_records.records.api import RDMRecord
 
 class TestIdProvider(RecordIdProviderV2):
     pid_type = "test"
 
-class TestRecord(InvenioRecord):
+class TestRecord(RDMRecord):
     model_cls = TestMetadata
     schema = ConstantField("$schema", "local://test-1.0.0.json")
     index = IndexField("test-test-1.0.0",)
@@ -158,7 +157,8 @@ from invenio_db import db
 
 
 from invenio_records.models import RecordMetadataBase
-
+from invenio_rdm_records.records.systemfields.deletion_status import RecordDeletionStatusEnum
+from sqlalchemy_utils.types import ChoiceType
 
 class TestMetadata(db.Model, RecordMetadataBase):
     """Model for TestRecord metadata."""
@@ -167,6 +167,12 @@ class TestMetadata(db.Model, RecordMetadataBase):
 
     # Enables SQLAlchemy-Continuum versioning
     __versioned__ = {}
+    
+    deletion_status = db.Column(
+        ChoiceType(RecordDeletionStatusEnum, impl=db.String(1)),
+        nullable=False,
+        default=RecordDeletionStatusEnum.PUBLISHED.value,
+    )
 '''
     )
 
@@ -193,6 +199,7 @@ class TestExt:
 
     def init_app(self, app):
         """Flask application initialization."""
+        self.app = app
         
         self.init_config(app)
         if not self.is_inherited():
@@ -361,9 +368,8 @@ def test_service_builder():
 
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from invenio_records_resources.services import RecordService as InvenioRecordService
-
-class TestService(InvenioRecordService):
+from invenio_rdm_records.services.services import RDMRecordService
+class TestService(RDMRecordService):
     """TestRecord service."""        
 '''
     )
@@ -378,7 +384,7 @@ def test_service_config():
     print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
-from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
+from invenio_rdm_records.services.config import RDMRecordServiceConfig
 from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 from invenio_records_resources.services import RecordLink
 from invenio_records_resources.services import pagination_links
@@ -388,9 +394,9 @@ from test.services.records.schema import TestSchema
 from test.services.records.search import TestSearchOptions
 from test.services.records.results import TestRecordItem
 from test.services.records.results import TestRecordList
+from oarepo_runtime.services.components import process_service_configs
 
-
-class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
+class TestServiceConfig(PermissionsPresetsConfigMixin, RDMRecordServiceConfig):
     """TestRecord service config."""
     result_item_cls = TestRecordItem
     result_list_cls = TestRecordList
@@ -401,7 +407,15 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     search = TestSearchOptions
     record_cls = TestRecord
     service_id = "test"
-    components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]
+    
+    @property
+    def components(self):
+        components_list = []
+        components_list.extend(process_service_configs(type(self).mro()[2:]))
+        additional_components = []
+        components_list.extend(additional_components)
+        return components_list    
+    
     model = "test"
     
     @property

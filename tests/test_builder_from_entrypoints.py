@@ -23,7 +23,7 @@ def test_include_invenio():
             "version": "1.0.0",
             "record": {
                 "module": {"qualified": "test"},
-                OAREPO_USE: "invenio",
+                OAREPO_USE: ["invenio", "rdm"],
                 "properties": {"a": {"type": "keyword", "required": True}},
             },
         },
@@ -40,23 +40,25 @@ def test_include_invenio():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "schema.py")
     ).read()
-
     assert (
         strip_whitespaces(
             """
 import marshmallow as ma
+from invenio_rdm_records.services.schemas.access import AccessSchema
 from marshmallow import fields as ma_fields
 from oarepo_runtime.services.schema.marshmallow import BaseRecordSchema
+from oarepo_runtime.services.schema.rdm import RDMRecordMixin
 
 
-
-class TestSchema(BaseRecordSchema):
+class TestSchema(BaseRecordSchema, RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE
 
 
     a = ma_fields.String(required=True)
+    
+    access = ma_fields.Nested(lambda: AccessSchema())
     """
         )
         == strip_whitespaces(data)
@@ -65,7 +67,6 @@ class TestSchema(BaseRecordSchema):
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "ui_schema.py")
     ).read()
-    print(data)
     assert (
         strip_whitespaces(
             """
@@ -89,6 +90,18 @@ class TestUISchema(InvenioUISchema):
             "properties": {
                 "$schema": {"type": "keyword", "ignore_above": 1024},
                 "a": {"type": "keyword", "ignore_above": 1024},
+                'access': {'properties': {'embargo': {'properties': {'active': {'type': 'boolean'},
+                                                                     'reason': {'type': 'text'},
+                                                                     'until': {'format': 'basic_date||strict_date',
+                                                                               'type': 'date'}},
+                                                      'type': 'object'},
+                                          'files': {'ignore_above': 1024,
+                                                    'type': 'keyword'},
+                                          'record': {'ignore_above': 1024,
+                                                     'type': 'keyword'},
+                                          'status': {'ignore_above': 1024,
+                                                     'type': 'keyword'}},
+                           'type': 'object'},
                 "created": {
                     "type": "date",
                     "format": "strict_date_time||strict_date_time_no_millis||basic_date_time||basic_date_time_no_millis||basic_date||strict_date||strict_date_hour_minute_second||strict_date_hour_minute_second_fraction",

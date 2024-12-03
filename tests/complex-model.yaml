@@ -1,5 +1,5 @@
 record:
-  use: [invenio]
+  use: [invenio, rdm]
   module:
     qualified: complex_model
   permissions:

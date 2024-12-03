@@ -1,4 +1,5 @@
 import re
+
 {{ vars.config.module|generate_import(alias='config') }}
 {{ vars.ext|imports }}
 
@@ -13,6 +14,7 @@ class {{ vars.ext|class_header }}:
 
     def init_app(self, app):
         """Flask application initialization."""
+        self.app = app
         {% if vars.ext.base_classes %}
         super().init_app(app=app)
         {% endif %}
