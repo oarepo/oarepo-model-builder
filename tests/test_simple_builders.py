@@ -382,7 +382,8 @@ from invenio_records_resources.services import RecordServiceConfig as InvenioRec
 from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 from invenio_records_resources.services import RecordLink
 from invenio_records_resources.services import pagination_links
-from oarepo_runtime.records import has_permission
+from oarepo_runtime.services.config import has_permission
+from oarepo_runtime.services.records import pagination_links_html
 from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
@@ -418,7 +419,9 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     service_id = "test"
     
+    
     search_item_links_template = LinksTemplate
+    
 
     components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]
 
@@ -451,7 +454,10 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
             
             **pagination_links("{+api}/test/{?args*}"),
             
+            **pagination_links_html("{+ui}/test/{?args*}"),
+            
         }
+    
 '''
     )
 
