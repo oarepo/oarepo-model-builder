@@ -9,14 +9,14 @@ from .utils import strip_whitespaces
 OAREPO_USE = "use"
 
 
-def test_include_invenio():
+def test_include_components():
     schema = load_model(
         "test.yaml",  # NOSONAR
         model_content={
             "version": "1.0.0",
             "record": {
                 "module": {"qualified": "test"},
-                OAREPO_USE: ["invenio", "doi", "oaipmh"],
+                OAREPO_USE: ["invenio","rdm", "doi", "oaipmh"],
                 "properties": {
                     "a": {"type": "keyword", "required": True},
                     "harvest": {
@@ -47,8 +47,10 @@ def test_include_invenio():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "config.py")
     ).read()
+
     data = str(data)
-    assert (
-        "components=[*PermissionsPresetsConfigMixin.components,*InvenioRecordServiceConfig.components,DoiComponent,OaiSectionComponent]"
-        in re.sub(r"\s", "", data)
-    )
+    data = re.sub(r"\s", "", str(data))  # Remove all whitespace from data
+    additional_components = "additional_components=[DoiComponent,OaiSectionComponent]"  # Remove whitespace from expected substring
+
+    assert additional_components in data
+

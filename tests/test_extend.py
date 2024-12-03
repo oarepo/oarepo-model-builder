@@ -37,8 +37,8 @@ def test_extend_marshmallow():
 
     loaded_model = json5.loads(fs.read("test/models/records.json"))
     assert loaded_model["model"]["marshmallow"] == {
-        "base-classes": ["marshmallow.Schema"],
-        "class": "aaa.BlahSchema",
+        "base-classes": ['marshmallow.Schema',
+                         'oarepo_runtime.services.schema.rdm.RDMRecordMixin'],        "class": "aaa.BlahSchema",
         "extra-code": "",
         "generate": False,
         "module": "test.services.records.schema",
@@ -91,7 +91,7 @@ def test_extend_with_extra_props():
 
     loaded_model = json5.loads(fs.read("test/models/records.json"))
     assert loaded_model["model"]["marshmallow"] == {
-        "base-classes": ["aaa.BlahSchema"],
+        "base-classes": ["aaa.BlahSchema", 'oarepo_runtime.services.schema.rdm.RDMRecordMixin'],
         "class": "test.services.records.schema.TestSchema",
         "extra-code": "",
         "generate": True,
@@ -118,11 +118,10 @@ def test_extend_with_extra_props():
     assert "schema = TestSchema" in service_config
 
     schema = fs.read("test/services/records/schema.py")
-    print(schema)
 
     assert "from aaa import BlahSchema" in schema
     assert "from aaa import BlahMetadataSchema" in schema
-    assert "class TestSchema(BlahSchema)" in schema
+    assert "class TestSchema(BlahSchema, RDMRecordMixin)" in schema
     assert "metadata = ma_fields.Nested(lambda: TestMetadataSchema())" in schema
     assert "class TestMetadataSchema(BlahMetadataSchema)" in schema
     assert "b = ma_fields.String()" in schema
@@ -158,7 +157,7 @@ def test_extend_with_extra_props_inside_use():
 
     loaded_model = json5.loads(fs.read("test/models/records.json"))
     assert loaded_model["model"]["marshmallow"] == {
-        "base-classes": ["aaa.BlahSchema"],
+        "base-classes": ["aaa.BlahSchema", 'oarepo_runtime.services.schema.rdm.RDMRecordMixin'],
         "class": "test.services.records.schema.TestSchema",
         "extra-code": "",
         "generate": True,
@@ -180,16 +179,14 @@ def test_extend_with_extra_props_inside_use():
     assert property_a["ui"]["marshmallow"]["write"] is False
 
     service_config = fs.read("test/services/records/config.py")
-    print(service_config)
     assert "from test.services.records.schema import TestSchema" in service_config
     assert "schema = TestSchema" in service_config
 
     schema = fs.read("test/services/records/schema.py")
-    print(schema)
 
     assert "from aaa import BlahSchema" in schema
     assert "from aaa import BlahMetadataSchema" in schema
-    assert "class TestSchema(BlahSchema)" in schema
+    assert "class TestSchema(BlahSchema, RDMRecordMixin)" in schema
     assert "metadata = ma_fields.Nested(lambda: TestMetadataSchema())" in schema
     assert "class TestMetadataSchema(BlahMetadataSchema)" in schema
     assert "b = ma_fields.String()" in schema

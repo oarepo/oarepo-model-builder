@@ -1,5 +1,6 @@
 {{ vars.record_metadata|imports }}
-
+from invenio_rdm_records.records.systemfields.deletion_status import RecordDeletionStatusEnum
+from sqlalchemy_utils.types import ChoiceType
 class {{ vars.record_metadata|class_header }}:
     """Model for {{ vars.record.class|base_name }} metadata."""
 
@@ -9,5 +10,11 @@ class {{ vars.record_metadata|class_header }}:
     # Enables SQLAlchemy-Continuum versioning
     __versioned__ = {}
     {% endif %}
+
+    deletion_status = db.Column(
+        ChoiceType(RecordDeletionStatusEnum, impl=db.String(1)),
+        nullable=False,
+        default=RecordDeletionStatusEnum.PUBLISHED.value,
+    )
 
 {{ vars.record_metadata|extra_code }}

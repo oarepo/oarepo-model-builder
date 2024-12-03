@@ -140,13 +140,21 @@ class ServiceModelComponent(DataTypeComponent):
         )
         config.setdefault("extra-code", "")
         config.setdefault("service-id", datatype.definition["module"]["suffix-snake"])
+        # config.setdefault(
+        #     "base-classes",
+        #     [
+        #         "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
+        #         "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
+        #     ],
+        # )
         config.setdefault(
             "base-classes",
             [
                 "oarepo_runtime.services.config.service.PermissionsPresetsConfigMixin",
-                "invenio_records_resources.services.RecordServiceConfig{InvenioRecordServiceConfig}",
+                "invenio_rdm_records.services.config.RDMRecordServiceConfig",
             ],
         )
+
         config.setdefault("components", [])
         config.setdefault("additional-args", [])
         convert_config_to_qualified_name(config)
@@ -164,7 +172,7 @@ class ServiceModelComponent(DataTypeComponent):
         service.setdefault("extra-code", "")
         service.setdefault(
             "base-classes",
-            ["invenio_records_resources.services.RecordService{InvenioRecordService}"],
+            ["invenio_rdm_records.services.services.RDMRecordService"],
         )
         service.setdefault(
             "imports",

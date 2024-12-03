@@ -18,11 +18,11 @@ initialize_server_venv() {
 #  if [ -d $SERVER_VENV ] ; then
 #    rm -rf $SERVER_VENV
 #  fi
-#
+
 #  python3.12 -m venv $SERVER_VENV
   source $SERVER_VENV/bin/activate
-
-#  $SERVER_VENV/bin/pip install -U setuptools pip wheel  ~/cesnet/nr/tmp2211/nrp-devtools/
+#
+#  $SERVER_VENV/bin/pip install -U setuptools pip wheel nrp-devtools
 #  $SERVER_VENV/bin/nrp-devtools proxy 120 &
 #  $SERVER_VENV/bin/pip install "oarepo[tests, rdm]==${OAREPO_VERSION}.*" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
 #  $SERVER_VENV/bin/pip install -e complex-model --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
@@ -30,27 +30,27 @@ initialize_server_venv() {
 
 initialize_builder_venv() {
 
-#  if test -d $BUILDER_VENV ; then
-#    rm -rf $BUILDER_VENV
-#  fi
+  if test -d $BUILDER_VENV ; then
+    rm -rf $BUILDER_VENV
+  fi
 
-#  python3.12 -m venv $BUILDER_VENV
+  python3.12 -m venv $BUILDER_VENV
   . $BUILDER_VENV/bin/activate
-#  $BUILDER_VENV/bin/pip install -U setuptools pip wheel  ~/cesnet/nr/tmp2211/nrp-devtools/
-#  $BUILDER_VENV/bin/pip install -e '.[tests]'
+  $BUILDER_VENV/bin/pip install -U setuptools pip wheel  ~/cesnet/nr/tmp2211/nrp-devtools/
+  $BUILDER_VENV/bin/pip install -e '.[tests]'
 }
 
-#initialize_client_test_venv() {
-#
-#  if test -d $TEST_VENV ; then
-#    rm -rf $TEST_VENV
-#  fi
-#
-#  python3.12 -m venv $TEST_VENV
-#
-#  $TEST_VENV/bin/pip install -U setuptools pip wheel ~/cesnet/nr/tmp2211/nrp-devtools/
-#  $TEST_VENV/bin/pip install requests PyYAML pytest
-#}
+initialize_client_test_venv() {
+
+  if test -d $TEST_VENV ; then
+    rm -rf $TEST_VENV
+  fi
+
+  python3.12 -m venv $TEST_VENV
+
+  $TEST_VENV/bin/pip install -U setuptools pip wheel ~/cesnet/nr/tmp2211/nrp-devtools/
+  $TEST_VENV/bin/pip install requests PyYAML pytest
+}
 
 run_builder_tests() {
   pytest tests
@@ -138,7 +138,7 @@ stop_server() {
 initialize_builder_venv
 #run_builder_tests
 
-#create_server
+create_server
 
 if [ "$1" == "--create" ] ; then
   exit 0
@@ -150,7 +150,7 @@ fi
 start_server
 trap stop_server EXIT
 
-#initialize_client_test_venv
+initialize_client_test_venv
 
 if [ "$1" == "--server" ] ; then
   echo "Running at https://127.0.0.1:5000/api/complex-model/. Press enter to stop the server"

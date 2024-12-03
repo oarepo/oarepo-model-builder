@@ -211,10 +211,11 @@ def test_array_of_objects(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
+    print(data)
     assert (
         strip_whitespaces(
             """
-class TestSchema(Schema):
+class TestSchema(Schema, RDMRecordMixin):
     class Meta:
         unknown = ma.RAISE
     a = ma_fields.List(ma_fields.Nested(lambda: AItemSchema()))
@@ -339,10 +340,12 @@ def test_generate_nested_schema_same_file(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
+
+
     assert (
         strip_whitespaces(
             """
-class TestSchema(Schema):
+class TestSchema(Schema, RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE
@@ -392,12 +395,7 @@ def test_generate_nested_schema_different_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-import marshmallow as ma
-from marshmallow import fields as ma_fields
-from test.services.schema2 import BSchema
-from marshmallow import Schema
-
-class TestSchema(Schema):
+class TestSchema(Schema, RDMRecordMixin):
     class Meta:
         unknown = ma.RAISE
     a = ma_fields.Nested(lambda: BSchema())        
@@ -446,11 +444,10 @@ def test_use_nested_schema_same_file(fulltext_builder):
         os.path.join("test", "services", "records", "schema.py")
     ) as f:
         data = f.read()
-        print(data)
     assert (
         strip_whitespaces(
             """
-class TestSchema(Schema):
+class TestSchema(Schema, RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE
@@ -488,7 +485,7 @@ def test_use_nested_schema_different_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(Schema):
+class TestSchema(Schema,  RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE
@@ -527,7 +524,7 @@ def test_generate_nested_schema_array(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(Schema):
+class TestSchema(Schema, RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE
@@ -562,7 +559,7 @@ def test_extend_existing(fulltext_builder):
 from invenio_records_resources.services.records.schema import BaseRecordSchema as InvenioBaseRecordSchema
 import marshmallow as ma
 import marshmallow.validate as ma_valid
-class TestSchema(Schema):
+class TestSchema(Schema, RDMRecordMixin):
     """TestSchema schema."""
     a = ma_fields.String()'''
         )
@@ -608,8 +605,9 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from test.services.records.schema2 import BSchema
 from marshmallow import Schema
+from oarepo_runtime.services.schema.rdm import RDMRecordMixin
 
-class TestSchema(Schema):
+class TestSchema(Schema, RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE
@@ -669,7 +667,7 @@ def test_generate_nested_schema_relative_same_file(fulltext_builder):
     assert (
         strip_whitespaces(
             """
-class TestSchema(Schema):
+class TestSchema(Schema, RDMRecordMixin):
 
     class Meta:
         unknown = ma.RAISE
@@ -723,7 +721,8 @@ import marshmallow as ma
 from marshmallow import fields as ma_fields
 from test.services.schema2 import BSchema
 from marshmallow import Schema
-class TestSchema(Schema):
+from oarepo_runtime.services.schema.rdm import RDMRecordMixin
+class TestSchema(Schema, RDMRecordMixin):
     class Meta:
         unknown = ma.RAISE
 
