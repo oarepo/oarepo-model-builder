@@ -382,44 +382,82 @@ from invenio_records_resources.services import RecordServiceConfig as InvenioRec
 from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
 from invenio_records_resources.services import RecordLink
 from invenio_records_resources.services import pagination_links
+from oarepo_runtime.services.config import has_permission
+from oarepo_runtime.services.records import pagination_links_html
 from test.records.api import TestRecord
 from test.services.records.permissions import TestPermissionPolicy
 from test.services.records.schema import TestSchema
 from test.services.records.search import TestSearchOptions
 from test.services.records.results import TestRecordItem
 from test.services.records.results import TestRecordList
+from invenio_records_resources.services import LinksTemplate
 
 
 class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
     """TestRecord service config."""
+    
     result_item_cls = TestRecordItem
+    
+    
     result_list_cls = TestRecordList
-    PERMISSIONS_PRESETS = ["everyone"]
+    
+    PERMISSIONS_PRESETS = ["everyone" ]
+
     url_prefix = "/test/"
+    
     base_permission_policy_cls = TestPermissionPolicy
+    
+    
     schema = TestSchema
+    
+    
     search = TestSearchOptions
+    
+    
     record_cls = TestRecord
+    
+    
     service_id = "test"
+    
+    
+    search_item_links_template = LinksTemplate
+    
+
     components = [ *PermissionsPresetsConfigMixin.components, *InvenioRecordServiceConfig.components]
+
     model = "test"
+
     
     @property
     def links_item(self):
         return {
             
-            "self":RecordLink("{+api}/test/{id}"),
+            "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
             
-            "self_html":RecordLink("{+ui}/test/{id}"),
+            "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
             
         }
+    
+    @property
+    def links_search_item(self):
+        return {
+            
+            "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
+            
+            "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
+            
+        }
+    
     @property
     def links_search(self):
         return {
             
             **pagination_links("{+api}/test/{?args*}"),
             
+            **pagination_links_html("{+ui}/test/{?args*}"),
+            
         }
+    
 '''
     )
 

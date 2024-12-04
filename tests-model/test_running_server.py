@@ -13,7 +13,6 @@ def test_running_server():
             break
         for hit in data["hits"]["hits"]:
             requests.delete(hit["links"]["self"], verify=False)  # NOSONAR
-
     assert data == {
         "hits": {"hits": [], "total": 0},
         "aggregations": {
@@ -28,7 +27,8 @@ def test_running_server():
         },
         "sortBy": "newest",
         "links": {
-            "self": "https://127.0.0.1:5000/api/complex-model/?page=1&size=25&sort=newest"
+            "self": "https://127.0.0.1:5000/api/complex-model/?page=1&size=25&sort=newest",
+            "self_html": "https://127.0.0.1:5000/complex-model/?page=1&size=25&sort=newest"
         },
     }
 

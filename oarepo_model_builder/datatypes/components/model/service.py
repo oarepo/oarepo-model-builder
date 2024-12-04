@@ -97,6 +97,10 @@ class ServiceConfigClassSchema(ma.Schema):
             "doc": "List of additional arguments that will be passed to the service config constructor"
         },
     )
+    search_item_links_template_cls = ma.fields.String(
+        attribute="search-item-links-template-cls",
+        data_key="search-item-links-template-cls",
+    )
     skip = ma.fields.Boolean()
 
 
@@ -149,6 +153,10 @@ class ServiceModelComponent(DataTypeComponent):
         )
         config.setdefault("components", [])
         config.setdefault("additional-args", [])
+        config.setdefault(
+            "search-item-links-template-cls",
+            "invenio_records_resources.services.LinksTemplate",
+        )
         convert_config_to_qualified_name(config)
 
         service = set_default(datatype, "service", {})
