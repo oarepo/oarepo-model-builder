@@ -421,6 +421,10 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     service_id = "test"
 
+
+    search_item_links_template = LinksTemplate
+
+
     @property
     def components(self):
         components_list = []
@@ -428,10 +432,6 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
         additional_components = []
         components_list.extend(additional_components)
         return components_list
-
-    
-    
-    search_item_links_template = LinksTemplate
     
 
     model = "test"
