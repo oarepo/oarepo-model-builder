@@ -5,11 +5,15 @@ class {{ vars.ext|class_header }}:
     {% if not vars.service.skip %}
     @cached_property
     def {{ ext.ext_service_name }}(self):
+        service_config = config.{{ vars.service_config.config_key }}
+        service_kwargs = {{ ext.service_kwargs }}
+        if hasattr(service_config, "build"):
+            config_class = service_config.build(self.app)
+        else:
+            config_class = service_config()
+        service_kwargs["config"] = config_class
         return config.{{ vars.service.config_key }}(
-            config=config.{{ vars.service_config.config_key }}(
-            {% if vars.service_config.additional_args %}
-                {{ vars.service_config.additional_args|generate_list }}
-            {% endif %}),
+            **service_kwargs,
             {% if vars.service.additional_args %}
                 {{ vars.service.additional_args|generate_list }}
             {% endif %}

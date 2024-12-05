@@ -32,6 +32,6 @@ class ExtResourceModelComponent(DataTypeComponent):
         if not datatype.profile == "record":
             return
         ext = set_default(datatype, "ext-resource", {})
-
+        ext.setdefault("service-kwargs", {})
         ext.setdefault("generate", True)
         ext.setdefault("skip", False)

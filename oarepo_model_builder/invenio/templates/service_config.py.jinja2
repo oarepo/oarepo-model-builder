@@ -10,6 +10,7 @@
 {% for c in vars.service_config.components %}
 {{ c|code_imports }}
 {% endfor %}
+from oarepo_runtime.services.components import process_service_configs
 
 class {{ vars.service_config|class_header }}:
     """{{ vars.record.class|base_name }} service config."""
@@ -41,7 +42,13 @@ class {{ vars.service_config|class_header }}:
     search_item_links_template = {{ vars.service_config.search_item_links_template_cls|base_name }}
     {% endif %}
 
-    components = [ {% for b in vars.service_config.base_classes %}*{{ b|base_name }}.components{% if not loop.last %}, {% endif %}{% endfor %}{% for c in vars.service_config.components %}, {{ c|extra_code }} {% endfor %}]
+    @property
+    def components(self):
+        components_list = []
+        components_list.extend(process_service_configs(type(self).mro()[2:]))
+        additional_components = [{% for c in vars.service_config.components %}{{ c|extra_code }}{% if not loop.last %}, {% endif %}{% endfor %}]
+        components_list.extend(additional_components)
+        return components_list
 
     model = "{{ vars.module.qualified }}"
 
