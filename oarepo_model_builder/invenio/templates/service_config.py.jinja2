@@ -6,6 +6,7 @@
 {{ vars.search_options.class|imports }}
 {{ vars.record_item.class|imports }}
 {{ vars.record_list.class|imports }}
+{{ vars.service_config.search_item_links_template_cls|imports }}
 {% for c in vars.service_config.components %}
 {{ c|code_imports }}
 {% endfor %}
@@ -36,6 +37,9 @@ class {{ vars.service_config|class_header }}:
     {% endif %}
     {% if not vars.service_config.skip %}
     service_id = "{{ vars.service_config.service_id }}"
+    {% endif %}
+    {% if not vars.service_config.skip %}
+    search_item_links_template = {{ vars.service_config.search_item_links_template_cls|base_name }}
     {% endif %}
 
     @property
