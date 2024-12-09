@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 export BUILDER_VENV=.venv
 export TEST_VENV=.venv-tests
 export SERVER_VENV=.venv-server
-export PYTHON_VERSION=${PYTHON_VERSION:python3}
+export PYTHON_VERSION=${PYTHON_VERSION:-python3}
 
 OAREPO_VERSION=${OAREPO_VERSION:-12}
 
