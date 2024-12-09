@@ -40,6 +40,7 @@ def test_model_saver():
             }
         },
     )
+    print(data[0]["model"])
     assert data[0]["model"] == {
         "type": "model",
         "searchable": True,
@@ -60,7 +61,7 @@ def test_model_saver():
         },
         "sample": {"file": "data/sample_data.yaml"},
         "model-name": "Test",
-        "ext-resource": {"generate": True, "skip": False},
+        "ext-resource": {"generate": True, 'service-kwargs': {} , "skip": False},
         "search-options": {
             "generate": True,
             "module": "test.services.records.search",
@@ -433,7 +434,7 @@ def test_model_saver_invenio():
         },
         "sample": {"file": "data/sample_data.yaml"},
         "model-name": "Test",
-        "ext-resource": {"generate": True, "skip": False},
+        "ext-resource": {"generate": True, 'service-kwargs': {}, "skip": False},
         "search-options": {
             "generate": True,
             "module": "test.services.records.search",

@@ -66,7 +66,7 @@ def test_prepare_datatype():
             "suffix-snake": "test",
         },
         "sample": {"file": "data/sample_data.yaml"},
-        "ext-resource": {"generate": True, "skip": False},
+        "ext-resource": {"generate": True, 'service-kwargs': {}, "skip": False},
         "search-options": {
             "generate": True,
             "module": "my.test.services.records.search",
