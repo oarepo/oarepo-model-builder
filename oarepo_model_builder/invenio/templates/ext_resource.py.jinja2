@@ -1,17 +1,26 @@
 from functools import cached_property
 {{ vars.config.module|generate_import(alias='config') }}
 
+{% for extra_field_value in ext.service_kwargs.values() %}
+{{ extra_field_value|code_imports }}
+{% endfor %}
+
 class {{ vars.ext|class_header }}:
     {% if not vars.service.skip %}
     @cached_property
     def {{ ext.ext_service_name }}(self):
         service_config = config.{{ vars.service_config.config_key }}
-        service_kwargs = {{ ext.service_kwargs }}
         if hasattr(service_config, "build"):
             config_class = service_config.build(self.app)
         else:
             config_class = service_config()
-        service_kwargs["config"] = config_class
+
+        service_kwargs = {
+            {% for kwarg_name, kwarg_def in ext.service_kwargs.items() %}
+            "{{ kwarg_name }}": {{ kwarg_def | extra_code}},
+            {% endfor %}
+            "config": config_class
+        }
         return config.{{ vars.service.config_key }}(
             **service_kwargs,
             {% if vars.service.additional_args %}
