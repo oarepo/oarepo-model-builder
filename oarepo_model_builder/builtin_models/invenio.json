@@ -130,6 +130,174 @@
         }
       }
     },
+    "is_published": {
+      "type": "boolean",
+      "marshmallow": {
+        "read": false,
+        "write": false
+      },
+      "sample": {
+        "skip": true
+      },
+      "facets": {
+        "searchable": true,
+        "facet": false
+      }
+    },
+    "deletion_status": {
+      "type": "keyword",
+      "marshmallow": {
+        "read": false,
+        "write": false
+      },
+      "sample": {
+        "skip": true
+      },
+      "facets": {
+        "searchable": true,
+        "facet": false
+      }
+    },
+    "version_id": {
+      "type": "integer",
+      "marshmallow": {
+        "read": false,
+        "write": false
+      },
+      "sample": {
+        "skip": true
+      },
+      "facets": {
+        "searchable": true,
+        "facet": false
+      }
+    },
+    "is_deleted": {
+      "type": "boolean",
+      "marshmallow": {
+        "read": false,
+        "write": false
+      },
+      "sample": {
+        "skip": true
+      },
+      "facets": {
+        "searchable": true,
+        "facet": false
+      }
+    },
+    "versions": {
+      "type": "object",
+      "marshmallow": {
+        "skip": true,
+        "read": false,
+        "write": false,
+        "generate": false,
+        "class": "FakeVersionsSchema"
+      },
+      "ui": {
+        "marshmallow": {
+          "read": false,
+          "write": false,
+          "generate": false,
+          "skip": true,
+          "class": "FakeVersionsUISchema"
+        }
+      },
+      "sample": {
+        "skip": true
+      },
+      "facets": {
+        "searchable": true,
+        "facet": false
+      },
+      "properties": {
+        "index": {
+          "type": "integer",
+          "marshmallow": {
+            "read": false,
+            "write": false
+          },
+          "sample": {
+            "skip": true
+          },
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
+        },
+        "is_latest": {
+          "type": "boolean",
+          "marshmallow": {
+            "read": false,
+            "write": false
+          },
+          "sample": {
+            "skip": true
+          },
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
+        },
+        "is_latest_draft": {
+          "type": "boolean",
+          "marshmallow": {
+            "read": false,
+            "write": false
+          },
+          "sample": {
+            "skip": true
+          },
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
+        },
+        "latest_id": {
+          "type": "keyword",
+          "marshmallow": {
+            "read": false,
+            "write": false
+          },
+          "sample": {
+            "skip": true
+          },
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
+        },
+        "latest_index": {
+          "type": "integer",
+          "marshmallow": {
+            "read": false,
+            "write": false
+          },
+          "sample": {
+            "skip": true
+          },
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
+        },
+        "next_draft_id": {
+          "type": "keyword",
+          "marshmallow": {
+            "read": false,
+            "write": false
+          },
+          "sample": {
+            "skip": true
+          },
+          "facets": {
+            "searchable": true,
+            "facet": false
+          }
+        }
+      }
+    },
     "$schema": {
       "type": "keyword",
       "marshmallow": {
