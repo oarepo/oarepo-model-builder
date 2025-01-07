@@ -98,7 +98,6 @@ class ObjectMarshmallowMixin:
     ):
         schema_class = marshmallow_config.get("class")
         generate = marshmallow_config.get("generate", True)
-
         if schema_class:
             qualified_schema_class = qualified_name(marshmallow_module, schema_class)
             if qualified_schema_class != schema_class:
