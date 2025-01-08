@@ -54,7 +54,7 @@ class {{ vars.service_config|class_header }}:
             if component not in seen:
                 unique_components.append(component)
                 seen.add(component)
-
+        print(unique_components)
         return unique_components
 
     model = "{{ vars.module.qualified }}"
