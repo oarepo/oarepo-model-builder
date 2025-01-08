@@ -158,7 +158,7 @@ if [ "$1" == "--server" ] ; then
 fi
 
 cat complex-model/data/sample_data.yaml
-$TEST_VENV/bin/pytest tests-model -vvv
+$TEST_VENV/bin/pytest tests-model -vv -s
 
 
 echo "All tests succeeded"
