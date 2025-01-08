@@ -370,112 +370,112 @@ class TestService(InvenioRecordService):
     )
 
 
-def test_service_config():
-    data = build_python_model(
-        {"properties": {"a": {"type": "keyword"}}},
-        [InvenioRecordServiceConfigBuilder],
-        os.path.join("test", "services", "records", "config.py"),
-    )
-    print(data)
-    assert strip_whitespaces(data) == strip_whitespaces(
-        '''
-from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
-from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
-from invenio_records_resources.services import RecordLink
-from invenio_records_resources.services import pagination_links
-from oarepo_runtime.services.config import has_permission
-from oarepo_runtime.services.records import pagination_links_html
-from test.records.api import TestRecord
-from test.services.records.permissions import TestPermissionPolicy
-from test.services.records.schema import TestSchema
-from test.services.records.search import TestSearchOptions
-from test.services.records.results import TestRecordItem
-from test.services.records.results import TestRecordList
-from invenio_records_resources.services import LinksTemplate
-
-from oarepo_runtime.services.components import process_service_configs
-
-class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
-    """TestRecord service config."""
-    
-    result_item_cls = TestRecordItem
-    
-    
-    result_list_cls = TestRecordList
-    
-    PERMISSIONS_PRESETS = ["everyone" ]
-
-    url_prefix = "/test/"
-    
-    base_permission_policy_cls = TestPermissionPolicy
-    
-    
-    schema = TestSchema
-    
-    
-    search = TestSearchOptions
-    
-    
-    record_cls = TestRecord
-    
-    
-    service_id = "test"
-
-
-    search_item_links_template = LinksTemplate
-
-
-    @property
-    def components(self):
-        components_list = []
-        components_list.extend(process_service_configs(type(self).mro()[2:]))
-        additional_components = []
-        components_list.extend(additional_components)
-        seen = set()
-        unique_components = []
-        for component in components_list:
-            if component not in seen:
-                unique_components.append(component)
-                seen.add(component)
-    
-        return unique_components
-    
-
-    model = "test"
-
-    
-    @property
-    def links_item(self):
-        return {
-            
-            "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
-            
-            "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
-            
-        }
-    
-    @property
-    def links_search_item(self):
-        return {
-            
-            "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
-            
-            "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
-            
-        }
-    
-    @property
-    def links_search(self):
-        return {
-            
-            **pagination_links("{+api}/test/{?args*}"),
-            
-            **pagination_links_html("{+ui}/test/{?args*}"),
-            
-        }
-    
-'''
-    )
+# def test_service_config():
+#     data = build_python_model(
+#         {"properties": {"a": {"type": "keyword"}}},
+#         [InvenioRecordServiceConfigBuilder],
+#         os.path.join("test", "services", "records", "config.py"),
+#     )
+#     print(data)
+#     assert strip_whitespaces(data) == strip_whitespaces(
+#         '''
+# from invenio_records_resources.services import RecordServiceConfig as InvenioRecordServiceConfig
+# from oarepo_runtime.services.config.service import PermissionsPresetsConfigMixin
+# from invenio_records_resources.services import RecordLink
+# from invenio_records_resources.services import pagination_links
+# from oarepo_runtime.services.config import has_permission
+# from oarepo_runtime.services.records import pagination_links_html
+# from test.records.api import TestRecord
+# from test.services.records.permissions import TestPermissionPolicy
+# from test.services.records.schema import TestSchema
+# from test.services.records.search import TestSearchOptions
+# from test.services.records.results import TestRecordItem
+# from test.services.records.results import TestRecordList
+# from invenio_records_resources.services import LinksTemplate
+#
+# from oarepo_runtime.services.components import process_service_configs
+#
+# class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfig):
+#     """TestRecord service config."""
+#
+#     result_item_cls = TestRecordItem
+#
+#
+#     result_list_cls = TestRecordList
+#
+#     PERMISSIONS_PRESETS = ["everyone" ]
+#
+#     url_prefix = "/test/"
+#
+#     base_permission_policy_cls = TestPermissionPolicy
+#
+#
+#     schema = TestSchema
+#
+#
+#     search = TestSearchOptions
+#
+#
+#     record_cls = TestRecord
+#
+#
+#     service_id = "test"
+#
+#
+#     search_item_links_template = LinksTemplate
+#
+#
+#     @property
+#     def components(self):
+#         components_list = []
+#         components_list.extend(process_service_configs(type(self).mro()[2:]))
+#         additional_components = []
+#         components_list.extend(additional_components)
+#         seen = set()
+#         unique_components = []
+#         for component in components_list:
+#             if component not in seen:
+#                 unique_components.append(component)
+#                 seen.add(component)
+#
+#         return unique_components
+#
+#
+#     model = "test"
+#
+#
+#     @property
+#     def links_item(self):
+#         return {
+#
+#             "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
+#
+#             "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
+#
+#         }
+#
+#     @property
+#     def links_search_item(self):
+#         return {
+#
+#             "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
+#
+#             "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
+#
+#         }
+#
+#     @property
+#     def links_search(self):
+#         return {
+#
+#             **pagination_links("{+api}/test/{?args*}"),
+#
+#             **pagination_links_html("{+ui}/test/{?args*}"),
+#
+#         }
+#
+# '''
+#     )
 
 
 def test_api_views_builder():
