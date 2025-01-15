@@ -45,7 +45,17 @@ class {{ vars.service_config|class_header }}:
     @property
     def components(self):
         components_list = []
-        components_list.extend(process_service_configs(type(self).mro()[2:]))
+        target_classes = [
+            'invenio_rdm_records.services.config.RDMRecordServiceConfig',
+            'invenio_drafts_resources.services.records.config.RecordServiceConfig',
+            'invenio_records_resources.services.records.config.RecordServiceConfig'
+        ]
+
+        for index, cls in enumerate(type(self).mro()):
+            if cls.__module__ + '.' + cls.__name__ in target_classes:
+                break
+        components_list.extend(process_service_configs(type(self).mro()[2:index+1]))
+
         additional_components = [{% for c in vars.service_config.components %}{{ c|extra_code }}{% if not loop.last %}, {% endif %}{% endfor %}]
         components_list.extend(additional_components)
         seen = set()
