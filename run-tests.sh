@@ -160,8 +160,6 @@ if [ "$1" == "--server" ] ; then
 fi
 
 cat complex-model/data/sample_data.yaml
-$TEST_VENV/bin/pip uninstall oarepo-runtime
-$TEST_VENV/bin/pip install ~/cesnet/25/oarepo-runtime
 $TEST_VENV/bin/pytest tests-model
 
 
