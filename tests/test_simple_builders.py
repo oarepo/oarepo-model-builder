@@ -427,21 +427,8 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
 
     @property
     def components(self):
-        components_list = []
-        
-        components_list.extend(process_service_configs(self))
-        
-        additional_components = []
-        components_list.extend(additional_components)
-        seen = set()
-        unique_components = []
-        for component in components_list:
-            identifier = (component.__module__, component.__name__)
-            if identifier not in seen:
-                unique_components.append(component)
-                seen.add(identifier)
-    
-        return unique_components
+
+        return process_service_configs(self) + []
     
 
     model = "test"

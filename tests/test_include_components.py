@@ -48,6 +48,6 @@ def test_include_invenio():
         os.path.join("test", "services", "records", "config.py")
     ).read()
     data = re.sub(r"\s", "", str(data))
-    additional_components = "additional_components=[DoiComponent,OaiSectionComponent]"  # Remove whitespace from expected substring
+    additional_components = "[DoiComponent,OaiSectionComponent]"  # Remove whitespace from expected substring
 
     assert additional_components in data
