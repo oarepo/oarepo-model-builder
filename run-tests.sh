@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 export BUILDER_VENV=.venv
 export TEST_VENV=.venv-tests
 export SERVER_VENV=.venv-server
-export PYTHON_VERSION=${PYTHON_VERSION:-python3}
+export PYTHON_VERSION=${PYTHON_VERSION:-python3.12}
 
 OAREPO_VERSION=${OAREPO_VERSION:-12}
 
@@ -27,6 +27,8 @@ initialize_server_venv() {
   $SERVER_VENV/bin/nrp-devtools proxy 120 &
   $SERVER_VENV/bin/pip install "oarepo[tests, rdm]==${OAREPO_VERSION}.*" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
   $SERVER_VENV/bin/pip install -e complex-model --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
+  $SERVER_VENV/bin/pip uninstall oarepo-runtime
+  $SERVER_VENV/bin/pip install ~/cesnet/25/oarepo-runtime/
 }
 
 initialize_builder_venv() {
@@ -158,6 +160,8 @@ if [ "$1" == "--server" ] ; then
 fi
 
 cat complex-model/data/sample_data.yaml
+$TEST_VENV/bin/pip uninstall oarepo-runtime
+$TEST_VENV/bin/pip install ~/cesnet/25/oarepo-runtime
 $TEST_VENV/bin/pytest tests-model
 
 

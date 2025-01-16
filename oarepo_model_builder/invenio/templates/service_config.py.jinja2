@@ -44,21 +44,9 @@ class {{ vars.service_config|class_header }}:
 
     @property
     def components(self):
-        components_list = []
 
-        components_list.extend(process_service_configs(self))
+        return process_service_configs(self) + [{% for c in vars.service_config.components %}{{ c|extra_code }}{% if not loop.last %}, {% endif %}{% endfor %}]
 
-        additional_components = [{% for c in vars.service_config.components %}{{ c|extra_code }}{% if not loop.last %}, {% endif %}{% endfor %}]
-        components_list.extend(additional_components)
-        seen = set()
-        unique_components = []
-        for component in components_list:
-            identifier = (component.__module__, component.__name__)
-            if identifier not in seen:
-                unique_components.append(component)
-                seen.add(identifier)
-
-        return unique_components
 
     model = "{{ vars.module.qualified }}"
 
