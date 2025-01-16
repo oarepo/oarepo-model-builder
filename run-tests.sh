@@ -11,6 +11,9 @@ export TEST_VENV=.venv-tests
 export SERVER_VENV=.venv-server
 export PYTHON_VERSION=${PYTHON_VERSION:-python3}
 
+export PIP_EXTRA_INDEX_URL=https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple
+export UV_EXTRA_INDEX_URL=https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple
+
 OAREPO_VERSION=${OAREPO_VERSION:-12}
 
 
@@ -25,8 +28,10 @@ initialize_server_venv() {
 
   $SERVER_VENV/bin/pip install -U setuptools pip wheel nrp-devtools
   $SERVER_VENV/bin/nrp-devtools proxy 120 &
-  $SERVER_VENV/bin/pip install "oarepo[tests, rdm]==${OAREPO_VERSION}.*" --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
-  $SERVER_VENV/bin/pip install -e complex-model --index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
+  $SERVER_VENV/bin/pip install "oarepo[tests, rdm]==${OAREPO_VERSION}.*"
+   #--index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
+  $SERVER_VENV/bin/pip install -e complex-model
+  #--index-url "http://127.0.0.1:4549/simple" --extra-index-url https://pypi.org/simple
 }
 
 initialize_builder_venv() {
