@@ -324,7 +324,7 @@ def test_resource_config_builder():
         [InvenioRecordResourceConfigBuilder],
         os.path.join("test", "resources", "records", "config.py"),
     )
-
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 import importlib_metadata

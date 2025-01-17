@@ -1,8 +1,6 @@
 import importlib_metadata
 from flask_resources import ResponseHandler
 
-{{ vars.json_serializer.class|imports }}
-{{ vars.resource_config|imports }}
 
 class {{ vars.resource_config|class_header }}:
     """{{ vars.record.class|base_name }} resource config."""
@@ -24,7 +22,7 @@ class {{ vars.resource_config|class_header }}:
     @property
     def error_handlers(self):
         entrypoint_error_handlers = {}
-        for x in importlib_metadata.entry_points(group='invenio.{{ vars.module.qualified }}.error_handlers'):
+        for x in importlib_metadata.entry_points(group='invenio.{{ vars.module.qualified }}_{{ profile }}.error_handlers'):
             entrypoint_error_handlers.update(x.load())
         return {
             **super().error_handlers,
