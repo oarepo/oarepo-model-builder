@@ -21,4 +21,14 @@ class {{ vars.resource_config|class_header }}:
             **entrypoint_response_handlers
         }
 
+    @property
+    def error_handlers(self):
+        entrypoint_error_handlers = {}
+        for x in importlib_metadata.entry_points(group='invenio.{{ vars.module.qualified }}.error_handlers'):
+            entrypoint_error_handlers.update(x.load())
+        return {
+            **super().error_handlers,
+            **entrypoint_error_handlers
+        }
+
 {{ vars.resource_config|extra_code }}
