@@ -1,6 +1,8 @@
 import importlib_metadata
 from flask_resources import ResponseHandler
 
+{{ vars.json_serializer.class|imports }}
+{{ vars.resource_config|imports }}
 
 class {{ vars.resource_config|class_header }}:
     """{{ vars.record.class|base_name }} resource config."""
