@@ -324,7 +324,7 @@ def test_resource_config_builder():
         [InvenioRecordResourceConfigBuilder],
         os.path.join("test", "resources", "records", "config.py"),
     )
-
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 import importlib_metadata
@@ -348,6 +348,16 @@ class TestResourceConfig(RecordResourceConfig):
             "application/vnd.inveniordm.v1+json": ResponseHandler(TestUIJSONSerializer()),
             **super().response_handlers,
             **entrypoint_response_handlers
+        }
+    
+    @property
+    def error_handlers(self):
+        entrypoint_error_handlers = {}
+        for x in importlib_metadata.entry_points(group='invenio.test_record.error_handlers'):
+            entrypoint_error_handlers.update(x.load())
+        return {
+            **super().error_handlers,
+            **entrypoint_error_handlers
         }
         '''
     )
