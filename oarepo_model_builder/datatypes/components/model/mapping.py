@@ -85,6 +85,9 @@ class MappingModelComponent(DataTypeComponent):
             "index",
             f"{alias}-{short_index_name}",
         )
+        mapping.setdefault("index-field-args", []).append(
+            f'search_alias="{alias}"'
+        )
         mapping.setdefault(
             "file",
             os.path.join(
