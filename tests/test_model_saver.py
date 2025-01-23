@@ -257,7 +257,7 @@ def test_model_saver():
             "module": "test.records.mappings",
             "index": "test-test-1.0.0",
             "file": "test/records/mappings/os-v2/test/test-1.0.0.json",
-            "index-field-args": [],
+            "index-field-args": ['search_alias="test"'],
         },
         "marshmallow": {
             "generate": True,
@@ -451,7 +451,7 @@ def test_model_saver_invenio():
              'file': 'test/records/mappings/os-v2/test/test-1.0.0.json',
              'generate': True,
              'index': 'test-test-1.0.0',
-             'index-field-args': [],
+             'index-field-args': ['search_alias="test"'],
              'module': 'test.records.mappings'},
  'marshmallow': {'base-classes': ['oarepo_runtime.services.schema.marshmallow.BaseRecordSchema'],
                  'class': 'test.services.records.schema.TestSchema',
