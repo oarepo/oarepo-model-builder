@@ -47,7 +47,8 @@ def test_include_invenio():
     data = builder.filesystem.open(
         os.path.join("test", "services", "records", "config.py")
     ).read()
-    data = re.sub(r"\s", "", str(data))
-    additional_components = "[DoiComponent,OaiSectionComponent]"  # Remove whitespace from expected substring
+    # print(data)
 
-    assert additional_components in data
+    data = re.sub(r"\s", "", str(data))
+
+    assert "process_service_configs(self,DoiComponent,OaiSectionComponent)" in data
