@@ -441,7 +441,7 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     @property
     def components(self):
 
-        return process_service_configs(self) + []
+        return process_service_configs(self)
     
 
     model = "test"

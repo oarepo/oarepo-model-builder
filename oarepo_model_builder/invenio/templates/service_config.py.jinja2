@@ -44,8 +44,7 @@ class {{ vars.service_config|class_header }}:
 
     @property
     def components(self):
-
-        return process_service_configs(self) + [{% for c in vars.service_config.components %}{{ c|extra_code }}{% if not loop.last %}, {% endif %}{% endfor %}]
+        return process_service_configs(self{% for c in vars.service_config.components %}, {{ c|extra_code }}{% endfor %})
 
 
     model = "{{ vars.module.qualified }}"
