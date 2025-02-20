@@ -181,6 +181,7 @@ def test_ext_builder():
         os.path.join("test", "ext.py"),
     )
 
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 import re
@@ -219,6 +220,13 @@ class TestExt:
                 else:
                     app.config.setdefault(identifier, getattr(config, identifier))
 
+        rdm_model_config = config.TEST_RDM_MODEL_CONFIG
+
+        app.config.setdefault('GLOBAL_SEARCH_MODELS', [])
+        app.config['GLOBAL_SEARCH_MODELS'].append(rdm_model_config)
+
+        app.config.setdefault('RDM_MODELS', [])
+        app.config['RDM_MODELS'].append(rdm_model_config)
 
     def is_inherited(self):
         from importlib_metadata import entry_points
@@ -268,7 +276,7 @@ def test_config_builder():
         [InvenioConfigBuilder],
         os.path.join("test", "config.py"),  # NOSONAR
     )
-
+    print(data)
     assert strip_whitespaces(data) == strip_whitespaces(
         """
 from test.services.records.config import TestServiceConfig
@@ -285,7 +293,13 @@ TEST_RECORD_SERVICE_CLASS = TestService
 OAREPO_PRIMARY_RECORD_SERVICE={
    TestRecord: "test"
 }
-        """
+TEST_RDM_MODEL_CONFIG = {
+    "model_service": "test.services.records.service.TestService",
+    "service_config": "test.services.records.config.TestServiceConfig",
+    "ui_resource_config": "ui.test.TestUIResourceConfig",
+    "api_resource_config": "test.resources.records.config.TestResourceConfig",
+}
+"""
     )
 
 

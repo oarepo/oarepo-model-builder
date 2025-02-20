@@ -26,4 +26,11 @@ OAREPO_PRIMARY_RECORD_SERVICE = {
     {{ vars.record.class|base_name }}: "{{ vars.service_config.service_id }}"
 }
 
+{{vars.module.prefix_upper}}_RDM_MODEL_CONFIG = {
+    "model_service": "{{ vars.service.class }}",
+    "service_config": "{{ vars.service_config.class }}",
+    "ui_resource_config": "ui.{{ vars.module.qualified }}.{{vars.module.prefix}}UIResourceConfig",
+    "api_resource_config": "{{ vars.resource_config.class }}",
+}
+
 {{ vars.config|extra_code }}
