@@ -220,7 +220,12 @@ class TestExt:
                 else:
                     app.config.setdefault(identifier, getattr(config, identifier))
 
-        rdm_model_config = config.TEST_RDM_MODEL_CONFIG
+        rdm_model_config = {
+            "model_service": "test.services.records.service.TestService",
+            "service_config": "test.services.records.config.TestServiceConfig",
+            "ui_resource_config": "ui.test.TestUIResourceConfig",
+            "api_resource_config": "test.resources.records.config.TestResourceConfig",
+        }
 
         app.config.setdefault('GLOBAL_SEARCH_MODELS', [])
         app.config['GLOBAL_SEARCH_MODELS'].append(rdm_model_config)
@@ -292,12 +297,6 @@ TEST_RECORD_SERVICE_CONFIG = TestServiceConfig
 TEST_RECORD_SERVICE_CLASS = TestService
 OAREPO_PRIMARY_RECORD_SERVICE={
    TestRecord: "test"
-}
-TEST_RDM_MODEL_CONFIG = {
-    "model_service": "test.services.records.service.TestService",
-    "service_config": "test.services.records.config.TestServiceConfig",
-    "ui_resource_config": "ui.test.TestUIResourceConfig",
-    "api_resource_config": "test.resources.records.config.TestResourceConfig",
 }
 """
     )
