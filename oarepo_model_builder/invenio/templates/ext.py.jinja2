@@ -40,7 +40,12 @@ class {{ vars.ext|class_header }}:
                 else:
                     app.config.setdefault(identifier, getattr(config, identifier))
 
-        rdm_model_config = config.{{vars.module.prefix_upper}}_RDM_MODEL_CONFIG
+        rdm_model_config = {
+            "model_service": "{{ vars.service.class }}",
+            "service_config": "{{ vars.service_config.class }}",
+            "ui_resource_config": "ui.{{ vars.module.qualified }}.{{vars.module.prefix}}UIResourceConfig",
+            "api_resource_config": "{{ vars.resource_config.class }}",
+        }
 
         app.config.setdefault('GLOBAL_SEARCH_MODELS', [])
         app.config['GLOBAL_SEARCH_MODELS'].append(rdm_model_config)
