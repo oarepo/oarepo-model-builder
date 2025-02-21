@@ -228,10 +228,18 @@ class TestExt:
         }
 
         app.config.setdefault('GLOBAL_SEARCH_MODELS', [])
-        app.config['GLOBAL_SEARCH_MODELS'].append(rdm_model_config)
+        for cfg in app.config['GLOBAL_SEARCH_MODELS']:
+            if cfg['model_service'] == rdm_model_config['model_service']:
+                break
+        else:
+            app.config['GLOBAL_SEARCH_MODELS'].append(rdm_model_config)
 
         app.config.setdefault('RDM_MODELS', [])
-        app.config['RDM_MODELS'].append(rdm_model_config)
+        for cfg in app.config['RDM_MODELS']:
+            if cfg['model_service'] == rdm_model_config['model_service']:
+                break
+        else:
+            app.config['RDM_MODELS'].append(rdm_model_config)
 
     def is_inherited(self):
         from importlib_metadata import entry_points
