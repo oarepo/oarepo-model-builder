@@ -221,3 +221,16 @@ def class_header(rec, class_name="class", base_classes_name="base-classes"):
             ret.append(pn.local_name)
         ret.append(")")
     return "".join(ret)
+
+
+def process_excluded(values_list):
+    excluded_stuff = [x[8:] for x in values_list if x.startswith("exclude:")]
+    if not excluded_stuff:
+        return values_list
+
+    values_list = [x for x in values_list if not x.startswith("exclude:")]
+    for e in excluded_stuff:
+        if e not in values_list:
+            raise AttributeError(f"Excluded value {e} not found in {values_list}")
+        values_list.remove(e)
+    return values_list
