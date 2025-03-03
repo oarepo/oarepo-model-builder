@@ -198,7 +198,11 @@ class TestExt:
         self.init_config(app)
         if not self.is_inherited():
             self.register_flask_extension(app)
-
+            
+        for method in dir(self):
+            if method.startswith("init_app_callback_"):
+                getattr(self, method)(app)
+  
     def register_flask_extension(self, app):
         
         app.extensions["test"] = self
@@ -215,27 +219,6 @@ class TestExt:
                             app.config[identifier][k]= v                
                 else:
                     app.config.setdefault(identifier, getattr(config, identifier))
-
-        rdm_model_config = {
-            "model_service": "test.services.records.service.TestService",
-            "service_config": "test.services.records.config.TestServiceConfig",
-            "ui_resource_config": "ui.test.TestUIResourceConfig",
-            "api_resource_config": "test.resources.records.config.TestResourceConfig",
-        }
-
-        app.config.setdefault('GLOBAL_SEARCH_MODELS', [])
-        for cfg in app.config['GLOBAL_SEARCH_MODELS']:
-            if cfg['model_service'] == rdm_model_config['model_service']:
-                break
-        else:
-            app.config['GLOBAL_SEARCH_MODELS'].append(rdm_model_config)
-
-        app.config.setdefault('RDM_MODELS', [])
-        for cfg in app.config['RDM_MODELS']:
-            if cfg['model_service'] == rdm_model_config['model_service']:
-                break
-        else:
-            app.config['RDM_MODELS'].append(rdm_model_config)
 
     def is_inherited(self):
         from importlib_metadata import entry_points
