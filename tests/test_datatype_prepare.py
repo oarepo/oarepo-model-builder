@@ -66,7 +66,7 @@ def test_prepare_datatype():
             "suffix-snake": "test",
         },
         "sample": {"file": "data/sample_data.yaml"},
-        "ext-resource": {"generate": True, 'service-kwargs': {}, "skip": False},
+        "ext-resource": {"generate": True, "service-kwargs": {}, "skip": False},
         "search-options": {
             "generate": True,
             "module": "my.test.services.records.search",
@@ -264,7 +264,7 @@ def test_prepare_datatype():
             "module": "my.test.records.mappings",
             "index": "my_test_record-test-1.0.0",
             "file": "my/test/records/mappings/os-v2/my_test_record/test-1.0.0.json",
-            "index-field-args": ['search_alias="my_test_record"'],
+            "index-field-args": [],
         },
         "marshmallow": {
             "generate": True,

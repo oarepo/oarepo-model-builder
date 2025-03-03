@@ -17,6 +17,7 @@ from oarepo_model_builder.utils.jinja import (
     generate_list,
     in_different_package,
     package_name,
+    process_excluded,
     repr_filter,
 )
 from oarepo_model_builder.utils.verbose import log
@@ -129,6 +130,7 @@ class PythonOutput(OutputBase):
             )
         )
         env.filters["repr"] = repr_filter
+        env.filters["process_excluded"] = process_excluded
 
 
 class AttrDict(dict):
