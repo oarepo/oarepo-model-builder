@@ -6,6 +6,7 @@ from oarepo_model_builder.utils.facet_helpers import facet_name, flatten
 from oarepo_model_builder.validation.utils import ImportSchema
 
 from ...datatypes import DataTypeComponent
+from ...model import ModelDataType
 from . import FacetDefinition
 
 
@@ -78,8 +79,22 @@ class RegularFacetsComponent(DataTypeComponent):
             facet_groups=facet_section.get("facet-groups", {"_default": 100000}),
         )
 
+        # find the root datatype
+        p = datatype
+        while p := p.parent:
+            if isinstance(p, ModelDataType):
+                model_facet_definitions = p.definition.get("facets", {})
+                facet_names = model_facet_definitions.get("facet-names", {})
+                break
+        else:
+            facet_names = {}
+
         # set the field on the definition
-        label = facet_section.get("label", f'{datatype.path.replace(".", "/")}.label')
+        label = facet_section.get("label")
+        if not label:
+            label = facet_names.get(
+                facet_definition.dot_path, f'{datatype.path.replace(".", "/")}.label'
+            )
         facet_definition.set_field(
             facet_section,
             arguments=[
