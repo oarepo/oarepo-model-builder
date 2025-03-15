@@ -34,6 +34,15 @@ class FacetsSchema(ma.Schema):
             "groups declared on the individual fields."
         },
     )
+    facet_names = ma.fields.Dict(
+        attribute="facet-names",
+        data_key="facet-names",
+        keys=ma.fields.String(),
+        values=ma.fields.String(),
+        metadata={
+            "doc": "Overwrite the facet names. In the form of {facet_path: facet_name}."
+        },
+    )
 
 
 class FacetsModelComponent(ObjectFacetsComponent):
