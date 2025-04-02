@@ -462,33 +462,39 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     @property
     def links_item(self):
-        return {
+        links = {
+            **super().links_item,
             
             "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
             
             "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
             
         }
+        return {k: v for k, v in links.items() if v is not None}
     
     @property
     def links_search_item(self):
-        return {
+        links = {
+            **super().links_search_item,
             
             "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
             
             "self_html":RecordLink("{+ui}/test/{id}", when=has_permission("read")),
             
         }
+        return {k: v for k, v in links.items() if v is not None}
     
     @property
     def links_search(self):
-        return {
+        links = {
+            **super().links_search,
             
             **pagination_links("{+api}/test/{?args*}"),
             
             **pagination_links_html("{+ui}/test/{?args*}"),
             
         }
+        return {k: v for k, v in links.items() if v is not None}
     
 '''
     )
