@@ -40,7 +40,9 @@ class ExtSchema(ma.Schema):
     )
     skip = ma.fields.Boolean()
     extra_code = ma.fields.Str(
-        metadata={"doc": "Extra code that will be pasted to app extension module"}
+        metadata={"doc": "Extra code that will be pasted to app extension module"},
+        attribute="extra-code",
+        data_key="extra-code",
     )
     imports = ma.fields.List(
         ma.fields.Nested(ImportSchema),
@@ -54,6 +56,7 @@ class ExtSchema(ma.Schema):
 
 class AppModelComponent(DataTypeComponent):
     "flask application"
+
     eligible_datatypes = [ModelDataType]
     depends_on = [DefaultsModelComponent]
 
