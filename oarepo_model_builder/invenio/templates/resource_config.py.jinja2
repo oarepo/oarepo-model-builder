@@ -1,5 +1,7 @@
 import importlib_metadata
-from flask_resources import ResponseHandler
+from oarepo_runtime.resources.responses import ExportableResponseHandler
+from flask_resources.serializers.json import JSONSerializer
+from invenio_records_resources.resources.records.headers import etag_headers
 
 {{ vars.json_serializer.class|imports }}
 {{ vars.resource_config|imports }}
@@ -16,8 +18,8 @@ class {{ vars.resource_config|class_header }}:
         for x in importlib_metadata.entry_points(group='invenio.{{ vars.module.qualified }}.response_handlers'):
             entrypoint_response_handlers.update(x.load())
         return {
-            "application/vnd.inveniordm.v1+json": ResponseHandler({{vars.json_serializer.class|base_name}}()),
-            **super().response_handlers,
+            "application/json": ExportableResponseHandler(export_code="json", name="json", serializer=JSONSerializer(), headers=etag_headers), #todo correct codes and how to use name
+            "application/vnd.inveniordm.v1+json": ExportableResponseHandler(export_code="inveniordm_json", name="inveniordm_json", serializer={{vars.json_serializer.class|base_name}}()),
             **entrypoint_response_handlers
         }
 
