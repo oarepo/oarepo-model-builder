@@ -350,8 +350,8 @@ class TestResourceConfig(RecordResourceConfig):
         for x in importlib_metadata.entry_points(group='invenio.test.response_handlers'):
             entrypoint_response_handlers.update(x.load())
         return {
-            "application/json": ExportableResponseHandler(export_code="json", name=_("NATIVE_JSON"), serializer=JSONSerializer(), headers=etag_headers), #todo correct codes and how to use name
-            "application/vnd.inveniordm.v1+json": ExportableResponseHandler(export_code="ui_json", name=_("NATIVE_UI_JSON"), serializer=TestUIJSONSerializer()),
+            "application/json": ExportableResponseHandler(export_code="json", name=_("Native JSON"), serializer=JSONSerializer(), headers=etag_headers),
+            "application/vnd.inveniordm.v1+json": ExportableResponseHandler(export_code="ui_json", name=_("Native UI JSON"), serializer=TestUIJSONSerializer()),
             **entrypoint_response_handlers
         }
 
