@@ -331,8 +331,10 @@ def test_resource_config_builder():
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 import importlib_metadata
-from flask_resources import ResponseHandler
-
+from oarepo_runtime.resources.responses import ExportableResponseHandler
+from flask_resources.serializers.json import JSONSerializer
+from invenio_records_resources.resources.records.headers import etag_headers
+from oarepo_runtime.i18n import lazy_gettext as _
 from test.resources.records.ui import TestUIJSONSerializer
 from invenio_records_resources.resources import RecordResourceConfig
 
@@ -348,11 +350,11 @@ class TestResourceConfig(RecordResourceConfig):
         for x in importlib_metadata.entry_points(group='invenio.test.response_handlers'):
             entrypoint_response_handlers.update(x.load())
         return {
-            "application/vnd.inveniordm.v1+json": ResponseHandler(TestUIJSONSerializer()),
-            **super().response_handlers,
+            "application/json": ExportableResponseHandler(export_code="json", name=_("Native JSON"), serializer=JSONSerializer(), headers=etag_headers),
+            "application/vnd.inveniordm.v1+json": ExportableResponseHandler(export_code="ui_json", name=_("Native UI JSON"), serializer=TestUIJSONSerializer()),
             **entrypoint_response_handlers
         }
-    
+
     @property
     def error_handlers(self):
         entrypoint_error_handlers = {}
