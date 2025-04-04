@@ -334,7 +334,7 @@ import importlib_metadata
 from oarepo_runtime.resources.responses import ExportableResponseHandler
 from flask_resources.serializers.json import JSONSerializer
 from invenio_records_resources.resources.records.headers import etag_headers
-
+from oarepo_runtime.i18n import lazy_gettext as _
 from test.resources.records.ui import TestUIJSONSerializer
 from invenio_records_resources.resources import RecordResourceConfig
 
@@ -350,8 +350,8 @@ class TestResourceConfig(RecordResourceConfig):
         for x in importlib_metadata.entry_points(group='invenio.test.response_handlers'):
             entrypoint_response_handlers.update(x.load())
         return {
-            "application/json": ExportableResponseHandler(export_code="json", name="json", serializer=JSONSerializer(), headers=etag_headers), #todo correct codes and how to use name
-            "application/vnd.inveniordm.v1+json": ExportableResponseHandler(export_code="inveniordm_json", name="inveniordm_json", serializer=TestUIJSONSerializer()),
+            "application/json": ExportableResponseHandler(export_code="json", name=_("NATIVE_JSON"), serializer=JSONSerializer(), headers=etag_headers), #todo correct codes and how to use name
+            "application/vnd.inveniordm.v1+json": ExportableResponseHandler(export_code="ui_json", name=_("NATIVE_UI_JSON"), serializer=TestUIJSONSerializer()),
             **entrypoint_response_handlers
         }
 
