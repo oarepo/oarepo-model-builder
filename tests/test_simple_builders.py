@@ -448,6 +448,7 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     
     service_id = "test"
+    indexer_queue_name = "test"
 
 
     search_item_links_template = LinksTemplate
