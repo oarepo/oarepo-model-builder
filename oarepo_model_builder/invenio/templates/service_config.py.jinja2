@@ -37,6 +37,7 @@ class {{ vars.service_config|class_header }}:
     {% endif %}
     {% if not vars.service_config.skip %}
     service_id = "{{ vars.service_config.service_id }}"
+    indexer_queue_name = "{{ vars.service_config.service_id }}"
     {% endif %}
     {% if not vars.service_config.skip %}
     search_item_links_template = {{ vars.service_config.search_item_links_template_cls|base_name }}
