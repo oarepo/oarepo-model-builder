@@ -449,24 +449,27 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     service_id = "test"
     indexer_queue_name = "test"
-
-
+    
+    
     search_item_links_template = LinksTemplate
-
+    
 
     @property
     def components(self):
-
         return process_service_configs(self)
-    
+
 
     model = "test"
 
     
     @property
     def links_item(self):
+        try:
+            supercls_links = super().links_item
+        except AttributeError: # if they aren't defined in the superclass
+            supercls_links = {}
         links = {
-            **super().links_item,
+            **supercls_links,
             
             "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
             
@@ -477,8 +480,12 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     @property
     def links_search_item(self):
+        try:
+            supercls_links = super().links_search_item
+        except AttributeError: # if they aren't defined in the superclass
+            supercls_links = {}
         links = {
-            **super().links_search_item,
+            **supercls_links,
             
             "self":RecordLink("{+api}/test/{id}", when=has_permission("read")),
             
@@ -489,8 +496,12 @@ class TestServiceConfig(PermissionsPresetsConfigMixin, InvenioRecordServiceConfi
     
     @property
     def links_search(self):
+        try:
+            supercls_links = super().links_search
+        except AttributeError: # if they aren't defined in the superclass
+            supercls_links = {}
         links = {
-            **super().links_search,
+            **supercls_links,
             
             **pagination_links("{+api}/test/{?args*}"),
             

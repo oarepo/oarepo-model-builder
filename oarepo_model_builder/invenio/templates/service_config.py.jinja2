@@ -53,8 +53,12 @@ class {{ vars.service_config|class_header }}:
     {% for links_name, links_def in links.items() %}
     @property
     def {{ links_name }}(self):
+        try:
+            supercls_links = super().{{ links_name }}
+        except AttributeError: # if they aren't defined in the superclass
+            supercls_links = {}
         links = {
-            **super().{{ links_name }},
+            **supercls_links,
             {% for link in links_def %}
             {% if link.name -%} "{{link.name}}": {%- else -%}**{%-endif-%}{{link.link_class}}({{link.link_args_str}}),
             {% endfor %}
@@ -63,3 +67,4 @@ class {{ vars.service_config|class_header }}:
     {% endfor %}
 
 {{ vars.service_config|extra_code }}
+
