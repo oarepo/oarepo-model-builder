@@ -14,11 +14,16 @@ except ImportError:
 
 
 def test_simple_mapping_builder():
-    model = {"properties": {"a": {"type": "keyword"}}}
+    model = {"properties": {"a": {"type": "keyword"}, "b": {"type": "long-integer"}}}
     data = build_model(model)
 
     assert data == {
-        "mappings": {"properties": {"a": {"type": "keyword", "ignore_above": 1024}}}
+        "mappings": {
+            "properties": {
+                "a": {"type": "keyword", "ignore_above": 1024},
+                "b": {"type": "long"},
+            }
+        }
     }
 
 

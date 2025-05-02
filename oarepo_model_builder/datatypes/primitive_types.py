@@ -30,6 +30,15 @@ class IntegerDataType(NumberDataType):
         enum = fields.List(fields.Integer(), required=False)
 
 
+class LongDataType(IntegerDataType):
+    model_type = "long-integer"
+
+    json_schema = {"type": "integer"}
+    mapping = {
+        "type": "long",
+    }
+
+
 class FloatDataType(NumberDataType):
     model_type = "float"
 
