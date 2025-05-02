@@ -43,6 +43,7 @@ from .primitive_types import (
     DoubleDataType,
     FloatDataType,
     IntegerDataType,
+    LongDataType,
 )
 from .strings import StringDataType  # noqa , just for export
 from .strings import (  # noqa
@@ -56,6 +57,7 @@ from .strings import (  # noqa
 
 DEFAULT_DATATYPES = [
     IntegerDataType,
+    LongDataType,
     FloatDataType,
     DoubleDataType,
     BooleanDataType,
