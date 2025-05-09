@@ -42,6 +42,7 @@ jobs:
       - name: Runs Opensearch
         uses: ankane/setup-opensearch@v1
         with:
+          opensearch-version: 2
           plugins: analysis-icu
 
       - name: Start Redis
