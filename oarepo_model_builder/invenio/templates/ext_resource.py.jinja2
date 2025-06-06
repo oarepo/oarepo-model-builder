@@ -1,4 +1,5 @@
 from functools import cached_property
+from oarepo_runtime.config import build_config
 {{ vars.config.module|generate_import(alias='config') }}
 
 {% for extra_field_value in ext.service_kwargs.values() %}
@@ -9,17 +10,13 @@ class {{ vars.ext|class_header }}:
     {% if not vars.service.skip %}
     @cached_property
     def {{ ext.ext_service_name }}(self):
-        service_config = config.{{ vars.service_config.config_key }}
-        if hasattr(service_config, "build"):
-            config_class = service_config.build(self.app)
-        else:
-            config_class = service_config()
+        service_config = build_config(config.{{ vars.service_config.config_key }}, self.app)
 
         service_kwargs = {
             {% for kwarg_name, kwarg_def in ext.service_kwargs.items() %}
             "{{ kwarg_name }}": {{ kwarg_def | extra_code}},
             {% endfor %}
-            "config": config_class
+            "config": service_config
         }
         return config.{{ vars.service.config_key }}(
             **service_kwargs,
@@ -34,10 +31,13 @@ class {{ vars.ext|class_header }}:
     def {{ ext.ext_resource_name }}(self):
         return config.{{ vars.resource.config_key }}(
             service=self.{{ ext.ext_service_name }},
-            config=config.{{ vars.resource_config.config_key }}(
-            {% if vars.resource_config.additional_args %}
-                {{ vars.resource_config.additional_args|generate_list }}
-            {% endif %}),
+            config=build_config(
+                config.{{ vars.resource_config.config_key }},
+                self.app
+                {% if vars.resource_config.additional_args %}
+                    {{ vars.resource_config.additional_args|generate_list(start=True) }}
+                {% endif %}
+            ),
             {% if vars.resource.additional_args %}
                 {{ vars.resource.additional_args|generate_list }}
             {% endif %}
