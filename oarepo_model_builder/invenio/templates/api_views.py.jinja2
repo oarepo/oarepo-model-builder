@@ -2,15 +2,16 @@ from flask import Blueprint
 
 def {{ vars.api_blueprint.function|base_name }}(app):
     """Create {{ vars.record.class|base_name }} blueprint."""
-    blueprint = app.extensions["{{ vars.ext.alias }}"].{{ ext.ext_resource_name }}.as_blueprint()
-    blueprint.record_once(init_{{ vars.api_blueprint.function|base_name }})
+    with app.app_context():
+        blueprint = app.extensions["{{ vars.ext.alias }}"].{{ ext.ext_resource_name }}.as_blueprint()
+        blueprint.record_once(init_{{ vars.api_blueprint.function|base_name }})
 
-    #calls record_once for all other functions starting with "init_addons_"
-    #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
-    funcs = globals()
-    funcs = [v for k, v in funcs.items() if k.startswith("init_addons_{{ vars.module.suffix_snake }}") and callable(v)]
-    for func in funcs:
-        blueprint.record_once(func)
+        #calls record_once for all other functions starting with "init_addons_"
+        #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
+        funcs = globals()
+        funcs = [v for k, v in funcs.items() if k.startswith("init_addons_{{ vars.module.suffix_snake }}") and callable(v)]
+        for func in funcs:
+            blueprint.record_once(func)
 
     return blueprint
 

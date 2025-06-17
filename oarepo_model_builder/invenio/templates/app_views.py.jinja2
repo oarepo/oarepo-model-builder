@@ -1,15 +1,16 @@
 from flask import Blueprint
 
 def {{ vars.app_blueprint.function|base_name }}(app):
-    blueprint = Blueprint("{{ vars.app_blueprint.alias }}_app", __name__, url_prefix="{{ vars.resource_config.base_url }}")
-    blueprint.record_once(init_{{ vars.app_blueprint.function|base_name }})
+    with app.app_context():
+        blueprint = Blueprint("{{ vars.app_blueprint.alias }}_app", __name__, url_prefix="{{ vars.resource_config.base_url }}")
+        blueprint.record_once(init_{{ vars.app_blueprint.function|base_name }})
 
-    #calls record_once for all other functions starting with "init_addons_"
-    #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
-    funcs = globals()
-    funcs = [v for k, v in funcs.items() if k.startswith("init_addons_{{ vars.module.suffix_snake }}") and callable(v)]
-    for func in funcs:
-        blueprint.record_once(func)
+        #calls record_once for all other functions starting with "init_addons_"
+        #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
+        funcs = globals()
+        funcs = [v for k, v in funcs.items() if k.startswith("init_addons_{{ vars.module.suffix_snake }}") and callable(v)]
+        for func in funcs:
+            blueprint.record_once(func)
 
     return blueprint
 
