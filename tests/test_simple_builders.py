@@ -527,15 +527,16 @@ from flask import Blueprint
 
 def create_api_blueprint(app):
     """Create TestRecord blueprint."""
-    blueprint = app.extensions["test"].resource_records.as_blueprint()
-    blueprint.record_once(init_create_api_blueprint)
-
-    #calls record_once for all other functions starting with "init_addons_"
-    #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
-    funcs = globals()
-    funcs = [v for k, v in funcs.items() if k.startswith("init_addons_test") and callable(v)]
-    for func in funcs:
-        blueprint.record_once(func)
+    with app.app_context():
+        blueprint = app.extensions["test"].resource_records.as_blueprint()
+        blueprint.record_once(init_create_api_blueprint)
+    
+        #calls record_once for all other functions starting with "init_addons_"
+        #https://stackoverflow.com/questions/58785162/how-can-i-call-function-with-string-value-that-equals-to-function-name
+        funcs = globals()
+        funcs = [v for k, v in funcs.items() if k.startswith("init_addons_test") and callable(v)]
+        for func in funcs:
+            blueprint.record_once(func)
 
     return blueprint
 
