@@ -117,5 +117,9 @@ class RegularFacetsComponent(DataTypeComponent):
             facets = []
 
         # and store it on the element
-        section.config["facets"] = facets
+        stored_facets = section.config.setdefault("facets", [])
+        for f in facets:
+            if not any(f.path == sf.path for sf in stored_facets):
+                stored_facets.append(f)
+
         return section
