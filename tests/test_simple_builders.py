@@ -627,7 +627,6 @@ def test_ui_serializer_builder():
         [InvenioRecordUISerializerBuilder],
         os.path.join("test", "resources", "records", "ui.py"),
     )
-
     assert strip_whitespaces(data) == strip_whitespaces(
         '''
 from oarepo_runtime.resources import LocalizedUIJSONSerializer
@@ -640,13 +639,19 @@ from flask import g
 class TestUIJSONSerializer(LocalizedUIJSONSerializer):
     """UI JSON serializer."""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Initialise Serializer."""
+        base_schema_context = {"object_key": "ui", "service": "test"}
+        schema_context = (
+            base_schema_context | kwargs["schema_context"]
+            if "schema_context" in kwargs
+            else base_schema_context
+        )
         super().__init__(
             format_serializer_cls=JSONSerializer,
             object_schema_cls=TestUISchema,
             list_schema_cls=BaseListSchema,
-            schema_context={ "object_key": "ui", "identity": g.identity }
+            schema_context=schema_context,
         )
 '''
     )

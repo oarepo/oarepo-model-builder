@@ -549,24 +549,29 @@ def test_generate_json_serializer(fulltext_builder):
         strip_whitespaces(
             '''
 from oarepo_runtime.resources import LocalizedUIJSONSerializer
+
 from test.services.records.ui_schema import TestUISchema
 from flask_resources.serializers import JSONSerializer
 from flask_resources import BaseListSchema
 from flask import g
 
-
-
 class TestUIJSONSerializer(LocalizedUIJSONSerializer):
     """UI JSON serializer."""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Initialise Serializer."""
+        base_schema_context = {"object_key": "ui", "service": "test"}
+        schema_context = (
+            base_schema_context | kwargs["schema_context"]
+            if "schema_context" in kwargs
+            else base_schema_context
+        )
         super().__init__(
             format_serializer_cls=JSONSerializer,
             object_schema_cls=TestUISchema,
             list_schema_cls=BaseListSchema,
-            schema_context={"object_key": "ui", "identity": g.identity}
-        )    
+            schema_context=schema_context,
+        )  
     '''
         )
         == strip_whitespaces(data)
