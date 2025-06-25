@@ -10,12 +10,18 @@
 class {{ vars.json_serializer|class_header }}:
     """UI JSON serializer."""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Initialise Serializer."""
+        base_schema_context = {"object_key": "ui", "service": "{{ vars.service_config.service_id }}"}
+        schema_context = (
+            base_schema_context | kwargs["schema_context"]
+            if "schema_context" in kwargs
+            else base_schema_context
+        )
         super().__init__(
             format_serializer_cls={{ vars.json_serializer.format_serializer_cls|base_name }},
             object_schema_cls={{vars.ui.marshmallow.class|base_name}},
             list_schema_cls={{ vars.json_serializer.list_schema_cls|base_name }},
-            schema_context={ {{ vars.json_serializer.schema_context_args|generate_dict }} }
+            schema_context=schema_context,
         )
 {{ vars.json_serializer|extra_code }}
